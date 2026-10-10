@@ -14,6 +14,9 @@ const DEFAULTS = {
   COMPANY_DIR: "tests/fixtures/company-populated",
   MEDIA_DIR: "tests/fixtures/media",
   DIST_DIR: "dist",
+  // The site build's clock (src/build.js): pinned to the Monday after the fixture's last run so the dist
+  // tests see the same month, 'Next up' and labels on every machine and date (the real build uses now).
+  BUILD_NOW: "2026-10-12T09:30:00+05:30",
 };
 const env = { ...process.env };
 for (const [name, value] of Object.entries(DEFAULTS)) {

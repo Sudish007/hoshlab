@@ -1,0 +1,124 @@
+// src/lib/labels.js — the only token→text mapping (design OF-5; review M6, N2, N5).
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { ROOT } from "./helpers.js";
+import { modeLabel, providerLabel, tokenStateLabel, slotLabel, cadenceLine, flagSentence, isApproved, TERMINAL, SLOT_WORDS } from "../src/lib/labels.js";
+import { DRAFT_STATUSES, SLOT_STATUSES, TOKEN_STATES } from "../engine/lib/schema.js";
+
+const config = JSON.parse(readFileSync(join(ROOT, "company", "config.json"), "utf8"));
+const page = (handle) => config.pages.find((p) => p.handle === handle);
+
+test("labels.js is browser-safe: no node: imports, no imports at all", () => {
+  const src = readFileSync(join(ROOT, "src", "lib", "labels.js"), "utf8");
+  assert.doesNotMatch(src, /from\s+["']node:/);
+  assert.doesNotMatch(src, /^import\s/m);
+});
+
+test("modeLabel / providerLabel / tokenStateLabel map every token and throw on unknown ones (N5)", () => {
+  assert.equal(modeLabel("approve_first"), "Approve first");
+  assert.equal(modeLabel("autopilot"), "Autopilot");
+  assert.throws(() => modeLabel("manual"), /unknown mode/);
+  assert.equal(providerLabel("anthropic"), "Anthropic");
+  assert.equal(providerLabel("gemini"), "Google Gemini");
+  assert.equal(providerLabel("openai"), "OpenAI");
+  assert.throws(() => providerLabel("Anthropic"), /unknown provider/);
+  assert.equal(tokenStateLabel("ok"), "token ok");
+  assert.equal(tokenStateLabel("invalid"), "token invalid");
+  assert.equal(tokenStateLabel("not_configured"), "not configured yet");
+  assert.equal(tokenStateLabel("expiring"), "token expiring");
+  for (const s of TOKEN_STATES) assert.ok(tokenStateLabel(s), s);
+  assert.throws(() => tokenStateLabel("nope"), /unknown token state/);
+});
+
+// M6 truth table: every (draft status × approval × mode) cell, written out — not derived from the code.
+const APPROVALS = {
+  none: undefined,
+  approve: { decision: "approve", revision: 1 },
+  stale: { decision: "approve", revision: 0 }, // written against an older revision (M5.5)
+  reject: { decision: "reject", revision: 1, reason: "no" },
+};
+const EXPECTED = {
+  // status:        { approve_first: { none, approve, stale, reject }, autopilot: { ... } }
+  written: { approve_first: { none: "in progress", approve: "in progress", stale: "in progress", reject: null }, autopilot: { none: "in progress", approve: "in progress", stale: "in progress", reject: null } },
+  rendered: { approve_first: { none: "in progress", approve: "in progress", stale: "in progress", reject: null }, autopilot: { none: "in progress", approve: "in progress", stale: "in progress", reject: null } },
+  rework: { approve_first: { none: "in progress", approve: "in progress", stale: "in progress", reject: null }, autopilot: { none: "in progress", approve: "in progress", stale: "in progress", reject: null } },
+  queued: { approve_first: { none: "in review", approve: "scheduled", stale: "in review", reject: null }, autopilot: { none: "scheduled", approve: "scheduled", stale: "scheduled", reject: null } },
+  published: { approve_first: { none: "published", approve: "published", stale: "published", reject: "published" }, autopilot: { none: "published", approve: "published", stale: "published", reject: "published" } },
+  blocked: { approve_first: { none: null, approve: null, stale: null, reject: null }, autopilot: { none: null, approve: null, stale: null, reject: null } },
+  failed: { approve_first: { none: null, approve: null, stale: null, reject: null }, autopilot: { none: null, approve: null, stale: null, reject: null } },
+  rejected: { approve_first: { none: null, approve: null, stale: null, reject: null }, autopilot: { none: null, approve: null, stale: null, reject: null } },
+  expired: { approve_first: { none: null, approve: null, stale: null, reject: null }, autopilot: { none: null, approve: null, stale: null, reject: null } },
+};
+
+test("M6: slotLabel covers every draft status × approval × mode cell", () => {
+  assert.deepEqual(Object.keys(EXPECTED).sort(), [...DRAFT_STATUSES].sort(), "the table names every draft status");
+  let cells = 0;
+  for (const [status, byMode] of Object.entries(EXPECTED)) {
+    for (const [mode, byApproval] of Object.entries(byMode)) {
+      for (const [name, approval] of Object.entries(APPROVALS)) {
+        const draft = { id: "x", status, revision: 1 };
+        const slot = { slotId: "s", status, draftId: "x" };
+        assert.equal(slotLabel(slot, draft, approval, mode), byApproval[name], `${status} × ${name} × ${mode}`);
+        cells++;
+      }
+    }
+  }
+  assert.equal(cells, 9 * 2 * 4);
+  for (const word of Object.values(EXPECTED).flatMap((m) => Object.values(m).flatMap((a) => Object.values(a)))) {
+    if (word !== null) assert.ok(SLOT_WORDS.includes(word), word);
+  }
+});
+
+test("M6: slots without a draft — planned, dropped, and a slot whose draft folder is gone", () => {
+  for (const mode of ["approve_first", "autopilot"]) {
+    assert.equal(slotLabel({ slotId: "s", status: "planned" }, null, undefined, mode), "planned");
+    assert.equal(slotLabel({ slotId: "s" }, null, undefined, mode), "planned", "no status at all");
+    assert.equal(slotLabel({ slotId: "s", status: "dropped" }, null, undefined, mode), null, "dropped slots are hidden (M5.2)");
+    assert.equal(slotLabel({ slotId: "s", status: "published", draftId: "gone" }, null, undefined, mode), "published");
+    assert.equal(slotLabel({ slotId: "s", status: "written", draftId: "gone" }, null, undefined, mode), "in progress");
+    for (const s of ["blocked", "failed", "rejected", "expired"]) assert.equal(slotLabel({ slotId: "s", status: s, draftId: "gone" }, null, undefined, mode), null, s);
+  }
+  assert.equal(slotLabel({ slotId: "s", status: "queued", draftId: "gone" }, null, undefined, "approve_first"), "in review");
+  assert.equal(slotLabel({ slotId: "s", status: "queued", draftId: "gone" }, null, { decision: "approve" }, "approve_first"), "scheduled", "an approval without a revision counts when there is no draft to compare");
+  assert.equal(slotLabel({ slotId: "s", status: "queued", draftId: "gone" }, null, undefined, "autopilot"), "scheduled");
+  assert.deepEqual(SLOT_STATUSES.filter((s) => slotLabel({ slotId: "s", status: s }, null, undefined, "approve_first") === null).sort(), ["blocked", "dropped", "expired", "failed", "rejected"]);
+  assert.deepEqual(TERMINAL, ["rejected", "blocked", "failed", "expired"]);
+});
+
+test("isApproved requires an approve record for the draft's current revision", () => {
+  assert.equal(isApproved({ revision: 2 }, { decision: "approve", revision: 2 }), true);
+  assert.equal(isApproved({ revision: 2 }, { decision: "approve", revision: 1 }), false);
+  assert.equal(isApproved({ revision: 2 }, { decision: "reject", revision: 2 }), false);
+  assert.equal(isApproved({ revision: 2 }, undefined), false);
+});
+
+test("N2: cadenceLine counts posts and carousels from the cadence and reels only when features.reels", () => {
+  assert.equal(cadenceLine(page("rishtapatra"), config.features), "3 posts / week · 1 carousel");
+  assert.equal(cadenceLine(page("kaatdo"), config.features), "3 posts / week · 1 carousel");
+  assert.equal(cadenceLine(page("job_rez"), config.features), "4 posts / week · 1 carousel");
+  const withReel = { cadence: { slots: [...page("rishtapatra").cadence.slots, { dow: "sun", time: "11:00", format: "reel" }] } };
+  assert.equal(cadenceLine(withReel, { reels: false }), "3 posts / week · 1 carousel", "a reel slot is not counted while reels are off");
+  assert.equal(cadenceLine(withReel, { reels: true }), "4 posts / week · 1 carousel · 1 reel");
+  assert.equal(cadenceLine({ cadence: { slots: [{ dow: "mon", time: "09:00", format: "image" }] } }), "1 post / week");
+  assert.equal(cadenceLine({ cadence: { slots: [{ dow: "mon", time: "09:00", format: "carousel" }, { dow: "wed", time: "09:00", format: "carousel" }] } }), "2 posts / week · 2 carousels");
+  for (const p of config.pages) assert.ok(!cadenceLine(p, config.features).includes("reel"), p.handle);
+});
+
+test("flagSentence: one plain sentence per status flag, unknown flags throw", () => {
+  assert.equal(flagSentence("budget_exhausted", { month: "October 2026" }), "Budget for October 2026 is spent; drafting paused.");
+  assert.equal(flagSentence("budget_exhausted"), "Budget for this month is spent; drafting paused.");
+  assert.equal(flagSentence("budget_warn", { month: "October 2026" }), "Budget for October 2026 is past the warning level.");
+  assert.equal(flagSentence("token_invalid:kaatdo"), "Token for @kaatdo is invalid — run setup-secrets.");
+  assert.match(flagSentence("token_expiring:job_rez"), /^Token for @job_rez expires soon/);
+  assert.match(flagSentence("render_failed"), /Designer refused/);
+  assert.match(flagSentence("provider_down:gemini"), /^Google Gemini was unreachable/);
+  assert.match(flagSentence("media_branch_missing"), /not configured yet/);
+  assert.match(flagSentence("publish_failed:kd-2026-10-13-six-rules"), /^Publishing failed for kd-2026-10-13-six-rules/);
+  for (const f of ["budget_warn", "budget_exhausted", "token_invalid:kaatdo", "token_expiring:kaatdo", "render_failed", "provider_down:anthropic", "media_branch_missing", "publish_failed:x-1"]) {
+    const s = flagSentence(f);
+    assert.ok(/[.]$/.test(s) && !/[_:]/.test(s.replace(/setup-secrets|x-1/g, "")), `${f}: plain sentence, no tokens: ${s}`);
+  }
+  assert.throws(() => flagSentence("made_up"), /unknown flag/);
+});

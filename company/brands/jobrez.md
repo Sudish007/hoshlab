@@ -19,7 +19,7 @@ Source pointers are `<repo-folder>/<path>:<lines>` relative to the owner's works
 - Plain, specific, honest by default: say what is real and what is not ("self-reported", "not a certification").
 - Speaks to engineers: concrete nouns (branch, posting, taxonomy, layout rule), no marketing abstractions.
 - No hype, no exclamation marks, no superlatives; the product's own README is the register.
-- No India-specific branding tokens anywhere in captions, hashtags, alt text or artwork (OF-2): no country names, no local job boards, no local degree or tax acronyms. Write "live jobs panel", never a country.
+- No country-specific branding tokens anywhere in captions, hashtags, alt text or artwork (OF-2): no country names, no local job boards, no local degree or tax acronyms. Write "live jobs panel", never a country.
 - Prices are allowed only from the pricing table and only in ₹ as the product lists them.
 - Emoji: none. Language: English only (no Devanagari).
 - Words to prefer: master resume, branch, Job DNA, evidence, layout rules, free to export. Words to avoid: AI-powered, ATS-certified, beat the ATS, guaranteed.
