@@ -1,0 +1,38 @@
+{
+  "updatedAt": "2026-10-10T19:00:00+05:30",
+  "lastRun": null,
+  "lastRuns": [],
+  "queue": {
+    "rishtapatra": 0,
+    "kaatdo": 0,
+    "job_rez": 0
+  },
+  "blocked": {},
+  "budget": {
+    "month": "2026-10",
+    "usedUsd": 0,
+    "limitUsd": 25,
+    "exhausted": false
+  },
+  "pages": {
+    "rishtapatra": {
+      "mode": "approve_first",
+      "tokenState": "not_configured",
+      "tokenExpiresAt": null,
+      "lastPublishedAt": null
+    },
+    "kaatdo": {
+      "mode": "approve_first",
+      "tokenState": "not_configured",
+      "tokenExpiresAt": null,
+      "lastPublishedAt": null
+    },
+    "job_rez": {
+      "mode": "approve_first",
+      "tokenState": "not_configured",
+      "tokenExpiresAt": null,
+      "lastPublishedAt": null
+    }
+  },
+  "flags": []
+}

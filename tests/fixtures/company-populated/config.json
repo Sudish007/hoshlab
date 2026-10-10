@@ -1,0 +1,229 @@
+{
+  "version": 1,
+  "company": {
+    "name": "Hoshlab",
+    "nameDevanagari": "होशलैब",
+    "owner": "Sudish Kumar",
+    "ownerGithub": "Sudish007",
+    "timezone": "Asia/Kolkata"
+  },
+  "site": {
+    "url": "https://sudish007.github.io/hoshlab",
+    "basePath": "/hoshlab/"
+  },
+  "repo": {
+    "owner": "Sudish007",
+    "name": "hoshlab",
+    "branch": "main",
+    "mediaBranch": "media"
+  },
+  "schedule": {
+    "engineCron": "0 0 * * *",
+    "engineLabel": "Daily 05:30 IST",
+    "publisherCron": "0 * * * *",
+    "publisherLabel": "Hourly at :30 IST",
+    "actionsDelayNote": "Actions cron may start 10–30 min late"
+  },
+  "budget": {
+    "monthlyUsd": 25,
+    "warnAtPct": 80,
+    "hardStop": true
+  },
+  "features": {
+    "reels": false
+  },
+  "providers": {
+    "anthropic": {
+      "enabled": true,
+      "secret": "ANTHROPIC_API_KEY",
+      "endpoint": "https://api.anthropic.com/v1/messages",
+      "apiVersion": "2023-06-01",
+      "models": {
+        "claude-sonnet-5-5": {
+          "inputPerMTok": 2,
+          "outputPerMTok": 10,
+          "maxOutputTokens": 128000
+        }
+      },
+      "priceSource": "https://platform.claude.com/docs/en/docs/about-claude/pricing",
+      "pricesVerifiedAt": "2026-10-10",
+      "priceNote": "Claude Sonnet 5.5, base tokens $2 / $10 per MTok, max output 128K (model page platform.claude.com/docs/en/models/sonnet-5-5/overview). The model page states that a non-default temperature, top_p or top_k returns a 400 error and that adaptive thinking is on by default."
+    },
+    "gemini": {
+      "enabled": true,
+      "secret": "GEMINI_API_KEY",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta",
+      "models": {
+        "gemini-3.8-flash": {
+          "inputPerMTok": 0.75,
+          "outputPerMTok": 3.75,
+          "maxOutputTokens": 65536
+        }
+      },
+      "priceSource": "https://ai.google.dev/gemini-api/docs/pricing",
+      "pricesVerifiedAt": "2026-10-10",
+      "priceNote": "Gemini 3.8 Flash, standard paid tier. The pricing page lists $0.75 / $3.75 per MTok through 2026-12-31 and $1.50 / $7.50 from 2027-01-01 (output price includes thinking tokens); output token limit 65,536 from the model page. Re-run check-models in January 2027."
+    },
+    "openai": {
+      "enabled": true,
+      "secret": "OPENAI_API_KEY",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "models": {
+        "gpt-6-luna": {
+          "inputPerMTok": 0.1,
+          "outputPerMTok": 0.5,
+          "maxOutputTokens": 128000
+        }
+      },
+      "priceSource": "https://developers.openai.com/api/docs/pricing",
+      "pricesVerifiedAt": "2026-10-10",
+      "priceNote": "GPT-6 Luna, standard short-context price ($0.10 / $0.50 per MTok; prompts over 272K input tokens cost 2x input and 1.5x output), max output 128,000 (model page developers.openai.com/api/docs/models/gpt-6-luna). Reasoning tokens bill as output."
+    }
+  },
+  "defaults": {
+    "leadDays": 3,
+    "backlogWeeks": 2,
+    "maxReworkLoops": 2,
+    "maxPublishAttempts": 3,
+    "minGapHours": 6,
+    "lateAfterHours": 6,
+    "expireAfterHours": 48,
+    "hashtagCap": 8,
+    "captionMax": 2200,
+    "altTextMax": 100
+  },
+  "ig": {
+    "host": "https://graph.instagram.com",
+    "version": "v21.0",
+    "pollIntervalMs": 5000,
+    "pollMaxMs": 300000
+  },
+  "pages": [
+    {
+      "handle": "rishtapatra",
+      "prefix": "rp",
+      "displayName": "RishtaPatra · रिश्तापत्र",
+      "brand": "company/brands/rishtapatra.md",
+      "igUserId": "",
+      "appScopedId": "",
+      "tokenSecret": "IG_TOKEN_RISHTAPATRA",
+      "mode": "approve_first",
+      "modeChangedAt": "2026-10-01T09:00:00+05:30",
+      "modeChangedBy": "owner",
+      "languages": [
+        "hi",
+        "en"
+      ],
+      "formats": [
+        "image",
+        "carousel",
+        "reel"
+      ],
+      "brandColor": "#7a1f2b",
+      "cadence": {
+        "slots": [
+          {
+            "dow": "mon",
+            "time": "19:30",
+            "format": "image"
+          },
+          {
+            "dow": "wed",
+            "time": "19:30",
+            "format": "carousel"
+          },
+          {
+            "dow": "fri",
+            "time": "19:30",
+            "format": "image"
+          }
+        ]
+      }
+    },
+    {
+      "handle": "kaatdo",
+      "prefix": "kd",
+      "displayName": "KaatDo ╱ काट दो",
+      "brand": "company/brands/kaatdo.md",
+      "igUserId": "",
+      "appScopedId": "",
+      "tokenSecret": "IG_TOKEN_KAATDO",
+      "mode": "approve_first",
+      "modeChangedAt": "2026-10-01T09:00:00+05:30",
+      "modeChangedBy": "owner",
+      "languages": [
+        "en"
+      ],
+      "formats": [
+        "image",
+        "carousel",
+        "reel"
+      ],
+      "brandColor": "#0b8f4d",
+      "cadence": {
+        "slots": [
+          {
+            "dow": "tue",
+            "time": "08:15",
+            "format": "image"
+          },
+          {
+            "dow": "thu",
+            "time": "08:15",
+            "format": "image"
+          },
+          {
+            "dow": "sat",
+            "time": "11:00",
+            "format": "carousel"
+          }
+        ]
+      }
+    },
+    {
+      "handle": "job_rez",
+      "prefix": "jr",
+      "displayName": "JobRez",
+      "brand": "company/brands/jobrez.md",
+      "igUserId": "",
+      "appScopedId": "",
+      "tokenSecret": "IG_TOKEN_JOB_REZ",
+      "mode": "approve_first",
+      "modeChangedAt": "2026-10-01T09:00:00+05:30",
+      "modeChangedBy": "owner",
+      "languages": [
+        "en"
+      ],
+      "formats": [
+        "image",
+        "carousel",
+        "reel"
+      ],
+      "brandColor": "#7c3aed",
+      "cadence": {
+        "slots": [
+          {
+            "dow": "mon",
+            "time": "12:30",
+            "format": "image"
+          },
+          {
+            "dow": "tue",
+            "time": "12:30",
+            "format": "image"
+          },
+          {
+            "dow": "wed",
+            "time": "12:30",
+            "format": "carousel"
+          },
+          {
+            "dow": "thu",
+            "time": "12:30",
+            "format": "image"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -470,6 +470,8 @@ const PROVIDER_SPEC = {
   models: { "*": MODEL_PRICE_SPEC },
   priceSource: "str",
   pricesVerifiedAt: "date",
+  // Free text copied from the official page beside the price (scheduled changes, tiers); never parsed.
+  "priceNote?": "str<=500",
 };
 
 export const CONFIG_SPEC = {

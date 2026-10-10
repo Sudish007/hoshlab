@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "agents": [
+    {
+      "name": "ceo",
+      "title": "Chief Executive",
+      "group": "leadership",
+      "kind": "llm",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "fallback": ["openai", "gemini"],
+      "temperature": 0.4,
+      "maxOutputTokens": 4000,
+      "charter": "company/charters/ceo.md",
+      "schedule": "weekly-monday",
+      "never": ["publishes", "edits brand facts", "changes modes", "allocates more than 100 % of the budget"]
+    },
+    {
+      "name": "hr",
+      "title": "People & Roster",
+      "group": "leadership",
+      "kind": "llm",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "fallback": ["anthropic"],
+      "temperature": 0.3,
+      "maxOutputTokens": 4000,
+      "charter": "company/charters/hr.md",
+      "schedule": "monthly-1st",
+      "never": ["edits roster.json directly", "removes or disables QA or the Publisher", "proposes a provider that is not enabled"]
+    },
+    {
+      "name": "strategist",
+      "title": "Content Strategist",
+      "group": "studio",
+      "kind": "llm",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "fallback": ["anthropic"],
+      "temperature": 0.7,
+      "maxOutputTokens": 4000,
+      "charter": "company/charters/strategist.md",
+      "schedule": "daily",
+      "never": ["writes captions", "schedules past the cadence cap", "assigns a disputed fact", "schedules two posts on one page within minGapHours"]
+    },
+    {
+      "name": "writer",
+      "title": "Writer",
+      "group": "studio",
+      "kind": "llm",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "fallback": ["gemini", "openai"],
+      "temperature": 0.8,
+      "maxOutputTokens": 4000,
+      "charter": "company/charters/writer.md",
+      "schedule": "daily",
+      "never": ["invents numbers, testimonials or prices", "exceeds the format caps", "uses a fact id it was not offered", "adds links outside the allowed domains"]
+    },
+    {
+      "name": "designer",
+      "title": "Designer",
+      "group": "studio",
+      "kind": "deterministic",
+      "charter": "company/charters/designer.md",
+      "schedule": "daily",
+      "never": ["uses stock art or generated people", "uses colours or fonts outside brand.md Tokens", "uses gradients outside JobRez media"]
+    },
+    {
+      "name": "qa",
+      "title": "QA / Editor",
+      "group": "studio",
+      "kind": "llm",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "fallback": ["anthropic"],
+      "temperature": 0.0,
+      "maxOutputTokens": 2000,
+      "charter": "company/charters/qa.md",
+      "schedule": "daily",
+      "never": ["edits a draft", "passes a claim without a source", "passes a disputed fact"]
+    },
+    {
+      "name": "publisher",
+      "title": "Publisher",
+      "group": "operations",
+      "kind": "deterministic",
+      "charter": "company/charters/publisher.md",
+      "schedule": "hourly",
+      "never": ["posts without a QA pass", "posts in Approve first without an approve record", "retries a draft more than once per run", "posts a rejected or expired draft"]
+    },
+    {
+      "name": "analyst",
+      "title": "Analyst",
+      "group": "operations",
+      "kind": "llm",
+      "provider": "openai",
+      "model": "gpt-6-luna",
+      "fallback": ["gemini"],
+      "temperature": 0.2,
+      "maxOutputTokens": 4000,
+      "charter": "company/charters/analyst.md",
+      "schedule": "weekly-sunday",
+      "never": ["reports a number it did not fetch", "speculates about causes without labelling it a hypothesis"]
+    }
+  ]
+}
