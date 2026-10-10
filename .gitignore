@@ -5,3 +5,6 @@ dist/
 !.env.example
 .agents/
 *.log
+.media/
+audit-out/
+engine/render/fonts/

@@ -1,0 +1,39 @@
+{
+  "name": "hoshlab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hoshlab — an agentic company (8 AI agents + 1 human owner) that runs three Instagram pages. Plain Node ESM engine, static site, browser-only admin.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.2"
+  },
+  "scripts": {
+    "build": "node src/build.js",
+    "build:fonts": "node scripts/build-fonts.mjs",
+    "test": "node scripts/test.mjs",
+    "serve": "node scripts/serve.mjs",
+    "audit": "node scripts/audit.mjs",
+    "audit:admin": "node scripts/audit-admin.mjs",
+    "engine": "node engine/index.js",
+    "publish": "node engine/index.js publish",
+    "check-models": "node engine/index.js check-models",
+    "dryrun": "node scripts/dry-run-publish.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cascadia-code": "5.3.0",
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/dm-mono": "5.3.0",
+    "@fontsource/dm-sans": "5.3.0",
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/manrope": "5.3.0",
+    "@fontsource/mukta": "5.3.0",
+    "@fontsource/noto-sans-devanagari": "5.3.0",
+    "@fontsource/space-grotesk": "5.3.0",
+    "@fontsource/tiro-devanagari-hindi": "5.3.0",
+    "marked": "18.1.0",
+    "playwright": "1.64.0"
+  },
+  "devDependencies": {
+    "fast-xml-parser": "5.11.2"
+  }
+}
