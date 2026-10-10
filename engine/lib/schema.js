@@ -461,7 +461,17 @@ export const STATUS_FLAG = "pattern:^(?:budget_warn|budget_exhausted|token_inval
 // ---------------------------------------------------------------------------------------
 // §4.1 config.json (+ N3 features.reels, D5 altTextMax/appScopedId, D9 expireAfterHours, §12)
 
-const MODEL_PRICE_SPEC = { inputPerMTok: "num[0..10000]", outputPerMTok: "num[0..10000]", maxOutputTokens: "int[1..1000000]" };
+// acceptsTemperature:false = the model returns 400 on a non-default temperature, so the adapter omits
+// the field (claude-sonnet-5-5, see providers.anthropic.priceNote). reasoning = the cheapest thinking
+// level the model accepts: Gemini thinkingConfig.thinkingLevel, OpenAI reasoning_effort (FEAT-102 findings).
+export const REASONING_LEVELS = ["none", "minimal", "low", "medium", "high", "xhigh", "max"];
+const MODEL_PRICE_SPEC = {
+  inputPerMTok: "num[0..10000]",
+  outputPerMTok: "num[0..10000]",
+  maxOutputTokens: "int[1..1000000]",
+  "acceptsTemperature?": "bool",
+  "reasoning?": `enum[${REASONING_LEVELS.join("|")}]`,
+};
 const PROVIDER_SPEC = {
   enabled: "bool",
   secret: SECRET_NAME,

@@ -42,7 +42,8 @@
         "claude-sonnet-5-5": {
           "inputPerMTok": 2,
           "outputPerMTok": 10,
-          "maxOutputTokens": 128000
+          "maxOutputTokens": 128000,
+          "acceptsTemperature": false
         }
       },
       "priceSource": "https://platform.claude.com/docs/en/docs/about-claude/pricing",
@@ -57,12 +58,13 @@
         "gemini-3.8-flash": {
           "inputPerMTok": 0.75,
           "outputPerMTok": 3.75,
-          "maxOutputTokens": 65536
+          "maxOutputTokens": 65536,
+          "reasoning": "low"
         }
       },
       "priceSource": "https://ai.google.dev/gemini-api/docs/pricing",
       "pricesVerifiedAt": "2026-10-10",
-      "priceNote": "Gemini 3.8 Flash, standard paid tier. The pricing page lists $0.75 / $3.75 per MTok through 2026-12-31 and $1.50 / $7.50 from 2027-01-01 (output price includes thinking tokens); output token limit 65,536 from the model page. Re-run check-models in January 2027."
+      "priceNote": "Gemini 3.8 Flash, standard paid tier. The pricing page lists $0.75 / $3.75 per MTok through 2026-12-31 and $1.50 / $7.50 from 2027-01-01 (output price includes thinking tokens); output token limit 65,536 from the model page (includes thought tokens; thinkingLevel low is the lowest level this model accepts, default medium — ai.google.dev/gemini-api/docs/generate-content/thinking). Re-run check-models in January 2027."
     },
     "openai": {
       "enabled": true,
@@ -72,7 +74,8 @@
         "gpt-6-luna": {
           "inputPerMTok": 0.1,
           "outputPerMTok": 0.5,
-          "maxOutputTokens": 128000
+          "maxOutputTokens": 128000,
+          "reasoning": "low"
         }
       },
       "priceSource": "https://developers.openai.com/api/docs/pricing",
