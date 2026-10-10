@@ -1,0 +1,104 @@
+{
+  "draftId": "kd-2026-10-06-reconnect-every-trading-morning",
+  "revision": 1,
+  "at": "2026-10-04T05:40:21+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "405/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "always → 3/3 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "10 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "08:45 → kd-f07, 09:20 → kd-f07"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "95/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; Devanagari only \"काट दो\")"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 119 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "3 link tokens, all on kaatdo.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.00 (no recent captions)"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 4,
+    "claims": [
+      {
+        "claim": "Broker tokens expire every day under SEBI norms, so you reconnect each morning",
+        "ok": true,
+        "factId": "kd-f07"
+      },
+      {
+        "claim": "08:45 IST stale-token nudge; 09:20 IST connected-but-not-armed alert",
+        "ok": true,
+        "factId": "kd-f07"
+      },
+      {
+        "claim": "not investment advice; not registered with SEBI; execution never guaranteed",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "काट दो. sign-off",
+        "ok": true,
+        "factId": "kd-f13"
+      }
+    ],
+    "reasons": [],
+    "notes": "Risk-first, terse, no outcome promised; both times match kd-f07 exactly; all three disclaimer groups present verbatim."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261004-0531-5d6e7f"
+}

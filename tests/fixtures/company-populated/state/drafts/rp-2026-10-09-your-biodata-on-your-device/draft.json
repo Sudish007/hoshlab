@@ -1,0 +1,74 @@
+{
+  "id": "rp-2026-10-09-your-biodata-on-your-device",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0019",
+  "slotId": "rishtapatra-2026-10-09-1930",
+  "slotAt": "2026-10-09T19:30:00+05:30",
+  "format": "image",
+  "language": "hi",
+  "status": "published",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-07T05:33:40+05:30",
+  "updatedAt": "2026-10-09T19:31:05+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261007-0531-2c3d4e",
+  "caption": "आपका बायोडाटा, आपके डिवाइस पर।\nEvery detail, photo and imported resume is processed in the browser and saved only on your device. An account is optional.\nA guided 7-step editor with a live A4 preview that fits one page.\nबायोडाटा से रिश्ते तक।\nrishtapatra.com",
+  "hashtags": [
+    "#RishtaPatra",
+    "#Biodata",
+    "#Rishta",
+    "#Shaadi"
+  ],
+  "altText": "Cream card, maroon Hindi headline: your biodata stays on your device. Footer rishtapatra.com",
+  "artwork": {
+    "headline": "आपका बायोडाटा, आपके डिवाइस पर।",
+    "subline": "Processed in the browser, saved only on your device.",
+    "facts": [
+      "Photos and imported resumes stay local",
+      "Account optional",
+      "Guided 7-step editor, live A4 preview"
+    ],
+    "footer": "rishtapatra.com",
+    "variant": "A"
+  },
+  "factsUsed": [
+    {
+      "factId": "rp-f05",
+      "quote": "processed in the browser and saved only on the device; an account is optional"
+    },
+    {
+      "factId": "rp-f06",
+      "quote": "Guided 7-step editor … live A4 preview that auto-fits to one page"
+    },
+    {
+      "factId": "rp-f02",
+      "quote": "बायोडाटा से रिश्ते तक"
+    }
+  ],
+  "writerNote": "Local-first lead (memo 2026-W41 priority 1); Hindi headline and sign-off, English fact lines; no kundali mention, so no kundali disclaimer is triggered.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-09-your-biodata-on-your-device/image-1-6a6c9e30.jpg",
+      "bytes": 112436,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "6a6c9e30758bdca23cc19a152ad98b4b42dda5116e8f48d6ddb62bcb5dee311a",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-09-your-biodata-on-your-device/image-1-6a6c9e30.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-09-your-biodata-on-your-device/image-1-6a6c9e30.jpg"
+    }
+  ],
+  "publishAttempts": [
+    {
+      "at": "2026-10-09T19:31:05+05:30",
+      "ok": true,
+      "stage": "publish",
+      "mediaUrlUsed": "raw",
+      "runId": "publisher-hourly-20261009-1930-7a6b5c"
+    }
+  ],
+  "qaRef": "drafts/rp-2026-10-09-your-biodata-on-your-device/qa.json",
+  "designNote": "variant A · cream and maroon"
+}

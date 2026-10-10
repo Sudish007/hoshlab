@@ -19,10 +19,11 @@
 // --now <iso> fixes the clock and is accepted only together with a dry-run client.
 import { cpSync, existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, relative, resolve } from "node:path";
 import { CompanyError, loadCompany } from "../../src/lib/company.js";
 import { monthUsedUsd } from "../lib/budget.js";
 import { readEnv } from "../lib/env.js";
+import { commitAndPush, PushConflictError, repoRootFor, shouldCommit, writeGithubOutput } from "../lib/git.js";
 import { runId as makeRunId } from "../lib/ids.js";
 import { createLogger, scrub, stepLine } from "../lib/log.js";
 import { EDIT_SPEC, RUN_SPEC, STATUS_SPEC, SchemaError } from "../lib/schema.js";
@@ -328,11 +329,13 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
   changedFiles.push(state.appendLog("runs", run, RUN_SPEC, startedAt));
   const summary = stepLine(AGENT, run.ok, ms, 0, 0, note);
   log(summary);
-  return { ok: run.ok, changed: publishedChanged || draftsChanged, changedFiles: unique(changedFiles), summary, run, decisions, staleEdits, expired, pages, status, errors };
+  return { ok: run.ok, changed: publishedChanged || draftsChanged, changedFiles: unique(changedFiles), summary, run, decisions, staleEdits, expired, pages, status, errors, config };
 }
 
 // CLI entry: ctx from engine/index.js → exit code (0 ok, 1 failed, 2 usage).
-export async function run({ companyDir, processEnv = process.env, fetchImpl = globalThis.fetch, stdout = console.log, stderr = console.error, flags = {} } = {}) {
+// Commit + push (design §3.2 step 5) happen only with CI=true or --commit; `changed` reaches
+// $GITHUB_OUTPUT so the deploy job runs only when published.jsonl or a draft changed.
+export async function run({ root, companyDir, processEnv = process.env, fetchImpl = globalThis.fetch, stdout = console.log, stderr = console.error, flags = {} } = {}) {
   const dryRunFlag = flags["dry-run"] === true;
   const dryRun = isDryRun(processEnv, flags);
   let now;
@@ -366,6 +369,29 @@ export async function run({ companyDir, processEnv = process.env, fetchImpl = gl
     stderr(scrub(`publish: ${err && err.message ? err.message : String(err)}`));
     return 1;
   }
-  if (dryRunFlag) stdout(`publish: dry run complete — state written under ${dir}`);
+  if (dryRunFlag) {
+    stdout(`publish: dry run complete — state written under ${dir}; nothing committed`);
+    return result.ok ? 0 : 1;
+  }
+  if (result.ok && shouldCommit(processEnv, flags)) {
+    // commit into the repository that holds the company dir (the repo root in CI; a temp clone in tests)
+    const repoRoot = repoRootFor(companyDir) || root || resolve(companyDir, "..");
+    try {
+      const paths = result.changedFiles.map((rel) => relative(repoRoot, join(companyDir, rel)));
+      await commitAndPush({ repoRoot, config: result.config, changedFiles: paths, message: `state: ${WORKFLOW} ${result.run.id}`, stdout });
+      writeGithubOutput("changed", result.changed, processEnv);
+    } catch (err) {
+      if (err instanceof PushConflictError) {
+        stderr(scrub(`publish: ${err.message} — errors: push_conflict (the state stays in this checkout; the next run regenerates it)`));
+        writeGithubOutput("changed", false, processEnv);
+        return 1;
+      }
+      stderr(scrub(`publish: git step failed — ${err.message}`));
+      return 1;
+    }
+  } else if (result.ok) {
+    stdout(`publish: ${result.changedFiles.length} file${result.changedFiles.length === 1 ? "" : "s"} changed under ${companyDir}, not committed (pass --commit)`);
+    writeGithubOutput("changed", false, processEnv);
+  }
   return result.ok ? 0 : 1;
 }

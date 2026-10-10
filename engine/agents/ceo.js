@@ -224,11 +224,15 @@ export async function runCeo({ config, brands, router, state, now, runId, lastRe
   });
   const handles = config.pages.map((p) => p.handle);
   const pages = config.pages.map((p) => ({ handle: p.handle, factIds: new Set(brands[p.handle] ? usableFacts(brands[p.handle]).map((f) => f.id) : []) }));
+  // The single mock fixture (tests/fixtures/llm/ceo.ok.json) is pinned to 2026-W42, so a MOCK_LLM=1 dry
+  // run in any other week would fail the week rule twice and write no memo; the mock answers every
+  // other rule unchanged. Real providers are always held to the week they were asked for.
+  const weekRule = router.isMock === true ? null : week;
   const res = await router.complete(AGENT, {
     task,
     spec: outputSpec(handles),
     context: { brand: null, page: null, todayIst: d },
-    validate: (json) => validateCeoOutput(json, { week, pages }),
+    validate: (json) => validateCeoOutput(json, { week: weekRule, pages }),
   });
   const memo = res.json;
   const markdown = renderMemo(memo);

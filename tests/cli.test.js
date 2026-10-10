@@ -46,7 +46,9 @@ test("registry: every designed command is listed; unbuilt ones print 'not built 
   assert.equal(typeof COMMANDS["check-models"].load, "function");
   assert.equal(typeof COMMANDS["render-sample"].load, "function", "render-sample is built (FEAT-106)");
   assert.equal(typeof COMMANDS.publish.load, "function", "publish is built (FEAT-107)");
-  const expected = { daily: "FEAT-108", "set-page": "FEAT-108", analyst: "FEAT-203 / phase 2", hr: "FEAT-204 / phase 2", "refresh-tokens": "FEAT-202 / phase 2", retention: "FEAT-202 / phase 2" };
+  assert.equal(typeof COMMANDS.daily.load, "function", "daily is built (FEAT-108)");
+  assert.equal(typeof COMMANDS["set-page"].load, "function", "set-page is built (FEAT-108)");
+  const expected = { analyst: "FEAT-203 / phase 2", hr: "FEAT-204 / phase 2", "refresh-tokens": "FEAT-202 / phase 2", retention: "FEAT-202 / phase 2" };
   for (const [name, planned] of Object.entries(expected)) {
     const out = sink();
     const err = sink();

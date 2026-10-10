@@ -10,8 +10,8 @@
   "revision": 1,
   "reworkCount": 0,
   "mock": false,
-  "createdAt": "2026-10-10T05:33:00+05:30",
-  "updatedAt": "2026-10-12T05:40:00+05:30",
+  "createdAt": "2026-10-10T05:33:12+05:30",
+  "updatedAt": "2026-10-10T05:40:03+05:30",
   "by": "writer",
   "runId": "engine-daily-20261010-0531-c4d5e6",
   "caption": "Six rules. One kill switch.\nmax_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates. Your rule fires: every pending order is cancelled, every position is squared off at market, and the account stays locked until close.\nMonthly ₹999 at the time of posting. 7-day free trial, no card.\nKaatDo is a risk-management tool, not investment advice. KaatDo is not registered with SEBI. Broker API execution is never guaranteed.\nkaatdo.com\nकाट दो.",
@@ -55,15 +55,16 @@
   "media": [
     {
       "kind": "image",
-      "path": "media/kd-2026-10-13-six-rules/image-1-7cfbae6d.jpg",
-      "bytes": 9432,
+      "path": "media/kd-2026-10-13-six-rules/image-1-711972b4.jpg",
+      "bytes": 115386,
       "width": 1080,
       "height": 1350,
-      "sha256": "7cfbae6d41f17cb1b34897046134304f36529e6e223ea96756052d2a70958af1",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-13-six-rules/image-1-7cfbae6d.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-13-six-rules/image-1-7cfbae6d.jpg"
+      "sha256": "711972b4b273cbea39236b87905540153710f550129909eb15dd7ef72ed20593",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-13-six-rules/image-1-711972b4.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-13-six-rules/image-1-711972b4.jpg"
     }
   ],
   "publishAttempts": [],
-  "qaRef": "drafts/kd-2026-10-13-six-rules/qa.json"
+  "qaRef": "drafts/kd-2026-10-13-six-rules/qa.json",
+  "designNote": "variant A · dark console palette"
 }

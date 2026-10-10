@@ -1,31 +1,232 @@
 {
-  "updatedAt": "2026-10-01T09:00:00+05:30",
-  "lastRun": null,
-  "lastRuns": [],
+  "updatedAt": "2026-10-12T09:04:40+05:30",
+  "lastRun": {
+    "id": "engine-daily-20261012-0900-a7b8c9",
+    "workflow": "engine-daily",
+    "ok": true,
+    "at": "2026-10-12T09:04:40+05:30"
+  },
+  "lastRuns": [
+    {
+      "id": "engine-daily-20261012-0900-a7b8c9",
+      "workflow": "engine-daily",
+      "trigger": "dispatch",
+      "startedAt": "2026-10-12T09:00:12+05:30",
+      "endedAt": "2026-10-12T09:04:40+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not selected (--agents)",
+          "skipped": "not_selected"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not selected (--agents)",
+          "skipped": "not_selected"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not selected (--agents)",
+          "skipped": "not_selected"
+        },
+        {
+          "name": "writer",
+          "ok": true,
+          "calls": 1,
+          "costUsd": 0.022,
+          "ms": 11240,
+          "note": "0 written, 1 reworked"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 9304,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "1 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "calls": 1,
+          "costUsd": 0.005663,
+          "ms": 3580,
+          "note": "0 queued, 0 rework, 1 blocked"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/jr-2026-10-15-templates/draft.json",
+        "company/state/drafts/jr-2026-10-15-templates/qa.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0.053618
+    },
+    {
+      "id": "engine-daily-20261010-0531-c4d5e6",
+      "workflow": "engine-daily",
+      "trigger": "dispatch",
+      "startedAt": "2026-10-10T05:31:07+05:30",
+      "endedAt": "2026-10-10T05:40:49+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: --page filter (company-wide agent)",
+          "skipped": "page_filter"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: phase2 — HR monthly review: not built yet (phase 2)",
+          "skipped": "phase2"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "calls": 1,
+          "costUsd": 0.00068,
+          "ms": 6420,
+          "note": "kaatdo: 1 ideas, 6 slots, 1 assigned, 1 reel idea refused (reels not built yet)"
+        },
+        {
+          "name": "writer",
+          "ok": true,
+          "calls": 1,
+          "costUsd": 0.0198,
+          "ms": 9870,
+          "note": "1 written, 0 reworked"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 4812,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "1 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "calls": 1,
+          "costUsd": 0.005475,
+          "ms": 3310,
+          "note": "1 queued, 0 rework, 0 blocked"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/drafts/kd-2026-10-13-six-rules/draft.json",
+        "company/state/drafts/kd-2026-10-13-six-rules/qa.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0.025955
+    },
+    {
+      "id": "publisher-hourly-20261009-1930-7a6b5c",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-09T19:30:21+05:30",
+      "endedAt": "2026-10-09T19:31:09+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 48000,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "1 published, 0 waiting, 0 failed, 0 expired"
+        }
+      ],
+      "changed": [
+        "company/state/published.jsonl",
+        "company/state/drafts/rp-2026-10-09-your-biodata-on-your-device/draft.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-09-your-biodata-on-your-device",
+            "page": "rishtapatra",
+            "publish": true,
+            "reason": "approved",
+            "igMediaId": "17900000000000002"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "published",
+            "draftId": "rp-2026-10-09-your-biodata-on-your-device",
+            "quotaUsage": 1,
+            "quotaTotal": 50
+          },
+          "kaatdo": {
+            "outcome": "idle"
+          },
+          "job_rez": {
+            "outcome": "idle"
+          }
+        }
+      }
+    }
+  ],
   "queue": {
-    "rishtapatra": 0,
-    "kaatdo": 0,
+    "rishtapatra": 1,
+    "kaatdo": 1,
     "job_rez": 0
   },
-  "blocked": {},
+  "blocked": {
+    "job_rez": 1
+  },
   "budget": {
     "month": "2026-10",
-    "usedUsd": 0,
+    "usedUsd": 0.053618,
     "limitUsd": 25,
-    "exhausted": false
+    "exhausted": false,
+    "warn": false
   },
   "pages": {
     "rishtapatra": {
       "mode": "approve_first",
       "tokenState": "not_configured",
       "tokenExpiresAt": null,
-      "lastPublishedAt": null
+      "lastPublishedAt": "2026-10-09T19:31:05+05:30"
     },
     "kaatdo": {
       "mode": "approve_first",
       "tokenState": "not_configured",
       "tokenExpiresAt": null,
-      "lastPublishedAt": null
+      "lastPublishedAt": "2026-10-06T08:31:12+05:30"
     },
     "job_rez": {
       "mode": "approve_first",

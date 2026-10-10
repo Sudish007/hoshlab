@@ -18,6 +18,13 @@ const NOW = "2026-10-14T20:00:00+05:30"; // the kd slot (Tue 13th 08:15) is due 
 const KD = "kd-2026-10-13-six-rules";
 const RP = "rp-2026-10-14-kundali-free";
 const JR = "jr-2026-10-15-templates";
+// The populated fixture (FEAT-108) already carries history: two published posts, three run records,
+// one lastPublishedAt per published page. Tests measure deltas against these baselines.
+const FIXTURE_STATE = createState({ companyDir: COMPANY_DIR, now: NOW });
+const BASE_PUBLISHED = FIXTURE_STATE.readJsonl("state/published.jsonl").length;
+const BASE_RUNS = FIXTURE_STATE.readJsonl("state/runs/2026-10.jsonl").length;
+const BASE_LAST_RUNS = FIXTURE_STATE.readJson("state/status.json").lastRuns.length;
+const KD_FILE = FIXTURE_STATE.readDraft(KD).media[0].path.split("/").pop(); // image-1-<sha8>.jpg of the committed render
 const IG_USER = "17841400000000001";
 const TOKEN = "FAKE-IG-TOKEN-KAATDO-" + "x".repeat(40);
 const ENV_KD = { IG_TOKEN_KAATDO: TOKEN };
@@ -77,16 +84,18 @@ function fakeClient(fail = {}) {
   };
 }
 
-function treeHash(dir) {
+function treeHash(dir, skip = () => false) {
   const h = createHash("sha256");
   for (const p of walk(dir).sort()) {
-    h.update(relative(dir, p).replace(/\\/g, "/"));
+    const rel = relative(dir, p).replace(/\\/g, "/");
+    if (skip(rel)) continue;
+    h.update(rel);
     h.update(readFileSync(p));
   }
   return h.digest("hex");
 }
 
-test("fixture state seeded for the publisher: kd queued rev 1 + approve rev 1, rp queued rev 1 without approval, jr blocked reworkCount 2; calendar, ideas and qa files validate", () => {
+test("fixture state seeded for the publisher: kd queued rev 1 + approve rev 1, rp queued rev 1 without approval, jr blocked reworkCount 2, two published posts; calendar, ideas and qa files validate", () => {
   const fx = copyFixture();
   try {
     const kd = fx.draft(KD);
@@ -94,9 +103,10 @@ test("fixture state seeded for the publisher: kd queued rev 1 + approve rev 1, r
     const jr = fx.draft(JR);
     for (const d of [kd, rp, jr]) assert.deepEqual(validate(d, DRAFT_SPEC), { ok: true, errors: [] }, d.id);
     assert.deepEqual([kd.status, kd.revision, rp.status, rp.revision, jr.status, jr.reworkCount, jr.revision], ["queued", 1, "queued", 1, "blocked", 2, 3]);
-    assert.equal(kd.media[0].path, `media/${KD}/image-1-7cfbae6d.jpg`);
-    assert.equal(kd.media[0].rawUrl, `https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/${KD}/image-1-7cfbae6d.jpg`);
-    assert.equal(kd.media[0].pagesUrl, `https://sudish007.github.io/hoshlab/media/${KD}/image-1-7cfbae6d.jpg`);
+    assert.match(KD_FILE, /^image-1-[0-9a-f]{8}\.jpg$/);
+    assert.equal(kd.media[0].path, `media/${KD}/${KD_FILE}`);
+    assert.equal(kd.media[0].rawUrl, `https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/${KD}/${KD_FILE}`);
+    assert.equal(kd.media[0].pagesUrl, `https://sudish007.github.io/hoshlab/media/${KD}/${KD_FILE}`);
     const qa = (id) => fx.state.readQa(id);
     assert.equal(qa(KD).passed, true);
     assert.equal(qa(RP).passed, true);
@@ -104,19 +114,26 @@ test("fixture state seeded for the publisher: kd queued rev 1 + approve rev 1, r
     assert.ok(qa(JR).reasons.length >= 1);
     assert.deepEqual(jr.qaReasons, qa(JR).reasons);
     const approvals = fx.state.readJsonl("state/approvals.jsonl");
-    assert.deepEqual(approvals, [{ draftId: KD, decision: "approve", revision: 1, at: "2026-10-12T10:00:00+05:30", by: "owner" }]);
+    assert.deepEqual(approvals.at(-1), { draftId: KD, decision: "approve", revision: 1, at: "2026-10-12T10:00:00+05:30", by: "owner" });
+    assert.equal(approvals.filter((a) => a.draftId === RP).length, 0, "rp awaits approval");
+    assert.ok(approvals.some((a) => a.decision === "reject" && a.reason), "one reject with a reason (its feedback line is tagged tone)");
     const calendar = fx.state.readJson("state/calendar.json");
-    assert.deepEqual(calendar.slots.map((s) => [s.slotId, s.draftId, s.status]), [
+    const live = calendar.slots.filter((s) => s.status !== "published");
+    assert.deepEqual(live.map((s) => [s.slotId, s.draftId, s.status]), [
       ["kaatdo-2026-10-13-0815", KD, "queued"],
       ["rishtapatra-2026-10-14-1930", RP, "queued"],
       ["job_rez-2026-10-15-1230", JR, "blocked"],
     ]);
-    assert.ok(Date.parse(calendar.slots[0].at) < Date.parse(NOW), "the kd slot is due relative to the test clock");
+    assert.equal(calendar.slots.filter((s) => s.status === "published").length, BASE_PUBLISHED, "one published slot per published record");
+    assert.ok(Date.parse(live[0].at) < Date.parse(NOW), "the kd slot is due relative to the test clock");
     const ideas = fx.state.readJsonl("state/ideas.jsonl");
-    assert.deepEqual(ideas.map((i) => i.id), ["kd-i0007", "rp-i0031", "jr-i0012"]);
+    assert.deepEqual(ideas.map((i) => i.id).slice(-3), ["kd-i0007", "rp-i0031", "jr-i0012"]);
     assert.deepEqual(validate(fx.status(), STATUS_SPEC), { ok: true, errors: [] });
     assert.equal(fx.status().pages.kaatdo.tokenState, "not_configured");
     assert.equal(fx.config().pages[1].igUserId, "", "fixture pages are not configured (dry run substitutes dry-user)");
+    assert.equal(BASE_PUBLISHED, 2);
+    assert.equal(BASE_RUNS, 3);
+    assert.equal(BASE_LAST_RUNS, 3);
   } finally {
     fx.cleanup();
   }
@@ -136,8 +153,9 @@ test("dry-run client: the approved kd draft publishes (dry- id, DRYRUN permalink
     assert.deepEqual(validate(r.run, RUN_SPEC), { ok: true, errors: [] });
 
     const published = fx.published();
-    assert.equal(published.length, 1);
-    const rec = published[0];
+    assert.equal(published.length, BASE_PUBLISHED + 1);
+    const rec = published.at(-1);
+    assert.equal(rec.runId, r.run.id, "the new line is appended after the fixture history");
     assert.deepEqual(validate(rec, PUBLISHED_SPEC), { ok: true, errors: [] });
     assert.equal(rec.draftId, KD);
     assert.match(rec.igMediaId, /^dry-[0-9a-f]{8}$/);
@@ -177,20 +195,20 @@ test("dry-run client: the approved kd draft publishes (dry- id, DRYRUN permalink
     assert.deepEqual(status.queue, { rishtapatra: 1, kaatdo: 0, job_rez: 0 });
     assert.deepEqual(status.blocked, { job_rez: 1 });
     assert.deepEqual(status.flags, []);
-    assert.equal(status.lastRuns.length, 1);
+    assert.equal(status.lastRuns.length, BASE_LAST_RUNS + 1);
     assert.equal(status.lastRun.workflow, WORKFLOW);
     assert.equal(status.lastRun.ok, true);
     const runs = fx.runs();
-    assert.equal(runs.length, 1);
-    assert.deepEqual(runs[0], r.run);
+    assert.equal(runs.length, BASE_RUNS + 1);
+    assert.deepEqual(runs.at(-1), r.run);
 
     // the dry-run client printed the exact sequence: quota → HEAD → media (image_url …) → media_publish → permalink
     const dry = out.lines.filter((l) => l.startsWith(LINE_PREFIX));
     assert.deepEqual(
       dry.map((l) => l.split(" ").slice(2, 4).join(" ")),
-      ["GET /dry-user/content_publishing_limit", `HEAD https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/${KD}/image-1-7cfbae6d.jpg`, "POST /dry-user/media", "POST /dry-user/media_publish", `GET /${rec.igMediaId}`],
+      ["GET /dry-user/content_publishing_limit", `HEAD https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/${KD}/${KD_FILE}`, "POST /dry-user/media", "POST /dry-user/media_publish", `GET /${rec.igMediaId}`],
     );
-    assert.ok(dry[2].startsWith(`[ig dry-run] POST /dry-user/media image_url=https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/${KD}/image-1-7cfbae6d.jpg caption=`), dry[2]);
+    assert.ok(dry[2].startsWith(`[ig dry-run] POST /dry-user/media image_url=https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/${KD}/${KD_FILE} caption=`), dry[2]);
     assert.ok(out.lines.some((l) => l === `[publisher] rishtapatra: idle (${RP} awaiting_approval)`), out.text());
     assert.ok(out.lines.some((l) => l.startsWith(`[publisher] kaatdo: published ${KD}`)), out.text());
     assert.ok(out.lines.some((l) => l === "[publisher] job_rez: idle (no queued drafts)"), out.text());
@@ -201,10 +219,10 @@ test("dry-run client: the approved kd draft publishes (dry- id, DRYRUN permalink
     const r2 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T21:00:00+05:30", processEnv: {}, dryRun: true, stdout: out2 });
     assert.equal(r2.ok, true);
     assert.equal(r2.changed, false);
-    assert.equal(fx.published().length, 1);
+    assert.equal(fx.published().length, BASE_PUBLISHED + 1);
     assert.deepEqual(r2.run.publisher.decisions, [{ draftId: RP, page: "rishtapatra", publish: false, reason: "awaiting_approval" }]);
-    assert.equal(fx.status().lastRuns.length, 2);
-    assert.equal(fx.runs().length, 2);
+    assert.equal(fx.status().lastRuns.length, BASE_LAST_RUNS + 2);
+    assert.equal(fx.runs().length, BASE_RUNS + 2);
     assert.equal(out2.lines.filter((l) => l.startsWith(LINE_PREFIX)).length, 0);
     assert.deepEqual(r2.run.changed, ["company/state/status.json", "company/state/runs/2026-10.jsonl"]);
   } finally {
@@ -225,7 +243,8 @@ test("approving rp (revision 1) publishes it in the next dry run; a stale approv
     const r2 = await runPublish({ companyDir: fx.dir, now: NOW, processEnv: {}, dryRun: true, page: "rishtapatra", stdout: () => {} });
     assert.deepEqual(r2.run.publisher.decisions.map((d) => [d.draftId, d.publish, d.reason]), [[RP, true, "approved"]]);
     assert.equal(fx.draft(RP).status, "published");
-    assert.equal(fx.published()[0].late, false, "30 min after the slot");
+    assert.equal(fx.published().at(-1).draftId, RP);
+    assert.equal(fx.published().at(-1).late, false, "30 min after the slot");
     assert.equal(fx.draft(KD).status, "queued", "filtered page untouched");
   } finally {
     fx.cleanup();
@@ -241,7 +260,7 @@ test("approving rp (revision 1) publishes it in the next dry run; a stale approv
       [RP, true, "autopilot"],
       [KD, true, "approved"],
     ]);
-    const rows = auto.published();
+    const rows = auto.published().filter((p) => p.runId === r.run.id);
     assert.equal(rows.length, 2);
     assert.equal(rows.find((p) => p.draftId === RP).mode, "autopilot");
     assert.equal(rows.find((p) => p.draftId === RP).approvedBy, undefined);
@@ -264,7 +283,7 @@ test("a fake client returning code 190 → status.json pages.kaatdo.tokenState '
     const status = fx.status();
     assert.equal(status.pages.kaatdo.tokenState, "invalid");
     assert.deepEqual(status.flags, ["token_invalid:kaatdo"]);
-    assert.equal(status.pages.kaatdo.lastPublishedAt, null);
+    assert.equal(status.pages.kaatdo.lastPublishedAt, FIXTURE_STATE.readJson("state/status.json").pages.kaatdo.lastPublishedAt, "unchanged: nothing published");
     assert.equal(status.pages.rishtapatra.tokenState, "not_configured", "no secret for rishtapatra");
     assert.equal(status.pages.job_rez.tokenState, "not_configured");
     const kd = fx.draft(KD);
@@ -277,7 +296,7 @@ test("a fake client returning code 190 → status.json pages.kaatdo.tokenState '
     assert.deepEqual(r.run.publisher.pages.kaatdo, { outcome: "token_invalid", draftId: KD });
     assert.deepEqual(r.run.publisher.decisions.filter((d) => d.page === "kaatdo"), [{ draftId: KD, page: "kaatdo", publish: false, reason: "attempt_failed:container", stage: "container", code: 190 }], "one row per draft: the attempt outcome replaces the positive decision");
     assert.deepEqual(r.run.publisher.decisions.filter((d) => d.page === "rishtapatra"), [{ draftId: RP, page: "rishtapatra", publish: false, reason: "page_not_configured" }], "no secret and no igUserId for rishtapatra");
-    assert.equal(fx.published().length, 0);
+    assert.equal(fx.published().length, BASE_PUBLISHED, "nothing new published");
     assert.equal(r.changed, true, "the draft changed (attempt recorded)");
 
     // next hour: the page is skipped without building a client; the draft decision reads token_invalid
@@ -320,8 +339,8 @@ test("three failed attempts (one per run) → status failed + publish_failed:<id
     assert.deepEqual(status.flags, [`publish_failed:${KD}`]);
     assert.equal(status.pages.kaatdo.tokenState, "ok", "content_publishing_limit answered, so the token works");
     assert.deepEqual(status.queue, { rishtapatra: 1, kaatdo: 0, job_rez: 0 });
-    assert.equal(status.lastRuns.length, 3);
-    const runs = fx.runs();
+    assert.equal(status.lastRuns.length, BASE_LAST_RUNS + 3);
+    const runs = fx.runs().slice(BASE_RUNS);
     assert.equal(runs.length, 3);
     // rp is page_not_configured here (no secret), which is not "waiting" on time or approval
     assert.equal(runs[2].agents[0].note, "0 published, 0 waiting, 1 failed, 0 expired");
@@ -369,7 +388,7 @@ test("owner edits: a stale edit (baseRevision ≠ revision) is ignored and liste
     assert.equal(call.caption, `${edit.caption}\n\n#KaatDo #FnO`);
     assert.equal(call.altText, "Edited alt text");
     assert.deepEqual(r2.run.publisher.staleEdits, [RP], "the unparsable edit is listed, the valid one is not");
-    assert.equal(fx2.published()[0].draftId, KD);
+    assert.equal(fx2.published().at(-1).draftId, KD);
     assert.deepEqual(applyEdit({ caption: "a", hashtags: [], altText: "b", altTexts: ["x"] }, { caption: "c", hashtags: ["#d"], altText: "e" }), { caption: "c", hashtags: ["#d"], altText: "e", altTexts: ["x"] });
   } finally {
     fx2.cleanup();
@@ -421,7 +440,8 @@ test("a company that fails to load (corrupt config.json) → ok:false, the only 
   const fx = copyFixture();
   try {
     writeFileSync(join(fx.dir, "config.json"), "{ broken", "utf8");
-    const before = treeHash(join(fx.dir, "state"));
+    const notRuns = (rel) => rel.startsWith("runs/");
+    const before = treeHash(join(fx.dir, "state"), notRuns);
     const out = sink();
     const r = await runPublish({ companyDir: fx.dir, now: NOW, processEnv: {}, dryRun: true, stdout: out });
     assert.equal(r.ok, false);
@@ -429,13 +449,14 @@ test("a company that fails to load (corrupt config.json) → ok:false, the only 
     assert.ok(r.errors.length >= 1);
     assert.match(out.text(), /\[publisher\] error: config\.json/);
     const runs = fx.runs();
-    assert.equal(runs.length, 1);
-    assert.equal(runs[0].ok, false);
-    assert.deepEqual(validate(runs[0], RUN_SPEC), { ok: true, errors: [] });
-    assert.ok(runs[0].errors.some((e) => e.includes("config.json")));
-    assert.equal(runs[0].agents[0].note, "company failed to load");
-    rmSync(join(fx.dir, "state", "runs"), { recursive: true, force: true });
-    assert.equal(treeHash(join(fx.dir, "state")), before, "nothing else under state/ changed");
+    assert.equal(runs.length, BASE_RUNS + 1);
+    const run = runs.at(-1);
+    assert.equal(run.ok, false);
+    assert.deepEqual(validate(run, RUN_SPEC), { ok: true, errors: [] });
+    assert.ok(run.errors.some((e) => e.includes("config.json")));
+    assert.equal(run.agents[0].note, "company failed to load");
+    assert.equal(treeHash(join(fx.dir, "state"), notRuns), before, "nothing else under state/ changed");
+    assert.deepEqual(readFileSync(join(fx.dir, "state", "runs", "2026-10.jsonl"), "utf8").split("\n").filter(Boolean).length, BASE_RUNS + 1, "the run record is the only write");
   } finally {
     fx.cleanup();
   }
@@ -469,9 +490,9 @@ test("CLI: `publish --dry-run --now <iso>` runs on a temp copy (fixture byte-ide
   try {
     const out4 = sink();
     assert.equal(await main(["publish", "--page", "job_rez", "--now", NOW], { stdout: out4, stderr: sink(), processEnv: { IG_DRY_RUN: "1" }, companyDir: fx.dir }), EXIT.ok);
-    assert.equal(fx.published().length, 0);
-    assert.equal(fx.runs().length, 1);
-    assert.deepEqual(fx.runs()[0].publisher.pages, { rishtapatra: { outcome: "filtered" }, kaatdo: { outcome: "filtered" }, job_rez: { outcome: "idle" } });
+    assert.equal(fx.published().length, BASE_PUBLISHED);
+    assert.equal(fx.runs().length, BASE_RUNS + 1);
+    assert.deepEqual(fx.runs().at(-1).publisher.pages, { rishtapatra: { outcome: "filtered" }, kaatdo: { outcome: "filtered" }, job_rez: { outcome: "idle" } });
     assert.ok(out4.lines.some((l) => l === "[publisher] job_rez: idle (no queued drafts)"), out4.text());
   } finally {
     fx.cleanup();

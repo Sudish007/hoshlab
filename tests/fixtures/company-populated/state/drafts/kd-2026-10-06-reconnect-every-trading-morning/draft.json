@@ -1,0 +1,74 @@
+{
+  "id": "kd-2026-10-06-reconnect-every-trading-morning",
+  "page": "kaatdo",
+  "ideaId": "kd-i0003",
+  "slotId": "kaatdo-2026-10-06-0815",
+  "slotAt": "2026-10-06T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "published",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-04T05:33:05+05:30",
+  "updatedAt": "2026-10-06T08:31:12+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261004-0531-5d6e7f",
+  "caption": "Reconnect every trading morning.\nBroker tokens expire every day under SEBI norms, so you reconnect each morning. At 08:45 IST you get a stale-token nudge; at 09:20 IST an alert if you are connected but not armed.\nKaatDo is a risk-management tool, not investment advice. KaatDo is not registered with SEBI. Broker API execution is never guaranteed.\nkaatdo.com\nकाट दो.",
+  "hashtags": [
+    "#KaatDo",
+    "#FnO",
+    "#RiskManagement",
+    "#Options"
+  ],
+  "altText": "Dark console card: Reconnect every trading morning. Alert times in mono type; footer kaatdo.com",
+  "artwork": {
+    "headline": "Reconnect every trading morning.",
+    "subline": "Broker tokens expire daily under SEBI norms. Connect, then arm.",
+    "facts": [
+      "08:45 IST · stale-token nudge",
+      "09:20 IST · connected but not armed",
+      "Not investment advice. Not SEBI-registered."
+    ],
+    "footer": "kaatdo.com · काट दो.",
+    "variant": "A"
+  },
+  "factsUsed": [
+    {
+      "factId": "kd-f07",
+      "quote": "Broker tokens expire every day (SEBI norms), so the trader reconnects each trading morning; 08:45 IST stale-token nudge and 09:20 IST connected but NOT armed alert"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    },
+    {
+      "factId": "kd-f13",
+      "quote": "काट दो."
+    }
+  ],
+  "writerNote": "The daily reconnect is the most common support question (memo 2026-W41); both alert times from kd-f07; all three disclaimer groups verbatim.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-06-reconnect-every-trading-morning/image-1-c62874e9.jpg",
+      "bytes": 118733,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "c62874e9c4dcf922b271d234aaee1de99450906fdb696ddc396260b836a47e98",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-06-reconnect-every-trading-morning/image-1-c62874e9.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-06-reconnect-every-trading-morning/image-1-c62874e9.jpg"
+    }
+  ],
+  "publishAttempts": [
+    {
+      "at": "2026-10-06T08:31:12+05:30",
+      "ok": true,
+      "stage": "publish",
+      "mediaUrlUsed": "raw",
+      "runId": "publisher-hourly-20261006-0830-9f8e7d"
+    }
+  ],
+  "qaRef": "drafts/kd-2026-10-06-reconnect-every-trading-morning/qa.json",
+  "designNote": "variant A · dark console palette"
+}
