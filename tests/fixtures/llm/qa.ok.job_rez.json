@@ -1,0 +1,18 @@
+{
+  "agent": "qa",
+  "case": "ok",
+  "page": "job_rez",
+  "output": {
+    "verdict": "pass",
+    "toneScore": 4,
+    "claims": [
+      { "claim": "nine templates: TeXline, Stack First, Campus One free; Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact, Executive Mono Pro; Nova has a one-/two-column switch", "factId": "jr-f10", "ok": true },
+      { "claim": "PDF and plain-text export are unlimited and watermark-free on the free plan; Word export is Pro", "factId": "jr-f09", "ok": true },
+      { "claim": "six layout rules measured on the rendered page; not a certification against any ATS vendor", "factId": "jr-f07", "ok": true },
+      { "claim": "Build the resume. Land the job.", "factId": "jr-f02", "ok": true }
+    ],
+    "reasons": [],
+    "notes": "Plain and specific; no exclamation marks; no country tokens."
+  },
+  "usage": { "inputTokens": 5600, "outputTokens": 480 }
+}

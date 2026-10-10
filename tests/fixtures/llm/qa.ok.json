@@ -1,0 +1,18 @@
+{
+  "agent": "qa",
+  "case": "ok",
+  "page": "rishtapatra",
+  "output": {
+    "verdict": "pass",
+    "toneScore": 4,
+    "claims": [
+      { "claim": "Janam Kundali is free on RishtaPatra", "factId": "rp-f04", "ok": true },
+      { "claim": "the kundali is computed on your device; no request carries birth details", "factId": "rp-f07", "ok": true },
+      { "claim": "Rishta Connect shows a 36-point Guna Milan score on every match card", "factId": "rp-f08", "ok": true },
+      { "claim": "the kundali result is indicative; consult your pandit", "factId": "rp-f09", "ok": true }
+    ],
+    "reasons": [],
+    "notes": "Warm, plain Hindi + English; the kundali disclaimer is present verbatim in both languages."
+  },
+  "usage": { "inputTokens": 5200, "outputTokens": 420 }
+}

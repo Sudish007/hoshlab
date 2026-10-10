@@ -1,0 +1,47 @@
+{
+  "id": "rp-2026-10-14-kundali-free",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0031",
+  "slotId": "rishtapatra-2026-10-14-1930",
+  "slotAt": "2026-10-14T19:30:00+05:30",
+  "format": "image",
+  "language": "hi",
+  "status": "rendered",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-11T05:34:00+05:30",
+  "updatedAt": "2026-10-11T05:36:00+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261011-0531-f1a2b3",
+  "caption": "मुफ़्त जन्म कुंडली — अपने डिवाइस पर।\nJanam Kundali on RishtaPatra is free and computed on your device; no request carries your birth details.\nRishta Connect shows a 36-point Guna Milan score on every match card.\nकुंडली का फल indicative है — अपने पंडित से सलाह लें।\nrishtapatra.com",
+  "hashtags": ["#RishtaPatra", "#JanamKundali", "#Biodata", "#Rishta"],
+  "altText": "Cream card with a maroon Hindi headline: free Janam Kundali, computed on your device.",
+  "artwork": {
+    "headline": "मुफ़्त जन्म कुंडली",
+    "subline": "Computed on your device. No request carries your birth details.",
+    "facts": ["Janam Kundali: free", "Rishta Connect: 36-point Guna Milan score", "Indicative — consult your pandit"],
+    "footer": "rishtapatra.com",
+    "variant": "A"
+  },
+  "factsUsed": [
+    { "factId": "rp-f04", "quote": "Janam Kundali (free)" },
+    { "factId": "rp-f07", "quote": "computed client-side; no request carries birth data" },
+    { "factId": "rp-f08", "quote": "36-point Guna Milan score" },
+    { "factId": "rp-f09", "quote": "indicative; consult your pandit/astrologer" }
+  ],
+  "writerNote": "Leads with the free product (CEO priority); Hindi headline, English fact lines; kundali disclaimer in both languages.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-14-kundali-free/image-1-7cfbae6d.jpg",
+      "bytes": 9432,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "7cfbae6d41f17cb1b34897046134304f36529e6e223ea96756052d2a70958af1",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-14-kundali-free/image-1-7cfbae6d.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-14-kundali-free/image-1-7cfbae6d.jpg"
+    }
+  ],
+  "publishAttempts": []
+}

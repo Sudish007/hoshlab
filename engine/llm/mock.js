@@ -37,8 +37,17 @@ export function fixturePath(agent, { processEnv = process.env, fixturesDir = DEF
   return { path: join(fixturesDir, `${agent}.${caseName}.json`), caseName };
 }
 
+// Page-keyed fixtures: when the call names a page and `<agent>.<case>.<page>.json` exists it wins over
+// `<agent>.<case>.json` (QA claims cite brand-specific fact ids, so one MOCK_LLM run can answer all pages).
 export function loadFixture(agent, opts = {}) {
-  const { path, caseName } = fixturePath(agent, opts);
+  const base = fixturePath(agent, opts);
+  const caseName = base.caseName;
+  let path = base.path;
+  const page = typeof opts.page === "string" ? opts.page : opts.page && typeof opts.page.handle === "string" ? opts.page.handle : null;
+  if (page && /^[a-z0-9_.]{1,30}$/.test(page)) {
+    const keyed = base.path.replace(/\.json$/, `.${page}.json`);
+    if (existsSync(keyed)) path = keyed;
+  }
   if (!existsSync(path)) throw new MockFixtureError(`mock: fixture missing for ${agent} case ${caseName} (${path}); the mock adapter never fabricates output`, path);
   let fixture;
   try {
@@ -49,13 +58,13 @@ export function loadFixture(agent, opts = {}) {
   if (!fixture || typeof fixture !== "object" || !fixture.output || typeof fixture.output !== "object") {
     throw new MockFixtureError(`mock: fixture ${path} needs an object "output" key`, path);
   }
-  return { fixture, path, caseName };
+  return { fixture, path, caseName: path === base.path ? caseName : `${caseName}.${page}` };
 }
 
-// complete({ agent, processEnv, fixturesDir }) → adapter result + mock:true. Other adapter fields are ignored.
-export async function complete({ agent, processEnv = process.env, fixturesDir = DEFAULT_FIXTURES_DIR, model = "mock" }) {
+// complete({ agent, processEnv, fixturesDir, page }) → adapter result + mock:true. Other adapter fields are ignored.
+export async function complete({ agent, processEnv = process.env, fixturesDir = DEFAULT_FIXTURES_DIR, model = "mock", page }) {
   const started = Date.now();
-  const { fixture, caseName } = loadFixture(agent, { processEnv, fixturesDir });
+  const { fixture, caseName } = loadFixture(agent, { processEnv, fixturesDir, page });
   const usage = fixture.usage || {};
   return {
     text: JSON.stringify(fixture.output),

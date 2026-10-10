@@ -637,6 +637,8 @@ export const DRAFT_SPEC = {
   media: [MEDIA_ITEM_SPEC, { max: 10 }],
   publishAttempts: [PUBLISH_ATTEMPT_SPEC],
   "qaRef?": "str",
+  // QA's reasons[] kept on a failed draft so the Writer's rework task can read them (§4.7, FEAT-104).
+  "qaReasons?": ["str"],
 };
 
 // §4.7 drafts/<id>/qa.json

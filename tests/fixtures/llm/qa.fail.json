@@ -1,0 +1,15 @@
+{
+  "agent": "qa",
+  "case": "fail",
+  "output": {
+    "verdict": "fail",
+    "toneScore": 3,
+    "claims": [
+      { "claim": "Janam Kundali is free on RishtaPatra", "factId": "rp-f04", "ok": true },
+      { "claim": "trusted by thousands of families", "factId": null, "ok": false }
+    ],
+    "reasons": ["Remove \"trusted by thousands of families\": no fact supports a user count."],
+    "notes": ""
+  },
+  "usage": { "inputTokens": 5200, "outputTokens": 380 }
+}

@@ -17,7 +17,7 @@ Inputs you receive in the task JSON:
 
 Work in this order:
 
-1. Split the caption and the artwork copy into claims — every statement about the product, a number, a price, a feature, a limitation. List each in `claims` with the `factId` that supports it, or `null` when none does. A claim without a fact id is a fail.
+1. Split the caption and the artwork copy into claims — every statement about the product, a number, a price, a feature, a limitation. List each in `claims` with the `factId` that supports it — an id from `brand.facts`, or the `sku` of a `brand.pricing` row for a price claim — or `null` when none does. A claim without a fact id is a fail.
 2. For each claim with a fact id, check that the caption does not stretch the fact: a "beta" feature is not "available", "six brokers" is not "every broker", "indicative" kundali is not "accurate". Overstated claims get `ok: false`.
 3. Check disclaimers were not weakened: the required fragment must be present verbatim, not paraphrased, and must not be contradicted elsewhere in the caption.
 4. Score the tone 1–5 against the voice bullets (5 = reads like the brand's own site; 3 = acceptable; below 3 = fail). Note hype, emoji beyond the brand's allowance, wrong language, or copy that sounds like an agency rather than the product.
@@ -41,4 +41,4 @@ Return JSON only, matching this shape exactly:
 }
 ```
 
-Rules: `verdict` is `pass` or `fail`; `toneScore` is an integer 1–5; every `claim` lists `factId` (an id from `brand.facts`) or `null`; `reasons` is empty on a pass and non-empty on a fail; `notes` may be an empty string. The engine writes your result to `drafts/<id>/qa.json` and moves the draft to `queued` (pass), `rework` (fail, rework loops left) or `blocked` (fail, no loops left).
+Rules: `verdict` is `pass` or `fail`; `toneScore` is an integer 1–5; every `claim` lists `factId` (an id from `brand.facts`, or a `brand.pricing` sku for a price claim) or `null`; `reasons` is empty on a pass and non-empty on a fail; `notes` may be an empty string. The engine writes your result to `drafts/<id>/qa.json` and moves the draft to `queued` (pass), `rework` (fail, rework loops left) or `blocked` (fail, no loops left).

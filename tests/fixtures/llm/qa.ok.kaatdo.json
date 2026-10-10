@@ -1,0 +1,20 @@
+{
+  "agent": "qa",
+  "case": "ok",
+  "page": "kaatdo",
+  "output": {
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      { "claim": "six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates", "factId": "kd-f04", "ok": true },
+      { "claim": "on breach every pending order is cancelled, every position squared off at market, the account locked until close", "factId": "kd-f05", "ok": true },
+      { "claim": "monthly ₹999 at the time of posting", "factId": "monthly", "ok": true },
+      { "claim": "7-day free trial, no card", "factId": "trial", "ok": true },
+      { "claim": "not investment advice; not registered with SEBI; execution is never guaranteed", "factId": "kd-f10", "ok": true },
+      { "claim": "sign-off काट दो.", "factId": "kd-f13", "ok": true }
+    ],
+    "reasons": [],
+    "notes": "Terse console register; all three disclaimer groups verbatim; price quoted with 'at the time of posting'."
+  },
+  "usage": { "inputTokens": 5400, "outputTokens": 460 }
+}

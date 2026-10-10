@@ -1,0 +1,47 @@
+{
+  "id": "kd-2026-10-13-six-rules",
+  "page": "kaatdo",
+  "ideaId": "kd-i0007",
+  "slotId": "kaatdo-2026-10-13-0815",
+  "slotAt": "2026-10-13T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "rendered",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-10T05:33:00+05:30",
+  "updatedAt": "2026-10-10T05:35:00+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261010-0531-c4d5e6",
+  "caption": "Six rules. One kill switch.\nmax_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates. Your rule fires: every pending order is cancelled, every position is squared off at market, and the account stays locked until close.\nMonthly ₹999 at the time of posting. 7-day free trial, no card.\nKaatDo is a risk-management tool, not investment advice. KaatDo is not registered with SEBI. Broker API execution is never guaranteed.\nkaatdo.com\nकाट दो.",
+  "hashtags": ["#KaatDo", "#FnO", "#RiskManagement", "#KillSwitch"],
+  "altText": "Dark console card: Six rules. One kill switch. Rule names in mono type; footer kaatdo.com",
+  "artwork": {
+    "headline": "Six rules. One kill switch.",
+    "subline": "Your rule fires. Every order cancelled, every position squared off at market.",
+    "facts": ["max_daily_loss · profit_target · max_trades", "kill_time · kill_days · kill_dates", "Not investment advice. Not SEBI-registered."],
+    "footer": "kaatdo.com · काट दो.",
+    "variant": "A"
+  },
+  "factsUsed": [
+    { "factId": "kd-f04", "quote": "Six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates" },
+    { "factId": "kd-f05", "quote": "cancels every pending order, squares off every position at market, keeps the account locked until close" },
+    { "factId": "kd-f10", "quote": "not investment advice, and is not registered with SEBI; broker API execution is never guaranteed" },
+    { "factId": "kd-f13", "quote": "काट दो." }
+  ],
+  "writerNote": "Risk-first: the rule list, then what the switch does; price from the pricing table with 'at the time of posting'; all three disclaimer groups verbatim.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-13-six-rules/image-1-7cfbae6d.jpg",
+      "bytes": 9432,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "7cfbae6d41f17cb1b34897046134304f36529e6e223ea96756052d2a70958af1",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-13-six-rules/image-1-7cfbae6d.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-13-six-rules/image-1-7cfbae6d.jpg"
+    }
+  ],
+  "publishAttempts": []
+}

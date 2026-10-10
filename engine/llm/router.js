@@ -245,7 +245,7 @@ export function createRouter({
       let res;
       try {
         res = isMock
-          ? await mockAdapter.complete({ agent: agentName, processEnv, fixturesDir })
+          ? await mockAdapter.complete({ agent: agentName, processEnv, fixturesDir, page })
           : await adapters[c.provider].complete({
               system,
               user,
