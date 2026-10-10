@@ -1,14 +1,16 @@
 // Tiny static server that mounts dist/ under basePath, exactly as GitHub Pages will
 // (including gzip for text assets, so local Lighthouse sees production transfer sizes).
-// Usage: npm run serve  (PORT env var optional, default 4173)
+// Usage: npm run serve  (PORT env var optional, default 4173; DIST_DIR optional, default dist —
+// the same variable src/build.js writes to, so a fixture build in a temp dir can be served too)
 import { createServer } from "node:http";
 import { createReadStream, existsSync, statSync } from "node:fs";
-import { join, extname, normalize } from "node:path";
+import { join, extname, normalize, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createGzip } from "node:zlib";
 import config from "../site.config.js";
 
-const DIST = join(fileURLToPath(new URL("../dist/", import.meta.url)));
+const ROOT = fileURLToPath(new URL("../", import.meta.url));
+const DIST = resolve(ROOT, process.env.DIST_DIR || "dist");
 const PORT = Number(process.env.PORT || 4173);
 const BASE = config.basePath;
 
@@ -65,5 +67,5 @@ createServer((req, res) => {
   }
   send(req, res, 200, file);
 }).listen(PORT, "127.0.0.1", () => {
-  console.log(`Serving dist/ at http://127.0.0.1:${PORT}${BASE}`);
+  console.log(`Serving ${DIST} at http://127.0.0.1:${PORT}${BASE}`);
 });
