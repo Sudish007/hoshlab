@@ -480,12 +480,42 @@ test("createRouter guards: deterministic agents, missing charter, missing config
   }
 });
 
-test("validateOutput: null / array / shape errors", () => {
+test("validateOutput: null / array / shape errors; an agent's semantic validate() runs only on a valid shape", () => {
   assert.deepEqual(validateOutput(null, SPEC), ["$: no JSON object found in the model output"]);
   assert.deepEqual(validateOutput([1], SPEC), ["$: no JSON object found in the model output"]);
   assert.deepEqual(validateOutput(GOOD, SPEC), []);
   assert.ok(validateOutput(BAD, SPEC).length >= 2);
   assert.deepEqual(validateOutput({ anything: 1 }, null), [], "no spec → no validation");
+  const semantic = (json) => (json.factsUsed.some((f) => f.factId === "rp-f12") ? ["$.factsUsed[0].factId: rp-f12 is disputed"] : []);
+  assert.deepEqual(validateOutput(GOOD, SPEC, semantic), []);
+  assert.deepEqual(validateOutput({ ...GOOD, factsUsed: [{ factId: "rp-f12", quote: "x" }] }, SPEC, semantic), ["$.factsUsed[0].factId: rp-f12 is disputed"]);
+  assert.deepEqual(validateOutput(BAD, SPEC, () => { throw new Error("never reached on a bad shape"); }).length >= 2, true);
+  assert.deepEqual(validateOutput(GOOD, SPEC, () => "one string"), ["one string"]);
+  assert.deepEqual(validateOutput(GOOD, SPEC, () => null), []);
+  assert.deepEqual(validateOutput(GOOD, SPEC, () => [null, "", "x"]), ["x"]);
+});
+
+test("complete({ validate }): a shape-valid answer that fails the agent's semantic check gets the single repair call with those errors; a valid repair → repaired:true, a second failure → AgentOutputError", async () => {
+  const disputed = { ...GOOD, factsUsed: [{ factId: "rp-f12", quote: "12 languages" }] };
+  const semantic = (json) => json.factsUsed.filter((f) => f.factId === "rp-f12").map((_, i) => `$.factsUsed[${i}].factId: rp-f12 is not a usable fact of @rishtapatra`);
+  const h = harness({ queues: { anthropic: [{ body: anthropicBody(disputed) }, { body: anthropicBody(GOOD) }] } });
+  try {
+    const res = await h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra }, validate: semantic });
+    assert.equal(res.repaired, true);
+    assert.equal(res.calls, 2);
+    assert.deepEqual(res.json, GOOD);
+    const repair = h.fetchImpl.calls[1].body.messages[0].content;
+    assert.ok(repair.includes("Your previous output failed validation: $.factsUsed[0].factId: rp-f12 is not a usable fact of @rishtapatra. Return only the corrected JSON."), repair);
+  } finally {
+    h.cleanup();
+  }
+  const h2 = harness({ queues: { anthropic: [{ body: anthropicBody(disputed) }] } });
+  try {
+    await assert.rejects(h2.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra }, validate: semantic }), (e) => e instanceof AgentOutputError && e.calls === 2 && e.repairErrors[0].includes("rp-f12"));
+    assert.equal(h2.fetchImpl.calls.length, 2, "never a third call");
+  } finally {
+    h2.cleanup();
+  }
 });
 
 test("prompt envelope: charter + seven house rules + context (today IST, page, voice, usable facts, pricing, disclaimers, forbidden, domains, memo, digest) + output", () => {

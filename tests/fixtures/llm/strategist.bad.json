@@ -1,0 +1,18 @@
+{
+  "agent": "strategist",
+  "case": "bad",
+  "note": "Missing `assignments` → assertShape(OUTPUT_SPEC) fails → one repair call (same fixture) → AgentOutputError.",
+  "output": {
+    "ideas": [
+      {
+        "title": "Free kundali, no account",
+        "angle": "Lead with the free product.",
+        "format": "image",
+        "language": "hi",
+        "factIds": ["rp-f04", "rp-f07"],
+        "hook": "मुफ़्त जन्म कुंडली — अपने डिवाइस पर।"
+      }
+    ]
+  },
+  "usage": { "inputTokens": 4100, "outputTokens": 140 }
+}

@@ -1,0 +1,47 @@
+{
+  "agent": "writer",
+  "case": "ok",
+  "page": "job_rez",
+  "note": "Carries both `artwork` and `slides` so one fixture serves every @job_rez cadence slot. Facts jr-f10/f09/f07/f02; the export line follows jr-f09 (Word is Pro, review N19); no exclamation marks; no India-specific tokens (OF-2).",
+  "output": {
+    "caption": "Nine templates. Three are free.\nTeXline, Stack First and Campus One are free. Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact and Executive Mono are Pro. Nova has a one-column or two-column switch.\nExport to PDF or plain text — free, unlimited and watermark-free on the free plan. Word export is Pro.\nSix layout rules are measured on the rendered page after every edit. Not a certification against any ATS vendor.\njobrez.com",
+    "hashtags": ["#JobRez", "#Resume", "#ResumeTemplates", "#JobSearch"],
+    "altText": "Canvas card with the JobRez mark: Nine templates. Three free. Template names in small type.",
+    "artwork": {
+      "headline": "Nine templates. Three free.",
+      "subline": "TeXline, Stack First and Campus One cost nothing. Six more are Pro.",
+      "facts": ["Free: TeXline, Stack First, Campus One", "Pro: six more, Nova with a one- or two-column switch", "PDF and plain-text export: free, watermark-free"],
+      "footer": "jobrez.com"
+    },
+    "slides": [
+      {
+        "heading": "Nine templates. Three free.",
+        "body": "TeXline, Stack First and Campus One cost nothing. Six more are Pro. Swipe for the list.",
+        "altText": "Cover slide: Nine templates. Three free. JobRez wordmark on an ink background."
+      },
+      {
+        "heading": "Free: TeXline, Stack First, Campus One",
+        "body": "Three free templates. Export to PDF or plain text — unlimited and watermark-free on the free plan.",
+        "altText": "Slide two: the three free templates and the free export rule."
+      },
+      {
+        "heading": "Pro: six more templates",
+        "body": "Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact, Executive Mono. Nova switches between one and two columns. Word export is Pro.",
+        "altText": "Slide three: the six Pro templates and the Word export note."
+      },
+      {
+        "heading": "Build the resume. Land the job.",
+        "body": "Six layout rules, measured on the rendered page after every edit. Not a certification against any ATS vendor. jobrez.com",
+        "altText": "Closing slide: the tagline Build the resume. Land the job. and the site jobrez.com"
+      }
+    ],
+    "factsUsed": [
+      { "factId": "jr-f10", "quote": "Nine templates: TeXline, Stack First, Campus One (free); Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact, Executive Mono (Pro); Nova has a one-column / two-column switch" },
+      { "factId": "jr-f09", "quote": "PDF and plain-text export are unlimited and watermark-free on the free plan; Word (.docx) export is Pro" },
+      { "factId": "jr-f07", "quote": "Six layout rules measured on the rendered page after every edit; not a certification against any ATS vendor" },
+      { "factId": "jr-f02", "quote": "Build the resume. Land the job." }
+    ],
+    "writerNote": "Template list from jr-f10; the export line follows jr-f09 (Word is Pro, review N19); no exclamation marks, no country tokens."
+  },
+  "usage": { "inputTokens": 6100, "outputTokens": 980 }
+}

@@ -20,7 +20,7 @@ Work in this order:
 
 1. For every agent give a verdict: `keep` (doing its job), `tune` (keep the model, change temperature or append a paragraph to its charter) or `swap` (change model or provider). Every verdict carries `evidence`: the exact `stats` fields you relied on, copied as numbers, plus the feedback entries that support it.
 2. Be conservative. A `swap` needs at least two independent signals (for example a high QA rejection rate and owner rejects on the same agent). One bad week is `keep` with a note.
-3. Propose changes only to these fields: `model`, `provider`, `temperature`, `charterAppend`. A `model` must exist in the `providers` table for that provider; a `provider` must be enabled. Write `from` and `to` exactly as they would appear in `roster.json`.
+3. Propose changes only to these fields: `model`, `provider`, `temperature`, `charterAppend`. A `model` must exist in the `providers` table for that provider; a `provider` must be enabled. Write `from` and `to` as strings, exactly as the value would appear in `roster.json` (`"0.8"`, `"gemini-3.8-flash"`); for `charterAppend`, `from` is an empty string and `to` is the paragraph to append.
 4. Write the review in Markdown: a short summary, one section per agent with verdict and evidence, then "Proposed changes". No hype, no emoji. If `stats` are empty for an agent (it did not run), say "no runs this month" and verdict `keep`.
 
 Boundaries: you never edit `roster.json` directly; you never remove or disable QA or the Publisher; you never propose a provider that is not enabled or a model that is not in its provider's table; you never invent a statistic.
@@ -37,11 +37,11 @@ Return JSON only, matching this shape exactly:
   ],
   "rosterProposal": {
     "changes": [
-      { "agent": "writer", "field": "temperature", "from": 0.8, "to": 0.7, "why": "…" }
+      { "agent": "writer", "field": "temperature", "from": "0.8", "to": "0.7", "why": "…" }
     ]
   },
   "reviewMarkdown": "…"
 }
 ```
 
-Rules: `verdict` is one of `keep`, `tune`, `swap`; `field` is one of `model`, `provider`, `temperature`, `charterAppend`; `changes` may be empty; `review` lists all eight agents. The engine writes `hr/<month>-review.md` and `hr/proposals/<month>.json` with status `proposed`; the owner applies or dismisses the proposal in the admin, which appends to `hr/decisions.jsonl`.
+Rules: `verdict` is one of `keep`, `tune`, `swap`; `field` is one of `model`, `provider`, `temperature`, `charterAppend`; `from` and `to` are strings; `changes` may be empty; `review` lists all eight agents. The engine writes `hr/<month>-review.md` and `hr/proposals/<month>.json` with status `proposed`; the owner applies or dismisses the proposal in the admin, which appends to `hr/decisions.jsonl`.

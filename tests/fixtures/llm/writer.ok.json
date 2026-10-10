@@ -1,0 +1,42 @@
+{
+  "agent": "writer",
+  "case": "ok",
+  "page": "rishtapatra",
+  "note": "Carries both `artwork` (image slots) and `slides` (carousel slots) so one fixture serves every @rishtapatra cadence slot; the engine keeps the block the slot's format needs and drops the other. Facts rp-f04/f07/f08/f09 only; kundali disclaimer verbatim in both languages.",
+  "output": {
+    "caption": "मुफ़्त जन्म कुंडली — अपने डिवाइस पर।\nJanam Kundali on RishtaPatra is free and computed on your device; no request carries your birth details.\nRishta Connect shows a 36-point Guna Milan score on every match card.\nकुंडली का फल indicative है — अपने पंडित से सलाह लें।\nrishtapatra.com",
+    "hashtags": ["#RishtaPatra", "#JanamKundali", "#Biodata", "#Rishta"],
+    "altText": "Cream card with a maroon Hindi headline: free Janam Kundali, computed on your device.",
+    "artwork": {
+      "headline": "मुफ़्त जन्म कुंडली",
+      "subline": "Computed on your device. No request carries your birth details.",
+      "facts": ["Janam Kundali: free", "Rishta Connect: 36-point Guna Milan score", "Indicative — consult your pandit"],
+      "footer": "rishtapatra.com"
+    },
+    "slides": [
+      {
+        "heading": "मुफ़्त जन्म कुंडली",
+        "body": "Janam Kundali on RishtaPatra is free and computed on your device. No request carries your birth details.",
+        "altText": "Cover slide: free Janam Kundali, maroon Hindi headline on cream."
+      },
+      {
+        "heading": "36-point Guna Milan",
+        "body": "Rishta Connect shows a 36-point Guna Milan score on every match card.",
+        "altText": "Slide two: the 36-point Guna Milan score on a match card."
+      },
+      {
+        "heading": "Indicative, not a verdict",
+        "body": "कुंडली का फल indicative है — अपने पंडित से सलाह लें। North Indian method. rishtapatra.com",
+        "altText": "Closing slide: the kundali disclaimer in Hindi and the site rishtapatra.com"
+      }
+    ],
+    "factsUsed": [
+      { "factId": "rp-f04", "quote": "Janam Kundali (free)" },
+      { "factId": "rp-f07", "quote": "computed client-side; no request carries birth data" },
+      { "factId": "rp-f08", "quote": "36-point Guna Milan score" },
+      { "factId": "rp-f09", "quote": "indicative, North Indian method; consult your pandit/astrologer" }
+    ],
+    "writerNote": "Leads with the free product (CEO priority); Hindi headline, English fact lines; kundali disclaimer in both languages."
+  },
+  "usage": { "inputTokens": 5800, "outputTokens": 900 }
+}

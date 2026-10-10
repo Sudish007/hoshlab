@@ -1,0 +1,48 @@
+{
+  "agent": "strategist",
+  "case": "ok",
+  "page": "kaatdo",
+  "note": "Assignments name the open cadence slots of @kaatdo for now = 2026-10-12T05:31:00+05:30 (Monday). Idea 3 is a reel the engine must refuse while features.reels is false.",
+  "output": {
+    "ideas": [
+      {
+        "title": "Six rules one kill switch",
+        "angle": "Name the six rules and what the switch does the moment one fires.",
+        "format": "image",
+        "language": "en",
+        "factIds": ["kd-f04", "kd-f05"],
+        "hook": "Six rules. One kill switch."
+      },
+      {
+        "title": "Reconnect every morning",
+        "angle": "Broker tokens expire daily; the 08:45 nudge and the 09:20 not-armed alert exist so a trader is never unprotected by accident.",
+        "format": "image",
+        "language": "en",
+        "factIds": ["kd-f07"],
+        "hook": "Your broker token expired overnight."
+      },
+      {
+        "title": "What the switch cannot do",
+        "angle": "Honest limitations: squared off within seconds, not prevented; slippage on illiquid strikes; monitoring is down when the server is down.",
+        "format": "carousel",
+        "language": "en",
+        "factIds": ["kd-f08", "kd-f09"],
+        "hook": "What the kill switch cannot do."
+      },
+      {
+        "title": "Kill switch reel",
+        "angle": "Kinetic reel on the breach sequence.",
+        "format": "reel",
+        "language": "en",
+        "factIds": ["kd-f05"],
+        "hook": "Your rule fires."
+      }
+    ],
+    "assignments": [
+      { "slotId": "kaatdo-2026-10-13-0815", "ideaId": "new:0", "reason": "Tuesday image; memo priority 1: risk first" },
+      { "slotId": "kaatdo-2026-10-15-0815", "ideaId": "new:1", "reason": "Thursday image; the daily reconnect is the most common support question" },
+      { "slotId": "kaatdo-2026-10-17-1100", "ideaId": "new:2", "reason": "Saturday carousel; limitations need room, one per slide" }
+    ]
+  },
+  "usage": { "inputTokens": 3900, "outputTokens": 580 }
+}

@@ -1,0 +1,36 @@
+{
+  "agent": "writer",
+  "case": "bad",
+  "note": "caption is exactly 2,300 code points (> captionMax 2200) → assertShape fails → one repair call (same fixture) → AgentOutputError; everything else is valid so the length is the only error.",
+  "output": {
+    "caption": "Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free Janam Kundali, computed on your device. Free.",
+    "hashtags": [
+      "#RishtaPatra",
+      "#JanamKundali"
+    ],
+    "altText": "Cream card with a maroon Hindi headline: free Janam Kundali.",
+    "artwork": {
+      "headline": "Free Janam Kundali",
+      "subline": "Computed on your device.",
+      "facts": [
+        "Janam Kundali: free"
+      ],
+      "footer": "rishtapatra.com"
+    },
+    "factsUsed": [
+      {
+        "factId": "rp-f04",
+        "quote": "Janam Kundali (free)"
+      },
+      {
+        "factId": "rp-f07",
+        "quote": "computed client-side"
+      }
+    ],
+    "writerNote": "deliberately too long"
+  },
+  "usage": {
+    "inputTokens": 5800,
+    "outputTokens": 1200
+  }
+}

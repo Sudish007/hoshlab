@@ -1,0 +1,18 @@
+{
+  "agent": "ceo",
+  "case": "bad",
+  "note": "budgetSplitPct sums to 120 % → the engine's semantic check fails → one repair call (same fixture) → AgentOutputError; the shape itself is valid.",
+  "output": {
+    "week": "2026-W42",
+    "priorities": [
+      { "page": "rishtapatra", "rank": 1, "theme": "lead with the free product", "why": "Janam Kundali is free and runs on the device.", "factIds": ["rp-f04", "rp-f07"] },
+      { "page": "kaatdo", "rank": 1, "theme": "risk first", "why": "The rule list and the breach sequence are fully sourced.", "factIds": ["kd-f04", "kd-f05"] },
+      { "page": "job_rez", "rank": 1, "theme": "templates and free export", "why": "Nine templates, three free.", "factIds": ["jr-f10", "jr-f09"] }
+    ],
+    "pause": [],
+    "budgetSplitPct": { "rishtapatra": 50, "kaatdo": 40, "job_rez": 30 },
+    "ownerQuestions": [],
+    "memoMarkdown": "# Memo 2026-W42\n\nOver-allocated on purpose: 50 / 40 / 30."
+  },
+  "usage": { "inputTokens": 7200, "outputTokens": 400 }
+}

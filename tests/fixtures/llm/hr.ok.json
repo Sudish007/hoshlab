@@ -1,0 +1,21 @@
+{
+  "agent": "hr",
+  "case": "ok",
+  "note": "Shape fixture only: the HR monthly review is not built yet (phase 2, plan D18) and engine/agents/hr.js run() returns skipped: phase2 without calling a model. All eight agents reviewed; no runs this month, so every verdict is keep with empty evidence and no roster changes.",
+  "output": {
+    "month": "2026-10",
+    "review": [
+      { "agent": "ceo", "verdict": "keep", "evidence": {}, "proposal": "no runs this month" },
+      { "agent": "hr", "verdict": "keep", "evidence": {}, "proposal": "no runs this month" },
+      { "agent": "strategist", "verdict": "keep", "evidence": {}, "proposal": "no runs this month" },
+      { "agent": "writer", "verdict": "keep", "evidence": {}, "proposal": "no runs this month" },
+      { "agent": "designer", "verdict": "keep", "evidence": {}, "proposal": "no runs this month" },
+      { "agent": "qa", "verdict": "keep", "evidence": {}, "proposal": "no runs this month" },
+      { "agent": "publisher", "verdict": "keep", "evidence": {}, "proposal": "no runs this month" },
+      { "agent": "analyst", "verdict": "keep", "evidence": {}, "proposal": "no runs this month" }
+    ],
+    "rosterProposal": { "changes": [] },
+    "reviewMarkdown": "# HR review 2026-10\n\nNo agent ran this month, so every verdict is keep and there are no proposed changes.\n\n## Proposed changes\n\nNone."
+  },
+  "usage": { "inputTokens": 3000, "outputTokens": 500 }
+}

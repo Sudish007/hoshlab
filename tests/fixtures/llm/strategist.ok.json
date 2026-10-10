@@ -1,0 +1,48 @@
+{
+  "agent": "strategist",
+  "case": "ok",
+  "page": "rishtapatra",
+  "note": "Assignments name the open cadence slots of @rishtapatra for now = 2026-10-12T05:31:00+05:30 (Monday); for any other date the engine ignores them and fills the slots from the backlog. Idea 3 is a reel the engine must refuse while features.reels is false.",
+  "output": {
+    "ideas": [
+      {
+        "title": "Free kundali, no account",
+        "angle": "Lead with the free product: Janam Kundali runs on the device, needs no account and no request carries birth details.",
+        "format": "image",
+        "language": "hi",
+        "factIds": ["rp-f04", "rp-f07", "rp-f05"],
+        "hook": "मुफ़्त जन्म कुंडली — अपने डिवाइस पर।"
+      },
+      {
+        "title": "Biodata in seven steps",
+        "angle": "Walk through the guided editor and the one-page A4 preview, one step per slide.",
+        "format": "carousel",
+        "language": "en",
+        "factIds": ["rp-f06", "rp-f05"],
+        "hook": "Seven steps. One page. Your biodata."
+      },
+      {
+        "title": "Guna Milan on every match card",
+        "angle": "Rishta Connect shows the 36-point Guna Milan score; say plainly that it is indicative.",
+        "format": "image",
+        "language": "en",
+        "factIds": ["rp-f08", "rp-f09"],
+        "hook": "Every match card carries a Guna Milan score."
+      },
+      {
+        "title": "Tagline reel",
+        "angle": "Kinetic reel on the tagline, biodata to rishta.",
+        "format": "reel",
+        "language": "hi",
+        "factIds": ["rp-f02"],
+        "hook": "बायोडाटा से रिश्ते तक"
+      }
+    ],
+    "assignments": [
+      { "slotId": "rishtapatra-2026-10-12-1930", "ideaId": "new:0", "reason": "Monday image slot; memo priority 1: lead with the free product" },
+      { "slotId": "rishtapatra-2026-10-14-1930", "ideaId": "new:1", "reason": "Wednesday carousel; the editor walkthrough suits a step-by-step format" },
+      { "slotId": "rishtapatra-2026-10-16-1930", "ideaId": "new:2", "reason": "Friday image; Guna Milan with the kundali disclaimer" }
+    ]
+  },
+  "usage": { "inputTokens": 4100, "outputTokens": 620 }
+}

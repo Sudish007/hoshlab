@@ -54,6 +54,15 @@ test("ownership: writeJson / appendJsonl refuse every admin-owned path with Owne
     // engine-owned siblings are fine
     assert.equal(state.writeJson("state/hr/proposals/2026-10.json", { ok: true }), "state/hr/proposals/2026-10.json");
     assert.equal(state.appendJsonl("state/ideas.jsonl", { id: "x" }), "state/ideas.jsonl");
+    // text files (memos, reports) follow the same ownership rule and are UTF-8 without BOM
+    assert.throws(() => state.writeText("charters/ceo.md", "# x"), OwnershipError);
+    assert.throws(() => state.writeText("state/memos/2026-W42.md", { not: "text" }), TypeError);
+    assert.equal(state.writeText("state/memos/2026-W42.md", "# मेमो 2026-W42\n\n```json\n{}\n```\n"), "state/memos/2026-W42.md");
+    const bytes = readFileSync(join(dir, "state", "memos", "2026-W42.md"));
+    assert.notEqual(bytes[0], 0xef, "no BOM");
+    assert.equal(state.readText("state/memos/2026-W42.md"), "# मेमो 2026-W42\n\n```json\n{}\n```\n");
+    assert.throws(() => state.readText("state/memos/2026-W43.md"), /2026-W43\.md/);
+    assert.equal(readdirSync(join(dir, "state", "memos")).length, 1, "atomic write leaves no temp file");
   } finally {
     cleanup();
   }

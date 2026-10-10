@@ -1,0 +1,42 @@
+{
+  "agent": "writer",
+  "case": "ok",
+  "page": "kaatdo",
+  "note": "Carries both `artwork` and `slides` so one fixture serves every @kaatdo cadence slot. All three disclaimer groups verbatim; ₹999 and 7-day trial from the pricing table; the only Devanagari is the sign-off काट दो.",
+  "output": {
+    "caption": "Six rules. One kill switch.\nmax_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates. Your rule fires: every pending order is cancelled, every position is squared off at market, and the account stays locked until close.\nMonthly ₹999 at the time of posting. 7-day free trial, no card.\nKaatDo is a risk-management tool, not investment advice. KaatDo is not registered with SEBI. Broker API execution is never guaranteed.\nkaatdo.com\nकाट दो.",
+    "hashtags": ["#KaatDo", "#FnO", "#RiskManagement", "#KillSwitch"],
+    "altText": "Dark console card: Six rules. One kill switch. Rule names in mono type; footer kaatdo.com",
+    "artwork": {
+      "headline": "Six rules. One kill switch.",
+      "subline": "Your rule fires. Every order cancelled, every position squared off at market.",
+      "facts": ["max_daily_loss · profit_target · max_trades", "kill_time · kill_days · kill_dates", "Not investment advice. Not SEBI-registered."],
+      "footer": "kaatdo.com · काट दो."
+    },
+    "slides": [
+      {
+        "heading": "Six rules. One kill switch.",
+        "body": "max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates.",
+        "altText": "Cover slide: Six rules. One kill switch. Dark console card with the rule names."
+      },
+      {
+        "heading": "Your rule fires.",
+        "body": "Every pending order is cancelled, every position is squared off at market, and the account stays locked until close.",
+        "altText": "Slide two: what the kill switch does the moment a rule fires."
+      },
+      {
+        "heading": "Not investment advice.",
+        "body": "KaatDo is not registered with SEBI. Broker API execution is never guaranteed. kaatdo.com काट दो.",
+        "altText": "Closing slide: the disclaimer line, the site kaatdo.com and the sign-off."
+      }
+    ],
+    "factsUsed": [
+      { "factId": "kd-f04", "quote": "Six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates" },
+      { "factId": "kd-f05", "quote": "cancels every pending order, squares off every position at market, keeps the account locked until close" },
+      { "factId": "kd-f10", "quote": "not investment advice, and is not registered with SEBI; broker API execution is never guaranteed" },
+      { "factId": "kd-f13", "quote": "काट दो." }
+    ],
+    "writerNote": "Risk-first: the rule list, then what the switch does; price from the pricing table with 'at the time of posting'; all three disclaimer groups verbatim."
+  },
+  "usage": { "inputTokens": 5600, "outputTokens": 860 }
+}

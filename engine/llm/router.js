@@ -1,8 +1,10 @@
 // LLM router (design.md §5 envelope, §7 routing and budget; review M5.4/M7/M9; plan D7/D9/D10).
 //
 //   const router = createRouter({ config, roster, state, env, fetchImpl, sleep, now, runId, charters });
-//   const result = await router.complete('writer', { task, spec: OUTPUT_SPEC, context: { brand, page, memoExcerpt, feedbackDigest, extra } });
+//   const result = await router.complete('writer', { task, spec: OUTPUT_SPEC, context: { brand, page, memoExcerpt, feedbackDigest, extra }, validate });
 //   // result: { json, text, usage, costUsd, provider, model, ms, mock, calls, repaired, raw, estimate }
+//   // validate(json) → errors[] is an optional semantic check (fact ids offered, sums ≤ 100 …) that
+//   // runs after assertShape(spec) and feeds the same single repair call.
 //   router.flags      Set of status flags raised during this run (budget_warn, budget_exhausted, provider_down:<name>)
 //   router.totals     Map agent → { calls, ok, failed, costUsd, ms, inputTokens, outputTokens }
 //
@@ -108,17 +110,23 @@ export function resolveAgent(roster, config, name) {
   };
 }
 
-// validateOutput(json, spec) → errors[] ('' when valid).
-export function validateOutput(json, spec) {
+// validateOutput(json, spec, validate) → errors[] ('' when valid). `validate(json)` is an optional
+// semantic check an agent adds on top of the shape (fact ids offered, budget split ≤ 100 …); it runs
+// only when the shape is valid and returns a list of '<path>: <message>' strings (or nothing).
+export function validateOutput(json, spec, validate) {
   if (json === null || typeof json !== "object" || Array.isArray(json)) return ["$: no JSON object found in the model output"];
-  if (!spec) return [];
-  try {
-    assertShape(json, spec);
-    return [];
-  } catch (e) {
-    if (e instanceof SchemaError) return e.errors;
-    throw e;
+  if (spec) {
+    try {
+      assertShape(json, spec);
+    } catch (e) {
+      if (e instanceof SchemaError) return e.errors;
+      throw e;
+    }
   }
+  if (typeof validate !== "function") return [];
+  const extra = validate(json);
+  if (!extra) return [];
+  return (Array.isArray(extra) ? extra : [extra]).filter((x) => x !== undefined && x !== null && x !== "").map(String);
 }
 
 function pageHandle(page) {
@@ -282,8 +290,9 @@ export function createRouter({
     return null;
   }
 
-  // complete(agentName, { task, spec, context }) → result (see header).
-  async function complete(agentName, { task = {}, spec = null, context = {} } = {}) {
+  // complete(agentName, { task, spec, context, validate }) → result (see header). `validate(json)`
+  // is the agent's optional semantic check; its errors go through the same single repair call.
+  async function complete(agentName, { task = {}, spec = null, context = {}, validate } = {}) {
     const resolved = resolveAgent(roster, config, agentName);
     const { system, user, tokensEstimate } = envelopeFor(agentName, task, context);
     const page = pageHandle(context.page) || (context.brand && context.brand.frontMatter && context.brand.frontMatter.handle) || undefined;
@@ -318,7 +327,7 @@ export function createRouter({
     let { res } = outcome;
     let cost = outcome.costUsd;
     let json = res.json !== undefined && res.json !== null ? res.json : parseJson(res.text);
-    let errors = validateOutput(json, spec);
+    let errors = validateOutput(json, spec, validate);
     let repaired = false;
     if (errors.length) {
       // Exactly one repair call, on the provider that answered, carrying the previous output.
@@ -326,7 +335,7 @@ export function createRouter({
       const repair = await attemptProvider(agentName, used, { ...call, user: repairUser }, failures, counter);
       if (!repair) throw new AllProvidersFailedError(agentName, failures);
       const repairJson = repair.res.json !== undefined && repair.res.json !== null ? repair.res.json : parseJson(repair.res.text);
-      const repairErrors = validateOutput(repairJson, spec);
+      const repairErrors = validateOutput(repairJson, spec, validate);
       cost = Math.round((cost + repair.costUsd) * 1e6) / 1e6;
       if (repairErrors.length) {
         throw new AgentOutputError({ agent: agentName, provider: used.provider, model: used.model, errors, repairErrors, text: repair.res.text, calls: counter.calls });

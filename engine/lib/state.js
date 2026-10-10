@@ -115,6 +115,25 @@ export function createState({ companyDir = process.env.COMPANY_DIR || "company",
     return parseJsonl(readFileSync(path, "utf8").replace(/^\uFEFF/, ""));
   }
 
+  // Markdown/text state files (memos, reports, HR reviews): UTF-8 without BOM, same ownership rule.
+  function readText(rel) {
+    const path = abs(rel);
+    try {
+      return readFileSync(path, "utf8").replace(/^\uFEFF/, "");
+    } catch (e) {
+      e.message = `${rel}: ${e.message}`;
+      throw e;
+    }
+  }
+
+  function writeText(rel, text) {
+    const n = normalizeRel(rel);
+    if (isAdminOwned(n)) throw new OwnershipError(n);
+    if (typeof text !== "string") throw new TypeError(`state: writeText expects a string for ${n}`);
+    writeAtomic(abs(n), text);
+    return n;
+  }
+
   function appendJsonl(rel, record, spec) {
     const n = normalizeRel(rel);
     if (isAdminOwned(n)) throw new OwnershipError(n);
@@ -172,6 +191,8 @@ export function createState({ companyDir = process.env.COMPANY_DIR || "company",
     writeJson,
     readJsonl,
     appendJsonl,
+    readText,
+    writeText,
     monthLogPath,
     appendLog,
     latestByKey,

@@ -1,0 +1,57 @@
+{
+  "agent": "strategist",
+  "case": "ok",
+  "page": "job_rez",
+  "note": "Assignments name the open cadence slots of @job_rez for now = 2026-10-12T05:31:00+05:30 (Monday). Idea 4 is a reel the engine must refuse while features.reels is false. No India-specific tokens anywhere (OF-2).",
+  "output": {
+    "ideas": [
+      {
+        "title": "Nine templates three free",
+        "angle": "List the nine templates, name the three free ones, and say that PDF and plain-text export are free and watermark-free.",
+        "format": "image",
+        "language": "en",
+        "factIds": ["jr-f10", "jr-f09"],
+        "hook": "Nine templates. Three are free."
+      },
+      {
+        "title": "One master resume many branches",
+        "angle": "One master resume, a branch per role, each branch scored against the posting in Job DNA.",
+        "format": "image",
+        "language": "en",
+        "factIds": ["jr-f04"],
+        "hook": "One master resume. A branch for every role."
+      },
+      {
+        "title": "Six layout rules",
+        "angle": "One slide per layout rule, measured on the rendered page after every edit; close with the not-a-certification line.",
+        "format": "carousel",
+        "language": "en",
+        "factIds": ["jr-f07"],
+        "hook": "Six layout rules, measured after every edit."
+      },
+      {
+        "title": "Evidence notes are self-reported",
+        "angle": "Linked source, self-attested, open: what each evidence state means and why nothing is externally verified.",
+        "format": "image",
+        "language": "en",
+        "factIds": ["jr-f06"],
+        "hook": "Three evidence states. None of them is a verification."
+      },
+      {
+        "title": "Branch reel",
+        "angle": "Kinetic reel on branching a master resume.",
+        "format": "reel",
+        "language": "en",
+        "factIds": ["jr-f04"],
+        "hook": "Branch it."
+      }
+    ],
+    "assignments": [
+      { "slotId": "job_rez-2026-10-12-1230", "ideaId": "new:0", "reason": "Monday image; memo priority 1: templates and free export" },
+      { "slotId": "job_rez-2026-10-13-1230", "ideaId": "new:1", "reason": "Tuesday image; the master-resume model is the product's core idea" },
+      { "slotId": "job_rez-2026-10-14-1230", "ideaId": "new:2", "reason": "Wednesday carousel; six rules fit six slides" },
+      { "slotId": "job_rez-2026-10-15-1230", "ideaId": "new:3", "reason": "Thursday image; honesty-by-default theme" }
+    ]
+  },
+  "usage": { "inputTokens": 4300, "outputTokens": 700 }
+}
