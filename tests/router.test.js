@@ -14,7 +14,7 @@ import { costUsd } from "../engine/lib/budget.js";
 const company = loadCompany({ companyDir: COMPANY_DIR, warn: () => {} });
 const { config, roster, charters, brands } = company;
 const PRICES = { anthropic: config.providers.anthropic.models["claude-sonnet-5-5"], gemini: config.providers.gemini.models["gemini-3.8-flash"], openai: config.providers.openai.models["gpt-6-luna"] };
-const KEYS = { ANTHROPIC_API_KEY: "sk-ant-FAKE-aaaaaaaaaaaaaaaaaaaaaaaaaaaa", GEMINI_API_KEY: "AIzaFAKE-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", OPENAI_API_KEY: "sk-proj-FAKE-cccccccccccccccccccccccccc" };
+const KEYS = { ANTHROPIC_API_KEY: "FAKE-anthropic-key-aaaaaaaaaaaaaaaaaaaaaaaa", GEMINI_API_KEY: "FAKE-gemini-key-bbbbbbbbbbbbbbbbbbbbbbbbbbbb", OPENAI_API_KEY: "FAKE-openai-key-cccccccccccccccccccccccccccc" };
 const NOW = "2026-10-12T05:31:00+05:30"; // Monday
 const RUN_ID = "engine-daily-20261012-0531-abc123";
 const SPEC = { caption: "str<=2200", hashtags: ["str", { max: 8 }], factsUsed: [{ factId: "id", quote: "str" }, { min: 1 }] };

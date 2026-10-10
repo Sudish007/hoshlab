@@ -8,7 +8,7 @@ import { checkModels, NOT_CONFIGURED } from "../engine/commands/check-models.js"
 import { readEnv } from "../engine/lib/env.js";
 
 const config = JSON.parse(readFileSync(join(COMPANY_DIR, "config.json"), "utf8"));
-const KEYS = { ANTHROPIC_API_KEY: "sk-ant-FAKE-aaaaaaaaaaaaaaaaaaaaaaaaaaaa", GEMINI_API_KEY: "AIzaFAKE-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", OPENAI_API_KEY: "sk-proj-FAKE-cccccccccccccccccccccccccc" };
+const KEYS = { ANTHROPIC_API_KEY: "FAKE-anthropic-key-aaaaaaaaaaaaaaaaaaaaaaaa", GEMINI_API_KEY: "FAKE-gemini-key-bbbbbbbbbbbbbbbbbbbbbbbbbbbb", OPENAI_API_KEY: "FAKE-openai-key-cccccccccccccccccccccccccccc" };
 const SECRET_VALUES = Object.values(KEYS);
 
 function sink() {

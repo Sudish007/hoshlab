@@ -10,7 +10,7 @@ import * as openai from "../engine/llm/openai.js";
 import * as mock from "../engine/llm/mock.js";
 import { toJsonSchema } from "../engine/lib/schema.js";
 
-const KEY = "sk-test-FAKE-0123456789abcdefghijklmnop";
+const KEY = "FAKE-provider-key-0123456789abcdefghijklmnop";
 const SPEC = { caption: "str<=2200", score: "int", "note?": "str", tags: ["str", { max: 3 }], nested: { ok: "bool", kind: "enum[a|b]" } };
 const OUTPUT = { caption: "hello", score: 4, note: null, tags: ["x"], nested: { ok: true, kind: "a" } };
 
