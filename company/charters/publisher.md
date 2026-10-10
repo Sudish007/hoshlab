@@ -10,16 +10,17 @@ It runs hourly (the Actions cron fires at :30 IST; it may start 10–30 minutes 
 
 Inputs per draft: the draft (`status`, `revision`, `slotAt`, `media[]`, `publishAttempts[]`), the page's mode (`approve_first` or `autopilot`), the latest approval record for the draft (decision, revision), the page's token state and Instagram user id, the current time in IST, and the defaults (`maxPublishAttempts`, `lateAfterHours`, `expireAfterHours`, `minGapHours`).
 
-`decide()` returns one of `publish`, `skip` or `terminal` with a reason, in this order of checks:
+`decide()` returns `{ publish, reason }`; the checks run in this order and the first one that fails names the reason:
 
-1. Draft must be `queued` with a QA pass for its current `revision`; anything else → skip (`not_queued`).
-2. Page must be configured: a non-empty Instagram user id and a token state of `ok` or `expiring`; otherwise → skip (`page_not_configured` / `token_invalid`), and the page is skipped as a whole.
-3. Mode `approve_first` needs an approval with `decision: approve` whose `revision` equals the draft's `revision`; a `reject` → terminal `rejected`; no record → skip (`awaiting_approval`). Mode `autopilot` needs no approval.
-4. Timing: publish only when `slotAt` ≤ now. If now is more than `expireAfterHours` after `slotAt` → terminal `expired`. If now is more than `lateAfterHours` after `slotAt`, publish anyway and mark the record `late: true`.
-5. Attempts: a draft is tried at most once per run; after `maxPublishAttempts` failed attempts → terminal `failed`.
+1. Draft must be `queued` (QA passed its current `revision`); anything else → `status:<status>`.
+2. Timing: more than `expireAfterHours` after `slotAt` → `expired` (the draft is stamped `expired` and its slot is freed); `slotAt` in the future → `not_due`. If now is more than `lateAfterHours` after `slotAt`, publish anyway and mark the record `late: true`.
+3. Attempts: `maxPublishAttempts` failed attempts → `attempts_exhausted` (the draft is already `failed`).
+4. Page must be configured: a token state other than `invalid` (→ `token_invalid`), a token secret and a non-empty Instagram user id (→ `page_not_configured`); such a page is skipped as a whole.
+5. Approval: a latest `reject` → `rejected` in every mode. Mode `approve_first` needs a latest `approve` (→ `awaiting_approval`) whose `revision` equals the draft's (→ `approval_stale`). Mode `autopilot` needs no approval.
 6. Gap: never two posts on the same page within `minGapHours`; the later one waits (`min_gap`).
+7. Otherwise publish, reason `approved` or `autopilot`.
 
-Publishing a draft: create the media container (image, or carousel items then the carousel container) with the media's raw URL, poll the container status until `FINISHED` (interval and limit from config), then publish and read the permalink. Every attempt is appended to `publishAttempts[]` with stage, code and message; a success appends a record to `published.jsonl`, sets the draft `published`, and updates the page's `lastPublishedAt`. A code-190 response flips the page's token state to `invalid` and skips the page. Under `IG_DRY_RUN=1` the exact call sequence is logged and nothing is sent.
+Publishing a draft: read the page's publishing quota (`content_publishing_limit`; skip the page within two posts of the cap), check the media URL answers (`HEAD` on the raw URL, then the Pages URL), create the media container (image, or carousel items then the carousel container), publish and read the permalink (reels, phase 2, also poll the container status until `FINISHED`). Every attempt is appended to `publishAttempts[]` with stage, code and message; a success appends a record to `published.jsonl`, sets the draft `published`, and updates the page's `lastPublishedAt`. A code-190 response flips the page's token state to `invalid` and skips the page; a bad-parameter error (code 100) or the third failed attempt sets the draft `failed` with a `publish_failed` flag. Under `IG_DRY_RUN=1` the exact call sequence is logged and nothing is sent.
 
 Boundaries: never post without a QA pass; never post in Approve first without an approve record for the exact revision; never retry a draft more than once per run; never post a rejected or expired draft; never create or refresh tokens.
 

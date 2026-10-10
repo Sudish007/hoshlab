@@ -29,7 +29,7 @@ for (const [label, config] of Object.entries(configs)) {
     assert.equal(config.schedule.actionsDelayNote, "Actions cron may start 10–30 min late");
   });
 
-  test(`${label}: N3 features.reels present and false; D9/M15 defaults; ig placeholder`, () => {
+  test(`${label}: N3 features.reels present and false; D9/M15 defaults; ig.version pinned with its source (D5)`, () => {
     assert.equal(config.features.reels, false);
     assert.equal(config.defaults.expireAfterHours, 48);
     assert.equal(config.defaults.altTextMax, 100);
@@ -38,6 +38,9 @@ for (const [label, config] of Object.entries(configs)) {
     assert.equal(config.budget.monthlyUsd, 25);
     assert.equal(config.budget.hardStop, true);
     assert.match(config.ig.version, /^v\d+\.\d+$/);
+    assert.equal(config.ig.version, "v26.0", "FEAT-107: newest version on Meta's changelog on 2026-10-10 (introduced July 29, 2026)");
+    assert.equal(config.ig.versionSource, "https://developers.facebook.com/docs/graph-api/changelog");
+    assert.equal(config.ig.versionVerifiedAt, "2026-10-10");
     assert.equal(config.company.owner, "Sudish Kumar");
     assert.equal(config.company.ownerGithub, "Sudish007");
     assert.equal(config.site.basePath, "/hoshlab/");

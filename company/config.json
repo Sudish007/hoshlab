@@ -97,7 +97,9 @@
   },
   "ig": {
     "host": "https://graph.instagram.com",
-    "version": "v21.0",
+    "version": "v26.0",
+    "versionSource": "https://developers.facebook.com/docs/graph-api/changelog",
+    "versionVerifiedAt": "2026-10-10",
     "pollIntervalMs": 5000,
     "pollMaxMs": 300000
   },

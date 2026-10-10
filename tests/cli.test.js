@@ -45,7 +45,8 @@ test("registry: every designed command is listed; unbuilt ones print 'not built 
   assert.deepEqual(Object.keys(COMMANDS).sort(), ["analyst", "check-models", "daily", "hr", "publish", "refresh-tokens", "render-sample", "retention", "set-page"]);
   assert.equal(typeof COMMANDS["check-models"].load, "function");
   assert.equal(typeof COMMANDS["render-sample"].load, "function", "render-sample is built (FEAT-106)");
-  const expected = { daily: "FEAT-108", publish: "FEAT-107", "set-page": "FEAT-108", analyst: "FEAT-203 / phase 2", hr: "FEAT-204 / phase 2", "refresh-tokens": "FEAT-202 / phase 2", retention: "FEAT-202 / phase 2" };
+  assert.equal(typeof COMMANDS.publish.load, "function", "publish is built (FEAT-107)");
+  const expected = { daily: "FEAT-108", "set-page": "FEAT-108", analyst: "FEAT-203 / phase 2", hr: "FEAT-204 / phase 2", "refresh-tokens": "FEAT-202 / phase 2", retention: "FEAT-202 / phase 2" };
   for (const [name, planned] of Object.entries(expected)) {
     const out = sink();
     const err = sink();
@@ -177,7 +178,9 @@ test("render-sample: usage errors exit 2 without touching the renderer; --out in
   assert.equal(index["sample-kaatdo"].sample, true);
   assert.deepEqual(index["sample-kaatdo"].files, ["image-1-0123abcd.jpg"]);
   assert.equal(index["sample-kaatdo"].page, "kaatdo");
-  assert.equal(existsSync(join(COMPANY_DIR, "state", "drafts")), false, "nothing written under company/");
+  assert.equal(existsSync(join(COMPANY_DIR, "media")), false, "nothing written under company/");
+  assert.equal(existsSync(join(COMPANY_DIR, "index.json")), false, "no media index under company/");
+  assert.equal(existsSync(join(COMPANY_DIR, "state", "drafts", "sample-kaatdo")), false, "no sample draft under company/state");
 
   // --format carousel for a page whose draft fixture is an image → the writer.ok fixture's slides
   const carousel = sampleDraft({ root: ROOT, page: "kaatdo", format: "carousel" });

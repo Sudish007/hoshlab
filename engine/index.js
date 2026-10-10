@@ -14,7 +14,7 @@ export const EXIT = { ok: 0, failed: 1, usage: 2 };
 export const COMMANDS = {
   "check-models": { summary: "verify provider secrets, model ids and prices (no key material printed)", planned: "FEAT-103", load: () => import("./commands/check-models.js") },
   daily: { summary: "run the daily agents (CEO, Strategist, Writer, Designer, QA)", planned: "FEAT-108", load: null },
-  publish: { summary: "hourly publisher: post queued, approved drafts", planned: "FEAT-107", load: null },
+  publish: { summary: "hourly publisher: post queued, approved drafts (--page, --dry-run, --now <iso> with dry-run only)", planned: "FEAT-107", load: () => import("./commands/publish.js") },
   "render-sample": { summary: "render one fixture draft for a page into the media worktree (--page, --out, --format)", planned: "FEAT-106", load: () => import("./commands/render-sample.js") },
   "set-page": { summary: "switch a page between approve_first and autopilot (owner tool)", planned: "FEAT-108", load: null },
   analyst: { summary: "weekly insights report", planned: "FEAT-203 / phase 2", load: null },

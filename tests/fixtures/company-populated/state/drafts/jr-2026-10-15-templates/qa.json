@@ -1,0 +1,100 @@
+{
+  "draftId": "jr-2026-10-15-templates",
+  "revision": 3,
+  "at": "2026-10-12T05:40:00+05:30",
+  "passed": false,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "484/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "13 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "4 alt texts, longest 82/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "4 × 1080x1350 jpeg max 9 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "4 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.00 (no recent captions)"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "mock",
+    "model": "mock",
+    "verdict": "fail",
+    "toneScore": 3,
+    "claims": [
+      {
+        "claim": "Janam Kundali is free on RishtaPatra",
+        "ok": false
+      },
+      {
+        "claim": "trusted by thousands of families",
+        "ok": false
+      }
+    ],
+    "reasons": [
+      "Remove \"trusted by thousands of families\": no fact supports a user count.",
+      "claim cites rp-f04, which is not a usable fact of this brand: \"Janam Kundali is free on RishtaPatra\"",
+      "claim without a fact id: \"trusted by thousands of families\""
+    ],
+    "notes": ""
+  },
+  "reasons": [
+    "Remove \"trusted by thousands of families\": no fact supports a user count.",
+    "claim cites rp-f04, which is not a usable fact of this brand: \"Janam Kundali is free on RishtaPatra\"",
+    "claim without a fact id: \"trusted by thousands of families\""
+  ],
+  "mock": true,
+  "runId": "engine-daily-20261012-0531-fx1070"
+}

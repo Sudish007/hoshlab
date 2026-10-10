@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-10-12T05:33:00+05:30",
+  "horizonDays": 14,
+  "slots": [
+    {
+      "slotId": "kaatdo-2026-10-13-0815",
+      "page": "kaatdo",
+      "at": "2026-10-13T08:15:00+05:30",
+      "format": "image",
+      "ideaId": "kd-i0007",
+      "draftId": "kd-2026-10-13-six-rules",
+      "status": "queued",
+      "reason": "memo 2026-W42 priority 1"
+    },
+    {
+      "slotId": "rishtapatra-2026-10-14-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-14T19:30:00+05:30",
+      "format": "image",
+      "ideaId": "rp-i0031",
+      "draftId": "rp-2026-10-14-kundali-free",
+      "status": "queued",
+      "reason": "memo 2026-W42 priority 1 (owner-assigned image slot)"
+    },
+    {
+      "slotId": "job_rez-2026-10-15-1230",
+      "page": "job_rez",
+      "at": "2026-10-15T12:30:00+05:30",
+      "format": "carousel",
+      "ideaId": "jr-i0012",
+      "draftId": "jr-2026-10-15-templates",
+      "status": "blocked",
+      "reason": "backlog idea jr-i0012 (owner-assigned carousel slot)"
+    }
+  ]
+}

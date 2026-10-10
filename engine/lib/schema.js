@@ -505,7 +505,8 @@ export const CONFIG_SPEC = {
     captionMax: "int[1..2200]",
     altTextMax: "int[1..200]",
   },
-  ig: { host: "url", version: "pattern:^v\\d+\\.\\d+$", pollIntervalMs: "int[100..60000]", pollMaxMs: "int[1000..3600000]" },
+  // versionSource/versionVerifiedAt: where and when ig.version was last checked against Meta's changelog (plan D5, FEAT-107).
+  ig: { host: "url", version: "pattern:^v\\d+\\.\\d+$", "versionSource?": "url", "versionVerifiedAt?": "date", pollIntervalMs: "int[100..60000]", pollMaxMs: "int[1000..3600000]" },
   pages: [
     {
       handle: "handle",
@@ -599,6 +600,8 @@ export const PUBLISH_ATTEMPT_SPEC = {
   ok: "bool",
   stage: "enum[preflight|container|status|publish|rate_limit|skip]",
   "code?": "int",
+  // Graph API error_subcode (e.g. 2207052 under code 9004 "media download has failed"), when the envelope carries one.
+  "subcode?": "int",
   "message?": "str",
   "mediaUrlUsed?": "enum[raw|pages]",
   "runId?": "id",
@@ -701,7 +704,8 @@ export const PUBLISHED_SPEC = {
   draftId: "id",
   page: "handle",
   igMediaId: "str",
-  permalink: "url",
+  // null when the permalink fetch failed right after publishing; the Publisher completes it on its next run (design §11).
+  permalink: "url?",
   publishedAt: "iso-datetime",
   slotAt: "iso-datetime",
   late: "bool",
@@ -747,6 +751,12 @@ export const USAGE_SPEC = {
 
 // §4.14 runs/YYYY-MM.jsonl
 export const RUN_AGENT_SPEC = { name: AGENT, ok: "bool", ms: "int[0..86400000]", calls: "int[0..10000]", costUsd: "num[0..100000]", "note?": "str", "skipped?": "str" };
+// Publisher detail on a publisher-hourly run record (design §3.2, FEAT-107): one decision per queued draft
+// (reason from publisher.decide() or the attempt stage), the owner edits ignored for a stale baseRevision,
+// the drafts stamped expired (M5.1) and one outcome line per page.
+export const PUBLISH_DECISION_SPEC = { draftId: "id", page: "handle", publish: "bool", reason: "str", "stage?": "str", "code?": "int", "igMediaId?": "str" };
+export const PUBLISH_PAGE_SPEC = { outcome: "str", "draftId?": "id", "quotaUsage?": "int", "quotaTotal?": "int" };
+export const PUBLISH_RUN_SPEC = { decisions: [PUBLISH_DECISION_SPEC], staleEdits: ["id"], expired: ["id"], pages: { "*": PUBLISH_PAGE_SPEC } };
 export const RUN_SPEC = {
   id: "id",
   workflow: "pattern:^[a-z][a-z0-9-]{1,40}$",
@@ -759,6 +769,7 @@ export const RUN_SPEC = {
   errors: ["str"],
   budgetUsedUsd: "num[0..100000]",
   "dryRun?": "bool",
+  "publisher?": PUBLISH_RUN_SPEC,
 };
 
 // §4.12 status.json (M9 lastRuns ≤ 20)

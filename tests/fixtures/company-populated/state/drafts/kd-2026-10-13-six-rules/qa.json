@@ -1,0 +1,114 @@
+{
+  "draftId": "kd-2026-10-13-six-rules",
+  "revision": 1,
+  "at": "2026-10-12T05:40:00+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "498/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "always → 3/3 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "10 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "999 → pricing:monthly, 7 → pricing:trial"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "89/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; Devanagari only \"काट दो\")"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 9 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "3 link tokens, all on kaatdo.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.00 (no recent captions)"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; ₹999 = pricing:monthly"
+      }
+    ]
+  },
+  "model": {
+    "provider": "mock",
+    "model": "mock",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates",
+        "ok": true,
+        "factId": "kd-f04"
+      },
+      {
+        "claim": "on breach every pending order is cancelled, every position squared off at market, the account locked until close",
+        "ok": true,
+        "factId": "kd-f05"
+      },
+      {
+        "claim": "monthly ₹999 at the time of posting",
+        "ok": true,
+        "factId": "monthly"
+      },
+      {
+        "claim": "7-day free trial, no card",
+        "ok": true,
+        "factId": "trial"
+      },
+      {
+        "claim": "not investment advice; not registered with SEBI; execution is never guaranteed",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "sign-off काट दो.",
+        "ok": true,
+        "factId": "kd-f13"
+      }
+    ],
+    "reasons": [],
+    "notes": "Terse console register; all three disclaimer groups verbatim; price quoted with 'at the time of posting'."
+  },
+  "reasons": [],
+  "mock": true,
+  "runId": "engine-daily-20261012-0531-fx1070"
+}
