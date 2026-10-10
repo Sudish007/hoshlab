@@ -1,0 +1,104 @@
+{
+  "draftId": "rp-2026-10-09-your-biodata-on-your-device",
+  "revision": 1,
+  "at": "2026-10-07T05:41:02+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "297/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "no trigger fired"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "8 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "7 → rp-f06, 4 → rp-f06"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "92/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (hi+en; Devanagari allowed)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 112 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "3 link tokens, all on rishtapatra.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/2 (sparse)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.00 (no recent captions)"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 4,
+    "claims": [
+      {
+        "claim": "every detail, photo and imported resume is processed in the browser and saved only on your device",
+        "ok": true,
+        "factId": "rp-f05"
+      },
+      {
+        "claim": "an account is optional",
+        "ok": true,
+        "factId": "rp-f05"
+      },
+      {
+        "claim": "guided 7-step editor with a live A4 preview that fits one page",
+        "ok": true,
+        "factId": "rp-f06"
+      },
+      {
+        "claim": "बायोडाटा से रिश्ते तक",
+        "ok": true,
+        "factId": "rp-f02"
+      }
+    ],
+    "reasons": [],
+    "notes": "Warm and plain; Hindi headline in Devanagari; no kundali mention, so the kundali disclaimer is not required; no counts or superlatives."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261007-0531-2c3d4e"
+}

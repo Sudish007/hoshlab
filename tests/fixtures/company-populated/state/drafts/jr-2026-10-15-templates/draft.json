@@ -10,10 +10,10 @@
   "revision": 3,
   "reworkCount": 2,
   "mock": false,
-  "createdAt": "2026-10-12T05:36:00+05:30",
-  "updatedAt": "2026-10-12T05:40:00+05:30",
+  "createdAt": "2026-10-11T05:34:10+05:30",
+  "updatedAt": "2026-10-12T09:04:10+05:30",
   "by": "writer",
-  "runId": "engine-daily-20261012-0531-a7b8c9",
+  "runId": "engine-daily-20261012-0900-a7b8c9",
   "caption": "Nine templates. Three are free.\nTeXline, Stack First and Campus One are free. Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact and Executive Mono are Pro. Nova has a one-column or two-column switch.\nExport to PDF or plain text — free, unlimited and watermark-free on the free plan. Word export is Pro.\nSix layout rules are measured on the rendered page after every edit. Not a certification against any ATS vendor.\njobrez.com",
   "hashtags": [
     "#JobRez",
@@ -72,43 +72,43 @@
   "media": [
     {
       "kind": "image",
-      "path": "media/jr-2026-10-15-templates/slide-1-7cfbae6d.jpg",
-      "bytes": 9432,
+      "path": "media/jr-2026-10-15-templates/slide-1-e1a87d65.jpg",
+      "bytes": 78107,
       "width": 1080,
       "height": 1350,
-      "sha256": "7cfbae6d41f17cb1b34897046134304f36529e6e223ea96756052d2a70958af1",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-15-templates/slide-1-7cfbae6d.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-15-templates/slide-1-7cfbae6d.jpg"
+      "sha256": "e1a87d65aa57dc3d7b8da3d5fdce44be7fa05b275c915bf6fc8f28c07360b4d0",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-15-templates/slide-1-e1a87d65.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-15-templates/slide-1-e1a87d65.jpg"
     },
     {
       "kind": "image",
-      "path": "media/jr-2026-10-15-templates/slide-2-7cfbae6d.jpg",
-      "bytes": 9432,
+      "path": "media/jr-2026-10-15-templates/slide-2-ce00b3e9.jpg",
+      "bytes": 85066,
       "width": 1080,
       "height": 1350,
-      "sha256": "7cfbae6d41f17cb1b34897046134304f36529e6e223ea96756052d2a70958af1",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-15-templates/slide-2-7cfbae6d.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-15-templates/slide-2-7cfbae6d.jpg"
+      "sha256": "ce00b3e9da8e610a9f71bcc7ac097322f61f68bf2ae90f008455426df794bf87",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-15-templates/slide-2-ce00b3e9.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-15-templates/slide-2-ce00b3e9.jpg"
     },
     {
       "kind": "image",
-      "path": "media/jr-2026-10-15-templates/slide-3-7cfbae6d.jpg",
-      "bytes": 9432,
+      "path": "media/jr-2026-10-15-templates/slide-3-b5a42713.jpg",
+      "bytes": 98772,
       "width": 1080,
       "height": 1350,
-      "sha256": "7cfbae6d41f17cb1b34897046134304f36529e6e223ea96756052d2a70958af1",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-15-templates/slide-3-7cfbae6d.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-15-templates/slide-3-7cfbae6d.jpg"
+      "sha256": "b5a427130b9f8a686248107a4d6164a74f77db3312cee6624623d5f80887a172",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-15-templates/slide-3-b5a42713.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-15-templates/slide-3-b5a42713.jpg"
     },
     {
       "kind": "image",
-      "path": "media/jr-2026-10-15-templates/slide-4-7cfbae6d.jpg",
-      "bytes": 9432,
+      "path": "media/jr-2026-10-15-templates/slide-4-9c675c27.jpg",
+      "bytes": 100364,
       "width": 1080,
       "height": 1350,
-      "sha256": "7cfbae6d41f17cb1b34897046134304f36529e6e223ea96756052d2a70958af1",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-15-templates/slide-4-7cfbae6d.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-15-templates/slide-4-7cfbae6d.jpg"
+      "sha256": "9c675c27d26c39bec9739f9b7b36b9a772bec0c3eac94f335f8cdf27c6fbd834",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-15-templates/slide-4-9c675c27.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-15-templates/slide-4-9c675c27.jpg"
     }
   ],
   "publishAttempts": [],
@@ -117,5 +117,6 @@
     "Remove \"trusted by thousands of families\": no fact supports a user count.",
     "claim cites rp-f04, which is not a usable fact of this brand: \"Janam Kundali is free on RishtaPatra\"",
     "claim without a fact id: \"trusted by thousands of families\""
-  ]
+  ],
+  "designNote": "4 slides · variant A · cream on ink"
 }

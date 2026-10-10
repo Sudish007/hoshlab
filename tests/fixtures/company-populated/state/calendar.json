@@ -3,6 +3,26 @@
   "horizonDays": 14,
   "slots": [
     {
+      "slotId": "kaatdo-2026-10-06-0815",
+      "page": "kaatdo",
+      "at": "2026-10-06T08:15:00+05:30",
+      "format": "image",
+      "ideaId": "kd-i0003",
+      "draftId": "kd-2026-10-06-reconnect-every-trading-morning",
+      "status": "published",
+      "reason": "memo 2026-W41 priority 1"
+    },
+    {
+      "slotId": "rishtapatra-2026-10-09-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-09T19:30:00+05:30",
+      "format": "image",
+      "ideaId": "rp-i0019",
+      "draftId": "rp-2026-10-09-your-biodata-on-your-device",
+      "status": "published",
+      "reason": "memo 2026-W41 priority 1"
+    },
+    {
       "slotId": "kaatdo-2026-10-13-0815",
       "page": "kaatdo",
       "at": "2026-10-13T08:15:00+05:30",
@@ -10,7 +30,7 @@
       "ideaId": "kd-i0007",
       "draftId": "kd-2026-10-13-six-rules",
       "status": "queued",
-      "reason": "memo 2026-W42 priority 1"
+      "reason": "memo 2026-W41 priority 1"
     },
     {
       "slotId": "rishtapatra-2026-10-14-1930",
@@ -20,17 +40,17 @@
       "ideaId": "rp-i0031",
       "draftId": "rp-2026-10-14-kundali-free",
       "status": "queued",
-      "reason": "memo 2026-W42 priority 1 (owner-assigned image slot)"
+      "reason": "memo 2026-W41 priority 1 (owner-assigned image slot)"
     },
     {
       "slotId": "job_rez-2026-10-15-1230",
       "page": "job_rez",
-      "at": "2026-10-15T12:30:00+05:30",
+      "at": "2026-10-15T18:30:00+05:30",
       "format": "carousel",
       "ideaId": "jr-i0012",
       "draftId": "jr-2026-10-15-templates",
       "status": "blocked",
-      "reason": "backlog idea jr-i0012 (owner-assigned carousel slot)"
+      "reason": "backlog idea jr-i0012 (owner-assigned carousel slot); moved by the owner from 12:30 to 18:30"
     }
   ]
 }

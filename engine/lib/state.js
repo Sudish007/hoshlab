@@ -3,7 +3,7 @@
 // writes UTF-8 without BOM atomically, and refuses admin-owned paths.
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, join, posix, resolve } from "node:path";
-import { DRAFT_SPEC, QA_SPEC, SchemaError, validate } from "./schema.js";
+import { APPROVAL_SPEC, CALENDAR_SPEC, CONFIG_SPEC, DRAFT_SPEC, EDIT_SPEC, FEEDBACK_SPEC, HR_DECISION_SPEC, HR_PROPOSAL_SPEC, IDEA_SPEC, METRIC_SPEC, OVERRIDE_SPEC, PUBLISHED_SPEC, QA_SPEC, ROSTER_SPEC, RUN_SPEC, STATUS_SPEC, SchemaError, TOKENS_SPEC, USAGE_SPEC, validate } from "./schema.js";
 import { istMonthKey } from "./time.js";
 
 export class OwnershipError extends Error {
@@ -186,6 +186,7 @@ export function createState({ companyDir = process.env.COMPANY_DIR || "company",
     root,
     now: clock,
     resolve: abs,
+    validateTree: () => validateTree(root),
     exists: (rel) => existsSync(abs(rel)),
     readJson,
     writeJson,
@@ -204,4 +205,107 @@ export function createState({ companyDir = process.env.COMPANY_DIR || "company",
     isAdminOwned,
     isEngineOwned,
   };
+}
+
+// ---------------------------------------------------------------------------------------
+// validateTree(companyDir) — every file under company/ that the engine or the admin writes, checked
+// against its spec (design §12 "Every state write validates", P1-22/P1-24 proofs, fixtures-integrity
+// test). Brands and charters are validated by src/lib/company.js (loadCompany) and are only listed here.
+//   → { files: [{ rel, kind, ok, errors }], errors: ['<rel>: <message>', …], ok }
+// Unknown files under state/ are errors: the tree must contain only what the specs describe.
+
+const MONTH_FILE = /^\d{4}-(?:0[1-9]|1[0-2])\.jsonl$/;
+const WEEK_FILE = /^\d{4}-W(?:0[1-9]|[1-4]\d|5[0-3])\.md$/;
+const ID_RE = /^[a-z0-9][a-z0-9_.-]{0,119}$/;
+
+function walkFiles(dir, out = [], base = dir) {
+  if (!existsSync(dir)) return out;
+  for (const name of readdirSync(dir).sort()) {
+    const p = join(dir, name);
+    if (statSync(p).isDirectory()) walkFiles(p, out, base);
+    else out.push(p.slice(base.length + 1).replace(/\\/g, "/"));
+  }
+  return out;
+}
+
+// What a state path is and which spec applies → { kind, spec, jsonl, text, context? } or null (unknown).
+export function specFor(rel) {
+  const n = normalizeRel(rel);
+  if (n === "config.json") return { kind: "config", spec: CONFIG_SPEC };
+  if (n === "roster.json") return { kind: "roster", spec: ROSTER_SPEC, needsConfig: true };
+  if (/^brands\/[\w.-]+\.md$/.test(n)) return { kind: "brand", text: true };
+  if (/^charters\/[\w.-]+\.md$/.test(n)) return { kind: "charter", text: true };
+  if (n === "state/status.json") return { kind: "status", spec: STATUS_SPEC };
+  if (n === "state/calendar.json") return { kind: "calendar", spec: CALENDAR_SPEC };
+  if (n === "state/tokens.json") return { kind: "tokens", spec: TOKENS_SPEC };
+  if (n === "state/ideas.jsonl") return { kind: "idea", spec: IDEA_SPEC, jsonl: true };
+  if (n === "state/approvals.jsonl") return { kind: "approval", spec: APPROVAL_SPEC, jsonl: true };
+  if (n === "state/overrides.jsonl") return { kind: "override", spec: OVERRIDE_SPEC, jsonl: true };
+  if (n === "state/feedback.jsonl") return { kind: "feedback", spec: FEEDBACK_SPEC, jsonl: true };
+  if (n === "state/published.jsonl") return { kind: "published", spec: PUBLISHED_SPEC, jsonl: true };
+  if (n === "state/hr/decisions.jsonl") return { kind: "hrDecision", spec: HR_DECISION_SPEC, jsonl: true };
+  let m;
+  if ((m = n.match(/^state\/(runs|usage|metrics)\/([^/]+)$/))) {
+    if (!MONTH_FILE.test(m[2])) return null;
+    return { kind: m[1] === "runs" ? "run" : m[1] === "usage" ? "usage" : "metric", spec: m[1] === "runs" ? RUN_SPEC : m[1] === "usage" ? USAGE_SPEC : METRIC_SPEC, jsonl: true };
+  }
+  if ((m = n.match(/^state\/drafts\/([^/]+)\/(draft|qa)\.json$/))) {
+    if (!ID_RE.test(m[1])) return null;
+    return m[2] === "draft" ? { kind: "draft", spec: DRAFT_SPEC, id: m[1], idKey: "id" } : { kind: "qa", spec: QA_SPEC, id: m[1], idKey: "draftId" };
+  }
+  if ((m = n.match(/^state\/edits\/([^/]+)\.json$/))) return ID_RE.test(m[1]) ? { kind: "edit", spec: EDIT_SPEC, id: m[1], idKey: "draftId" } : null;
+  if ((m = n.match(/^state\/hr\/proposals\/([^/]+)\.json$/))) return MONTH_FILE.test(`${m[1]}.jsonl`) ? { kind: "hrProposal", spec: HR_PROPOSAL_SPEC } : null;
+  if ((m = n.match(/^state\/hr\/([^/]+)-review\.md$/))) return MONTH_FILE.test(`${m[1]}.jsonl`) ? { kind: "hrReview", text: true } : null;
+  if ((m = n.match(/^state\/(memos|reports)\/([^/]+)$/))) return WEEK_FILE.test(m[2]) ? { kind: m[1] === "memos" ? "memo" : "report", text: true } : null;
+  return null;
+}
+
+export function validateTree(companyDir) {
+  const root = resolve(companyDir);
+  const files = [];
+  const errors = [];
+  const read = (rel) => readFileSync(join(root, rel), "utf8").replace(/^\uFEFF/, "");
+  let config = null;
+  if (existsSync(join(root, "config.json"))) {
+    try {
+      config = JSON.parse(read("config.json"));
+    } catch {
+      config = null;
+    }
+  }
+  const rels = [...walkFiles(join(root, "state")).map((r) => `state/${r}`)];
+  for (const top of ["config.json", "roster.json"]) if (existsSync(join(root, top))) rels.unshift(top);
+  for (const rel of rels) {
+    const entry = { rel, kind: null, ok: true, errors: [] };
+    const s = specFor(rel);
+    if (!s) {
+      entry.ok = false;
+      entry.errors.push("unexpected file (no spec describes this path)");
+    } else {
+      entry.kind = s.kind;
+      try {
+        const text = read(rel);
+        if (s.text) {
+          if (!text.trim()) entry.errors.push("empty file");
+        } else if (s.jsonl) {
+          const rows = parseJsonl(text);
+          rows.forEach((row, i) => {
+            const r = validate(row, s.spec);
+            for (const e of r.errors) entry.errors.push(`line ${i + 1}: ${e}`);
+          });
+        } else {
+          const value = JSON.parse(text);
+          const r = validate(value, s.spec, s.needsConfig ? config : undefined);
+          entry.errors.push(...r.errors);
+          if (s.idKey && value && value[s.idKey] !== s.id) entry.errors.push(`${s.idKey} ${JSON.stringify(value && value[s.idKey])} does not match the folder/file name ${s.id}`);
+        }
+      } catch (e) {
+        entry.errors.push(e.message);
+      }
+      entry.ok = entry.errors.length === 0;
+    }
+    files.push(entry);
+    for (const e of entry.errors) errors.push(`${rel}: ${e}`);
+  }
+  return { files, errors, ok: errors.length === 0 };
 }

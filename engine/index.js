@@ -13,10 +13,10 @@ export const EXIT = { ok: 0, failed: 1, usage: 2 };
 // Registry: `load` imports the command module (export run(ctx) → exit code); null = not built yet.
 export const COMMANDS = {
   "check-models": { summary: "verify provider secrets, model ids and prices (no key material printed)", planned: "FEAT-103", load: () => import("./commands/check-models.js") },
-  daily: { summary: "run the daily agents (CEO, Strategist, Writer, Designer, QA)", planned: "FEAT-108", load: null },
+  daily: { summary: "run the daily agents (CEO, Strategist, Writer, Designer, QA; --agents csv, --page, --dry-run, --commit, --now <iso> with --dry-run only)", planned: "FEAT-108", load: () => import("./commands/daily.js") },
   publish: { summary: "hourly publisher: post queued, approved drafts (--page, --dry-run, --now <iso> with dry-run only)", planned: "FEAT-107", load: () => import("./commands/publish.js") },
   "render-sample": { summary: "render one fixture draft for a page into the media worktree (--page, --out, --format)", planned: "FEAT-106", load: () => import("./commands/render-sample.js") },
-  "set-page": { summary: "switch a page between approve_first and autopilot (owner tool)", planned: "FEAT-108", load: null },
+  "set-page": { summary: "switch a page between approve_first and autopilot (owner tool; --page, --mode)", planned: "FEAT-108", load: () => import("./commands/set-page.js") },
   analyst: { summary: "weekly insights report", planned: "FEAT-203 / phase 2", load: null },
   hr: { summary: "monthly roster review", planned: "FEAT-204 / phase 2", load: null },
   "refresh-tokens": { summary: "refresh Instagram long-lived tokens", planned: "FEAT-202 / phase 2", load: null },

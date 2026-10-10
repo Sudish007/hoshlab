@@ -1,7 +1,7 @@
 {
   "draftId": "jr-2026-10-15-templates",
   "revision": 3,
-  "at": "2026-10-12T05:40:00+05:30",
+  "at": "2026-10-12T09:04:10+05:30",
   "passed": false,
   "deterministic": {
     "passed": true,
@@ -44,7 +44,7 @@
       {
         "id": "media_spec",
         "ok": true,
-        "detail": "4 × 1080x1350 jpeg max 9 KB"
+        "detail": "4 × 1080x1350 jpeg max 100 KB"
       },
       {
         "id": "links",
@@ -96,5 +96,5 @@
     "claim without a fact id: \"trusted by thousands of families\""
   ],
   "mock": true,
-  "runId": "engine-daily-20261012-0531-fx1070"
+  "runId": "engine-daily-20261012-0900-a7b8c9"
 }

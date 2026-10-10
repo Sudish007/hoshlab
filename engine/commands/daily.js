@@ -1,0 +1,583 @@
+// daily — the engine-daily run (design.md §3.1, §3.5, §4.12, §4.14, §11; review M5.4, M9, M16; plan D6/D7/D9/D18):
+//   node engine/index.js daily [--agents ceo,strategist,…] [--page <handle>] [--dry-run] [--commit] [--now <iso>]
+//
+//   1. loadCompany + status.json — any CompanyError/SchemaError/SyntaxError is fatal: the ONLY write is
+//      runs/<IST month>.jsonl { ok:false, errors[] } and the command exits 1 (P1-24).
+//   2. budget: used = Σ usage/<month>.jsonl; used ≥ monthlyUsd with hardStop → flag budget_exhausted and
+//      every model-backed step (CEO, Strategist, Writer, QA) is recorded 'skipped: budget_exhausted' — no
+//      drafts are created (M5.4); used ≥ warnAtPct → budget_warn.
+//   3. CEO when Monday IST or this ISO week's memo is missing;  4. HR → skipped: phase2 (D18);
+//   5. Strategist per page;  6. Writer for slots within leadDays without a live draft + drafts in rework;
+//   7. Designer for `written` drafts (skipped: media_branch_missing when .media/.git is absent, M16);
+//   8. QA for `rendered` drafts;  9. one inline rework loop (Writer → Designer → QA) for the drafts QA
+//      sent to rework in this run;  10. finish: status.json (queue/blocked counts, budget, pages, flags,
+//      lastRuns ≤ 20 — M9), calendar slots re-linked to the drafts written today, runs/<month>.jsonl
+//      record, one scrubbed stdout line per agent.
+//   --dry-run copies the company dir (and .media when present) to a temp dir, runs there and prints the
+//   path; nothing in the repo changes. Commit + push happen only with CI=true or --commit (git.js).
+import { cpSync, existsSync, mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, relative, resolve } from "node:path";
+import { CompanyError, loadCompany } from "../../src/lib/company.js";
+import { monthUsedUsd } from "../lib/budget.js";
+import { readEnv } from "../lib/env.js";
+import { commitAndPush, PushConflictError, repoRootFor, shouldCommit, writeGithubOutput } from "../lib/git.js";
+import { runId as makeRunId } from "../lib/ids.js";
+import { createLogger, scrub, stepLine } from "../lib/log.js";
+import { mediaBranchPresent } from "../lib/media.js";
+import { CALENDAR_SPEC, RUN_SPEC, STATUS_SPEC, SchemaError } from "../lib/schema.js";
+import { createState, latestByKey } from "../lib/state.js";
+import { istMonthKey, nowIst, parseIso } from "../lib/time.js";
+import { AgentOutputError, AllProvidersFailedError, BudgetExhaustedError, createRouter } from "../llm/router.js";
+import { MockFixtureError } from "../llm/mock.js";
+import { createRenderer } from "../render/render.js";
+import { readMemo, runCeo, shouldRun as ceoShouldRun } from "../agents/ceo.js";
+import * as hr from "../agents/hr.js";
+import { TERMINAL_SLOT_DRAFT_STATUSES, runStrategist, slotStatusFor } from "../agents/strategist.js";
+import { runWriter } from "../agents/writer.js";
+import { SKIP_MEDIA_BRANCH_MISSING, runDesigner } from "../agents/designer.js";
+import { runQa } from "../agents/qa.js";
+import { queueCounts, triggerFrom } from "./publish.js";
+
+export const WORKFLOW = "engine-daily";
+export const AGENT_ORDER = ["ceo", "hr", "strategist", "writer", "designer", "qa"];
+export const LLM_AGENTS = ["ceo", "strategist", "writer", "qa"];
+export const SKIP_BUDGET = "skipped: budget_exhausted";
+export const FLAG_BUDGET_EXHAUSTED = "budget_exhausted";
+export const FLAG_BUDGET_WARN = "budget_warn";
+// Flags the daily run recomputes from scratch; every other flag (token_invalid:*, publish_failed:*,
+// token_expiring:*) belongs to the publisher / token refresh and is kept unless its cause is gone.
+const DAILY_FLAGS = new Set([FLAG_BUDGET_WARN, FLAG_BUDGET_EXHAUSTED, "render_failed", "media_branch_missing"]);
+const MS_PER_DAY = 86400000;
+
+function toDate(v) {
+  const d = v instanceof Date ? v : typeof v === "string" ? parseIso(v) : v === undefined || v === null ? new Date() : new Date(v);
+  if (Number.isNaN(d.getTime())) throw new TypeError(`daily: invalid date ${String(v)}`);
+  return d;
+}
+
+const ms = (iso) => Date.parse(iso);
+
+// parseAgents('ceo, writer') → Set | null (null = every agent). Unknown names throw.
+export function parseAgents(csv) {
+  if (csv === undefined || csv === null || csv === true || csv === "") return null;
+  const names = String(csv)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  for (const n of names) if (!AGENT_ORDER.includes(n)) throw new TypeError(`daily: unknown agent ${JSON.stringify(n)} (--agents takes ${AGENT_ORDER.join(",")})`);
+  return new Set(names);
+}
+
+function seedStatus(config, state, now) {
+  const pages = {};
+  for (const p of config.pages) pages[p.handle] = { mode: p.mode, tokenState: "not_configured", tokenExpiresAt: null, lastPublishedAt: null };
+  return { updatedAt: nowIst(now), lastRun: null, lastRuns: [], queue: {}, blocked: {}, budget: { month: istMonthKey(now), usedUsd: monthUsedUsd(state, now), limitUsd: config.budget.monthlyUsd, exhausted: false }, pages, flags: [] };
+}
+
+// A router error that ends the agent's work for this run (not a programming error).
+function isRouterError(err) {
+  return err instanceof BudgetExhaustedError || err instanceof AgentOutputError || err instanceof AllProvidersFailedError || err instanceof MockFixtureError;
+}
+
+// Live = may still move forward (not terminal, not published).
+function isLive(draft) {
+  return draft && !TERMINAL_SLOT_DRAFT_STATUSES.includes(draft.status) && draft.status !== "published";
+}
+
+// Slots of `page` that need a Writer: planned, with an idea, inside the lead window, no live draft.
+export function slotsToWrite(calendar, drafts, page, now, leadDays) {
+  const nowMs = toDate(now).getTime();
+  const limit = nowMs + leadDays * MS_PER_DAY;
+  const live = new Set(drafts.filter((d) => d.page === page.handle && isLive(d)).map((d) => d.slotId));
+  const byId = new Map(drafts.map((d) => [d.id, d]));
+  return ((calendar && calendar.slots) || []).filter((s) => {
+    if (s.page !== page.handle || s.status === "dropped") return false;
+    const at = ms(s.at);
+    if (!(at >= nowMs && at <= limit)) return false;
+    if (live.has(s.slotId)) return false;
+    if (s.draftId && isLive(byId.get(s.draftId))) return false;
+    return true;
+  });
+}
+
+// Captions of the page's drafts, newest first (the Writer and QA read the last 10 / 30).
+export function recentCaptionsFor(drafts, handle, exclude = null) {
+  return drafts
+    .filter((d) => d.page === handle && d.id !== exclude && typeof d.caption === "string")
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)) || b.id.localeCompare(a.id))
+    .map((d) => d.caption);
+}
+
+// calendar.json after a run: slots point at the live draft written for them today and carry the
+// draft's status (design §4.5 "derived at write time"). Returns the new document or null (unchanged).
+export function relinkCalendar(calendar, drafts) {
+  if (!calendar || !Array.isArray(calendar.slots)) return null;
+  const byId = new Map(drafts.map((d) => [d.id, d]));
+  const liveBySlot = new Map();
+  for (const d of drafts) {
+    if (!d.slotId || !isLive(d)) continue;
+    const prev = liveBySlot.get(d.slotId);
+    if (!prev || String(d.createdAt) > String(prev.createdAt)) liveBySlot.set(d.slotId, d);
+  }
+  let changed = false;
+  const slots = calendar.slots.map((s) => {
+    const next = { ...s };
+    if (!next.draftId && liveBySlot.has(next.slotId)) {
+      const d = liveBySlot.get(next.slotId);
+      next.draftId = d.id;
+      if (!next.ideaId && d.ideaId) next.ideaId = d.ideaId;
+    }
+    const draft = next.draftId ? byId.get(next.draftId) || null : null;
+    next.status = slotStatusFor(next, draft);
+    if (JSON.stringify(next) !== JSON.stringify(s)) changed = true;
+    return next;
+  });
+  return changed ? { ...calendar, slots } : null;
+}
+
+// runDaily({ companyDir, mediaRoot, now, processEnv, fetchImpl, flags: { agents, page, dryRun }, renderer, stdout, runId, trigger })
+//   → { ok, changed, changedFiles, run, status, agents, errors, flags, summary, companyDir }
+export async function runDaily({ companyDir, mediaRoot, now, processEnv = process.env, fetchImpl = globalThis.fetch, flags: runFlags = {}, renderer, stdout = (s) => process.stdout.write(s + "\n"), runId, trigger = triggerFrom(processEnv), workflow = WORKFLOW } = {}) {
+  if (!companyDir) throw new TypeError("daily: companyDir is required");
+  const startedAt = toDate(now);
+  const clock = () => startedAt;
+  const id = runId || makeRunId(workflow, startedAt);
+  const t0 = Date.now();
+  const dryRun = runFlags.dryRun === true;
+  const selected = parseAgents(runFlags.agents);
+  const pageFilter = typeof runFlags.page === "string" && runFlags.page ? runFlags.page : null;
+  const wants = (agent) => !selected || selected.has(agent);
+  const media = mediaRoot || resolve(companyDir, "..", ".media");
+
+  // 1. load — fatal: the only write is the run record (design §11 row 1, P1-24)
+  let company;
+  let status;
+  try {
+    company = loadCompany({ companyDir, now: clock, warn: () => {} });
+    const { state } = company;
+    status = state.exists("state/status.json") ? state.readJson("state/status.json", STATUS_SPEC) : seedStatus(company.config, state, startedAt);
+    if (state.exists("state/calendar.json")) state.readJson("state/calendar.json", CALENDAR_SPEC); // validates
+    for (const did of state.listDrafts()) state.readDraft(did); // every draft must validate before the run
+  } catch (err) {
+    if (!(err instanceof CompanyError) && !(err instanceof SchemaError) && !(err instanceof SyntaxError)) throw err;
+    const state = createState({ companyDir, now: clock });
+    const errors = (err.errors || [err.message]).map((e) => scrub(String(e)));
+    const elapsed = Date.now() - t0;
+    const runsRel = state.monthLogPath("runs", startedAt);
+    const run = { id, workflow, trigger, startedAt: nowIst(startedAt), endedAt: nowIst(new Date(startedAt.getTime() + elapsed)), ok: false, agents: [], changed: [`company/${runsRel}`], errors, budgetUsedUsd: 0 };
+    if (dryRun) run.dryRun = true;
+    state.appendLog("runs", run, RUN_SPEC, startedAt);
+    for (const e of errors) stdout(`[daily] error: ${e}`);
+    return { ok: false, fatal: true, changed: false, changedFiles: [runsRel], run, status: null, agents: [], errors, flags: [], summary: `daily: company failed to load (${errors.length} error${errors.length === 1 ? "" : "s"})`, companyDir };
+  }
+  const { config, roster, brands, charters, state } = company;
+  if (pageFilter && !config.pages.some((p) => p.handle === pageFilter)) throw new TypeError(`daily: unknown page ${JSON.stringify(pageFilter)} (--page takes ${config.pages.map((p) => p.handle).join("|")})`);
+  const pages = config.pages.filter((p) => !pageFilter || p.handle === pageFilter);
+  const d = config.defaults;
+  const router = createRouter({ config, roster, state, fetchImpl, now: clock, runId: id, charters, processEnv });
+  // every stdout line passes through scrub() with the provider keys (the router already scrubs its errors)
+  const logger = createLogger({ secrets: readEnv(Object.values(config.providers).map((p) => p.secret), processEnv).secrets(), stdout, stderr: stdout });
+  const log = (s) => logger.info(s);
+  const changedFiles = [];
+  const errors = [];
+  const flags = new Set();
+  const addFlag = (f) => flags.add(f);
+  const mediaCommits = [];
+
+  // 2. budget (M5.4): the month's spend decides whether any model-backed step runs at all
+  const limit = config.budget.monthlyUsd;
+  let used = monthUsedUsd(state, startedAt);
+  let exhausted = config.budget.hardStop === true && used >= limit;
+  if (exhausted) addFlag(FLAG_BUDGET_EXHAUSTED);
+  if (limit > 0 && (used / limit) * 100 >= config.budget.warnAtPct) addFlag(FLAG_BUDGET_WARN);
+
+  // per-agent records (RUN_AGENT_SPEC), in the design's order
+  const records = new Map(AGENT_ORDER.map((name) => [name, { name, ok: true, ms: 0, calls: 0, costUsd: 0, notes: [], skipped: null }]));
+  const rec = (name) => records.get(name);
+  const note = (name, text) => rec(name).notes.push(text);
+  const skip = (name, reason, skipped) => {
+    const r = rec(name);
+    r.notes.push(reason);
+    r.skipped = skipped || reason.replace(/^skipped: /, "");
+  };
+  const fail = (name, text) => {
+    const r = rec(name);
+    r.ok = false;
+    r.notes.push(scrub(text));
+  };
+  // Budget crossed mid-run (the router's gate throws before the call): the rest of the model steps skip.
+  const budgetHit = (name) => {
+    exhausted = true;
+    addFlag(FLAG_BUDGET_EXHAUSTED);
+    skip(name, SKIP_BUDGET, "budget_exhausted");
+  };
+  const timed = async (name, fn) => {
+    const started = Date.now();
+    try {
+      return await fn();
+    } finally {
+      rec(name).ms += Date.now() - started;
+    }
+  };
+  const settle = (name) => {
+    const t = router.totalsFor(name);
+    const r = rec(name);
+    r.calls = t.calls;
+    r.costUsd = Math.round(t.costUsd * 1e6) / 1e6;
+  };
+  const drafts = () => state.listDrafts().map((did) => state.readDraft(did));
+  const ideasById = () => latestByKey(state.readJsonl("state/ideas.jsonl"), "id");
+  const readCalendar = () => (state.exists("state/calendar.json") ? state.readJson("state/calendar.json", CALENDAR_SPEC) : null);
+
+  // 3. CEO — Monday IST or this week's memo missing; company-wide, so a --page filter skips it
+  if (!wants("ceo")) skip("ceo", "skipped: not selected (--agents)", "not_selected");
+  else if (pageFilter && !(selected && selected.has("ceo"))) skip("ceo", "skipped: --page filter (company-wide agent)", "page_filter");
+  else if (!ceoShouldRun(startedAt, state)) skip("ceo", `skipped: not Monday and ${readMemo(state, startedAt).rel} exists`, "not_due");
+  else if (exhausted) skip("ceo", SKIP_BUDGET, "budget_exhausted");
+  else {
+    await timed("ceo", async () => {
+      try {
+        const r = await runCeo({ config, brands, router, state, now: startedAt, runId: id, flags: [...status.flags, ...flags] });
+        changedFiles.push(r.rel);
+        note("ceo", r.note);
+      } catch (err) {
+        if (err instanceof BudgetExhaustedError) return budgetHit("ceo");
+        if (!isRouterError(err)) throw err;
+        fail("ceo", `${err.name}: ${err.message}`);
+      }
+    });
+    settle("ceo");
+  }
+
+  // 4. HR — Phase 2 (D18)
+  if (!wants("hr")) skip("hr", "skipped: not selected (--agents)", "not_selected");
+  else {
+    const r = hr.run({ config, roster, state, now: startedAt });
+    skip("hr", `skipped: ${r.skipped} — ${r.note}`, r.skipped);
+  }
+
+  // 5. Strategist per page
+  if (!wants("strategist")) skip("strategist", "skipped: not selected (--agents)", "not_selected");
+  else if (exhausted) skip("strategist", SKIP_BUDGET, "budget_exhausted");
+  else {
+    const memoDoc = readMemo(state, startedAt);
+    const memo = memoDoc ? memoDoc.memo : null;
+    let stop = false;
+    for (const page of pages) {
+      if (stop) break;
+      await timed("strategist", async () => {
+        try {
+          const r = await runStrategist({ page, brand: brands[page.handle], memo, state, router, config, now: startedAt, runId: id });
+          changedFiles.push(r.calendarRel, "state/ideas.jsonl");
+          note("strategist", `${page.handle}: ${r.note}`);
+        } catch (err) {
+          if (err instanceof BudgetExhaustedError) {
+            budgetHit("strategist");
+            stop = true;
+            return;
+          }
+          if (!isRouterError(err)) throw err;
+          fail("strategist", `${page.handle}: ${err.name}: ${err.message}`);
+          if (err instanceof AllProvidersFailedError) stop = true;
+        }
+      });
+    }
+    settle("strategist");
+  }
+
+  // 6. Writer — slots inside the lead window without a live draft, plus drafts in rework
+  async function writerPass(targets, label) {
+    const all = drafts();
+    const ideas = ideasById();
+    const cal = readCalendar();
+    let written = 0;
+    let reworked = 0;
+    let invalid = 0;
+    let stop = false;
+    for (const t of targets) {
+      if (stop) break;
+      const page = t.page;
+      const brand = brands[page.handle];
+      let slot = t.slot;
+      let existing = t.draft || null;
+      if (existing) {
+        slot = ((cal && cal.slots) || []).find((s) => s.slotId === existing.slotId) || { slotId: existing.slotId, page: page.handle, at: existing.slotAt, format: existing.format, status: existing.status, ideaId: existing.ideaId };
+        if ((existing.reworkCount || 0) > d.maxReworkLoops) {
+          // cannot happen through QA (it blocks at the cap) — kept so the loop bound holds whatever wrote the file
+          changedFiles.push(state.writeDraft({ ...existing, status: "blocked", updatedAt: nowIst(startedAt) }));
+          note("writer", `${existing.id}: blocked (reworkCount ${existing.reworkCount} > ${d.maxReworkLoops})`);
+          continue;
+        }
+      }
+      const idea = ideas.get(slot.ideaId);
+      if (!idea) {
+        note("writer", `${existing ? existing.id : slot.slotId}: idea ${slot.ideaId || "(none)"} missing, skipped`);
+        continue;
+      }
+      await timed("writer", async () => {
+        try {
+          const r = await runWriter({ slot, idea, brand, page, config, state, router, draft: existing, recentCaptions: recentCaptionsFor(all, page.handle, existing ? existing.id : null), now: startedAt, runId: id });
+          if (r.ok) {
+            changedFiles.push(`state/drafts/${r.draft.id}/draft.json`);
+            if (r.created) written++;
+            else reworked++;
+            all.push(r.draft);
+          } else {
+            invalid++;
+            if (r.draft) changedFiles.push(`state/drafts/${r.draft.id}/draft.json`);
+            fail("writer", `${existing ? existing.id : slot.slotId}: invalid_output after one repair call (${r.error.provider}/${r.error.model})`);
+          }
+        } catch (err) {
+          if (err instanceof BudgetExhaustedError) {
+            budgetHit("writer");
+            stop = true;
+            return;
+          }
+          if (!isRouterError(err)) throw err;
+          fail("writer", `${existing ? existing.id : slot.slotId}: ${err.name}: ${err.message}`);
+          if (err instanceof AllProvidersFailedError) stop = true;
+        }
+      });
+    }
+    const parts = [`${written} written`, `${reworked} reworked`];
+    if (invalid) parts.push(`${invalid} invalid_output`);
+    note("writer", `${label}${parts.join(", ")}`);
+    return { written, reworked, invalid };
+  }
+  const writerTargets = (reworkIds = null) => {
+    const all = drafts();
+    const cal = readCalendar();
+    const out = [];
+    for (const page of pages) {
+      if (!reworkIds) for (const slot of slotsToWrite(cal, all, page, startedAt, d.leadDays)) out.push({ page, slot });
+      for (const dr of all) if (dr.page === page.handle && dr.status === "rework" && (!reworkIds || reworkIds.has(dr.id))) out.push({ page, draft: dr });
+    }
+    return out;
+  };
+  if (!wants("writer")) skip("writer", "skipped: not selected (--agents)", "not_selected");
+  else if (exhausted) skip("writer", SKIP_BUDGET, "budget_exhausted");
+  else await writerPass(writerTargets(), "");
+  settle("writer");
+
+  // 7. Designer — every `written` draft; skipped cleanly without the media worktree (M16)
+  const mediaPresent = mediaBranchPresent(media);
+  let ownRenderer = null;
+  const theRenderer = () => renderer || (ownRenderer = ownRenderer || createRenderer());
+  async function designerPass(only = null, label = "") {
+    if (!mediaPresent) {
+      addFlag(SKIP_MEDIA_BRANCH_MISSING);
+      skip("designer", `skipped: ${SKIP_MEDIA_BRANCH_MISSING} (${join(media, ".git")} absent — run scripts/init-media-branch.ps1; not configured yet)`, SKIP_MEDIA_BRANCH_MISSING);
+      return null;
+    }
+    const queue = drafts().filter((x) => x.status === "written" && pages.some((p) => p.handle === x.page) && (!only || only.has(x.id)));
+    const r = await timed("designer", () => runDesigner({ drafts: queue, brands, config, state, mediaRoot: media, renderer: theRenderer(), now: startedAt, runId: id, log }));
+    changedFiles.push(...r.changed);
+    for (const f of r.flags) addFlag(f);
+    for (const x of r.results) if (x.status === "rendered") mediaCommits.push({ draftId: x.id, files: x.files });
+    if (!r.ok) fail("designer", `${label}${r.note}`);
+    else note("designer", `${label}${r.note}`);
+    return r;
+  }
+  if (!wants("designer")) skip("designer", "skipped: not selected (--agents)", "not_selected");
+  else await designerPass();
+
+  // 8. QA — every `rendered` draft (needs the media bytes, so it waits for the worktree too)
+  async function qaPass(only = null, label = "") {
+    if (!mediaPresent) {
+      skip("qa", `skipped: ${SKIP_MEDIA_BRANCH_MISSING} (rendered files cannot be read)`, SKIP_MEDIA_BRANCH_MISSING);
+      return { reworked: [] };
+    }
+    const all = drafts();
+    const queue = all.filter((x) => x.status === "rendered" && pages.some((p) => p.handle === x.page) && (!only || only.has(x.id)));
+    const counts = { queued: 0, rework: 0, blocked: 0 };
+    const reworked = [];
+    let stop = false;
+    for (const draft of queue) {
+      if (stop) break;
+      await timed("qa", async () => {
+        try {
+          const r = await runQa({ draft, brand: brands[draft.page], config, router, state, recentCaptions: recentCaptionsFor(all, draft.page, draft.id), mediaRoot: media, runId: id, now: startedAt });
+          changedFiles.push(`state/drafts/${draft.id}/draft.json`, `state/drafts/${draft.id}/qa.json`);
+          counts[r.status] = (counts[r.status] || 0) + 1;
+          if (r.status === "rework") reworked.push(draft.id);
+          log(`[qa] ${draft.id} ${r.status}${r.reasons.length ? ` — ${r.reasons.slice(0, 2).join("; ")}` : ""}`);
+        } catch (err) {
+          if (err instanceof BudgetExhaustedError) {
+            budgetHit("qa");
+            stop = true;
+            return;
+          }
+          if (!isRouterError(err)) throw err;
+          fail("qa", `${draft.id}: ${err.name}: ${err.message}`);
+          if (err instanceof AllProvidersFailedError) stop = true;
+        }
+      });
+    }
+    note("qa", `${label}${counts.queued} queued, ${counts.rework} rework, ${counts.blocked} blocked`);
+    return { reworked };
+  }
+  let qaResult = { reworked: [] };
+  if (!wants("qa")) skip("qa", "skipped: not selected (--agents)", "not_selected");
+  else if (exhausted) skip("qa", SKIP_BUDGET, "budget_exhausted");
+  else qaResult = await qaPass();
+  settle("qa");
+
+  // 9. one inline rework loop so a first-pass QA failure does not cost a day (design §3.1 step 7)
+  if (qaResult.reworked.length && !exhausted && wants("writer") && wants("designer") && wants("qa")) {
+    const ids = new Set(qaResult.reworked);
+    const w = await writerPass(writerTargets(ids), "rework loop: ");
+    settle("writer");
+    if (w.reworked > 0) {
+      await designerPass(ids, "rework loop: ");
+      await qaPass(ids, "rework loop: ");
+      settle("qa");
+    }
+  }
+  if (ownRenderer) await ownRenderer.close();
+  for (const f of router.flags) addFlag(f);
+
+  // 10. finish — calendar re-link, status.json, run record
+  try {
+    const finalDrafts = drafts();
+    const relinked = relinkCalendar(readCalendar(), finalDrafts);
+    if (relinked) changedFiles.push(state.writeJson("state/calendar.json", relinked, CALENDAR_SPEC));
+
+    used = monthUsedUsd(state, startedAt);
+    exhausted = config.budget.hardStop === true && used >= limit;
+    if (exhausted) addFlag(FLAG_BUDGET_EXHAUSTED);
+    const warn = limit > 0 && (used / limit) * 100 >= config.budget.warnAtPct;
+    if (warn) addFlag(FLAG_BUDGET_WARN);
+    const kept = (status.flags || []).filter((f) => {
+      if (DAILY_FLAGS.has(f) || f.startsWith("provider_down:")) return false;
+      if (f.startsWith("token_invalid:")) return (status.pages[f.slice("token_invalid:".length)] || {}).tokenState === "invalid";
+      if (f.startsWith("publish_failed:")) return finalDrafts.some((x) => x.id === f.slice("publish_failed:".length) && x.status === "failed");
+      return true;
+    });
+    const finalFlags = [...new Set([...kept, ...flags])];
+    const counts = queueCounts(finalDrafts, config);
+    for (const p of config.pages) {
+      const ps = status.pages[p.handle] || { mode: p.mode, tokenState: "not_configured", tokenExpiresAt: null, lastPublishedAt: null };
+      ps.mode = p.mode;
+      status.pages[p.handle] = ps;
+    }
+    const agents = AGENT_ORDER.map((name) => {
+      const r = rec(name);
+      const out = { name, ok: r.ok, ms: r.ms, calls: r.calls, costUsd: r.costUsd };
+      if (r.notes.length) out.note = r.notes.join(" | ");
+      if (r.skipped) out.skipped = r.skipped;
+      return out;
+    });
+    const elapsed = Date.now() - t0;
+    const endedAt = new Date(startedAt.getTime() + elapsed);
+    // run.ok is run-level (design §11: load failure, push conflict); a step that failed is recorded on its
+    // own agents[] row (ok:false + note) and the run still completes — the publisher uses the same reading.
+    const run = {
+      id,
+      workflow,
+      trigger,
+      startedAt: nowIst(startedAt),
+      endedAt: nowIst(endedAt),
+      ok: errors.length === 0,
+      agents,
+      changed: [],
+      errors,
+      budgetUsedUsd: used,
+    };
+    if (dryRun) run.dryRun = true;
+    const unique = (arr) => [...new Set(arr)];
+    run.changed = unique([...changedFiles, "state/status.json", state.monthLogPath("runs", startedAt)]).map((rel) => `company/${rel}`);
+    status.updatedAt = nowIst(endedAt);
+    status.lastRun = { id, workflow, ok: run.ok, at: run.endedAt };
+    status.lastRuns = [run, ...(status.lastRuns || [])].slice(0, 20);
+    status.queue = counts.queue;
+    status.blocked = counts.blocked;
+    status.budget = { month: istMonthKey(startedAt), usedUsd: used, limitUsd: limit, exhausted, warn };
+    status.flags = finalFlags;
+    changedFiles.push(state.writeJson("state/status.json", status, STATUS_SPEC));
+    changedFiles.push(state.appendLog("runs", run, RUN_SPEC, startedAt));
+    for (const a of agents) log(stepLine(a.name, a.ok, a.ms, a.calls, a.costUsd, a.note));
+    const failed = agents.filter((a) => !a.ok).map((a) => a.name);
+    const summary = `[daily] ${run.ok ? "ok" : "FAIL"} ${unique(changedFiles).length} files changed, budget $${used.toFixed(2)} of $${limit}${finalFlags.length ? `, flags ${finalFlags.join(" ")}` : ""}${failed.length ? `, ${failed.length} agent step${failed.length === 1 ? "" : "s"} failed (${failed.join(", ")})` : ""}`;
+    log(summary);
+    return { ok: run.ok, changed: true, changedFiles: unique(changedFiles), run, status, agents, errors, flags: finalFlags, summary, mediaCommits, companyDir, config };
+  } catch (err) {
+    if (ownRenderer) await ownRenderer.close().catch(() => {});
+    throw err;
+  }
+}
+
+// CLI entry: ctx from engine/index.js → exit code (0 ok, 1 failed, 2 usage).
+export async function run({ root, companyDir, processEnv = process.env, fetchImpl = globalThis.fetch, stdout = console.log, stderr = console.error, flags = {} } = {}) {
+  const dryRun = flags["dry-run"] === true;
+  let now;
+  if (flags.now !== undefined) {
+    if (!dryRun) {
+      stderr("daily: --now <iso> is accepted only with --dry-run (a real run is never back-dated)");
+      return 2;
+    }
+    try {
+      now = parseIso(String(flags.now));
+    } catch (err) {
+      stderr(`daily: ${err.message}`);
+      return 2;
+    }
+  }
+  try {
+    parseAgents(flags.agents);
+  } catch (err) {
+    stderr(err.message);
+    return 2;
+  }
+  if (!existsSync(companyDir)) {
+    stderr(`daily: company dir ${companyDir} does not exist`);
+    return 1;
+  }
+  const repoRoot = root || resolve(companyDir, "..");
+  const mediaDefault = processEnv.MEDIA_DIR ? resolve(repoRoot, processEnv.MEDIA_DIR) : join(repoRoot, ".media");
+  let dir = companyDir;
+  let mediaRoot = mediaDefault;
+  if (dryRun) {
+    const tmp = mkdtempSync(join(tmpdir(), "hoshlab-daily-dry-run-"));
+    dir = join(tmp, "company");
+    cpSync(companyDir, dir, { recursive: true });
+    if (mediaBranchPresent(mediaDefault)) {
+      mediaRoot = join(tmp, ".media");
+      cpSync(mediaDefault, mediaRoot, { recursive: true });
+    } else mediaRoot = join(tmp, ".media"); // absent → the Designer records media_branch_missing, as it would in the repo
+    stdout(`daily: --dry-run works on a temp copy ${dir} (the repo's company dir is untouched)`);
+  }
+  let result;
+  try {
+    result = await runDaily({ companyDir: dir, mediaRoot, now, processEnv, fetchImpl, flags: { agents: flags.agents, page: typeof flags.page === "string" ? flags.page : null, dryRun }, stdout });
+  } catch (err) {
+    stderr(scrub(`daily: ${err && err.message ? err.message : String(err)}`));
+    return 1;
+  }
+  if (dryRun) {
+    stdout(`daily: dry run complete — state written under ${dir}; nothing committed`);
+    return result.ok ? 0 : 1;
+  }
+  if (result.ok && shouldCommit(processEnv, flags)) {
+    try {
+      // commit into the repository that holds the company dir (the repo root in CI; a temp clone in tests)
+      const gitRoot = repoRootFor(companyDir) || repoRoot;
+      const message = `state: ${WORKFLOW} ${result.run.id}`;
+      const paths = result.changedFiles.map((rel) => relative(gitRoot, join(companyDir, rel)));
+      const g = await commitAndPush({ repoRoot: gitRoot, config: result.config, changedFiles: paths, message, mediaRoot, mediaCommits: result.mediaCommits || [], stdout });
+      writeGithubOutput("changed", g.committed || g.mediaCommitted > 0, processEnv);
+    } catch (err) {
+      if (err instanceof PushConflictError) {
+        stderr(scrub(`daily: ${err.message} — errors: push_conflict (the state stays in this checkout; the next run regenerates it)`));
+        writeGithubOutput("changed", false, processEnv);
+        return 1;
+      }
+      stderr(scrub(`daily: git step failed — ${err.message}`));
+      return 1;
+    }
+  } else if (result.ok) {
+    stdout(`daily: ${result.changedFiles.length} file${result.changedFiles.length === 1 ? "" : "s"} changed under ${companyDir}, not committed (pass --commit)`);
+    writeGithubOutput("changed", false, processEnv);
+  }
+  return result.ok ? 0 : 1;
+}
