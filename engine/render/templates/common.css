@@ -1,0 +1,138 @@
+/* Hoshlab artwork templates — shared rules (design.md §10; review M13).
+   Ported from the mock's .post* rules (.agents/tasks/hoshlab-v1/mock/mock.css): --u is 1/1080 of the
+   canvas width, so every size below is written in "post pixels". Colours and families come from the
+   brand's ## Tokens, injected by the renderer as CSS custom properties (--c-<name>, --font-<name>,
+   --grad-<name>, --font-devanagari). Fonts are the self-hosted @fontsource files (npm run build:fonts).
+   No "MOCK" stamp exists here: this is the real template. */
+@import url("../fonts/fonts.css");
+
+html, body { margin: 0; padding: 0; background: #ffffff; }
+body { width: 1080px; }
+#canvas {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  overflow: hidden;
+  --u: calc(1080px / 1080);
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--u) * 72);
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+/* Children never shrink: copy that does not fit overflows the canvas and layout() reports it. */
+#canvas > * { flex: 0 0 auto; }
+#canvas * { box-sizing: border-box; }
+/* low-specificity reset so the brand rules below (.post-rp .sub etc.) keep their margins */
+.post h1, .post h2, .post p, .post ul, .post ol, .post li { margin: 0; padding: 0; }
+.post ul, .post ol { list-style: none; }
+[lang="hi"] { font-family: var(--font-devanagari); }
+[hidden] { display: none !important; }
+
+/* Headline tiers: A (≤ 36 chars) 104 u, B (≤ 60) 84 u, C 68 u — chosen by the template from the length. */
+.headline { line-height: 1.05; overflow-wrap: normal; }
+.headline[data-variant="A"] { font-size: calc(var(--u) * 104); }
+.headline[data-variant="B"] { font-size: calc(var(--u) * 84); }
+.headline[data-variant="C"] { font-size: calc(var(--u) * 68); line-height: 1.1; }
+
+.brand-row { display: flex; align-items: center; gap: calc(var(--u) * 22); }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: calc(var(--u) * 24); }
+.swipe { display: inline-flex; align-items: center; gap: calc(var(--u) * 16); }
+.swipe svg { width: calc(var(--u) * 48); height: calc(var(--u) * 48); flex: none; }
+.dots { display: flex; gap: calc(var(--u) * 12); margin-top: auto; padding-top: calc(var(--u) * 40); }
+.dots i { display: block; width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; }
+
+/* ---------- RishtaPatra (tokens: brand, brand-700, accent, accent-ink, bg, surface-2, ink, ink-2, line) ---------- */
+.post-rp { background: var(--c-bg); color: var(--c-ink); font-family: var(--font-ui); }
+.post-rp .brand-row svg { width: calc(var(--u) * 96); height: calc(var(--u) * 96); flex: none; }
+.post-rp .brand-row .word { font-family: var(--font-display); font-weight: 700; font-size: calc(var(--u) * 54); color: var(--c-brand); }
+/* gold is decoration only; gold TEXT uses accent-ink (brand token note, M13 contrast) */
+.post-rp .brand-row .word-hi { font-family: var(--font-devanagari); font-size: calc(var(--u) * 40); color: var(--c-accent-ink); }
+.post-rp .rule { height: calc(var(--u) * 2); background: var(--c-accent); width: calc(var(--u) * 160); margin: calc(var(--u) * 56) 0 calc(var(--u) * 40); }
+.post-rp .eyebrow { font-size: calc(var(--u) * 30); letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-ink-2); margin-top: calc(var(--u) * 56); }
+.post-rp .eyebrow + .rule { margin-top: calc(var(--u) * 28); }
+.post-rp .headline { font-family: var(--font-display); font-weight: 700; color: var(--c-brand); letter-spacing: -0.01em; }
+.post-rp .headline [lang="hi"] { font-weight: 400; } /* Tiro Devanagari Hindi ships 400 only */
+.post-rp .sub { font-size: calc(var(--u) * 46); line-height: 1.35; color: var(--c-ink); margin-top: calc(var(--u) * 32); }
+.post-rp .facts { margin: auto 0 0; padding-top: calc(var(--u) * 48); display: grid; gap: calc(var(--u) * 18); font-size: calc(var(--u) * 34); line-height: 1.3; color: var(--c-ink-2); }
+.post-rp .facts li { display: flex; gap: calc(var(--u) * 18); align-items: baseline; }
+.post-rp .facts li::before { content: ""; width: calc(var(--u) * 16); height: calc(var(--u) * 16); background: var(--c-accent); flex: none; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.post-rp .foot { margin-top: calc(var(--u) * 40); padding-top: calc(var(--u) * 28); border-top: 1px solid var(--c-line); font-size: calc(var(--u) * 30); letter-spacing: 0.18em; color: var(--c-ink-2); text-transform: uppercase; }
+.post-rp .foot [lang="hi"] { letter-spacing: 0; text-transform: none; }
+/* carousel */
+.post-rp.slide-cover { background: var(--c-brand); color: var(--c-bg); }
+.post-rp.slide-cover .brand-row .word { color: var(--c-bg); }
+.post-rp.slide-cover .brand-row .word-hi { color: var(--c-surface-2); }
+.post-rp.slide-cover .rule { background: var(--c-accent); }
+.post-rp.slide-cover .headline { color: var(--c-bg); }
+.post-rp.slide-cover .sub { color: var(--c-surface-2); }
+.post-rp.slide-cover .swipe { margin-top: auto; font-size: calc(var(--u) * 32); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-bg); }
+.post-rp.slide-body .headline, .post-rp.slide-recap .headline { margin-top: calc(var(--u) * 48); }
+.post-rp .body { font-size: calc(var(--u) * 44); line-height: 1.4; color: var(--c-ink); margin-top: calc(var(--u) * 36); }
+.post-rp .dots i { background: var(--c-line); }
+.post-rp .dots i.on { background: var(--c-brand); }
+.post-rp.slide-recap .foot { margin-top: auto; }
+
+/* ---------- KaatDo (tokens: ink, panel, edge, txt, dim, green, red, light-bg, light-txt, light-dim, light-green) ---------- */
+.post-kd { background: var(--c-ink); color: var(--c-txt); font-family: var(--font-display); }
+.post-kd .brand-row svg { width: calc(var(--u) * 84); height: calc(var(--u) * 84); flex: none; }
+.post-kd .brand-row .word { font-weight: 700; font-size: calc(var(--u) * 50); letter-spacing: 0.06em; color: var(--c-txt); }
+.post-kd .brand-row .word b { color: var(--c-green); font-weight: 700; }
+/* the ╱ of the display name is a box-drawing glyph: Space Grotesk lacks it, Cascadia Code (symbols2) has it */
+.post-kd .brand-row .slash { font-family: var(--font-mono); color: var(--c-dim); font-size: calc(var(--u) * 44); }
+.post-kd .brand-row .word-hi { font-family: var(--font-devanagari); font-size: calc(var(--u) * 40); color: var(--c-dim); }
+.post-kd .eyebrow { font-family: var(--font-mono); font-size: calc(var(--u) * 30); letter-spacing: 0.3em; text-transform: uppercase; color: var(--c-dim); margin-top: calc(var(--u) * 64); }
+.post-kd .headline { font-weight: 700; margin-top: calc(var(--u) * 56); color: var(--c-txt); letter-spacing: -0.02em; }
+.post-kd .eyebrow + .headline { margin-top: calc(var(--u) * 24); }
+.post-kd .headline [lang="hi"] { color: var(--c-red); font-weight: 700; }
+.post-kd .sub { font-size: calc(var(--u) * 40); line-height: 1.35; color: var(--c-dim); margin-top: calc(var(--u) * 28); }
+.post-kd .facts { margin: calc(var(--u) * 56) 0 0; display: grid; gap: calc(var(--u) * 14); font-family: var(--font-mono); font-size: calc(var(--u) * 32); line-height: 1.35; }
+.post-kd .facts li { border: 1px solid var(--c-edge); background: var(--c-panel); padding: calc(var(--u) * 18) calc(var(--u) * 22); color: var(--c-txt); }
+.post-kd .foot { margin-top: auto; padding-top: calc(var(--u) * 28); border-top: 1px solid var(--c-edge); font-family: var(--font-mono); font-size: calc(var(--u) * 30); letter-spacing: 0.2em; color: var(--c-dim); }
+.post-kd .foot [lang="hi"] { letter-spacing: 0; }
+/* carousel: cover + recap dark console, body slides on the light palette */
+.post-kd.slide-cover .swipe { margin-top: auto; font-family: var(--font-mono); font-size: calc(var(--u) * 32); letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-green); }
+.post-kd .body { font-family: var(--font-mono); font-size: calc(var(--u) * 40); line-height: 1.45; color: var(--c-dim); margin-top: calc(var(--u) * 36); }
+.post-kd.slide-body { background: var(--c-light-bg); color: var(--c-light-txt); }
+.post-kd.slide-body .brand-row .word { color: var(--c-light-txt); }
+/* light-green #0b8f4d is 3.9:1 on light-bg — below the 4.5:1 text rule at 50 u — so the wordmark stays in light-txt here */
+.post-kd.slide-body .brand-row .word b { color: var(--c-light-txt); }
+.post-kd.slide-body .brand-row .slash, .post-kd.slide-body .brand-row .word-hi { color: var(--c-light-dim); }
+.post-kd.slide-body .headline { color: var(--c-light-txt); }
+.post-kd.slide-body .headline [lang="hi"] { color: var(--c-light-red); }
+.post-kd.slide-body .body { color: var(--c-light-dim); }
+.post-kd.slide-body .dots i { background: var(--c-light-dim); }
+.post-kd.slide-body .dots i.on { background: var(--c-light-green); }
+.post-kd .dots i { background: var(--c-edge); }
+.post-kd .dots i.on { background: var(--c-green); }
+
+/* ---------- JobRez (tokens: ink, ink-2, text, muted, line, canvas, cream, violet, violet-dark, green-text, green-soft, lime, badge, grad-violet) ---------- */
+.post-jr { background: var(--c-cream); color: var(--c-text); font-family: var(--font-body); }
+.post-jr .brand-row { gap: calc(var(--u) * 20); }
+/* JobRez's own gradient tile — the only gradient anywhere in Hoshlab media; data-bg is its solid approximation for contrast */
+.post-jr .brand-row .tile { width: calc(var(--u) * 92); height: calc(var(--u) * 92); border-radius: calc(var(--u) * 26); background: var(--grad-grad-violet); display: grid; place-items: center; flex: none; }
+.post-jr .brand-row .tile svg { width: calc(var(--u) * 66); height: calc(var(--u) * 66); }
+.post-jr .brand-row .word { font-family: var(--font-display); font-weight: 800; font-size: calc(var(--u) * 58); letter-spacing: -0.05em; color: var(--c-ink); }
+.post-jr .brand-row .word span { color: var(--c-violet); margin-left: calc(var(--u) * 3); }
+.post-jr .eyebrow { font-family: var(--font-mono); font-size: calc(var(--u) * 30); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-violet-dark); margin-top: calc(var(--u) * 72); }
+.post-jr .headline { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.035em; color: var(--c-ink); margin-top: calc(var(--u) * 64); line-height: 1.04; }
+.post-jr .eyebrow + .headline { margin-top: calc(var(--u) * 18); }
+.post-jr .headline em { font-style: normal; color: var(--c-violet); }
+.post-jr .sub { font-size: calc(var(--u) * 40); line-height: 1.35; color: var(--c-ink-2); margin-top: calc(var(--u) * 28); }
+.post-jr .facts { margin: calc(var(--u) * 60) 0 0; display: grid; gap: calc(var(--u) * 20); }
+.post-jr .facts li { display: grid; grid-template-columns: calc(var(--u) * 64) 1fr; gap: calc(var(--u) * 20); align-items: start; font-size: calc(var(--u) * 34); line-height: 1.35; color: var(--c-ink-2); }
+.post-jr .facts li b { display: grid; place-items: center; width: calc(var(--u) * 64); height: calc(var(--u) * 64); border-radius: calc(var(--u) * 16); background: var(--c-green-soft); color: var(--c-green-text); font-family: var(--font-mono); font-size: calc(var(--u) * 30); font-weight: 400; }
+.post-jr .foot { margin-top: auto; border-top: 1px solid var(--c-line); padding-top: calc(var(--u) * 26); font-family: var(--font-mono); font-size: calc(var(--u) * 30); color: var(--c-muted); letter-spacing: 0.08em; }
+/* carousel: cover on ink with cream display type, body slides on canvas */
+.post-jr.slide-cover { background: var(--c-ink); color: var(--c-cream); }
+.post-jr.slide-cover .brand-row .word { color: var(--c-cream); }
+.post-jr.slide-cover .brand-row .word span { color: var(--c-lime); }
+.post-jr.slide-cover .headline { color: var(--c-cream); }
+.post-jr.slide-cover .headline em { color: var(--c-lime); }
+.post-jr.slide-cover .sub { color: var(--c-line); }
+.post-jr.slide-cover .swipe { margin-top: auto; font-family: var(--font-mono); font-size: calc(var(--u) * 32); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-lime); }
+.post-jr.slide-body, .post-jr.slide-recap { background: var(--c-canvas); }
+.post-jr .body { font-size: calc(var(--u) * 42); line-height: 1.4; color: var(--c-ink-2); margin-top: calc(var(--u) * 36); }
+.post-jr .dots i { background: var(--c-line); }
+.post-jr .dots i.on { background: var(--c-violet); }
+.post-jr.slide-recap .foot { margin-top: auto; }

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RishtaPatra · image 1080×1350</title>
+<link rel="stylesheet" href="../common.css">
+</head>
+<body>
+<!-- RishtaPatra image (design §10, mock/posts.html .post-rp): brand row, optional eyebrow, gold rule,
+     headline (tier A/B/C), subline, 2–3 fact rows, footer domain · handle. Tokens: company/brands/rishtapatra.md -->
+<div id="canvas" class="post post-rp" data-palette="cream and maroon">
+  <div class="brand-row">
+    <svg viewBox="0 0 104 110" aria-hidden="true" focusable="false">
+      <defs><clipPath id="rp-clip"><path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z"/></clipPath></defs>
+      <rect x="4" y="7" width="96" height="96" rx="24" fill="#7a1f2b"/>
+      <g transform="translate(21.4 21.7) scale(0.45)">
+        <path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z" fill="#fff8ee" opacity="0.92"/>
+        <path d="M74 0V26H100Z" fill="#e6cf8a"/>
+        <g transform="translate(36 28)"><path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z" fill="#fff8ee"/><path d="M74 0V26H100Z" fill="#e6cf8a"/></g>
+        <g clip-path="url(#rp-clip)"><path transform="translate(36 28)" d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z" fill="#c9a227"/></g>
+      </g>
+    </svg>
+    <span class="word" id="word"></span><span class="word-hi" lang="hi" id="word-hi"></span>
+  </div>
+  <p class="eyebrow" id="eyebrow" hidden></p>
+  <div class="rule" aria-hidden="true"></div>
+  <h2 class="headline" id="headline"></h2>
+  <p class="sub" id="sub"></p>
+  <ul class="facts" id="facts"></ul>
+  <div class="foot"><span id="foot-left"></span><span class="ig-handle" id="foot-right"></span></div>
+</div>
+<script src="../common.js"></script>
+<script>
+(function () {
+  var H = window.HOSHLAB;
+  var draft = window.__DRAFT__ || {};
+  var brand = window.__BRAND__ || {};
+  var art = draft.artwork || {};
+  var canvas = document.getElementById("canvas");
+  H.applyTokens(canvas, window.__TOKENS__);
+  document.getElementById("word").textContent = brand.name || "";
+  var wordHi = document.getElementById("word-hi");
+  if (brand.nameDevanagari) wordHi.textContent = brand.nameDevanagari; else wordHi.hidden = true;
+  var eyebrow = document.getElementById("eyebrow");
+  if (art.eyebrow) { eyebrow.hidden = false; H.setText(eyebrow, art.eyebrow); }
+  var headline = document.getElementById("headline");
+  headline.setAttribute("data-variant", H.pickVariant(art.headline));
+  H.setText(headline, art.headline || "");
+  var sub = document.getElementById("sub");
+  if (art.subline) H.setText(sub, art.subline); else sub.hidden = true;
+  H.fillList(document.getElementById("facts"), art.facts);
+  H.setText(document.getElementById("foot-left"), art.footer || H.siteHost(brand.site));
+  document.getElementById("foot-right").textContent = brand.handle ? "@" + brand.handle : "";
+})();
+</script>
+</body>
+</html>

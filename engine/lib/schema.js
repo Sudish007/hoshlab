@@ -604,6 +604,9 @@ export const PUBLISH_ATTEMPT_SPEC = {
   "runId?": "id",
 };
 export const ARTWORK_SPEC = { headline: "str<=60", subline: "str<=110", facts: ["str<=70", { max: 3 }], footer: "str", "variant?": "enum[A|B|C]" };
+// Designer refusal (design §10 guards, §11 "Render" row; FEAT-106): the draft stays `written` and carries why.
+export const RENDER_ERROR_CODES = ["overflow", "missing_glyphs", "text_floor", "contrast", "media_spec", "render_failed"];
+export const RENDER_ERROR_SPEC = { code: `enum[${RENDER_ERROR_CODES.join("|")}]`, "detail?": "str<=1000", at: "iso-datetime" };
 export const SLIDE_SPEC = { heading: "str<=40", body: "str<=160", altText: "str<=200" };
 export const REEL_SPEC = { style: "enum[kinetic|capture]", durationSec: "num[1..90]", scenes: [{ text: "str<=60", seconds: "num[1..10]" }, { min: 3, max: 6 }] };
 
@@ -633,7 +636,7 @@ export const DRAFT_SPEC = {
   factsUsed: [{ factId: "id", quote: "str" }],
   "writerNote?": "str",
   "designNote?": "str",
-  "renderError?": "str",
+  "renderError?": RENDER_ERROR_SPEC,
   media: [MEDIA_ITEM_SPEC, { max: 10 }],
   publishAttempts: [PUBLISH_ATTEMPT_SPEC],
   "qaRef?": "str",

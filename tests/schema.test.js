@@ -381,7 +381,10 @@ test("DRAFT_SPEC: M5 lifecycle enum incl. rejected/expired, reel shape, caps", (
   bad({ ...draft, reel: { style: "capture", durationSec: 18, scenes: [{ text: "a", seconds: 4 }] } }, DRAFT_SPEC, /\$\.reel\.scenes: expected at least 3/);
   const { mock, ...noMock } = draft;
   bad(noMock, DRAFT_SPEC, /\$\.mock: required/);
-  ok({ ...draft, renderError: "overflow in headline", designNote: "variant B", status: "written", media: [] }, DRAFT_SPEC);
+  // renderError is the Designer's refusal record { code, detail, at } (FEAT-106), not a bare string
+  ok({ ...draft, renderError: { code: "overflow", detail: "h2#headline 1420 > 1350 px tall", at: "2026-10-12T05:40:00+05:30" }, designNote: "variant B", status: "written", media: [] }, DRAFT_SPEC);
+  bad({ ...draft, renderError: "overflow in headline" }, DRAFT_SPEC, /\$\.renderError: expected object/);
+  bad({ ...draft, renderError: { code: "ugly", at: "2026-10-12T05:40:00+05:30" } }, DRAFT_SPEC, /\$\.renderError\.code/);
 });
 
 test("CALENDAR_SPEC slot statuses and nullable draftId; IDEA_SPEC status + attempts", () => {

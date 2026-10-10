@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RishtaPatra · carousel slide 1080×1350</title>
+<link rel="stylesheet" href="../common.css">
+</head>
+<body>
+<!-- RishtaPatra carousel (design §10): slide 1 = cover (maroon, cream display type, "Swipe" affordance),
+     slides 2..n-1 = heading + body on cream, slide n = recap + footer. window.__SLIDE__ is the 0-based index. -->
+<div id="canvas" class="post post-rp" data-palette="cream and maroon">
+  <div class="brand-row">
+    <svg viewBox="0 0 104 110" aria-hidden="true" focusable="false">
+      <defs><clipPath id="rp-clip"><path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z"/></clipPath></defs>
+      <rect x="4" y="7" width="96" height="96" rx="24" fill="#7a1f2b" stroke="#fff8ee" stroke-width="3"/>
+      <g transform="translate(21.4 21.7) scale(0.45)">
+        <path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z" fill="#fff8ee" opacity="0.92"/>
+        <path d="M74 0V26H100Z" fill="#e6cf8a"/>
+        <g transform="translate(36 28)"><path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z" fill="#fff8ee"/><path d="M74 0V26H100Z" fill="#e6cf8a"/></g>
+        <g clip-path="url(#rp-clip)"><path transform="translate(36 28)" d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z" fill="#c9a227"/></g>
+      </g>
+    </svg>
+    <span class="word" id="word"></span><span class="word-hi" lang="hi" id="word-hi"></span>
+  </div>
+  <div class="rule" aria-hidden="true"></div>
+  <h2 class="headline" id="headline"></h2>
+  <p class="sub" id="sub" hidden></p>
+  <p class="body" id="body" hidden></p>
+  <div class="swipe" id="swipe" hidden><span>Swipe</span><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 24h30M26 12l12 12-12 12" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="dots" id="dots" hidden aria-hidden="true"></div>
+  <div class="foot" id="foot" hidden><span id="foot-left"></span><span class="ig-handle" id="foot-right"></span></div>
+</div>
+<script src="../common.js"></script>
+<script>
+(function () {
+  var H = window.HOSHLAB;
+  var draft = window.__DRAFT__ || {};
+  var brand = window.__BRAND__ || {};
+  var slides = Array.isArray(draft.slides) ? draft.slides : [];
+  var i = Math.max(0, Math.min(slides.length - 1, Number(window.__SLIDE__ || 0)));
+  var slide = slides[i] || {};
+  var role = i === 0 ? "cover" : i === slides.length - 1 ? "recap" : "body";
+  var canvas = document.getElementById("canvas");
+  canvas.classList.add("slide-" + role);
+  if (role === "cover") canvas.setAttribute("data-palette", "maroon and cream");
+  H.applyTokens(canvas, window.__TOKENS__);
+  document.getElementById("word").textContent = brand.name || "";
+  var wordHi = document.getElementById("word-hi");
+  if (brand.nameDevanagari) wordHi.textContent = brand.nameDevanagari; else wordHi.hidden = true;
+  var headline = document.getElementById("headline");
+  headline.setAttribute("data-variant", H.pickVariant(slide.heading));
+  H.setText(headline, slide.heading || "");
+  if (role === "cover") {
+    var sub = document.getElementById("sub");
+    sub.hidden = false;
+    H.setText(sub, slide.body || "");
+    document.getElementById("swipe").hidden = false;
+  } else {
+    var body = document.getElementById("body");
+    body.hidden = false;
+    H.setText(body, slide.body || "");
+    if (role === "body") {
+      var dots = document.getElementById("dots");
+      dots.hidden = false;
+      H.fillDots(dots, slides.length, i);
+    } else {
+      document.getElementById("foot").hidden = false;
+      document.getElementById("foot-left").textContent = H.siteHost(brand.site);
+      document.getElementById("foot-right").textContent = brand.handle ? "@" + brand.handle : "";
+    }
+  }
+})();
+</script>
+</body>
+</html>

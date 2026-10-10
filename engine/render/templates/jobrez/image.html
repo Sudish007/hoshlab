@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>JobRez · image 1080×1350</title>
+<link rel="stylesheet" href="../common.css">
+</head>
+<body>
+<!-- JobRez image (design §10, mock/posts.html .post-jr): the mark on its violet gradient tile (the only gradient
+     in Hoshlab media; data-bg is the solid approximation used for contrast), Job|Rez wordmark, optional mono eyebrow,
+     headline (last sentence in violet), subline, numbered fact rows, footer domain · handle. English only (OF-2):
+     the brand names no Devanagari family, so any Devanagari run fails the per-script rule. Tokens: company/brands/jobrez.md -->
+<div id="canvas" class="post post-jr" data-palette="violet on cream">
+  <div class="brand-row">
+    <span class="tile" data-bg="#9247f2" aria-hidden="true">
+      <svg viewBox="0 0 32 32" focusable="false">
+        <path d="M7 6.5 h9.5 l5 5 V24 a2 2 0 0 1 -2 2 H7 a2 2 0 0 1 -2 -2 V8.5 a2 2 0 0 1 2 -2 z" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M16.5 6.5 V11.5 h5" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M9.5 16 h7.5 M9.5 20 h5" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" opacity="0.75"/>
+        <circle cx="23.5" cy="23.5" r="6.5" fill="#22c55e"/>
+        <path d="M20.6 23.6 l2 2 l3.9 -4.2" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="word"><span id="word-a"></span><span id="word-b"></span></span>
+  </div>
+  <p class="eyebrow" id="eyebrow" hidden></p>
+  <h2 class="headline" id="headline"></h2>
+  <p class="sub" id="sub"></p>
+  <ol class="facts" id="facts"></ol>
+  <div class="foot"><span id="foot-left"></span><span class="ig-handle" id="foot-right"></span></div>
+</div>
+<script src="../common.js"></script>
+<script>
+(function () {
+  var H = window.HOSHLAB;
+  var draft = window.__DRAFT__ || {};
+  var brand = window.__BRAND__ || {};
+  var art = draft.artwork || {};
+  var canvas = document.getElementById("canvas");
+  H.applyTokens(canvas, window.__TOKENS__);
+  // two-tone wordmark "Job" + "Rez" (jr-f01): split before the second capital letter
+  var name = String(brand.name || "");
+  var m = /^([A-Z][a-z]+)([A-Z].*)$/.exec(name);
+  document.getElementById("word-a").textContent = m ? m[1] : name;
+  document.getElementById("word-b").textContent = m ? m[2] : "";
+  var eyebrow = document.getElementById("eyebrow");
+  if (art.eyebrow) { eyebrow.hidden = false; H.setText(eyebrow, art.eyebrow); }
+  var headline = document.getElementById("headline");
+  var text = art.headline || "";
+  headline.setAttribute("data-variant", H.pickVariant(text));
+  // a two-sentence headline sets its last sentence in violet (mock composition)
+  var parts = /^(.*?[.!?])\s+(\S.*)$/.exec(text);
+  if (parts) {
+    H.setText(headline, parts[1] + " ");
+    var em = document.createElement("em");
+    H.setText(em, parts[2]);
+    headline.appendChild(em);
+  } else H.setText(headline, text);
+  var sub = document.getElementById("sub");
+  if (art.subline) H.setText(sub, art.subline); else sub.hidden = true;
+  H.fillList(document.getElementById("facts"), art.facts, function (li, i) {
+    var b = document.createElement("b");
+    b.textContent = String(i + 1);
+    li.appendChild(b);
+  });
+  H.setText(document.getElementById("foot-left"), art.footer || H.siteHost(brand.site));
+  document.getElementById("foot-right").textContent = brand.handle ? "@" + brand.handle : "";
+})();
+</script>
+</body>
+</html>

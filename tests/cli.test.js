@@ -44,7 +44,8 @@ test("parseArgs: command, --key value, --key=value, --flag booleans, positional 
 test("registry: every designed command is listed; unbuilt ones print 'not built yet (planned in …)' and exit 2", async () => {
   assert.deepEqual(Object.keys(COMMANDS).sort(), ["analyst", "check-models", "daily", "hr", "publish", "refresh-tokens", "render-sample", "retention", "set-page"]);
   assert.equal(typeof COMMANDS["check-models"].load, "function");
-  const expected = { daily: "FEAT-108", publish: "FEAT-107", "render-sample": "FEAT-106", "set-page": "FEAT-108", analyst: "FEAT-203 / phase 2", hr: "FEAT-204 / phase 2", "refresh-tokens": "FEAT-202 / phase 2", retention: "FEAT-202 / phase 2" };
+  assert.equal(typeof COMMANDS["render-sample"].load, "function", "render-sample is built (FEAT-106)");
+  const expected = { daily: "FEAT-108", publish: "FEAT-107", "set-page": "FEAT-108", analyst: "FEAT-203 / phase 2", hr: "FEAT-204 / phase 2", "refresh-tokens": "FEAT-202 / phase 2", retention: "FEAT-202 / phase 2" };
   for (const [name, planned] of Object.entries(expected)) {
     const out = sink();
     const err = sink();
@@ -135,6 +136,56 @@ test("check-models with keys (fake fetch): model ids verified against the provid
   const r5 = await checkModels({ config: partial, env, fetchImpl: modelLists() });
   assert.equal(r5.ok, true);
   assert.equal(r5.summary, "check-models: 2 of 2 enabled providers validated");
+});
+
+test("render-sample: usage errors exit 2 without touching the renderer; --out inside company/ is refused; a fake renderer gets the fixture draft and index.json records sample:true", async () => {
+  const calls = [];
+  const fakeRenderer = {
+    async renderDraft(draft, brand, { outDir, relDir }) {
+      calls.push({ id: draft.id, format: draft.format, handle: brand.frontMatter.handle, outDir, relDir });
+      const file = `${draft.format === "carousel" ? "slide" : "image"}-1-0123abcd.jpg`;
+      return { media: [{ kind: "image", file, path: `${relDir}${file}`, bytes: 9432, width: 1080, height: 1350, sha256: "0123abcd".repeat(8), variant: "A", palette: "test palette", minTextU: 30, minContrast: 4.5 }] };
+    },
+    async close() {},
+  };
+  const { run, sampleDraft } = await import("../engine/commands/render-sample.js");
+  const base = { root: ROOT, companyDir: COMPANY_DIR, renderer: fakeRenderer };
+  let err = sink();
+  assert.equal(await run({ ...base, flags: {}, stdout: sink(), stderr: err }), 2);
+  assert.match(err.text(), /--page <handle> is required/);
+  err = sink();
+  assert.equal(await run({ ...base, flags: { page: "kaatdo", format: "reel" }, stdout: sink(), stderr: err }), 2);
+  assert.match(err.text(), /--format must be one of image\|carousel/);
+  err = sink();
+  assert.equal(await run({ ...base, flags: { page: "nobody" }, stdout: sink(), stderr: err }), 2);
+  assert.match(err.text(), /unknown page nobody/);
+  err = sink();
+  assert.equal(await run({ ...base, flags: { page: "kaatdo", out: join(COMPANY_DIR, "state") }, stdout: sink(), stderr: err }), 2);
+  assert.match(err.text(), /never writes under company\//);
+  assert.equal(calls.length, 0, "no render for usage errors");
+
+  // the fixture draft of the page is rendered into <out>/media/sample-<handle>/ and indexed with sample:true
+  const { tmpDir } = await import("./helpers.js");
+  const { readFileSync, existsSync } = await import("node:fs");
+  const out = tmpDir("hoshlab-render-sample-");
+  const stdout = sink();
+  assert.equal(await run({ ...base, flags: { page: "kaatdo", out }, stdout, stderr: sink() }), 0, stdout.text());
+  assert.deepEqual(calls.map((c) => [c.id, c.format, c.handle, c.relDir]), [["kd-2026-10-13-six-rules", "image", "kaatdo", "media/sample-kaatdo/"]]);
+  assert.equal(calls[0].outDir, join(out, "media", "sample-kaatdo"));
+  assert.match(stdout.text(), /image-1-0123abcd\.jpg {2}9432 bytes {2}1080x1350/);
+  const index = JSON.parse(readFileSync(join(out, "index.json"), "utf8"));
+  assert.equal(index["sample-kaatdo"].sample, true);
+  assert.deepEqual(index["sample-kaatdo"].files, ["image-1-0123abcd.jpg"]);
+  assert.equal(index["sample-kaatdo"].page, "kaatdo");
+  assert.equal(existsSync(join(COMPANY_DIR, "state", "drafts")), false, "nothing written under company/");
+
+  // --format carousel for a page whose draft fixture is an image → the writer.ok fixture's slides
+  const carousel = sampleDraft({ root: ROOT, page: "kaatdo", format: "carousel" });
+  assert.equal(carousel.format, "carousel");
+  assert.ok(Array.isArray(carousel.slides) && carousel.slides.length >= 2);
+  assert.equal(carousel.artwork, undefined);
+  assert.equal(sampleDraft({ root: ROOT, page: "job_rez", format: "carousel" }).id, "jr-2026-10-15-templates", "exact fixture wins");
+  assert.equal(sampleDraft({ root: ROOT, page: "rishtapatra" }).format, "image");
 });
 
 test("check-models: an unloadable company dir → exit 1 with a message", async () => {
