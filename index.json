@@ -1,0 +1,32 @@
+{
+  "sample-job_rez": {
+    "sample": true,
+    "files": [
+      "slide-1-e1a87d65.jpg",
+      "slide-2-ce00b3e9.jpg",
+      "slide-3-b5a42713.jpg",
+      "slide-4-9c675c27.jpg"
+    ],
+    "page": "job_rez",
+    "format": "carousel",
+    "at": "2026-10-11T15:33:45+05:30"
+  },
+  "sample-kaatdo": {
+    "sample": true,
+    "files": [
+      "image-1-711972b4.jpg"
+    ],
+    "page": "kaatdo",
+    "format": "image",
+    "at": "2026-10-11T15:33:41+05:30"
+  },
+  "sample-rishtapatra": {
+    "sample": true,
+    "files": [
+      "image-1-fc09aa36.jpg"
+    ],
+    "page": "rishtapatra",
+    "format": "image",
+    "at": "2026-10-11T15:33:36+05:30"
+  }
+}
