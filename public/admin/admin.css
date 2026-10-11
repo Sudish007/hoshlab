@@ -30,8 +30,9 @@
 .check input { width: 20px; height: 20px; min-height: 0; margin: 0; }
 .check label { font-weight: 400; display: flex; align-items: center; min-height: var(--control); margin: 0; }
 .help ol, .help ul { padding-left: 1.2rem; font-size: var(--fs-sm); margin: 0; display: grid; gap: 0.4rem; }
-/* Inline links in the help get a >= 44px hit area without moving the lines (ai-batkahi pattern). */
-.help li a { padding-block: 0.85em; }
+/* Inline links in the help get a >= 44px hit area without moving the lines (ai-batkahi pattern): at 390 px the
+   list text is 14 px, so 1em of block padding on each side is what reaches var(--control) (audit-admin N11 row). */
+.help li a { padding-block: 1em; }
 .form-error, .errors { color: var(--bad); font-size: var(--fs-sm); margin: 0.5rem 0 0; }
 .errors { border: 1px solid var(--bad); border-radius: var(--radius); padding: 0.75rem 1rem 0.75rem 2rem; list-style: disc; overflow-wrap: anywhere; }
 .errors:empty { display: none; }
@@ -48,7 +49,9 @@ tr.bad td.mono:nth-child(3) { color: var(--bad); }
 .panel h3 { font-size: var(--fs-h3); }
 .admin-grid { display: grid; gap: 1rem; align-items: start; }
 @media (min-width: 64em) { .admin-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
-.editor-grid { display: grid; gap: 1rem; align-items: start; }
+/* minmax(0, 1fr) in the single-column layout too: an implicit `auto` track would take the facts table's 40rem
+   min-content width and push the page sideways at 390 px instead of letting the captioned .table-wrap scroll (M12). */
+.editor-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; align-items: start; }
 @media (min-width: 64em) { .editor-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 
 /* ---------- queue cards ---------- */
