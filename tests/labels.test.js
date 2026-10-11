@@ -4,8 +4,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT } from "./helpers.js";
-import { modeLabel, providerLabel, tokenStateLabel, slotLabel, cadenceLine, flagSentence, tokenDaysLeft, isApproved, TERMINAL, SLOT_WORDS } from "../src/lib/labels.js";
-import { DRAFT_STATUSES, SLOT_STATUSES, TOKEN_STATES } from "../engine/lib/schema.js";
+import { modeLabel, providerLabel, tokenStateLabel, slotLabel, cadenceLine, flagSentence, tokenDaysLeft, isApproved, windowLabel, metricLabel, TERMINAL, SLOT_WORDS } from "../src/lib/labels.js";
+import { DRAFT_STATUSES, METRIC_SPEC, METRIC_WINDOWS, SLOT_STATUSES, TOKEN_STATES } from "../engine/lib/schema.js";
 
 const config = JSON.parse(readFileSync(join(ROOT, "company", "config.json"), "utf8"));
 const page = (handle) => config.pages.find((p) => p.handle === handle);
@@ -30,6 +30,14 @@ test("modeLabel / providerLabel / tokenStateLabel map every token and throw on u
   assert.equal(tokenStateLabel("expiring"), "token expiring");
   for (const s of TOKEN_STATES) assert.ok(tokenStateLabel(s), s);
   assert.throws(() => tokenStateLabel("nope"), /unknown token state/);
+  // FEAT-203: insights windows and metric names (the Reports page prints these, never the record tokens)
+  assert.equal(windowLabel("48h"), "48 hours");
+  assert.equal(windowLabel("7d"), "7 days");
+  for (const w of METRIC_WINDOWS) assert.ok(windowLabel(w), w);
+  assert.throws(() => windowLabel("24h"), /unknown insights window/);
+  assert.equal(metricLabel("saved"), "saves");
+  for (const m of Object.keys(METRIC_SPEC.metrics)) assert.ok(metricLabel(m), m);
+  assert.throws(() => metricLabel("impressions"), /unknown insights metric/);
 });
 
 // M6 truth table: every (draft status × approval × mode) cell, written out — not derived from the code.

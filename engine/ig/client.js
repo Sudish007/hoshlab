@@ -9,6 +9,7 @@
 //     .containerStatus(containerId)                       GET  /{containerId}?fields=status_code,status   (reels: poll until FINISHED)
 //     .publish(creationId)                                POST /{igUserId}/media_publish    creation_id
 //     .getPermalink(mediaId)                              GET  /{mediaId}?fields=permalink,timestamp
+//     .insights(igMediaId, metrics[])                     GET  /{igMediaId}/insights?metric=<csv>   (Analyst, FEAT-203)
 //     .getMe()                                            GET  /me?fields=id,user_id,username
 //     .refreshToken()                                     GET  /refresh_access_token?grant_type=ig_refresh_token  (unversioned, as Meta documents it)
 //
@@ -41,6 +42,36 @@ export const CONTAINER_STATUS_CODES = ["EXPIRED", "ERROR", "FINISHED", "IN_PROGR
 // Unversioned Graph endpoint (https://graph.instagram.com/refresh_access_token, Meta's reference page shows no version segment).
 export const REFRESH_PATH = "/refresh_access_token";
 export const REFRESH_GRANT = "ig_refresh_token";
+// Media insights (design §4.10, P2-04). The six metric names are the ones Meta's "Instagram Media Insights"
+// reference lists for BOTH product types the Publisher creates — FEED (image and carousel posts) and REELS — on
+// the pinned version (config.ig.version v26.0): comments, likes, reach, saved, shares, views. `views` replaced
+// `impressions` (deprecated for media created after 2 July 2024) and the reel-only `plays`, so one list serves
+// every format. Verified against https://developers.facebook.com/docs/instagram-platform/reference/instagram-media/insights
+// on 2026-10-11 (page "Updated: Sep 11, 2026"; "The latest version is: v26.0").
+export const INSIGHT_METRICS = ["reach", "views", "likes", "comments", "saved", "shares"];
+export const INSIGHTS_DOC = { url: "https://developers.facebook.com/docs/instagram-platform/reference/instagram-media/insights", verifiedAt: "2026-10-11", version: "v26.0" };
+
+// insights response → { metrics: { name: int | null }, missing: [names without a value], raw: { data: [{ name, period, value }] } }
+// Meta: "If insights data you are requesting does not exist or is currently unavailable, the API returns an empty
+// data set instead of 0" — so a metric that is absent stays null and is listed in `missing`; nothing is read as 0.
+export function parseInsights(json, metrics = INSIGHT_METRICS) {
+  const rows = json && Array.isArray(json.data) ? json.data.filter((r) => r && typeof r === "object") : [];
+  const out = {};
+  const missing = [];
+  for (const name of metrics) {
+    const row = rows.find((r) => r.name === name);
+    let v;
+    if (row) {
+      if (Array.isArray(row.values) && row.values[0] && row.values[0].value !== undefined) v = row.values[0].value;
+      else if (row.total_value && row.total_value.value !== undefined) v = row.total_value.value;
+    }
+    const n = intOrNull(v);
+    out[name] = n;
+    if (n === null) missing.push(name);
+  }
+  const raw = { data: rows.map((r) => ({ name: r.name, period: r.period === undefined ? null : r.period, value: intOrNull(Array.isArray(r.values) && r.values[0] ? r.values[0].value : r.total_value && r.total_value.value) })) };
+  return { metrics: out, missing, raw };
+}
 
 export class IgError extends Error {
   // new IgError({ code, subcode, message, stage, status, type, fbtraceId, secrets })
@@ -221,6 +252,14 @@ export function createClient({ config, token, igUserId, fetchImpl = globalThis.f
       requireString("mediaId", mediaId);
       const json = await request("GET", `/${mediaId}`, { fields: "permalink,timestamp" }, "publish");
       return { permalink: typeof json.permalink === "string" ? json.permalink : null, timestamp: typeof json.timestamp === "string" ? json.timestamp : null, raw: json };
+    },
+    // Lifetime media insights for one published post (FEED or REELS; INSIGHT_METRICS) → parseInsights(). The Analyst
+    // writes a metrics record only when every requested metric has a value (no 0 is ever invented for a gap).
+    async insights(igMediaId, metrics = INSIGHT_METRICS) {
+      requireString("igMediaId", igMediaId);
+      if (!Array.isArray(metrics) || !metrics.length) throw new TypeError("ig: insights needs a non-empty metrics list");
+      const json = await request("GET", `/${igMediaId}/insights`, { metric: metrics.join(",") }, "insights");
+      return parseInsights(json, metrics);
     },
     async getMe() {
       const json = await request("GET", "/me", { fields: "id,user_id,username" }, "skip");

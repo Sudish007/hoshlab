@@ -81,8 +81,14 @@ test("Published shows one 'Nothing published yet — first slot <date>' card per
   assert.ok(html.includes("0 posts"));
 });
 
-test("Reports prints the phase-2 sentence; Activity says No runs yet; Team cards say not run yet", () => {
-  assert.ok(page("reports/index.html").includes("No reports yet — the Analyst starts in phase 2"));
+test("Reports keeps the honest empty state (no report, no insights, nothing invented); Activity says No runs yet; Team cards say not run yet", () => {
+  const reports = page("reports/index.html");
+  assert.ok(reports.includes("No reports yet — the Analyst runs on Sundays once posts have been live for 48 hours"), "FEAT-203 empty sentence");
+  assert.ok(!reports.includes("phase 2"), "the Analyst is built: the empty state no longer blames the phase");
+  assert.ok(reports.includes("none fetched yet"), "no insights records → says so");
+  assert.ok(reports.includes("nothing published yet"));
+  assert.ok(!reports.includes('class="report-row"'), "no report rows");
+  assert.ok(!existsSync(join(dist, "reports", "2026-W41")), "no report detail page is built from the empty fixture");
   const activity = page("activity/index.html");
   assert.ok(activity.includes('<p class="empty">No runs yet.</p>'));
   assert.ok(!activity.includes('<article class="run'));

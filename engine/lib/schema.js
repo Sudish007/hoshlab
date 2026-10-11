@@ -754,17 +754,22 @@ export const PUBLISHED_SPEC = {
   "dryRun?": "bool",
 };
 
-// §4.10 metrics/YYYY-MM.jsonl (Phase 2)
+// §4.10 metrics/YYYY-MM.jsonl (Phase 2, FEAT-203). One record per published post and window, appended by the
+// Analyst's insights fetch; `at` is the fetch instant (the file is the IST month of `at`, review M9). The six
+// names are Meta's media-insights metrics for FEED and REELS media on the pinned API version (engine/agents/
+// analyst.js METRIC_NAMES). `dryRun: true` marks the dry-run client's deterministic zeros — never real data.
+export const METRIC_WINDOWS = ["48h", "7d"];
 export const METRIC_SPEC = {
   draftId: "id",
   igMediaId: "str",
   page: "handle",
   at: "iso-datetime",
-  window: "enum[48h|7d]",
+  window: `enum[${METRIC_WINDOWS.join("|")}]`,
   metrics: { reach: "int", views: "int", likes: "int", comments: "int", saved: "int", shares: "int" },
   source: "enum[ig-insights]",
   "raw?": "obj",
   "runId?": "id",
+  "dryRun?": "bool",
 };
 
 // §4.13 usage/YYYY-MM.jsonl
@@ -813,10 +818,12 @@ export const RUN_SPEC = {
   "tokens?": { "*": TOKEN_RUN_PAGE_SPEC },
 };
 
-// §4.12 status.json (M9 lastRuns ≤ 20)
+// §4.12 status.json (M9 lastRuns ≤ 20). `lastReport` (FEAT-203): the Analyst's latest weekly report — week id,
+// path relative to company/state/ and the instant it was written.
 export const STATUS_SPEC = {
   updatedAt: "iso-datetime",
   "lastRun?": { id: "id", workflow: "pattern:^[a-z][a-z0-9-]{1,40}$", ok: "bool", at: "iso-datetime" },
+  "lastReport?": { week: WEEK_ID, path: "pattern:^reports/\\d{4}-W\\d{2}\\.md$", at: "iso-datetime" },
   lastRuns: [RUN_SPEC, { max: 20 }],
   queue: { "*": "int[0..10000]" },
   blocked: { "*": "int[0..10000]" },

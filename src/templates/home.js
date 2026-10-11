@@ -177,7 +177,7 @@ export function homePage(view) {
       <article class="card"><p class="eyebrow">1 · Plan</p><h3>CEO + Strategist</h3><p class="meta">The CEO memo sets this week's priorities per page; the Strategist turns them into an idea backlog and a calendar of slots.</p></article>
       <article class="card"><p class="eyebrow">2 · Make</p><h3>Writer + Designer</h3><p class="meta">Caption in the page's voice from brand.md facts only; artwork rendered with the product's real tokens (${config.features && config.features.reels ? "image, carousel and silent reel — kinetic type or the product's own screens" : "image and carousel; reels are not built yet"}).</p></article>
       <article class="card"><p class="eyebrow">3 · Check</p><h3>QA / Editor</h3><p class="meta">Blocks invented numbers, missing disclaimers, off-brand colours, text under the floor. A failed check goes back to the Writer, not to you.</p></article>
-      <article class="card"><p class="eyebrow">4 · Ship</p><h3>Publisher + Analyst</h3><p class="meta">In Approve first, the Publisher waits for the owner's tick; in Autopilot it posts on schedule. The Analyst's insights are not built yet (phase 2).</p></article>
+      <article class="card"><p class="eyebrow">4 · Ship</p><h3>Publisher + Analyst</h3><p class="meta">In Approve first, the Publisher waits for the owner's tick; in Autopilot it posts on schedule. The Analyst fetches each post's Instagram insights at 48 hours and 7 days and writes the weekly report on Sundays.</p></article>
     </div>
   </section>
 

@@ -805,22 +805,26 @@ async function writeMode(handle, mode) {
 }
 
 /* ---------- run now (workflow_dispatch + poll) ---------- */
-async function dispatch(file, button) {
+// dispatch(file, button, inputs): workflow_dispatch with { dry_run: false, ...inputs } (every value is sent as a
+// string by github.js). "Run analyst" passes { agents: "analyst" } to engine-daily.yml (FEAT-203); the status line
+// names the inputs so the owner sees which run the strip follows.
+async function dispatch(file, button, inputs = {}) {
   const status = $("run-status");
   const link = $("run-link");
+  const label = Object.keys(inputs).length ? `${file} (${Object.entries(inputs).map(([k, v]) => `${k}=${v}`).join(", ")})` : file;
   clearInterval(S.pollTimer);
   button.disabled = true;
   show(link, false);
   const since = new Date(Date.now() - 60000).toISOString();
   try {
-    await S.client.dispatchWorkflow(file, { dry_run: false });
+    await S.client.dispatchWorkflow(file, { ...inputs, dry_run: false });
   } catch (err) {
     button.disabled = false;
-    status.textContent = fail(err, `dispatch ${file}`);
+    status.textContent = fail(err, `dispatch ${label}`);
     return;
   }
-  log(`dispatched ${file} on ${cfg.branch}`);
-  status.textContent = `${file}: dispatched — run not started yet`;
+  log(`dispatched ${label} on ${cfg.branch}`);
+  status.textContent = `${label}: dispatched — run not started yet`;
   let polls = 0;
   let last = "";
   const tick = async () => {
@@ -834,9 +838,9 @@ async function dispatch(file, button) {
     const c = classifyRun(run, { since });
     if (c.label !== last) {
       last = c.label;
-      log(`${file}: ${c.label}`);
+      log(`${label}: ${c.label}`);
     }
-    status.textContent = `${file}: ${c.label}`;
+    status.textContent = `${label}: ${c.label}`;
     if (c.url && c.state !== "waiting") {
       link.href = c.url;
       show(link, true);
@@ -844,7 +848,7 @@ async function dispatch(file, button) {
     if (c.state === "success" || c.state === "failure" || polls >= MAX_POLLS) {
       clearInterval(S.pollTimer);
       button.disabled = false;
-      if (polls >= MAX_POLLS && c.state !== "success" && c.state !== "failure") status.textContent = `${file}: still ${c.label} after ${Math.round((POLL_MS * MAX_POLLS) / 60000)} min — open Actions`;
+      if (polls >= MAX_POLLS && c.state !== "success" && c.state !== "failure") status.textContent = `${label}: still ${c.label} after ${Math.round((POLL_MS * MAX_POLLS) / 60000)} min — open Actions`;
       if (c.state === "success") loadDeployStatus();
     }
   };
@@ -1180,6 +1184,7 @@ async function boot() {
   $("cal-next").addEventListener("click", () => shiftMonth(1));
   $("run-engine").addEventListener("click", (ev) => dispatch(cfg.workflows.engine, ev.currentTarget));
   $("run-publisher").addEventListener("click", (ev) => dispatch(cfg.workflows.publisher, ev.currentTarget));
+  $("run-analyst").addEventListener("click", (ev) => dispatch(cfg.workflows.engine, ev.currentTarget, { agents: "analyst" }));
   $("json-form").addEventListener("submit", (ev) => {
     ev.preventDefault();
     const rel = $("json-path").value.trim().replace(/^company\//, "");

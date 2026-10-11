@@ -1,5 +1,5 @@
 # Hoshlab — the daily engine run (design.md §3.1; review M16, N16, N17; plan D19).
-# CEO (Mondays) → Strategist → Writer → Designer → QA on the runner; the engine itself commits the state as
+# CEO (Mondays) → Strategist → Writer → Designer → QA → Analyst (Sundays, or inputs.agents=analyst) on the runner; the engine itself commits the state as
 # hoshlab-bot, pushes the media branch first and then main (rebase-retry), and writes `changed` to
 # $GITHUB_OUTPUT; the deploy job then calls pages.yml so the site shows the new state in the same run.
 # Shares the `hoshlab-state` concurrency group with publisher-hourly.yml: the two never write state at once.
@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       agents:
-        description: "Agents to run, comma-separated (ceo,hr,strategist,writer,designer,qa); empty = all"
+        description: "Agents to run, comma-separated (ceo,hr,strategist,writer,designer,qa,analyst); empty = all. The admin's Run analyst button sends `analyst`"
         type: string
         default: ""
       page:

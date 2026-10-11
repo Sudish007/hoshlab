@@ -6,6 +6,10 @@
 const MODES = { approve_first: "Approve first", autopilot: "Autopilot" };
 const PROVIDERS = { anthropic: "Anthropic", gemini: "Google Gemini", openai: "OpenAI", mock: "Mock adapter" };
 const TOKEN_STATES = { ok: "token ok", invalid: "token invalid", not_configured: "not configured yet", expiring: "token expiring", unknown: "token untested" };
+// Insights windows (design §4.10, FEAT-203): the metrics record token → the words the Reports page prints.
+const WINDOWS = { "48h": "48 hours", "7d": "7 days" };
+// Insights metric names (Meta's media-insights metrics) → column headings.
+const METRICS = { reach: "reach", views: "views", likes: "likes", comments: "comments", saved: "saves", shares: "shares" };
 
 // Draft statuses that end a slot's life (review M5): never shown on Calendar or "Next up".
 export const TERMINAL = ["rejected", "blocked", "failed", "expired"];
@@ -26,6 +30,16 @@ export function providerLabel(provider) {
 
 export function tokenStateLabel(state) {
   return lookup(TOKEN_STATES, state, "token state");
+}
+
+// windowLabel('48h') → '48 hours'; windowLabel('7d') → '7 days'.
+export function windowLabel(window) {
+  return lookup(WINDOWS, window, "insights window");
+}
+
+// metricLabel('saved') → 'saves'.
+export function metricLabel(metric) {
+  return lookup(METRICS, metric, "insights metric");
 }
 
 // True when `approval` authorises `draft` (an approve record for the draft's current revision).

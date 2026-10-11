@@ -13,8 +13,9 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import config from "../site.config.js";
 import { loadCompany } from "./lib/company.js";
-import { APPROVAL_SPEC, CALENDAR_SPEC, EDIT_SPEC, OVERRIDE_SPEC, PUBLISHED_SPEC, RUN_SPEC, STATUS_SPEC, USAGE_SPEC, validate } from "../engine/lib/schema.js";
+import { APPROVAL_SPEC, CALENDAR_SPEC, EDIT_SPEC, METRIC_SPEC, OVERRIDE_SPEC, PUBLISHED_SPEC, RUN_SPEC, STATUS_SPEC, USAGE_SPEC, validate } from "../engine/lib/schema.js";
 import { OF2_PATTERNS } from "../engine/lib/checks.js";
+import { OUTPUT_SPEC as ANALYST_OUTPUT_SPEC, listReports, parseReport } from "../engine/agents/analyst.js";
 import { nowIst, parseIso, istMonthKey } from "../engine/lib/time.js";
 import { buildFonts, FONTS_DIR } from "../scripts/build-fonts.mjs";
 import { FONT_FILES, FONT_BUDGET } from "./lib/fonts.js";
@@ -28,7 +29,7 @@ import { pageDetail } from "./templates/page.js";
 import { activityPage } from "./templates/activity.js";
 import { calendarPage } from "./templates/calendar.js";
 import { publishedPage } from "./templates/published.js";
-import { reportsPage } from "./templates/reports.js";
+import { reportPage, reportsPage } from "./templates/reports.js";
 import { aboutPage } from "./templates/about.js";
 import { notFoundPage } from "./templates/not-found.js";
 import { adminPage } from "./templates/admin.js";
@@ -267,7 +268,19 @@ export function loadState(company, now) {
   const calendar = state.exists("state/calendar.json") ? state.readJson("state/calendar.json", CALENDAR_SPEC) : null;
   const runs = [...assertRecords(readLog(state, "runs", prevKey), RUN_SPEC, `state/runs/${prevKey}.jsonl`), ...assertRecords(readLog(state, "runs", monthKey), RUN_SPEC, `state/runs/${monthKey}.jsonl`)];
   const usage = [...assertRecords(readLog(state, "usage", prevKey), USAGE_SPEC, `state/usage/${prevKey}.jsonl`), ...assertRecords(readLog(state, "usage", monthKey), USAGE_SPEC, `state/usage/${monthKey}.jsonl`)];
-  return { status, drafts, edits, approvals, overrides, published, calendar, runs, usage };
+  const metrics = [...assertRecords(readLog(state, "metrics", prevKey), METRIC_SPEC, `state/metrics/${prevKey}.jsonl`), ...assertRecords(readLog(state, "metrics", monthKey), METRIC_SPEC, `state/metrics/${monthKey}.jsonl`)];
+  // The Analyst's reports (FEAT-203): every file must carry the JSON block the engine wrote and the block must still
+  // be a valid Analyst output — a hand-edited or truncated report fails the build by name, like any state file.
+  const reports = listReports(state).map((entry) => {
+    const markdown = state.readText(entry.rel);
+    const parsed = parseReport(markdown);
+    if (!parsed) throw new BuildError(`${entry.rel}: no JSON block (the Analyst writes one; see engine/agents/analyst.js renderReport)`);
+    const r = validate(parsed.report, ANALYST_OUTPUT_SPEC);
+    if (!r.ok) throw new BuildError(`${entry.rel}: ${r.errors.slice(0, 3).join("; ")}`);
+    if (parsed.report.week !== entry.week) throw new BuildError(`${entry.rel}: the JSON block says week ${parsed.report.week}`);
+    return { ...entry, markdown };
+  });
+  return { status, drafts, edits, approvals, overrides, published, calendar, runs, usage, metrics, reports };
 }
 
 // --- enforcement ------------------------------------------------------------------------------------
@@ -335,7 +348,7 @@ export function build() {
   const data = loadState(company, now);
   const view0 = { config: company.config, roster: company.roster, brands: company.brands, ...data, now };
 
-  console.log(`Building ${company.config.pages.length} pages, ${data.drafts.length} drafts, ${data.published.length} published posts, ${data.runs.length} runs (clock ${nowIst(now)}) -> ${rel(DIST) || DIST}`);
+  console.log(`Building ${company.config.pages.length} pages, ${data.drafts.length} drafts, ${data.published.length} published posts, ${data.runs.length} runs, ${data.reports.length} reports (clock ${nowIst(now)}) -> ${rel(DIST) || DIST}`);
   rmSync(DIST, { recursive: true, force: true });
   mkdirSync(DIST, { recursive: true });
 
@@ -354,6 +367,7 @@ export function build() {
   write("calendar/index.html", calendarPage(view));
   write("published/index.html", publishedPage(view));
   write("reports/index.html", reportsPage(view));
+  for (const report of view.reports) write(`reports/${report.week}/index.html`, reportPage(view, report));
   write("about/index.html", aboutPage(view));
   write("admin/index.html", adminPage({ config: company.config, roster: company.roster, year: view.year }));
   write("404.html", notFoundPage(view));

@@ -331,6 +331,51 @@ strong { font-weight: 650; }
 .filter-status { min-height: 1.5em; }
 .filter-status:empty { display: none; }
 
+/* ---------- Reports (the Analyst's weekly reports, FEAT-203) ---------- */
+/* The report body is engine-written Markdown (src/lib/markdown.js renderDocument: headings shifted one level, raw
+   HTML escaped, links printed as text) and every table sits in the ONE captioned horizontal scroller the design
+   allows (review M12 — the same .table-wrap + "scroll →" as the admin's facts table), so an eight-column table
+   scrolls inside its box at 390 px instead of pushing the page sideways. From 64em the narrative takes 3/5 and the
+   structured numbers 2/5 of the container, so no monitor half stays empty (OF-4). */
+.report-list { display: grid; gap: 1rem; }
+.report-row { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1rem; display: grid; gap: 0.75rem 1.5rem; grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 64em) { .report-row { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); } }
+.report-row h3 { font-size: var(--fs-h3); }
+.report-row h3 a { display: inline-flex; align-items: center; min-height: var(--control); text-decoration: none; }
+.report-row h3 a:hover { text-decoration: underline; }
+.report-row .totals { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; font-size: var(--fs-sm); }
+.report-row .totals li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.25rem 0.75rem; border-left: 3px solid var(--brand, var(--rule-2)); padding-left: 0.5rem; min-width: 0; overflow-wrap: anywhere; }
+.report-row .totals .mono { color: var(--ink-2); }
+.report-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+@media (min-width: 64em) { .report-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
+.report-side { display: grid; gap: 1rem; align-content: start; }
+.card ol.plain { margin: 0; padding-left: 1.1rem; font-size: var(--fs-sm); }
+.card ol.plain li { margin: 0.15rem 0; }
+.report-side .used { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; font-size: var(--fs-sm); }
+.report-side .used li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.1rem 0.75rem; border-left: 3px solid var(--brand, var(--rule-2)); padding-left: 0.5rem; overflow-wrap: anywhere; }
+.report-side .used .mono { color: var(--ink-2); font-size: var(--fs-xs); }
+.prose { min-width: 0; }
+.prose > :first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.prose h2 { font-size: var(--fs-h3); margin: 1.75rem 0 0.5rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
+.prose h3, .prose h4, .prose h5, .prose h6 { font-size: var(--fs-lg); margin: 1.25rem 0 0.4rem; }
+.prose p, .prose li { max-width: 75ch; }
+.prose ul, .prose ol { margin: 0 0 1em; padding-left: 1.2rem; }
+.prose li { margin: 0.2rem 0; }
+.prose li p { margin: 0; }
+.prose code { font-family: var(--font-mono); font-size: var(--fs-sm); background: var(--surface-2); padding: 0 0.3em; border-radius: 3px; }
+.prose blockquote { margin: 0 0 1em; padding-left: 0.75rem; border-left: 2px solid var(--rule-2); color: var(--ink-2); }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin: 1.5rem 0; }
+/* The one permitted horizontal scroller: the caption says so (review M12). */
+.table-wrap { margin: 0 0 1rem; overflow-x: auto; display: grid; gap: 0.25rem; }
+.table-wrap figcaption { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-2); }
+.table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--rule); font-size: var(--fs-sm); }
+.table th, .table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+.table th { background: var(--surface-2); font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); white-space: nowrap; }
+.table td { overflow-wrap: anywhere; }
+.table tbody tr:last-child td { border-bottom: 0; }
+.table .align-right { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.table .align-center { text-align: center; }
+
 /* ---------- Footer ---------- */
 .site-footer { border-top: 1px solid var(--rule); margin-top: 1rem; background: var(--surface); }
 .footer-inner { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; justify-content: space-between; align-items: center; padding-block: 1.25rem; font-size: var(--fs-sm); color: var(--ink-2); }

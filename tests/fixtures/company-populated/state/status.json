@@ -6,6 +6,11 @@
     "ok": true,
     "at": "2026-10-12T09:04:40+05:30"
   },
+  "lastReport": {
+    "week": "2026-W41",
+    "path": "reports/2026-W41.md",
+    "at": "2026-10-11T21:03:30+05:30"
+  },
   "lastRuns": [
     {
       "id": "engine-daily-20261012-0900-a7b8c9",

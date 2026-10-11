@@ -20,13 +20,13 @@ const APPROVED_KD = "kd-2026-10-13-six-rules";
 const BLOCKED_JR = "jr-2026-10-15-templates";
 
 test("P1-12: every public page, the 404 and the three feeds exist", () => {
-  for (const rel of ["index.html", "team/index.html", "pages/index.html", "pages/rishtapatra/index.html", "pages/kaatdo/index.html", "pages/job_rez/index.html", "activity/index.html", "calendar/index.html", "published/index.html", "reports/index.html", "about/index.html", "404.html", "sitemap.xml", "feed.xml", "robots.txt", "styles.css", "main.js", "brands.css", "favicon.svg", "favicon.ico", "apple-touch-icon.png", "og-default.png"]) {
+  for (const rel of ["index.html", "team/index.html", "pages/index.html", "pages/rishtapatra/index.html", "pages/kaatdo/index.html", "pages/job_rez/index.html", "activity/index.html", "calendar/index.html", "published/index.html", "reports/index.html", "reports/2026-W41/index.html", "about/index.html", "404.html", "sitemap.xml", "feed.xml", "robots.txt", "styles.css", "main.js", "brands.css", "favicon.svg", "favicon.ico", "apple-touch-icon.png", "og-default.png"]) {
     assert.ok(existsSync(join(DIST, ...rel.split("/"))), rel);
   }
   assert.ok(existsSync(join(DIST, "admin", "lib", "labels.js")), "shared libs copied for the admin (N18)");
   for (const name of ["schema.js", "checks.js", "brand.js", "labels.js"]) assert.ok(!existsSync(join(ROOT, "public", "admin", "lib", name)), `shared lib ${name} is never committed under public/admin/lib (N18)`);
   assert.ok(existsSync(join(DIST, "admin", "index.html")), "admin page built (FEAT-111)");
-  assert.equal(publicHtml().length, 12);
+  assert.equal(publicHtml().length, 13, "12 Phase 1 pages + the fixture's one report page (FEAT-203)");
 });
 
 test("OF-1: no public page links to admin or has an element whose text is 'Admin'", () => {
@@ -73,7 +73,8 @@ test("N4: Team says 'no language model' exactly twice (Designer, Publisher) and 
   assert.ok(team.includes("Six of the eight roles run on a language model; the Designer and Publisher are deterministic code. Every role has a list of things it is never allowed to do."));
   assert.ok(team.includes("Every factual claim must map to a fact id in brand.md."));
   assert.ok(team.includes("Monthly review: not built yet (phase 2)"));
-  assert.ok(team.includes("Weekly insights: not built yet (phase 2)"));
+  assert.ok(!team.includes("Weekly insights: not built yet"), "the Analyst is built (FEAT-203): its card no longer says not built yet");
+  assert.ok(team.includes("insights at 48 h and 7 d + the weekly report"));
 });
 
 test("N5: provider names are human labels, never config tokens", () => {
@@ -279,8 +280,12 @@ test("Activity page: every run from the current + previous month files, newest f
   assert.ok(html.includes("October 2026 and September 2026"));
 });
 
-test("Reports page prints the honest phase-2 sentence; About states public drafts and the limits", () => {
-  assert.ok(page("reports/index.html").includes("No reports yet — the Analyst starts in phase 2"));
+test("Reports page lists the fixture report (the empty sentence is gone, P2-05); About states public drafts and the limits", () => {
+  const reports = page("reports/index.html");
+  assert.ok(!reports.includes("No reports yet"), "a report exists, so no empty state");
+  assert.ok(reports.includes("1 weekly report from Instagram insights."));
+  assert.ok(reports.includes("Numbers come from Instagram insights fetched at 48 h and 7 d"));
+  assert.ok(reports.includes(`href="${config.basePath}reports/2026-W41/"`));
   const about = page("about/index.html");
   assert.ok(about.includes("Drafts are public."));
   assert.ok(about.includes("Actions cron may start 10–30 min late"));

@@ -46,9 +46,10 @@ function firstLine(caption) {
   return line.trim().slice(0, 120);
 }
 
-// Public routes only. `extra` lets the builder add per-page paths (pages/<handle>/).
+// Public routes only: the fixed pages, one per Instagram page (pages/<handle>/) and one per Analyst report
+// (reports/<week>/, FEAT-203).
 export function publicRoutes(view) {
-  return ["", "team/", "pages/", ...view.config.pages.map((p) => `pages/${p.handle}/`), "activity/", "calendar/", "published/", "reports/", "about/"];
+  return ["", "team/", "pages/", ...view.config.pages.map((p) => `pages/${p.handle}/`), "activity/", "calendar/", "published/", "reports/", ...(view.reports || []).map((r) => r.url), "about/"];
 }
 
 export function sitemap(view) {

@@ -89,7 +89,7 @@ test("N6: the lock copy names raw.githubusercontent.com beside api.github.com; h
   for (const h of ["Security", "What the admin can do", "Limits"]) assert.ok(html.includes(`>${h}</h3>`), h);
 });
 
-test("views, dialogs, tabs and the card template exist as static markup; tabs wrap (M12); 'Run analyst' is honestly not built yet", () => {
+test("views, dialogs, tabs and the card template exist as static markup; tabs wrap (M12); 'Run analyst' is an enabled button (FEAT-203)", () => {
   for (const id of ["view-queue", "view-blocked", "view-calendar", "view-modes", "view-run", "view-brand", "view-roster", "view-charter", "view-tell-ceo", "view-activity", "view-json"]) {
     assert.match(html, new RegExp(`<section id="${id}" class="view" hidden`), id);
   }
@@ -105,7 +105,10 @@ test("views, dialogs, tabs and the card template exist as static markup; tabs wr
   assert.match(css, /\.table-wrap \{[^}]*overflow-x: auto/);
   assert.match(css, /\.seg button \{[^}]*min-height: var\(--control\)/, "segmented mode buttons are 44 px (N11)");
   assert.ok(html.includes("Blocked, failed, expired"));
-  assert.ok(html.includes("Run analyst — not built yet (phase 2)"));
+  assert.match(html, /<button type="button" class="btn" id="run-analyst">Run analyst<\/button>/, "Run analyst is a live button (no disabled, no aria-disabled)");
+  assert.ok(!html.includes("not built yet (phase 2)") || !/Run analyst[^<]*not built yet/.test(html), "the Analyst is no longer labelled unbuilt");
+  assert.ok(!html.includes("Reports and analytics: not built yet"), "the limits list no longer calls analytics unbuilt");
+  assert.ok(html.includes("Instagram's own media insights"), "the limits list names the insights source");
   assert.ok(html.includes('<figcaption class="meta">scroll →</figcaption>'), "the facts table is the one captioned scroller (M12)");
   assert.ok(html.includes('role="grid"'));
 });

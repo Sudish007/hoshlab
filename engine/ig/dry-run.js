@@ -8,6 +8,7 @@
 // first poll of a container and FINISHED from the second; refreshToken returns a clearly fake 'DRYRUN-' token.
 // Selected by engine/commands/publish.js when IG_DRY_RUN=1 or --dry-run (isDryRun()).
 import { createHash } from "node:crypto";
+import { INSIGHT_METRICS } from "./client.js";
 
 export const DRY_USER_ID = "dry-user";
 export const DRY_ME = { id: "dry-app", user_id: DRY_USER_ID, username: "dry" };
@@ -100,6 +101,15 @@ export function createDryRunClient({ igUserId = DRY_USER_ID, stdout = (s) => pro
     async getPermalink(mediaId) {
       const id = record("GET", `/${mediaId}`, { fields: "permalink,timestamp" });
       return { permalink: `https://www.instagram.com/p/DRYRUN${id.slice(4)}/`, timestamp: clock().toISOString(), raw: null };
+    },
+    // Insights (FEAT-203): the call is recorded and every metric is 0 — deterministic, labelled dryRun:true, never a
+    // random or plausible-looking number. The Analyst stores the label on the metrics record.
+    async insights(igMediaId, metrics = INSIGHT_METRICS) {
+      const names = Array.isArray(metrics) && metrics.length ? metrics : INSIGHT_METRICS;
+      record("GET", `/${igMediaId}/insights`, { metric: names.join(",") });
+      const zeros = {};
+      for (const name of names) zeros[name] = 0;
+      return { metrics: zeros, missing: [], dryRun: true, raw: { dryRun: true, data: names.map((name) => ({ name, period: "lifetime", value: 0 })) } };
     },
     async getMe() {
       record("GET", "/me", { fields: "id,user_id,username" });
