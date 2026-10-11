@@ -13,12 +13,12 @@ export const EXIT = { ok: 0, failed: 1, usage: 2 };
 // Registry: `load` imports the command module (export run(ctx) → exit code); null = not built yet.
 export const COMMANDS = {
   "check-models": { summary: "verify provider secrets, model ids and prices (no key material printed)", planned: "FEAT-103", load: () => import("./commands/check-models.js") },
-  daily: { summary: "run the daily agents (CEO, Strategist, Writer, Designer, QA, Analyst on Sundays; --agents csv, --page, --dry-run, --commit, --now <iso> with --dry-run only)", planned: "FEAT-108", load: () => import("./commands/daily.js") },
+  daily: { summary: "run the daily agents (CEO, HR on the 1st, Strategist, Writer, Designer, QA, Analyst on Sundays; --agents csv, --page, --dry-run, --commit, --now <iso> with --dry-run only)", planned: "FEAT-108", load: () => import("./commands/daily.js") },
   publish: { summary: "hourly publisher: post queued, approved drafts (--page, --dry-run, --now <iso> with dry-run only)", planned: "FEAT-107", load: () => import("./commands/publish.js") },
   "render-sample": { summary: "render one fixture draft for a page into the media worktree (--page, --out, --format)", planned: "FEAT-106", load: () => import("./commands/render-sample.js") },
   "set-page": { summary: "switch a page between approve_first and autopilot (owner tool; --page, --mode)", planned: "FEAT-108", load: () => import("./commands/set-page.js") },
   analyst: { summary: "the Analyst on demand: Instagram insights at 48 h / 7 d into metrics/<month>.jsonl + this week's report (= daily --agents analyst; --dry-run, --commit, --now <iso> with --dry-run only)", planned: "FEAT-203", load: () => import("./commands/analyst.js") },
-  hr: { summary: "monthly roster review", planned: "FEAT-204 / phase 2", load: null },
+  hr: { summary: "the monthly roster review on demand: per-agent stats of the previous month → hr/<month>-review.md + hr/proposals/<month>.json (= daily --agents hr, forced; --dry-run, --commit, --now <iso> with --dry-run only)", planned: "FEAT-204", load: () => import("./commands/hr.js") },
   "refresh-tokens": { summary: "weekly: refresh Instagram long-lived tokens < 20 days from expiry, store them with gh secret set, record tokens.json (--dry-run, --commit, --page)", planned: "FEAT-202", load: () => import("./commands/refresh-tokens.js") },
   retention: { summary: "weekly: delete reel MP4s published > 90 days ago from the media branch, keep posters (--dry-run, --commit, --days)", planned: "FEAT-202", load: () => import("./commands/retention.js") },
 };

@@ -13,9 +13,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import config from "../site.config.js";
 import { loadCompany } from "./lib/company.js";
-import { APPROVAL_SPEC, CALENDAR_SPEC, EDIT_SPEC, METRIC_SPEC, OVERRIDE_SPEC, PUBLISHED_SPEC, RUN_SPEC, STATUS_SPEC, USAGE_SPEC, validate } from "../engine/lib/schema.js";
+import { APPROVAL_SPEC, CALENDAR_SPEC, EDIT_SPEC, HR_DECISION_SPEC, HR_PROPOSAL_SPEC, METRIC_SPEC, OVERRIDE_SPEC, PUBLISHED_SPEC, RUN_SPEC, STATUS_SPEC, USAGE_SPEC, validate } from "../engine/lib/schema.js";
 import { OF2_PATTERNS } from "../engine/lib/checks.js";
 import { OUTPUT_SPEC as ANALYST_OUTPUT_SPEC, listReports, parseReport } from "../engine/agents/analyst.js";
+import { OUTPUT_SPEC as HR_OUTPUT_SPEC, listProposals, listReviews, parseReview } from "../engine/agents/hr.js";
 import { nowIst, parseIso, istMonthKey } from "../engine/lib/time.js";
 import { buildFonts, FONTS_DIR } from "../scripts/build-fonts.mjs";
 import { FONT_FILES, FONT_BUDGET } from "./lib/fonts.js";
@@ -280,7 +281,25 @@ export function loadState(company, now) {
     if (parsed.report.week !== entry.week) throw new BuildError(`${entry.rel}: the JSON block says week ${parsed.report.week}`);
     return { ...entry, markdown };
   });
-  return { status, drafts, edits, approvals, overrides, published, calendar, runs, usage, metrics, reports };
+  // HR's monthly reviews, proposals and the owner's decisions (FEAT-204): the same rule — a review without the engine's
+  // JSON block, a proposal or a decision line that fails its spec, fails the build by name.
+  const hr = {
+    reviews: listReviews(state).map((entry) => {
+      const markdown = state.readText(entry.rel);
+      const parsed = parseReview(markdown);
+      if (!parsed) throw new BuildError(`${entry.rel}: no JSON block (HR writes one; see engine/agents/hr.js renderReview)`);
+      const r = validate(parsed.review, HR_OUTPUT_SPEC);
+      if (!r.ok) throw new BuildError(`${entry.rel}: ${r.errors.slice(0, 3).join("; ")}`);
+      return { ...entry, markdown, review: parsed.review, engine: parsed.engine, body: parsed.body };
+    }),
+    proposals: listProposals(state).map((entry) => {
+      const proposal = state.readJson(entry.rel, HR_PROPOSAL_SPEC);
+      if (proposal.month !== entry.month) throw new BuildError(`${entry.rel}: the file says month ${proposal.month}`);
+      return { ...entry, ...proposal };
+    }),
+    decisions: assertRecords(state.readJsonl("state/hr/decisions.jsonl"), HR_DECISION_SPEC, "state/hr/decisions.jsonl"),
+  };
+  return { status, drafts, edits, approvals, overrides, published, calendar, runs, usage, metrics, reports, hr };
 }
 
 // --- enforcement ------------------------------------------------------------------------------------

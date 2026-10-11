@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { tmpDir } from "./helpers.js";
-import { ADMIN_OWNED, ENGINE_OWNED, OwnershipError, createState, isAdminOwned, isEngineOwned, latestByKey, normalizeRel, parseJsonl } from "../engine/lib/state.js";
-import { APPROVAL_SPEC, DRAFT_SPEC, SchemaError, STATUS_SPEC, USAGE_SPEC } from "../engine/lib/schema.js";
+import { ADMIN_OWNED, ENGINE_OWNED, HR_ENGINE_FILES, OwnershipError, createState, isAdminOwned, isEngineOwned, latestByKey, normalizeRel, parseJsonl, specFor } from "../engine/lib/state.js";
+import { APPROVAL_SPEC, DRAFT_SPEC, HR_DECISION_SPEC, HR_PROPOSAL_SPEC, SchemaError, STATUS_SPEC, USAGE_SPEC } from "../engine/lib/schema.js";
 
 const RUN_ID = "engine-daily-20261031-2350-a1b2c3";
 const usageRecord = (at) => ({ at, runId: RUN_ID, agent: "writer", page: "rishtapatra", provider: "mock", model: "mock", inputTokens: 10, outputTokens: 5, costUsd: 0, ms: 12, ok: true, error: null, mock: true });
@@ -79,10 +79,42 @@ test("ownership tables: isAdminOwned / isEngineOwned / normalizeRel", () => {
     assert.equal(isEngineOwned(rel), true, rel);
   }
   assert.ok(ENGINE_OWNED.includes("state/hr/*"));
+  assert.deepEqual(HR_ENGINE_FILES, ["state/hr/proposals/*", "state/hr/*-review.md"], "what state/hr/* stands for (N14 documentation)");
   assert.equal(normalizeRel("./state//drafts/../status.json"), "state/status.json");
   assert.throws(() => normalizeRel("../outside.json"), RangeError);
   assert.throws(() => normalizeRel("c:/abs/path.json"), RangeError);
   assert.throws(() => createState({ companyDir: "x" }).writeJson("state/../../escape.json", {}), RangeError);
+});
+
+// Review N14 / plan D13 (FEAT-204): the admin appends hr/decisions.jsonl and never edits a proposal; HR writes proposals
+// and reviews and never a decision. Both tables say so, specFor knows the three kinds, and the engine state refuses the log.
+test("N14: hr/decisions.jsonl is admin-owned; hr/proposals/* and hr/*-review.md are engine-owned", () => {
+  assert.ok(ADMIN_OWNED.includes("state/hr/decisions.jsonl"));
+  assert.ok(!ENGINE_OWNED.includes("state/hr/decisions.jsonl"));
+  for (const rel of ["state/hr/proposals/2026-09.json", "state/hr/2026-09-review.md", "state/hr/proposals/2026-10.json"]) {
+    assert.equal(isEngineOwned(rel), true, rel);
+    assert.equal(isAdminOwned(rel), false, rel);
+  }
+  assert.equal(isEngineOwned("state/hr/decisions.jsonl"), false);
+  assert.equal(isAdminOwned("state/hr/decisions.jsonl"), true);
+  assert.equal(specFor("state/hr/decisions.jsonl").kind, "hrDecision");
+  assert.equal(specFor("state/hr/proposals/2026-09.json").kind, "hrProposal");
+  assert.equal(specFor("state/hr/2026-09-review.md").kind, "hrReview");
+  assert.equal(specFor("state/hr/proposals/2026-9.json"), null, "a proposal file is named by its YYYY-MM month");
+  assert.equal(specFor("state/hr/notes.md"), null, "nothing else lives under state/hr/");
+  const { dir, cleanup } = fresh();
+  try {
+    const state = createState({ companyDir: dir, now: "2026-11-01T05:31:00+05:30" });
+    const decision = { month: "2026-10", proposal: "hr/proposals/2026-10.json", decision: "apply", at: "2026-11-02T10:00:00+05:30", by: "owner" };
+    assert.throws(() => state.appendJsonl("state/hr/decisions.jsonl", decision, HR_DECISION_SPEC), (e) => e instanceof OwnershipError && e.path === "state/hr/decisions.jsonl");
+    const proposal = { month: "2026-10", at: "2026-11-01T05:31:40+05:30", runId: "engine-daily-20261101-0531-aaaaaa", status: "proposed", reviewPath: "hr/2026-10-review.md", review: [], changes: [] };
+    assert.equal(state.writeJson("state/hr/proposals/2026-10.json", proposal, HR_PROPOSAL_SPEC), "state/hr/proposals/2026-10.json");
+    assert.equal(state.writeText("state/hr/2026-10-review.md", "# HR review 2026-10\n"), "state/hr/2026-10-review.md");
+    assert.throws(() => state.writeJson("state/hr/proposals/2026-10.json", { ...proposal, status: "applied" }, HR_PROPOSAL_SPEC), SchemaError, "a proposal's status is always 'proposed' — the decision lives in the admin's log");
+    assert.equal(existsSync(join(dir, "state", "hr", "decisions.jsonl")), false);
+  } finally {
+    cleanup();
+  }
 });
 
 test("writeJson validates first and writes nothing on failure; success writes UTF-8 without BOM, atomically", () => {

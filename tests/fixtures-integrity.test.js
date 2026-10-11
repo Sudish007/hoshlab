@@ -15,7 +15,8 @@ import { MAX_MEDIA_BYTES } from "../engine/lib/checks.js";
 import { pagesUrl, rawUrl } from "../engine/lib/media.js";
 import { parseMemo, outputSpec, validateCeoOutput } from "../engine/agents/ceo.js";
 import { OUTPUT_SPEC as ANALYST_OUTPUT_SPEC, aggregate, allowedNumbers, numberTokens, parseReport, renderReport, validateAnalystOutput } from "../engine/agents/analyst.js";
-import { METRIC_SPEC, assertShape } from "../engine/lib/schema.js";
+import { OUTPUT_SPEC as HR_OUTPUT_SPEC, computeAgentStats, listProposals, listReviews, parseReview, readMonthData, renderReview, validateHrOutput } from "../engine/agents/hr.js";
+import { HR_PROPOSAL_SPEC, METRIC_SPEC, assertShape } from "../engine/lib/schema.js";
 import { loadCompany } from "../src/lib/company.js";
 import { usableFacts } from "../engine/lib/brand.js";
 import { queueCounts } from "../engine/commands/publish.js";
@@ -129,7 +130,7 @@ test("every fixture state file validates against its spec; memos carry a CEO JSO
   assert.deepEqual(tree.errors, []);
   assert.ok(tree.files.length >= 25, `${tree.files.length} files`);
   const kinds = new Set(tree.files.map((f) => f.kind));
-  for (const k of ["config", "roster", "status", "calendar", "idea", "approval", "override", "feedback", "published", "run", "usage", "draft", "qa", "memo", "metric", "report"]) assert.ok(kinds.has(k), k);
+  for (const k of ["config", "roster", "status", "calendar", "idea", "approval", "override", "feedback", "published", "run", "usage", "draft", "qa", "memo", "metric", "report", "hrReview", "hrProposal"]) assert.ok(kinds.has(k), k);
   const memos = tree.files.filter((f) => f.kind === "memo").map((f) => f.rel);
   assert.deepEqual(memos, ["state/memos/2026-W41.md", "state/memos/2026-W42.md"]);
   const handles = config.pages.map((p) => p.handle);
@@ -201,4 +202,41 @@ test("metrics/2026-10.jsonl + reports/2026-W41.md: records are due-window fetche
   assert.ok(ok.forCeo.length >= 1);
   const status = state.readJson("state/status.json");
   assert.deepEqual(status.lastReport, { week: "2026-W41", path: "reports/2026-W41.md", at: parsed.engine.generatedAt });
+});
+
+// FEAT-204 (P2-06, N14): the fixture's September review + proposal are what the engine writes from one HR output — the
+// review file is renderReview(output, engine) byte for byte, the proposal file is that output's review/changes with status
+// proposed, the engine's stats in the block equal computeAgentStats over the fixture's (empty) September, the output passes
+// the engine's own validation against those stats, and no decisions log exists (the Team card says "awaiting the owner").
+test("hr/2026-09-review.md + hr/proposals/2026-09.json: one HR output, re-derived; evidence rule holds; no decisions.jsonl", () => {
+  const markdown = state.readText("state/hr/2026-09-review.md");
+  const parsed = parseReview(markdown);
+  assert.ok(parsed, "JSON block present");
+  assertShape(parsed.review, HR_OUTPUT_SPEC);
+  assert.equal(parsed.review.month, "2026-09");
+  assert.equal(renderReview(parsed.review, parsed.engine), markdown, "the file is exactly what renderReview writes");
+  assert.equal(parsed.body, parsed.review.reviewMarkdown.trimEnd());
+  const proposal = state.readJson("state/hr/proposals/2026-09.json", HR_PROPOSAL_SPEC);
+  assert.deepEqual(proposal, { month: "2026-09", at: parsed.engine.generatedAt, runId: parsed.engine.runId, status: "proposed", reviewPath: "hr/2026-09-review.md", review: parsed.review.review, changes: parsed.review.rosterProposal.changes });
+  assert.deepEqual(proposal.changes, [{ ...proposal.changes[0], agent: "writer", field: "temperature", from: "0.8", to: "0.7" }], "one change: writer temperature 0.8 → 0.7");
+  assert.equal(company.roster.agents.find((a) => a.name === "writer").temperature, 0.8, "`from` is the fixture roster's value");
+  assert.deepEqual(proposal.review.map((r) => r.agent), company.roster.agents.map((a) => a.name), "all eight agents, roster order");
+  assert.ok(proposal.review.every((r) => (r.agent === "writer" ? r.verdict === "tune" : r.verdict === "keep")));
+  assert.match(proposal.at, /^2026-10-01T/, "written by the 1 October run");
+  assert.match(proposal.runId, /^engine-daily-20261001-/);
+  // the stats in the block are the engine's for September (the fixture has no September logs: all zeros), and the output
+  // passes the engine's validation against them — a review that quoted a number would fail here
+  const sept = readMonthData(state, "2026-09");
+  const stats = computeAgentStats({ month: "2026-09", agents: company.roster.agents.map((a) => a.name), usageMonth: sept.usage, runs: sept.runs, drafts: sept.drafts, qaFiles: sept.qaFiles, published: sept.published });
+  assert.deepEqual(parsed.engine.stats, stats);
+  assert.deepEqual(parsed.engine.data, { usageRows: 0, runs: 0, draftsWritten: 0, published: 0, feedback: 0 });
+  assert.equal(parsed.engine.mock, false);
+  assert.deepEqual(validateHrOutput(parsed.review, { month: "2026-09", roster: company.roster, config, stats }), []);
+  assert.ok(proposal.review.every((r) => Object.keys(r.evidence).length === 0), "nothing to quote: every evidence is {}");
+  assert.equal(existsSync(join(COMPANY_DIR, "state", "hr", "decisions.jsonl")), false, "no decision yet → status proposed");
+  assert.deepEqual(listReviews(state).map((r) => r.month), ["2026-09"]);
+  assert.deepEqual(listProposals(state).map((r) => r.month), ["2026-09"]);
+  // the review and proposal count among validateTree's kinds (the tree test above already requires zero errors)
+  const kinds = new Set(validateTree(COMPANY_DIR).files.map((f) => f.kind));
+  assert.ok(kinds.has("hrReview") && kinds.has("hrProposal"));
 });

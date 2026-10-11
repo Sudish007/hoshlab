@@ -145,6 +145,18 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("the first real report appears after the first Sunday with a post that has been live for 48 hours");
   assert.ok(!readme.includes("Strategist and Analyst (phase 2)"), "the roster line no longer calls the Analyst phase 2");
   assert.ok(!readme.includes('as "not built yet (phase 2)": the Analyst'), "the Analyst left the unbuilt list");
+  // FEAT-204 (P2-06): the HR step, its evidence rule, the qa/publisher guard, the admin's Apply / Dismiss through the decisions
+  // log (N14), the on-demand command, and HR off the unbuilt list
+  has("7a. **1st of the month 05:30 IST — HR**");
+  has("\"evidence number not in stats\"");
+  has("a proposal can never remove or disable QA or the Publisher");
+  has("HR never edits `roster.json`");
+  has("**Apply** writes the proposed values into `roster.json` (re-validated in the browser) and appends `company/state/hr/decisions.jsonl`; **Dismiss** appends the decision only; the proposal file is never modified");
+  has("node --env-file=.env engine/index.js hr --dry-run");
+  has("`roster: apply hr proposal <month>` + `hr: apply proposal <month>` / `hr: dismiss proposal <month>`");
+  has("the first HR review on the 1st of the month after the first month with runs");
+  assert.ok(!readme.includes("HR (monthly review, phase 2)"), "the roster line no longer calls HR phase 2");
+  assert.ok(!readme.includes('"not built yet (phase 2)": HR\'s monthly review'), "HR left the unbuilt list");
 });
 
 test("numbers in the README are the config's", () => {

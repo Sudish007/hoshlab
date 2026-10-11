@@ -118,9 +118,10 @@ test("Monday run on the fixture (MOCK_LLM): CEO memo, Strategist per page, Write
     assert.match(agent(r, "ceo").note, /→ memos\/2026-W42\.md$/);
     assert.ok(fx.state.exists("state/memos/2026-W42.md"));
     assert.match(fx.state.readText("state/memos/2026-W42.md"), /```json\n[\s\S]+\n```\n$/);
-    // HR: phase 2
-    assert.equal(agent(r, "hr").skipped, "phase2");
-    assert.match(agent(r, "hr").note, /not built yet \(phase 2\)/);
+    // HR: built (FEAT-204) but due on the 1st only — the fixture's September proposal is on file, so 12 October is not_due
+    assert.equal(agent(r, "hr").skipped, "not_due");
+    assert.equal(agent(r, "hr").calls, 0);
+    assert.match(agent(r, "hr").note, /^skipped: not_due — not the 1st of the month and hr\/proposals\/2026-09\.json exists/);
     // Strategist: one call per page, calendar + ideas written
     assert.equal(agent(r, "strategist").calls, 3);
     const calendar = fx.state.readJson("state/calendar.json", CALENDAR_SPEC);

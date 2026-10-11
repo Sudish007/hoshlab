@@ -268,6 +268,27 @@ export function rosterRules(roster, config) {
   return errors;
 }
 
+// §4.2 "validated … by the HR-proposal applier" / §5 HR (FEAT-204, plan D13): the roster after an HR proposal's
+// changes. Pure and browser-safe — the engine validates the proposed roster with it before writing a proposal, the
+// admin builds the roster.json it PUTs on Apply with it. Only `model`, `provider` and `temperature` touch roster.json
+// (`charterAppend` is applied to charters/<agent>.md by the admin); an agent is never added, removed or disabled, so
+// the qa/publisher invariants of rosterRules() can only be re-checked, never broken here. `to` arrives as the string the
+// model wrote ("0.7") and is converted for temperature; a provider that was also a fallback leaves the fallback list.
+export const ROSTER_CHANGE_FIELDS = ["model", "provider", "temperature", "charterAppend"];
+export function applyRosterChanges(roster, changes = []) {
+  const agents = ((roster && roster.agents) || []).map((a) => ({ ...a, ...(a.fallback ? { fallback: [...a.fallback] } : {}) }));
+  for (const c of changes || []) {
+    const agent = agents.find((a) => a.name === (c && c.agent));
+    if (!agent) throw new RangeError(`applyRosterChanges: unknown agent ${JSON.stringify(c && c.agent)}`);
+    if (!ROSTER_CHANGE_FIELDS.includes(c.field)) throw new RangeError(`applyRosterChanges: unknown field ${JSON.stringify(c.field)} (${ROSTER_CHANGE_FIELDS.join("|")})`);
+    if (c.field === "charterAppend") continue;
+    if (c.field === "temperature") agent.temperature = Number(c.to);
+    else agent[c.field] = String(c.to);
+    if (c.field === "provider" && Array.isArray(agent.fallback)) agent.fallback = agent.fallback.filter((p) => p !== agent.provider);
+  }
+  return { ...roster, agents };
+}
+
 export function approvalRules(record) {
   const errors = [];
   if (record.decision === "reject") {

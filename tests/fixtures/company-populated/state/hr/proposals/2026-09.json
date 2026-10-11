@@ -1,0 +1,66 @@
+{
+  "month": "2026-09",
+  "at": "2026-10-01T05:31:40+05:30",
+  "runId": "engine-daily-20261001-0531-b2c3d4",
+  "status": "proposed",
+  "reviewPath": "hr/2026-09-review.md",
+  "review": [
+    {
+      "agent": "ceo",
+      "verdict": "keep",
+      "evidence": {},
+      "proposal": "no runs this month"
+    },
+    {
+      "agent": "hr",
+      "verdict": "keep",
+      "evidence": {},
+      "proposal": "no runs this month"
+    },
+    {
+      "agent": "strategist",
+      "verdict": "keep",
+      "evidence": {},
+      "proposal": "no runs this month"
+    },
+    {
+      "agent": "writer",
+      "verdict": "tune",
+      "evidence": {},
+      "proposal": "No September runs exist in this company, so there is no evidence either way; start the Writer one notch cooler (0.7) for its first full month and judge it on October's numbers."
+    },
+    {
+      "agent": "designer",
+      "verdict": "keep",
+      "evidence": {},
+      "proposal": "no runs this month"
+    },
+    {
+      "agent": "qa",
+      "verdict": "keep",
+      "evidence": {},
+      "proposal": "no runs this month"
+    },
+    {
+      "agent": "publisher",
+      "verdict": "keep",
+      "evidence": {},
+      "proposal": "no runs this month"
+    },
+    {
+      "agent": "analyst",
+      "verdict": "keep",
+      "evidence": {},
+      "proposal": "no runs this month"
+    }
+  ],
+  "changes": [
+    {
+      "agent": "writer",
+      "field": "temperature",
+      "from": "0.8",
+      "to": "0.7",
+      "why": "no September runs to judge by; a cooler Writer for the first full month, to be reviewed against October's QA rejection rate"
+    }
+  ]
+}

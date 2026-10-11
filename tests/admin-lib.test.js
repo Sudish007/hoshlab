@@ -15,6 +15,8 @@ const { createAdminState, ADMIN_OWNED, OwnershipError, ValidationError, isAdminO
 const { createStore, KEY } = await lib("store.js");
 const { classifyRun, describeLatest, relativeTime } = await lib("run-status.js");
 const { encodeUtf8, decodeUtf8 } = await lib("base64.js");
+const { DECISIONS_REL, applyProposal, buildApply, describeChange, dismissProposal, latestDecisions, proposalStatus } = await lib("proposals.js");
+const { ROSTER_SPEC, validate } = await lib("schema.js");
 
 const TOKEN = "ghp_FAKE_admin_lib_test_token";
 const OWNER = "Sudish007";
@@ -192,6 +194,115 @@ test("writeJson validates config/roster/edits and writes 2-space JSON with the c
   await assert.rejects(state.writeJson("brands/kaatdo.md", {}), OwnershipError, "a brand is text, not JSON");
   assert.deepEqual(state.errorsFor("state/approvals.jsonl", APPROVAL), []);
   assert.ok(state.errorsFor("state/approvals.jsonl", { ...APPROVAL, by: 7 }).length > 0);
+});
+
+// FEAT-204 (P2-06, N14 / D13): Apply PUTs roster.json (validated) + appends hr/decisions.jsonl; Dismiss appends the log only;
+// the proposal file is never PUT; a proposal that would leave the roster without a valid qa is refused before any request.
+const fixtureProposal = () => JSON.parse(readFileSync(join(COMPANY_DIR, "state", "hr", "proposals", "2026-09.json"), "utf8"));
+const fixtureRoster = () => JSON.parse(readFileSync(join(COMPANY_DIR, "roster.json"), "utf8"));
+const fixtureConfig = () => JSON.parse(readFileSync(join(COMPANY_DIR, "config.json"), "utf8"));
+const AT = "2026-10-12T10:30:00+05:30";
+
+test("proposals.js: status from the decisions log (latest per month wins), describeChange wording", () => {
+  const p = fixtureProposal();
+  assert.equal(proposalStatus(p, []), "proposed");
+  const apply = { month: "2026-09", proposal: "hr/proposals/2026-09.json", decision: "apply", at: "2026-10-02T10:00:00+05:30", by: "owner" };
+  const dismiss = { ...apply, decision: "dismiss", at: "2026-10-03T10:00:00+05:30" };
+  assert.equal(proposalStatus(p, [apply]), "applied");
+  assert.equal(proposalStatus(p, [apply, dismiss]), "dismissed", "the later decision wins");
+  assert.equal(proposalStatus(p, [dismiss, apply]), "dismissed", "by `at`, not by file order");
+  assert.equal(proposalStatus({ month: "2026-10" }, [apply]), "proposed", "another month's decision does not count");
+  assert.equal(latestDecisions([apply, dismiss]).get("2026-09").decision, "dismiss");
+  assert.equal(describeChange(p.changes[0]), `writer · temperature: 0.8 → 0.7 — ${p.changes[0].why}`);
+  assert.equal(describeChange({ agent: "designer", field: "charterAppend", from: "", to: "Prefer variant A.", why: "shorter headlines" }), "designer · charterAppend: — → Prefer variant A. — shorter headlines");
+});
+
+test("proposals.js: Apply → roster.json PUT (writer 0.8 → 0.7, ROSTER_SPEC-valid) then one decisions.jsonl line; the proposal file is never written; Dismiss → decisions.jsonl only", async () => {
+  const proposal = fixtureProposal();
+  const roster = fixtureRoster();
+  const config = fixtureConfig();
+  const files = { "company/roster.json": JSON.stringify(roster, null, 2) + "\n", "company/state/hr/proposals/2026-09.json": JSON.stringify(proposal, null, 2) + "\n" };
+  const gh = fakeGitHub({ files });
+  const client = createClient({ token: TOKEN, owner: OWNER, repo: REPO, branch: "main", fetchImpl: gh.fetchImpl });
+  const state = createAdminState(client);
+  const r = await applyProposal(state, { proposal, roster, config, at: AT });
+  assert.deepEqual(r.applied, ["roster.json"]);
+  const puts = gh.requests.filter((q) => q.method === "PUT");
+  assert.deepEqual(puts.map((q) => q.url), ["/repos/Sudish007/hoshlab/contents/company/roster.json", "/repos/Sudish007/hoshlab/contents/company/state/hr/decisions.jsonl"], "roster first, the decision last, nothing else");
+  assert.equal(puts[0].body.message, "roster: apply hr proposal 2026-09");
+  assert.equal(puts[0].body.sha, "sha-company/roster.json-1");
+  const written = JSON.parse(decodeUtf8(puts[0].body.content));
+  assert.equal(written.agents.find((a) => a.name === "writer").temperature, 0.7);
+  assert.deepEqual(written.agents.map((a) => a.name), roster.agents.map((a) => a.name), "no agent added or removed");
+  assert.deepEqual(validate(written, ROSTER_SPEC, config), { ok: true, errors: [] });
+  assert.equal(puts[1].body.message, "hr: apply proposal 2026-09");
+  assert.equal(puts[1].body.sha, undefined, "decisions.jsonl did not exist yet");
+  assert.equal(decodeUtf8(puts[1].body.content), JSON.stringify({ month: "2026-09", proposal: "hr/proposals/2026-09.json", decision: "apply", at: AT, by: "owner", applied: ["roster.json"] }) + "\n");
+  assert.deepEqual(r.decision, { month: "2026-09", proposal: "hr/proposals/2026-09.json", decision: "apply", at: AT, by: "owner", applied: ["roster.json"] });
+  assert.equal(gh.store.get("company/state/hr/proposals/2026-09.json").text, files["company/state/hr/proposals/2026-09.json"], "the proposal file is untouched (N14)");
+  assert.ok(gh.requests.every((q) => !(q.method === "PUT" && q.url.includes("hr/proposals"))));
+  assert.equal(proposalStatus(proposal, [r.decision]), "applied");
+  // Dismiss: one append, nothing else
+  const gh2 = fakeGitHub({ files: { ...files, [`company/${DECISIONS_REL}`]: JSON.stringify(r.decision) + "\n" } });
+  const state2 = createAdminState(createClient({ token: TOKEN, owner: OWNER, repo: REPO, branch: "main", fetchImpl: gh2.fetchImpl }));
+  const d = await dismissProposal(state2, { proposal: { ...proposal, month: "2026-10" }, at: AT, reason: "not this month" });
+  const puts2 = gh2.requests.filter((q) => q.method === "PUT");
+  assert.deepEqual(puts2.map((q) => q.url), [`/repos/Sudish007/hoshlab/contents/company/${DECISIONS_REL}`]);
+  assert.equal(puts2[0].body.message, "hr: dismiss proposal 2026-10");
+  assert.equal(puts2[0].body.sha, `sha-company/${DECISIONS_REL}-1`, "appended to the existing log with its sha");
+  const lines = decodeUtf8(puts2[0].body.content).trimEnd().split("\n").map((l) => JSON.parse(l));
+  assert.equal(lines.length, 2);
+  assert.deepEqual(lines[1], { month: "2026-10", proposal: "hr/proposals/2026-10.json", decision: "dismiss", at: AT, by: "owner", reason: "not this month" });
+  assert.deepEqual(d.decision, lines[1]);
+  assert.equal(gh2.store.get("company/roster.json").text, files["company/roster.json"], "Dismiss never touches the roster");
+  assert.equal(FETCH_ATTEMPTS.length, 0);
+});
+
+test("proposals.js: a proposal whose result has no valid qa — or that no longer matches the roster — is refused client-side before any request; charterAppend is applied to the charter text", async () => {
+  const proposal = fixtureProposal();
+  const roster = fixtureRoster();
+  const config = fixtureConfig();
+  const gh = fakeGitHub({ files: { "company/roster.json": JSON.stringify(roster, null, 2) + "\n" } });
+  const state = createAdminState(createClient({ token: TOKEN, owner: OWNER, repo: REPO, branch: "main", fetchImpl: gh.fetchImpl }));
+  // a swap of qa's provider leaves its model outside the new provider's table → ROSTER_SPEC refuses
+  const qaSwap = { ...proposal, changes: [{ agent: "qa", field: "provider", from: "gemini", to: "openai", why: "x" }] };
+  const plan = buildApply({ proposal: qaSwap, roster, config });
+  assert.match(plan.errors.join("\n"), /roster after the proposal: \$\.agents\[5\]\.model: gemini-3\.8-flash not in providers\.openai\.models/);
+  await assert.rejects(applyProposal(state, { proposal: qaSwap, roster, config, at: AT }), /cannot apply the 2026-09 proposal: roster after the proposal/);
+  // a roster that already lacks qa can never be the base of an apply
+  const noQa = { ...roster, agents: roster.agents.filter((a) => a.name !== "qa") };
+  assert.match(buildApply({ proposal, roster: noQa, config }).errors.join("\n"), /roster after the proposal: \$\.agents: expected at least 8 items \(7\)/, "the shape rule (exactly eight agents) fires before the by-name rule");
+  await assert.rejects(applyProposal(state, { proposal, roster: noQa, config, at: AT }), /expected at least 8 items \(7\)/);
+  const qaRenamed = { ...roster, agents: roster.agents.map((a) => (a.name === "qa" ? { ...a, name: "ceo" } : a)) };
+  assert.match(buildApply({ proposal, roster: qaRenamed, config }).errors.join("\n"), /missing agent qa/, "eight agents but no qa → the by-name rule");
+  // qa disabled in the base roster → refused too (qa and publisher cannot be disabled)
+  const qaOff = { ...roster, agents: roster.agents.map((a) => (a.name === "qa" ? { ...a, enabled: false } : a)) };
+  assert.match(buildApply({ proposal, roster: qaOff, config }).errors.join("\n"), /qa cannot be disabled/);
+  // the roster moved on since HR wrote the proposal (owner set the writer to 0.75) → refused, nothing clobbered
+  const moved = { ...roster, agents: roster.agents.map((a) => (a.name === "writer" ? { ...a, temperature: 0.75 } : a)) };
+  assert.match(buildApply({ proposal, roster: moved, config }).errors.join("\n"), /writer temperature is "0\.75" now, the proposal expected "0\.8" — the roster changed since HR wrote it/);
+  // an unknown agent, a non-proposal
+  assert.match(buildApply({ proposal: { ...proposal, changes: [{ ...proposal.changes[0], agent: "intern" }] }, roster, config }).errors.join("\n"), /^proposal: \$\.changes\[0\]\.agent: expected one of ceo\|hr\|/, "an unknown agent name fails the proposal's own shape (AGENT enum) first");
+  assert.match(buildApply({ proposal: { ...proposal, changes: [{ ...proposal.changes[0], agent: "analyst" }] }, roster: { ...roster, agents: roster.agents.filter((a) => a.name !== "analyst") }, config }).errors.join("\n"), /change 1: analyst is not in the roster/);
+  assert.match(buildApply({ proposal: { month: "2026-09" }, roster, config }).errors.join("\n"), /^proposal: /);
+  assert.equal(gh.requests.filter((q) => q.method === "PUT").length, 0, "every refusal happened before any request");
+  // charterAppend: the paragraph is appended to the charter text, validated with the editor's rule, and PUT as a charter
+  const append = { ...proposal, changes: [{ agent: "designer", field: "charterAppend", from: "", to: "Prefer variant A whenever the headline fits 36 characters.", why: "x" }] };
+  const charter = "# Designer\n\n## Identity\nx\n\n## Method\ny\n\n## Output\nz\n";
+  const plan2 = buildApply({ proposal: append, roster, config, charters: { designer: charter }, validateCharter: (t) => (t.includes("## Output") ? [] : ["heading '## Output' missing"]) });
+  assert.deepEqual(plan2.errors, []);
+  assert.equal(plan2.rosterChanged, false, "charterAppend does not touch roster.json");
+  assert.deepEqual(plan2.applied, ["charters/designer.md"]);
+  assert.equal(plan2.charters["charters/designer.md"], `${charter.trimEnd()}\n\nPrefer variant A whenever the headline fits 36 characters.\n`);
+  assert.match(buildApply({ proposal: append, roster, config }).errors.join("\n"), /the designer charter is not loaded/);
+  assert.match(buildApply({ proposal: append, roster, config, charters: { designer: charter }, validateCharter: () => ["12001 characters, limit 12000"] }).errors.join("\n"), /designer charter after the append: 12001 characters/);
+  const gh3 = fakeGitHub({ files: { "company/roster.json": JSON.stringify(roster, null, 2) + "\n", "company/charters/designer.md": charter } });
+  const state3 = createAdminState(createClient({ token: TOKEN, owner: OWNER, repo: REPO, branch: "main", fetchImpl: gh3.fetchImpl }));
+  const r3 = await applyProposal(state3, { proposal: append, roster, config, charters: { designer: charter }, at: AT });
+  const puts3 = gh3.requests.filter((q) => q.method === "PUT");
+  assert.deepEqual(puts3.map((q) => q.url.replace("/repos/Sudish007/hoshlab/contents/", "")), ["company/charters/designer.md", `company/${DECISIONS_REL}`], "no roster PUT when no roster field changed");
+  assert.equal(puts3[0].body.message, "charter: designer (hr proposal 2026-09)");
+  assert.deepEqual(r3.decision.applied, ["charters/designer.md"]);
 });
 
 test("github.js: dispatchWorkflow posts to /actions/workflows/<file>/dispatches with ref = branch and string inputs; latestWorkflowRun; rawUrl has no token", async () => {
