@@ -22,7 +22,8 @@ export const LOG_KINDS = ["runs", "usage", "metrics"];
 
 export function normalizeRel(rel) {
   const n = posix.normalize(String(rel).replace(/\\/g, "/")).replace(/^\.\//, "").replace(/^\/+/, "");
-  if (n === ".." || n.startsWith("../") || isAbsolute(n)) throw new RangeError(`state: path escapes the company dir: ${rel}`);
+  // Windows drive paths are refused on every host (node:path isAbsolute is posix-only on Linux CI).
+  if (n === ".." || n.startsWith("../") || isAbsolute(n) || /^[A-Za-z]:(\/|$)/.test(n)) throw new RangeError(`state: path escapes the company dir: ${rel}`);
   return n;
 }
 
