@@ -28,8 +28,9 @@ export function adminCsp(siteOrigin) {
   );
 }
 
-// adminPage({ config: companyConfig, roster }) → HTML.
-export function adminPage({ config: company, roster }) {
+// adminPage({ config: companyConfig, roster, year }) → HTML. `year` is the build clock's IST year (view.year),
+// printed in the shared footer exactly like every public page.
+export function adminPage({ config: company, roster, year }) {
   const { owner, name: repoName, branch } = config.repo;
   const siteOrigin = new URL(config.siteUrl).origin;
   const siteHost = new URL(config.siteUrl).host;
@@ -366,6 +367,7 @@ export function adminPage({ config: company, roster }) {
     description: "Hoshlab admin (owner only).",
     path: "admin/",
     body,
+    year,
     mainClass: "container admin",
     noindex: true,
     mainJs: false,

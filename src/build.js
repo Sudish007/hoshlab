@@ -355,7 +355,7 @@ export function build() {
   write("published/index.html", publishedPage(view));
   write("reports/index.html", reportsPage(view));
   write("about/index.html", aboutPage(view));
-  write("admin/index.html", adminPage({ config: company.config, roster: company.roster }));
+  write("admin/index.html", adminPage({ config: company.config, roster: company.roster, year: view.year }));
   write("404.html", notFoundPage(view));
   write("feed.xml", atomFeed(view));
   write("sitemap.xml", sitemap(view));
