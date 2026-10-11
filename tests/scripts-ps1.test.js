@@ -76,6 +76,17 @@ test("setup-secrets.ps1 (P1-20, M15, design §16): hidden prompts, Enter keeps, 
   assert.match(text, /SetEnvironmentVariable\(\$entry\.Name, \$entry\.Value, 'Process'\)/, "keys reach check-models through the process environment only…");
   assert.match(text, /SetEnvironmentVariable\(\$entry\.Name, \$null, 'Process'\)/, "… and are removed afterwards");
   assert.match(text, /config: instagram ids/, "tells the owner what to commit");
+  // R1-01: the summary names company/state/status.json whenever $statusChanged, independently of $configChanged
+  // (a token replacement for the same account leaves config.json unchanged), and says to pull first.
+  const summary = text.slice(text.indexOf("setup-secrets: summary for"));
+  assert.match(summary, /^\$changedFiles = @\(\)$/m, "the changed-file list starts empty");
+  assert.match(summary, /^if \(\$configChanged\) \{ \$changedFiles \+= 'company\/config\.json' \}$/m, "config.json is added on its own condition");
+  assert.match(summary, /^if \(\$statusChanged\) \{ \$changedFiles \+= 'company\/state\/status\.json' \}$/m, "status.json is added on its own condition — not nested under $configChanged");
+  assert.match(summary, /^if \(\$changedFiles\.Count -gt 0\) \{$/m, "the commit instructions print whenever either file changed");
+  assert.ok(!/if \(\$configChanged\) \{[^}]*\$statusChanged/s.test(summary), "$statusChanged is not evaluated inside the $configChanged branch");
+  assert.match(summary, /Write-Host '  git pull --ff-only'/, "pull before committing (the bot rewrites status.json hourly)");
+  assert.match(summary, /re-probes a paused page every hour/, "says the publisher clears the pause by itself, so the status.json commit is optional");
+  assert.match(summary, /company\/config\.json and company\/state\/status\.json unchanged; nothing to commit/, "the unchanged line names both files");
   assert.ok(!/git (add|commit|push)[^"']*$/m.test(text.replace(/Write-Host.*$/gm, "")), "the script itself never commits");
   assert.ok(!/ConvertFrom-SecureString -AsPlainText/.test(text), "PowerShell 7 only");
   for (const [i, line] of text.split(/\r?\n/).entries()) {

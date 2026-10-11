@@ -13,10 +13,13 @@
 #     token in the query string of a request that is never printed. user_id (the professional account that
 #     publishes) is written to pages[].igUserId and id (app-scoped) to pages[].appScopedId through
 #     scripts/lib/set-page-ids.mjs (JSON round-trip, UTF-8 without BOM, validated against CONFIG_SPEC); a stored
-#     tokenState 'invalid' in company/state/status.json is reset to 'unknown' so the next publisher run retries.
+#     tokenState 'invalid' in the LOCAL company/state/status.json is reset to 'unknown'. The publisher in Actions
+#     re-probes a paused page every hour once the new secret is stored, so the production page resumes without a
+#     commit; the local reset only keeps your checkout in step.
 #   * Provider keys: `node engine/index.js check-models` with the keys entered this session in that process's
 #     environment only (removed afterwards). Keys that were kept cannot be checked here and are reported as such.
-# Nothing is committed: the script ends by telling you what to commit ('config: instagram ids').
+# Nothing is committed: the script ends by naming EVERY changed file (config.json and/or state/status.json) and
+# telling you to `git pull --ff-only` first (the bot rewrites status.json hourly), then what to commit.
 # Requires: Windows PowerShell 5.1 (';' between commands, no double-ampersand, no ternary), gh on PATH and
 # authenticated (gh auth status), node on PATH. ASCII only.
 [CmdletBinding()]
@@ -302,14 +305,22 @@ foreach ($entry in $entries) {
     Write-Host ('  ' + $entry.Name + ': ' + $entry.Status)
     $entry.Value = ''
 }
-if ($configChanged) {
-    $files = 'company/config.json'
-    if ($statusChanged) { $files = $files + ' company/state/status.json' }
+# Every changed file is named, whichever of the two it is (a token replacement for the same account changes
+# status.json only). status.json is rewritten by the bot every hour, so pull before committing it.
+$changedFiles = @()
+if ($configChanged) { $changedFiles += 'company/config.json' }
+if ($statusChanged) { $changedFiles += 'company/state/status.json' }
+if ($changedFiles.Count -gt 0) {
+    $files = $changedFiles -join ' '
     Write-Host ''
-    Write-Host ('setup-secrets: ' + $files + ' changed (ids only, no secret). Review and commit:')
+    Write-Host ('setup-secrets: ' + $files + ' changed (ids and token state only, no secret). Pull first, then review and commit:')
+    Write-Host '  git pull --ff-only'
     Write-Host ('  git diff ' + $files)
     Write-Host ('  git add ' + $files + '; git commit -m "config: instagram ids"; git push')
+    if ($statusChanged) {
+        Write-Host 'setup-secrets: the publisher in Actions re-probes a paused page every hour with the stored secret, so committing status.json is optional; if the pull brings a newer status.json, drop your local change (git checkout -- company/state/status.json) and let the next publisher run clear the pause.'
+    }
 }
 else {
-    Write-Host 'setup-secrets: company/config.json unchanged; nothing to commit.'
+    Write-Host 'setup-secrets: company/config.json and company/state/status.json unchanged; nothing to commit.'
 }

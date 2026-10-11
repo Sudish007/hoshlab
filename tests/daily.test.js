@@ -13,6 +13,7 @@ import { CALENDAR_SPEC, DRAFT_SPEC, RUN_SPEC, STATUS_SPEC, USAGE_SPEC, assertSha
 import { monthUsedUsd } from "../engine/lib/budget.js";
 import { AGENT_ORDER, SKIP_BUDGET, WORKFLOW, parseAgents, recentCaptionsFor, relinkCalendar, runDaily, slotsToWrite } from "../engine/commands/daily.js";
 import { setPageMode } from "../engine/commands/set-page.js";
+import { RenderError, RenderUnavailableError } from "../engine/render/render.js";
 
 const MONDAY = "2026-10-12T05:31:00+05:30"; // the strategist fixtures' assignments name this Monday's open slots
 const TUESDAY = "2026-10-13T05:31:00+05:30";
@@ -66,12 +67,21 @@ function copyFixture({ media = true } = {}) {
 }
 
 // Renderer double: writes a 2-byte file per media item and reports fixture-shaped rows (no browser).
-function fakeRenderer() {
+// `refuse(draft, nth)` may return an Error to throw for that call (nth = how many times this draft was seen).
+function fakeRenderer(refuse = () => null) {
   const calls = [];
+  const drafts = []; // what each call received: { id, revision, reworkCount, qaReasons, nth }
+  const seen = new Map();
   return {
     calls,
+    drafts,
     async renderDraft(draft, brand, { outDir, relDir }) {
       calls.push(draft.id);
+      const nth = (seen.get(draft.id) || 0) + 1;
+      seen.set(draft.id, nth);
+      drafts.push({ id: draft.id, revision: draft.revision, reworkCount: draft.reworkCount, qaReasons: draft.qaReasons, nth });
+      const err = refuse(draft, nth);
+      if (err) throw err;
       const n = draft.format === "carousel" ? draft.slides.length : 1;
       const media = Array.from({ length: n }, (_, i) => {
         const file = `${draft.format === "carousel" ? "slide" : "image"}-${i + 1}-${SHA.slice(0, 8)}.jpg`;
@@ -261,6 +271,165 @@ test("P1-08: a rendered draft failing QA (qa.fail fixture) goes to rework, the i
   } finally {
     fx.cleanup();
   }
+});
+
+test("R1-02: a Designer refusal (RenderError missing_glyphs) sends the draft to rework with 'render: …' first in qaReasons and reworkCount + 1, the inline loop reworks it in the same run (Writer → Designer → QA); at maxReworkLoops the refusal blocks the draft; a RenderUnavailableError still leaves drafts written with the designer row ok:false", async () => {
+  const DETAIL = "U+2192 not in Tiro Devanagari Hindi: “→ अभी बनाएं”";
+  const fx = copyFixture();
+  try {
+    // rp is queued in the fixture; put it back in front of the Designer as a non-mock written draft
+    const rp = fx.draft(RP);
+    assert.equal(rp.reworkCount, 0);
+    fx.state.writeDraft({ ...rp, status: "written", media: [] });
+    const flags = { agents: "writer,designer,qa", page: "rishtapatra" };
+    // the first render of rp is refused (an arrow no artwork font covers); every later render succeeds
+    const renderer = fakeRenderer((draft, nth) => (draft.id === RP && nth === 1 ? new RenderError("missing_glyphs", DETAIL, { missingGlyphs: [0x2192] }) : null));
+    const out = sink();
+    const r1 = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: TUESDAY, processEnv: MOCK, flags, renderer, stdout: out });
+    assert.equal(r1.ok, true, out.text());
+    assert.equal(agent(r1, "designer").ok, true, "a refusal is not a step failure (design §11)");
+    assert.equal(agent(r1, "designer").note, "0 rendered, 1 refused (1 to rework, 0 blocked) | rework loop: 1 rendered, 0 refused");
+    assert.equal(agent(r1, "writer").note, "0 written, 0 reworked | rework loop: 0 written, 1 reworked", "the Writer reworked the refused draft inside the same run");
+    assert.equal(agent(r1, "writer").calls, 1);
+    assert.equal(agent(r1, "qa").note, "0 queued, 0 rework, 0 blocked | rework loop: 0 queued, 1 rework, 0 blocked", "nothing was rendered for QA in the first pass; the reworked (mock) copy failed QA with mock_output");
+    assert.ok(r1.flags.includes("render_failed"), r1.flags.join());
+    assert.ok(out.lines.some((l) => l.startsWith(`[designer] ${RP} refused: missing_glyphs — ${DETAIL} → rework (1 of 2)`)), out.text());
+    // what the Designer handed over: the second render saw the Writer's rework of the refused draft
+    assert.deepEqual(renderer.calls, [RP, RP]);
+    assert.deepEqual(renderer.drafts.map((d) => [d.revision, d.reworkCount, d.qaReasons]), [
+      [1, 0, undefined],
+      [2, 1, undefined],
+    ], "the rework loop's render saw revision 2 with reworkCount 1 (the refusal) and the Writer had cleared the reasons");
+    let d = fx.draft(RP);
+    assert.equal(d.status, "rework", "QA failed the mock rework (mock_output) → rework again");
+    assert.equal(d.reworkCount, 2, "refusal (1) + QA failure in the loop (2)");
+    assert.equal(d.revision, 2);
+    assert.equal(d.mock, true);
+    assert.equal(d.renderError, undefined, "the successful render cleared renderError");
+    assert.deepEqual(fx.state.readQa(RP).reasons, ["mock_output"]);
+    assert.deepEqual(validate(d, DRAFT_SPEC), { ok: true, errors: [] });
+    assert.deepEqual(fx.status().flags, ["render_failed"]);
+    const cal = fx.state.readJson("state/calendar.json", CALENDAR_SPEC);
+    assert.equal(cal.slots.find((s) => s.draftId === RP).status, "rework");
+
+    // the refusal alone (no QA selected → no inline loop): the draft file shows exactly what the Designer wrote
+    const fx2 = copyFixture();
+    try {
+      fx2.state.writeDraft({ ...fx2.draft(RP), status: "written", media: [] });
+      const r2 = await runDaily({ companyDir: fx2.dir, mediaRoot: fx2.mediaRoot, now: TUESDAY, processEnv: MOCK, flags: { agents: "designer", page: "rishtapatra" }, renderer: fakeRenderer(() => new RenderError("missing_glyphs", DETAIL)), stdout: () => {} });
+      assert.equal(r2.ok, true);
+      const only = fx2.draft(RP);
+      assert.equal(only.status, "rework");
+      assert.equal(only.reworkCount, 1);
+      assert.equal(only.revision, 1);
+      assert.ok(only.qaReasons[0].startsWith("render: missing_glyphs"), only.qaReasons.join());
+      assert.equal(only.qaReasons[0], `render: missing_glyphs — ${DETAIL}`);
+      assert.deepEqual(only.media, []);
+      assert.deepEqual(only.renderError, { code: "missing_glyphs", detail: DETAIL, at: TUESDAY });
+      assert.deepEqual(validate(only, DRAFT_SPEC), { ok: true, errors: [] });
+      assert.equal(agent(r2, "writer").skipped, "not_selected");
+      // the next run's Writer picks it up like any rework (same path as a QA failure)
+      const r3 = await runDaily({ companyDir: fx2.dir, mediaRoot: fx2.mediaRoot, now: "2026-10-14T05:31:00+05:30", processEnv: MOCK, flags: { agents: "writer", page: "rishtapatra" }, renderer: fakeRenderer(), stdout: () => {} });
+      assert.equal(agent(r3, "writer").note, "0 written, 1 reworked");
+      assert.equal(fx2.draft(RP).status, "written");
+      assert.equal(fx2.draft(RP).revision, 2);
+      assert.equal(fx2.draft(RP).qaReasons, undefined);
+    } finally {
+      fx2.cleanup();
+    }
+
+    // at the cap: reworkCount already maxReworkLoops → the refusal blocks the draft (the admin lists blocked drafts)
+    const fx3 = copyFixture();
+    try {
+      const max = JSON.parse(readFileSync(join(fx3.dir, "config.json"), "utf8")).defaults.maxReworkLoops;
+      fx3.state.writeDraft({ ...fx3.draft(RP), status: "written", media: [], reworkCount: max, revision: max + 1 });
+      const r4 = await runDaily({ companyDir: fx3.dir, mediaRoot: fx3.mediaRoot, now: TUESDAY, processEnv: MOCK, flags, renderer: fakeRenderer(() => new RenderError("missing_glyphs", DETAIL)), stdout: () => {} });
+      assert.equal(r4.ok, true);
+      assert.equal(agent(r4, "designer").note, "0 rendered, 1 refused (0 to rework, 1 blocked)");
+      assert.equal(agent(r4, "writer").note, "0 written, 0 reworked", "a blocked draft is not reworked");
+      const capped = fx3.draft(RP);
+      assert.equal(capped.status, "blocked");
+      assert.equal(capped.reworkCount, max);
+      assert.equal(capped.qaReasons[0], `render: missing_glyphs — ${DETAIL}`);
+      assert.equal(capped.renderError.code, "missing_glyphs");
+      assert.deepEqual(fx3.status().blocked, { rishtapatra: 1, job_rez: 1 });
+      assert.deepEqual(fx3.status().queue, { rishtapatra: 0, kaatdo: 1, job_rez: 0 });
+      assert.ok(fx3.status().flags.includes("render_failed"));
+    } finally {
+      fx3.cleanup();
+    }
+
+    // RenderUnavailableError (no Chromium): step-level failure, drafts stay written, nothing reworked
+    const fx4 = copyFixture();
+    try {
+      fx4.state.writeDraft({ ...fx4.draft(RP), status: "written", media: [] });
+      const r5 = await runDaily({ companyDir: fx4.dir, mediaRoot: fx4.mediaRoot, now: TUESDAY, processEnv: MOCK, flags, renderer: fakeRenderer(() => new RenderUnavailableError("Chromium could not be launched: spawn ENOENT")), stdout: () => {} });
+      assert.equal(r5.ok, true, "run-level ok (design §11): the failed step is on its own row");
+      assert.equal(agent(r5, "designer").ok, false);
+      assert.match(agent(r5, "designer").note, /0 rendered, 0 refused, stopped: Chromium could not be launched/);
+      assert.equal(fx4.draft(RP).status, "written");
+      assert.equal(fx4.draft(RP).reworkCount, 0);
+      assert.equal(agent(r5, "writer").note, "0 written, 0 reworked");
+      assert.ok(r5.flags.includes("render_failed"));
+    } finally {
+      fx4.cleanup();
+    }
+  } finally {
+    fx.cleanup();
+  }
+});
+
+test("R1-05: when every provider fails with retryable 503s the agent row is ok:false, the run stays ok, and status.flags carries provider_down:<name> for each provider that was actually attempted (not for the ones skipped for a missing secret); the flags are dropped by a later run that succeeds", async () => {
+  const KEYS = { ANTHROPIC_API_KEY: "FAKE-anthropic-key-aaaaaaaaaaaaaaaaaaaaaaaa", GEMINI_API_KEY: "FAKE-gemini-key-bbbbbbbbbbbbbbbbbbbbbbbbbbbb", OPENAI_API_KEY: "FAKE-openai-key-cccccccccccccccccccccccccccc" };
+  const calls = [];
+  const down = async (url) => {
+    calls.push(String(url));
+    return new Response(JSON.stringify({ error: { message: "overloaded" } }), { status: 503, headers: { "content-type": "application/json" } });
+  };
+  const noSleep = async () => {};
+  const roster = JSON.parse(readFileSync(join(COMPANY_DIR, "roster.json"), "utf8"));
+  const ceo = roster.agents.find((a) => a.name === "ceo");
+  const chain = [ceo.provider, ...ceo.fallback];
+  assert.equal(chain.length, 3, "the CEO has two fallbacks in the fixture roster");
+  const fx = copyFixture();
+  try {
+    // every provider configured → each is attempted (3 tries each) → every one is flagged
+    const r = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: MONDAY, processEnv: KEYS, fetchImpl: down, sleep: noSleep, flags: { agents: "ceo" }, renderer: fakeRenderer(), stdout: () => {} });
+    assert.equal(r.ok, true, "a failed agent step is not a run failure (design §11)");
+    assert.equal(r.run.ok, true);
+    assert.equal(agent(r, "ceo").ok, false);
+    assert.match(agent(r, "ceo").note, /^AllProvidersFailedError: ceo: no provider answered — /);
+    assert.equal(agent(r, "ceo").calls, 9, "3 attempts × 3 providers");
+    assert.equal(calls.length, 9);
+    assert.deepEqual([...r.flags].sort(), chain.map((p) => `provider_down:${p}`).sort());
+    assert.deepEqual([...fx.status().flags].sort(), chain.map((p) => `provider_down:${p}`).sort());
+    assert.deepEqual(validate(fx.status(), STATUS_SPEC), { ok: true, errors: [] });
+    const usage = fx.usage().filter((u) => u.runId === r.run.id);
+    assert.equal(usage.length, 9);
+    assert.ok(usage.every((u) => u.ok === false && u.costUsd === 0 && !u.mock));
+    for (const v of Object.values(KEYS)) assert.ok(!JSON.stringify([r.run, fx.status(), usage]).includes(v), "no key material in the state");
+
+    // only the primary has a secret → only the primary is attempted and flagged; the skipped fallbacks are not "down"
+    // (the Writer is given a draft in rework so it has one call to make; the writer's chain is anthropic → gemini, openai)
+    fx.state.writeDraft({ ...fx.draft(RP), status: "rework", qaReasons: ["tone: too salesy"] });
+    calls.length = 0;
+    const r2 = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: TUESDAY, processEnv: { ANTHROPIC_API_KEY: KEYS.ANTHROPIC_API_KEY }, fetchImpl: down, sleep: noSleep, flags: { agents: "writer", page: "rishtapatra" }, renderer: fakeRenderer(), stdout: () => {} });
+    assert.equal(r2.ok, true);
+    assert.equal(agent(r2, "writer").ok, false);
+    assert.equal(agent(r2, "writer").calls, 3, "3 attempts on anthropic; gemini and openai skipped (secret missing) → not attempted, not flagged");
+    assert.equal(calls.length, 3);
+    assert.deepEqual(r2.flags, ["provider_down:anthropic"]);
+    assert.deepEqual(fx.status().flags, ["provider_down:anthropic"], "the stale gemini/openai flags from the previous run are dropped");
+    assert.equal(fx.draft(RP).status, "rework", "nothing was written for the draft");
+
+    // a run with the mock adapter (every call answers) clears the provider flags — daily owns them
+    const r3 = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: "2026-10-14T05:31:00+05:30", processEnv: MOCK, flags: { agents: "hr" }, renderer: fakeRenderer(), stdout: () => {} });
+    assert.equal(r3.ok, true);
+    assert.deepEqual(fx.status().flags, []);
+  } finally {
+    fx.cleanup();
+  }
+  assert.equal(FETCH_ATTEMPTS.length, 0, "every call went through the injected fetchImpl, none through globalThis.fetch");
 });
 
 test("P1-24: a corrupted config.json → ok:false (CLI exit 1) and the ONLY write is runs/<month>.jsonl { ok:false, errors[] }", async () => {

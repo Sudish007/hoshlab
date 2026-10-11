@@ -8,8 +8,10 @@
 // app-scoped id) becomes pages[].appScopedId. config.json is admin-owned, so like engine/commands/set-page.js
 // this is a plain-fs JSON round-trip that keeps key order and indent, validates against CONFIG_SPEC first and
 // writes UTF-8 without BOM. With --reset-token-state a stored company/state/status.json pages[h].tokenState
-// 'invalid' becomes 'unknown' and the token_invalid:<h> flag is dropped — the publisher never clears a stored
-// 'invalid' itself (FEAT-107), so replacing a token needs this owner action before the page posts again.
+// 'invalid' becomes 'unknown' and the token_invalid:<h> flag is dropped in the LOCAL checkout. The publisher
+// in Actions clears a stored 'invalid' by itself once the replaced secret answers content_publishing_limit
+// (R1-01), so this local reset is a convenience for the owner's own status.json; committing it is optional
+// and needs a `git pull` first because the bot rewrites status.json every hour.
 // Nothing is committed and no id is printed: output names the page and the digit counts only.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";

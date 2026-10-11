@@ -9,7 +9,7 @@ import { createState } from "../engine/lib/state.js";
 import { DRAFT_SPEC, validate } from "../engine/lib/schema.js";
 import { mediaPaths, pagesUrl, rawUrl, readIndex, updateIndex } from "../engine/lib/media.js";
 import { RenderError, RenderUnavailableError } from "../engine/render/render.js";
-import { runDesigner, designNote, mediaRows, SKIP_MEDIA_BRANCH_MISSING, FLAG_RENDER_FAILED } from "../engine/agents/designer.js";
+import { runDesigner, designNote, mediaRows, renderReason, RENDER_REASON_PREFIX, SKIP_MEDIA_BRANCH_MISSING, FLAG_RENDER_FAILED } from "../engine/agents/designer.js";
 
 const company = loadCompany({ companyDir: join(ROOT, "company"), warn: () => {} });
 const { brands, config } = company;
@@ -155,37 +155,68 @@ test("success: status rendered, media[] rows carry rawUrl/pagesUrl from config, 
   }
 });
 
-test("RenderError: the draft stays written with renderError { code, detail, at } and empty media; the run continues with the next draft", async () => {
+test("RenderError (R1-02): the draft goes to rework like a failed QA check — qaReasons[0] 'render: <code> — <detail>', reworkCount + 1, empty media, renderError kept for the admin card; at maxReworkLoops it is blocked; the run continues with the next draft", async () => {
   const rp = written("rp-2026-10-14-kundali-free");
   const kd = written("kd-2026-10-13-six-rules");
   const h = harness([rp, kd]);
   try {
     writeFileSync(join(h.mediaRoot, ".git"), "gitdir: x\n");
-    const r = fakeRenderer({ [rp.id]: new RenderError("overflow", "div#canvas 1420 > 1350 px tall: “मुफ़्त जन्म कुंडली…”", { overflows: [] }) });
-    const res = await runDesigner({ drafts: [rp, kd], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r, now: NOW });
+    const detail = "div#canvas 1420 > 1350 px tall: “मुफ़्त जन्म कुंडली…”";
+    const r = fakeRenderer({ [rp.id]: new RenderError("overflow", detail, { overflows: [] }) });
+    const res = await runDesigner({ drafts: [rp, kd], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r, now: NOW, runId: "engine-daily-20261012-0540-abcdef" });
     assert.equal(res.ok, true);
     assert.equal(res.rendered, 1);
     assert.equal(res.refused, 1);
+    assert.equal(res.toRework, 1);
+    assert.equal(res.blocked, 0);
     assert.deepEqual(res.flags, [FLAG_RENDER_FAILED], "design §11: a refused draft raises render_failed while the step stays ok");
-    assert.equal(res.note, "1 rendered, 1 refused");
+    assert.equal(res.note, "1 rendered, 1 refused (1 to rework, 0 blocked)");
     assert.deepEqual(res.results.map((x) => [x.id, x.status, x.code || null]), [
-      [rp.id, "written", "overflow"],
+      [rp.id, "rework", "overflow"],
       [kd.id, "rendered", null],
     ]);
     const rpOut = h.state.readDraft(rp.id);
-    assert.equal(rpOut.status, "written");
+    assert.equal(rpOut.status, "rework", "R1-02: a refusal is routed through the rework path, not left `written`");
+    assert.equal(rpOut.reworkCount, (rp.reworkCount || 0) + 1);
+    assert.equal(rpOut.revision, rp.revision, "the Designer never bumps the revision — the Writer does");
+    assert.deepEqual(rpOut.qaReasons, [`render: overflow — ${detail}`]);
+    assert.equal(renderReason(new RenderError("overflow", detail)), `${RENDER_REASON_PREFIX}overflow — ${detail}`);
     assert.deepEqual(rpOut.media, []);
-    assert.deepEqual(rpOut.renderError, { code: "overflow", detail: "div#canvas 1420 > 1350 px tall: “मुफ़्त जन्म कुंडली…”", at: NOW });
+    assert.deepEqual(rpOut.renderError, { code: "overflow", detail, at: NOW });
+    assert.equal(rpOut.runId, "engine-daily-20261012-0540-abcdef");
     assert.equal(rpOut.designNote, undefined);
     assert.deepEqual(validate(rpOut, DRAFT_SPEC), { ok: true, errors: [] });
     assert.equal(h.state.readDraft(kd.id).status, "rendered");
     assert.equal(readIndex(h.mediaRoot)[rp.id], undefined, "nothing indexed for a refused draft");
-    // a later successful render clears renderError
+    assert.ok(!r.calls.some((c) => c.closed), "an injected renderer is not closed by the Designer");
+
+    // the Writer's rework hands a `written` draft back; a successful render then clears renderError and the reason
+    const reworked = { ...rpOut, status: "written", revision: rpOut.revision + 1 };
+    delete reworked.qaReasons;
+    delete reworked.renderError;
+    h.state.writeDraft(reworked);
     const r2 = fakeRenderer({});
     await runDesigner({ drafts: [h.state.readDraft(rp.id)], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r2, now: NOW });
     const again = h.state.readDraft(rp.id);
     assert.equal(again.status, "rendered");
     assert.equal(again.renderError, undefined);
+    assert.equal(again.qaReasons, undefined);
+
+    // at the cap (reworkCount === maxReworkLoops) a refusal blocks the draft for the owner — same rule as QA
+    const max = config.defaults.maxReworkLoops;
+    const capped = { ...written("rp-2026-10-14-kundali-free"), reworkCount: max, revision: max + 1 };
+    h.state.writeDraft(capped);
+    const r3 = fakeRenderer({ [capped.id]: new RenderError("missing_glyphs", "U+2192 not in Inter: “→ अभी”", { missingGlyphs: [0x2192] }) });
+    const res3 = await runDesigner({ drafts: [h.state.readDraft(capped.id)], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r3, now: NOW });
+    assert.deepEqual([res3.rendered, res3.refused, res3.toRework, res3.blocked], [0, 1, 0, 1]);
+    assert.equal(res3.note, "0 rendered, 1 refused (0 to rework, 1 blocked)");
+    assert.deepEqual(res3.results.map((x) => [x.id, x.status, x.code]), [[capped.id, "blocked", "missing_glyphs"]]);
+    const blocked = h.state.readDraft(capped.id);
+    assert.equal(blocked.status, "blocked");
+    assert.equal(blocked.reworkCount, max, "the counter is not bumped past the cap");
+    assert.deepEqual(blocked.qaReasons, ["render: missing_glyphs — U+2192 not in Inter: “→ अभी”"]);
+    assert.equal(blocked.renderError.code, "missing_glyphs");
+    assert.deepEqual(validate(blocked, DRAFT_SPEC), { ok: true, errors: [] });
   } finally {
     h.cleanup();
   }
