@@ -216,8 +216,9 @@ test("render smoke: an over-long headline is refused with 'overflow' and the can
   assert.equal(existsSync(join(out, "kd-long")), false);
 });
 
-test("render smoke: a reel draft is refused (phase 2) and a browser that cannot launch is RenderUnavailableError", { skip: SKIP }, async () => {
-  await assert.rejects(renderDraft({ draft: { ...KD, format: "reel" }, brand: brands.kaatdo, outDir: join(out, "kd-reel"), browser }), (e) => e instanceof RenderError && e.code === "media_spec" && /reel: not built yet \(phase 2/.test(e.detail));
+test("render smoke: a reel draft without a reel block is refused (reels render through video.js — tests/reel-render.test.js), an unknown format is media_spec, and a browser that cannot launch is RenderUnavailableError", { skip: SKIP }, async () => {
+  await assert.rejects(renderDraft({ draft: { ...KD, format: "reel" }, brand: brands.kaatdo, outDir: join(out, "kd-reel"), browser }), (e) => e instanceof RenderError && e.code === "media_spec" && /reel draft without a reel block/.test(e.detail));
+  await assert.rejects(renderDraft({ draft: { ...KD, format: "story" }, brand: brands.kaatdo, outDir: join(out, "kd-story"), browser }), (e) => e instanceof RenderError && e.code === "media_spec" && /story: unknown format/.test(e.detail));
   const broken = { launch: async () => { throw new Error("no chromium here"); } };
   await assert.rejects(renderDraft({ draft: KD, brand: brands.kaatdo, outDir: join(out, "kd-nolaunch"), chromium: broken }), (e) => e instanceof RenderUnavailableError && e.code === "render_failed" && /no chromium here/.test(e.message));
 });

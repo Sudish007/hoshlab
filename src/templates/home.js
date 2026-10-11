@@ -154,7 +154,7 @@ export function homePage(view) {
     ${sectionHead("How a post happens", { more: { href: url("team/"), text: "Who does what →" }, desc: "Four hand-offs, each one a file in the repository: plan, make, check, ship. Nothing reaches Instagram without a QA pass, and in Approve first nothing reaches it without the owner." })}
     <div class="grid grid-4">
       <article class="card"><p class="eyebrow">1 · Plan</p><h3>CEO + Strategist</h3><p class="meta">The CEO memo sets this week's priorities per page; the Strategist turns them into an idea backlog and a calendar of slots.</p></article>
-      <article class="card"><p class="eyebrow">2 · Make</p><h3>Writer + Designer</h3><p class="meta">Caption in the page's voice from brand.md facts only; artwork rendered with the product's real tokens (image and carousel; reels are not built yet).</p></article>
+      <article class="card"><p class="eyebrow">2 · Make</p><h3>Writer + Designer</h3><p class="meta">Caption in the page's voice from brand.md facts only; artwork rendered with the product's real tokens (${config.features && config.features.reels ? "image, carousel and silent reel — kinetic type or the product's own screens" : "image and carousel; reels are not built yet"}).</p></article>
       <article class="card"><p class="eyebrow">3 · Check</p><h3>QA / Editor</h3><p class="meta">Blocks invented numbers, missing disclaimers, off-brand colours, text under the floor. A failed check goes back to the Writer, not to you.</p></article>
       <article class="card"><p class="eyebrow">4 · Ship</p><h3>Publisher + Analyst</h3><p class="meta">In Approve first, the Publisher waits for the owner's tick; in Autopilot it posts on schedule. The Analyst's insights are not built yet (phase 2).</p></article>
     </div>

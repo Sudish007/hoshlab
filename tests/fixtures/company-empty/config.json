@@ -30,7 +30,7 @@
     "hardStop": true
   },
   "features": {
-    "reels": false
+    "reels": true
   },
   "providers": {
     "anthropic": {
@@ -93,7 +93,19 @@
     "expireAfterHours": 48,
     "hashtagCap": 8,
     "captionMax": 2200,
-    "altTextMax": 100
+    "altTextMax": 100,
+    "reel": {
+      "minSec": 15,
+      "maxSec": 30,
+      "kineticScenes": [
+        3,
+        6
+      ],
+      "captureScenes": [
+        3,
+        6
+      ]
+    }
   },
   "ig": {
     "host": "https://graph.instagram.com",
@@ -141,6 +153,11 @@
             "dow": "fri",
             "time": "19:30",
             "format": "image"
+          },
+          {
+            "dow": "sat",
+            "time": "19:30",
+            "format": "reel"
           }
         ]
       }
@@ -181,6 +198,11 @@
             "dow": "sat",
             "time": "11:00",
             "format": "carousel"
+          },
+          {
+            "dow": "sun",
+            "time": "11:00",
+            "format": "reel"
           }
         ]
       }
@@ -226,6 +248,11 @@
             "dow": "thu",
             "time": "12:30",
             "format": "image"
+          },
+          {
+            "dow": "fri",
+            "time": "12:30",
+            "format": "reel"
           }
         ]
       }

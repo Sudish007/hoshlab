@@ -105,4 +105,10 @@ One regular expression per line (flags `iu`); a match anywhere in the caption, h
 
 - image: template image — 1080×1350; variant by headline length (A ≤ 36 chars, B ≤ 60, C longer); maroon headline on cream, thin gold rule, 2–3 fact lines in ink, Hindi lines in Tiro Devanagari Hindi, footer "rishtapatra.com" with the Do Patra mark
 - carousel: template carousel — 3–7 slides at 1080×1350; cover slide maroon with cream display type, body slides cream with maroon headings and ink body, closing slide repeats the tagline and site
-- reel: not built yet (phase 2; features.reels is false)
+- reel: template reel-kinetic — 1080×1920, 15–30 s, silent, 30 fps; style `kinetic`: each scene's line types on in Cormorant Garamond (Hindi in Tiro Devanagari Hindi) over the cream background with the brand row, a gold rule and the footer; style `capture` (template reel-capture): the product's own public pages from the capture list below inside a phone frame on cream, one caption bar per scene in maroon, footer "rishtapatra.com"
+- capture: verified 2026-10-11 — public pages of rishtapatra.com recorded at a 1080×1920 phone viewport (curl.exe returned 200 text/html for each; the routes are the product's own, see the pointers)
+  - `/` — shubhpatra/src/lib/routes.ts:20
+  - `/hi/` — shubhpatra/src/lib/routes.ts:20
+  - `/app` — shubhpatra/src/lib/routes.ts:4
+  - `/kundali` — shubhpatra/src/lib/routes.ts:12
+  - `/kundali/milan` — shubhpatra/src/lib/routes.ts:12

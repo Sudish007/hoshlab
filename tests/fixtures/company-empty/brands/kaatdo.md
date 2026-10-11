@@ -114,4 +114,10 @@ One regular expression per line (flags `iu`); a match anywhere in the caption, h
 
 - image: template image — 1080×1350; dark console panel (#070b14) with an edge border, Space Grotesk headline in txt (#dfe7f6), one green or red accent line, 2–3 mono fact lines, footer "kaatdo.com" with the mark and the sign-off "काट दो." in Noto Sans Devanagari
 - carousel: template carousel — 3–7 slides at 1080×1350; cover slide dark console, body slides light palette (#f5f7fb) with light-txt headings and mono body, closing slide dark with the disclaimer line and the sign-off
-- reel: not built yet (phase 2; features.reels is false)
+- reel: template reel-kinetic — 1080×1920, 15–30 s, silent, 30 fps; style `kinetic`: each scene's line types on in Space Grotesk over the flat dark console panel (#070b14) with a green caret, the brand row, a mono scene counter and the footer with the sign-off "काट दो."; style `capture` (template reel-capture): the product's own public pages from the capture list below inside a phone frame on the dark console, one mono caption bar per scene in txt, footer "kaatdo.com"
+- capture: verified 2026-10-11 — public pages of kaatdo.com recorded at a 1080×1920 phone viewport (curl.exe returned 200 text/html for each; `/#…` are the landing page's own section anchors)
+  - `/` — kaatdo/web/index.html:415-419
+  - `/#flatline` — kaatdo/web/index.html:455 ; kaatdo/web/index.html:487
+  - `/#rules` — kaatdo/web/index.html:417 ; kaatdo/web/index.html:575
+  - `/#pricing` — kaatdo/web/index.html:418 ; kaatdo/web/index.html:647
+  - `/status` — kaatdo/app/main.py:180

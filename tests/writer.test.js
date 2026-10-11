@@ -12,7 +12,7 @@ import { readEnv } from "../engine/lib/env.js";
 import { DRAFT_SPEC, USAGE_SPEC, assertShape, validate } from "../engine/lib/schema.js";
 import { codePoints, fullCaption, runChecks } from "../engine/lib/checks.js";
 import { AgentOutputError, BudgetExhaustedError, createRouter } from "../engine/llm/router.js";
-import { AGENT, DEFAULT_CAPS, INVALID_OUTPUT_REASON, OUTPUT_SPEC, RECENT_CAPTIONS, buildTask, capsOf, draftFromOutput, formatSpecText, outputSpec, runWriter, validateWriterOutput } from "../engine/agents/writer.js";
+import { AGENT, DEFAULT_CAPS, INVALID_OUTPUT_REASON, OUTPUT_SPEC, RECENT_CAPTIONS, buildTask, capsOf, draftFromOutput, formatSpecText, outputSpec, reelErrors, reelRules, runWriter, validateWriterOutput } from "../engine/agents/writer.js";
 
 const company = loadCompany({ companyDir: COMPANY_DIR, warn: () => {} });
 const { config, roster, brands, charters } = company;
@@ -34,7 +34,34 @@ const SLOTS = {
   kdCarousel: { slotId: "kaatdo-2026-10-17-1100", page: "kaatdo", at: "2026-10-17T11:00:00+05:30", format: "carousel", status: "planned", ideaId: "kd-i0003" },
   jrImage: { slotId: "job_rez-2026-10-12-1230", page: "job_rez", at: "2026-10-12T12:30:00+05:30", format: "image", status: "planned", ideaId: "jr-i0001" },
   jrCarousel: { slotId: "job_rez-2026-10-14-1230", page: "job_rez", at: "2026-10-14T12:30:00+05:30", format: "carousel", status: "planned", ideaId: "jr-i0003" },
+  // FEAT-201: the Phase 2 reel slots (plan D22)
+  rpReel: { slotId: "rishtapatra-2026-10-17-1930", page: "rishtapatra", at: "2026-10-17T19:30:00+05:30", format: "reel", status: "planned", ideaId: "rp-i0004" },
+  kdReel: { slotId: "kaatdo-2026-10-18-1100", page: "kaatdo", at: "2026-10-18T11:00:00+05:30", format: "reel", status: "planned", ideaId: "kd-i0004" },
+  jrReel: { slotId: "job_rez-2026-10-16-1230", page: "job_rez", at: "2026-10-16T12:30:00+05:30", format: "reel", status: "planned", ideaId: "jr-i0004" },
 };
+// A rendered reel's media as QA sees it: the video row with the Designer's ffprobe summary and the poster (SOF 1080×1920 is
+// what checkReelMediaSpec reads, so the poster bytes are the fixture JPEG with its SOF patched to 1080×1920).
+function reelMedia() {
+  const poster = new Uint8Array(JPEG);
+  let i = 2;
+  while (i + 3 < poster.length) {
+    const marker = poster[i + 1];
+    if (marker === 0xff) {
+      i++;
+      continue;
+    }
+    if (marker === 0xc0 || marker === 0xc2) {
+      poster[i + 5] = 1920 >> 8;
+      poster[i + 6] = 1920 & 0xff;
+      break;
+    }
+    i += 2 + ((poster[i + 2] << 8) | poster[i + 3]);
+  }
+  return [
+    { kind: "video", bytes: 2_000_000, width: 1080, height: 1920, path: "media/x/reel-abcdef12.mp4", durationSec: 16, probe: { ok: true, codec: "h264", width: 1080, height: 1920, pixFmt: "yuv420p", frameRate: "30/1", durationSec: 16, bytes: 2_000_000, faststart: true } },
+    { kind: "poster", bytes: poster, width: 1080, height: 1920, path: "media/x/poster-12345678.jpg" },
+  ];
+}
 const IDEAS = {
   rp: { id: "rp-i0001", page: "rishtapatra", title: "Free kundali, no account", angle: "Lead with the free product.", hook: "मुफ़्त जन्म कुंडली — अपने डिवाइस पर।", format: "image", language: "hi", facts: ["rp-f04", "rp-f07", "rp-f05"], status: "scheduled", attempts: 0, createdAt: "2026-10-12T05:31:00+05:30", by: "strategist", runId: RUN_ID },
   kd: { id: "kd-i0001", page: "kaatdo", title: "Six rules one kill switch", angle: "Name the six rules.", hook: "Six rules. One kill switch.", format: "image", language: "en", facts: ["kd-f04", "kd-f05"], status: "scheduled", attempts: 0, createdAt: "2026-10-12T05:31:00+05:30", by: "strategist", runId: RUN_ID },
@@ -63,6 +90,7 @@ function fakeRouter(output, { fail } = {}) {
 }
 
 function mediaFor(draft) {
+  if (draft.format === "reel") return reelMedia();
   const n = draft.format === "carousel" ? draft.slides.length : 1;
   return Array.from({ length: n }, () => ({ kind: "image", bytes: JPEG, width: 1080, height: 1350 }));
 }
@@ -318,7 +346,31 @@ test("validateWriterOutput: a factsUsed id that is disputed, foreign or unknown 
   assert.deepEqual(validateWriterOutput(noArtwork, { format: "image", offeredIds: offered, caps }), ["$.artwork: required for format image"]);
   const { slides, ...noSlides } = ok;
   assert.deepEqual(validateWriterOutput(noSlides, { format: "carousel", offeredIds: offered, caps }), ["$.slides: required for format carousel"]);
-  assert.deepEqual(validateWriterOutput(ok, { format: "reel", offeredIds: offered, caps }), ["$.reel: required for format reel"]);
+  const { reel, ...noReel } = ok;
+  assert.deepEqual(validateWriterOutput(noReel, { format: "reel", offeredIds: offered, caps }), ["$.reel: required for format reel"]);
+  // FEAT-201: the fixture's kinetic reel (4 × 4 s = 16 s) passes with the brand's live rules
+  const rules = reelRules(config, brands.rishtapatra);
+  assert.deepEqual(rules, { minSec: 15, maxSec: 30, kineticScenes: [3, 6], captureScenes: [3, 6], seconds: [3, 5], capturePaths: ["/", "/hi/", "/app", "/kundali", "/kundali/milan"] });
+  assert.deepEqual(validateWriterOutput(ok, { format: "reel", offeredIds: offered, caps, reel: rules }), []);
+  const reelCase = (patch) => validateWriterOutput({ ...ok, reel: { ...ok.reel, ...patch } }, { format: "reel", offeredIds: offered, caps, reel: rules });
+  assert.deepEqual(reelCase({ durationSec: 20 }), ["$.reel.durationSec: 20 is not the sum of the scenes' seconds (16)"]);
+  assert.deepEqual(reelCase({ scenes: ok.reel.scenes.slice(0, 3), durationSec: 12 }), ["$.reel.scenes: the scenes add up to 12 s, a reel must run 15–30 s"]);
+  assert.deepEqual(reelCase({ scenes: ok.reel.scenes.map((s) => ({ ...s, seconds: 8 })), durationSec: 32 }), ok.reel.scenes.map((_, i) => `$.reel.scenes[${i}].seconds: expected a whole number of 3–5 seconds (8)`));
+  assert.deepEqual(reelCase({ scenes: ok.reel.scenes.map((s) => ({ ...s, seconds: 4.5 })), durationSec: 18 }), ok.reel.scenes.map((_, i) => `$.reel.scenes[${i}].seconds: expected a whole number of 3–5 seconds (4.5)`));
+  assert.deepEqual(reelCase({ scenes: [...ok.reel.scenes, ...ok.reel.scenes].slice(0, 7).map((s) => ({ ...s, seconds: 3 })), durationSec: 21 }), ["$.reel.scenes: kinetic reels take 3–6 scenes (7)"]);
+  assert.deepEqual(reelCase({ style: "capture" }), [], "capture is allowed: the brand lists product screens");
+  const noScreens = { ...rules, capturePaths: [] };
+  assert.deepEqual(validateWriterOutput({ ...ok, reel: { ...ok.reel, style: "capture" } }, { format: "reel", offeredIds: offered, caps, reel: noScreens }), ["$.reel.style: capture needs product screens to record and this brand lists none; use kinetic"]);
+  assert.deepEqual(reelErrors({ style: "kinetic", durationSec: 16, scenes: [{ text: " ", seconds: 4 }, { text: "b", seconds: 4 }, { text: "c", seconds: 4 }, { text: "d", seconds: 4 }] }, rules), ["$.reel.scenes[0].text: empty"]);
+  // the format spec text explains both styles and names the brand's screens
+  const spec = formatSpecText("reel", caps, rules);
+  assert.match(spec, /3–6 scenes of ≤ 60 characters, 3–5 seconds each/);
+  assert.match(spec, /reel\.durationSec is the sum of the scenes' seconds and must be 15–30/);
+  assert.match(spec, /kinetic: each scene's line types on over the brand background/);
+  assert.match(spec, /capture: each scene is a short caption shown over a real screen of the product's own public pages/);
+  assert.match(spec, /the product screens available are \/, \/hi\/, \/app, \/kundali, \/kundali\/milan/);
+  assert.match(spec, /the reel is silent/);
+  assert.match(formatSpecText("reel", caps, noScreens), /no product screens are listed for this brand, so use kinetic/);
   const long = { ...ok, caption: "x".repeat(2190), hashtags: ["#RishtaPatra", "#Biodata"] };
   assert.equal(codePoints(fullCaption(long)), 2190 + 2 + "#RishtaPatra #Biodata".length);
   assert.deepEqual(validateWriterOutput(long, { format: "image", offeredIds: offered, caps }), [`$.caption: ${2190 + 2 + "#RishtaPatra #Biodata".length} characters with the hashtag line, limit 2200`]);
@@ -376,22 +428,51 @@ test("router errors other than AgentOutputError propagate and nothing is written
   assert.doesNotThrow(() => assertShape({ ...llm("writer.ok").output, hashtags: ["#रिश्ता"] }, OUTPUT_SPEC), "Devanagari hashtag with a matra validates (schema HASHTAG)");
 });
 
-test("the drafts implied by every writer.ok fixture pass runChecks against the real brand files in both formats (consistent with the fact tables)", () => {
+test("the drafts implied by every writer.ok fixture pass runChecks against the real brand files in all three formats (consistent with the fact tables); a reel slot keeps `reel` and drops artwork/slides", () => {
   const cases = [
-    ["writer.ok", brands.rishtapatra, RP, IDEAS.rp, SLOTS.rpImage, SLOTS.rpCarousel],
-    ["writer.ok.kaatdo", brands.kaatdo, KD, IDEAS.kd, SLOTS.kdImage, SLOTS.kdCarousel],
-    ["writer.ok.job_rez", brands.job_rez, JR, IDEAS.jr, SLOTS.jrImage, SLOTS.jrCarousel],
+    ["writer.ok", brands.rishtapatra, RP, IDEAS.rp, SLOTS.rpImage, SLOTS.rpCarousel, SLOTS.rpReel],
+    ["writer.ok.kaatdo", brands.kaatdo, KD, IDEAS.kd, SLOTS.kdImage, SLOTS.kdCarousel, SLOTS.kdReel],
+    ["writer.ok.job_rez", brands.job_rez, JR, IDEAS.jr, SLOTS.jrImage, SLOTS.jrCarousel, SLOTS.jrReel],
   ];
-  for (const [fixture, brand, page, idea, imageSlot, carouselSlot] of cases) {
+  for (const [fixture, brand, page, idea, imageSlot, carouselSlot, reelSlot] of cases) {
     const output = llm(fixture).output;
     assertShape(output, OUTPUT_SPEC);
-    assert.deepEqual(validateWriterOutput(output, { format: "image", offeredIds: new Set(brand.usableFacts().map((f) => f.id)), caps: capsOf(config) }), []);
-    for (const slot of [imageSlot, carouselSlot]) {
+    const offeredIds = new Set(brand.usableFacts().map((f) => f.id));
+    assert.deepEqual(validateWriterOutput(output, { format: "image", offeredIds, caps: capsOf(config) }), []);
+    assert.deepEqual(validateWriterOutput(output, { format: "reel", offeredIds, caps: capsOf(config), reel: reelRules(config, brand) }), [], `${fixture}: the reel block passes the live reel rules`);
+    for (const slot of [imageSlot, carouselSlot, reelSlot]) {
       const d = draftFromOutput({ output, slot, idea: { ...idea, format: slot.format }, page, now: NOW, runId: RUN_ID });
       assert.deepEqual(validate(d, DRAFT_SPEC), { ok: true, errors: [] }, `${fixture} ${slot.format}`);
       const r = runChecks(d, brand, { config, media: mediaFor(d) });
       assert.equal(r.passed, true, `${fixture} ${slot.format}: ${r.checks.filter((c) => !c.ok).map((c) => `${c.id}: ${c.detail}`).join(" | ")}`);
       assert.equal(r.checks.length, 12);
+      if (slot.format === "reel") {
+        assert.deepEqual(d.reel, output.reel, "reel kept as the model wrote it");
+        assert.equal(d.artwork, undefined);
+        assert.equal(d.slides, undefined);
+        assert.equal(d.reel.scenes.reduce((s, sc) => s + sc.seconds, 0), d.reel.durationSec);
+        assert.ok(d.reel.scenes.every((sc) => codePoints(sc.text) <= 60));
+      }
     }
+  }
+});
+
+test("reel slot under MOCK_LLM=1: the task JSON carries format.reel (live limits + the brand's capture screens) and the draft keeps the fixture's kinetic reel", async () => {
+  const h = harness();
+  try {
+    const res = await runWriter({ slot: SLOTS.kdReel, idea: { ...IDEAS.kd, id: "kd-i0004", title: "Six rules reel", format: "reel" }, brand: brands.kaatdo, page: KD, config, state: h.state, router: h.router, now: NOW, runId: RUN_ID });
+    assert.equal(res.ok, true);
+    const d = res.draft;
+    assert.equal(d.format, "reel");
+    assert.deepEqual(d.reel, llm("writer.ok.kaatdo").output.reel);
+    assert.equal(d.artwork, undefined);
+    assert.equal(d.slides, undefined);
+    assert.deepEqual(validate(d, DRAFT_SPEC), { ok: true, errors: [] });
+    const task = buildTask({ slot: SLOTS.kdReel, idea: { ...IDEAS.kd, format: "reel" }, brand: brands.kaatdo, page: KD, config });
+    assert.deepEqual(task.format.reel, { minSec: 15, maxSec: 30, kineticScenes: [3, 6], captureScenes: [3, 6], secondsPerScene: [3, 5], sceneMax: 60, captureScreens: ["/", "/#flatline", "/#rules", "/#pricing", "/status"] });
+    assert.match(task.format.spec, /the product screens available are \/, \/#flatline, \/#rules, \/#pricing, \/status/);
+    assert.equal(buildTask({ slot: SLOTS.kdImage, idea: IDEAS.kd, brand: brands.kaatdo, page: KD, config }).format.reel, undefined, "image slots carry no reel block");
+  } finally {
+    h.cleanup();
   }
 });

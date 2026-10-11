@@ -333,7 +333,8 @@ function thumb(card, draft) {
   const a = card.querySelector('[data-slot="open"]');
   const img = card.querySelector('[data-slot="img"]');
   const missing = card.querySelector('[data-slot="img-missing"]');
-  const m = draft.media && draft.media[0];
+  // a reel's thumbnail is its poster JPEG (the MP4 row cannot be an <img>)
+  const m = (draft.media || []).find((x) => x.kind === "poster") || (draft.media && draft.media[0]);
   if (!m) {
     img.classList.add("missing");
     show(missing, true);

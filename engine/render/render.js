@@ -7,6 +7,9 @@
 // A guard failure is a RenderError (per-draft: the Designer sends the draft back to the Writer as `rework`,
 // or `blocked` at the rework cap — R1-02); a browser that cannot be launched is a RenderUnavailableError
 // (the Designer step fails, the run continues).
+// Reels (FEAT-201, plan D17): renderDraft routes format `reel` to ./video.js (kinetic: type-on typography;
+// capture: ./capture.js records the product's own public pages first) — 1080×1920 frames at 30 fps → ffmpeg
+// H.264 yuv420p +faststart, silent, plus a poster JPEG; ffprobe (./probe.js) must accept the file.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
@@ -25,6 +28,8 @@ export const CONTRAST_MIN_LARGE = 3;
 export const LARGE_TEXT_U = 60;
 // RenderError codes raised here: overflow | missing_glyphs | text_floor | contrast | media_spec (schema RENDER_ERROR_CODES)
 export const FORMATS = { image: "image.html", carousel: "carousel.html" };
+// Reels (FEAT-201) render through ./video.js (templates reel-kinetic.html / reel-capture.html, 1080×1920 frames → ffmpeg).
+export const REEL_FORMAT = "reel";
 
 // Per-draft refusal: the draft goes to `rework` with renderError = { code, detail, at } (design §11, R1-02).
 export class RenderError extends Error {
@@ -38,12 +43,15 @@ export class RenderError extends Error {
 }
 
 // Chromium could not be launched / a font face failed to load: the Designer step fails (`render_failed`).
+// code 'ffmpeg' (video.js, FEAT-201): ffmpeg/ffprobe missing or the encoded reel failed its probe — a per-draft
+// deferral, the reel draft stays `written` and the Designer carries on with the next draft.
 export class RenderUnavailableError extends Error {
-  constructor(message, cause) {
+  constructor(message, cause, code = "render_failed", extra = {}) {
     super(message);
     this.name = "RenderUnavailableError";
-    this.code = "render_failed";
+    this.code = code;
     if (cause) this.cause = cause;
+    Object.assign(this, extra);
   }
 }
 
@@ -116,10 +124,11 @@ const clip = (s, n = 60) => {
 
 // The render guards over a template's layout() result (pure: unit-tested without a browser).
 // Throws RenderError in the order overflow → missing_glyphs (per-script rule, then coverage) → text_floor → contrast.
-export function applyGuards(result, { devanagariFamilies = [], table, textFloorU = TEXT_FLOOR_U } = {}) {
+// `canvas` is the expected size (1080×1350 for feed artwork; video.js passes 1080×1920 for reel frames).
+export function applyGuards(result, { devanagariFamilies = [], table, textFloorU = TEXT_FLOOR_U, canvas = { width: MEDIA_WIDTH, height: MEDIA_HEIGHT } } = {}) {
   if (!result || !Array.isArray(result.runs)) throw new TypeError("render: layout() returned no runs");
-  if (result.canvas && (result.canvas.width !== MEDIA_WIDTH || result.canvas.height !== MEDIA_HEIGHT)) {
-    throw new RenderError("media_spec", `canvas ${result.canvas.width}x${result.canvas.height}, expected ${MEDIA_WIDTH}x${MEDIA_HEIGHT}`);
+  if (result.canvas && (result.canvas.width !== canvas.width || result.canvas.height !== canvas.height)) {
+    throw new RenderError("media_spec", `canvas ${result.canvas.width}x${result.canvas.height}, expected ${canvas.width}x${canvas.height}`);
   }
   if (result.overflow) {
     const o = (result.overflows && result.overflows[0]) || {};
@@ -163,7 +172,8 @@ export function checkJpeg(buf) {
   return dims;
 }
 
-async function launch(chromium) {
+// launchBrowser(chromium?) → a headless Chromium; failure is a RenderUnavailableError (shared with video.js / capture).
+export async function launchBrowser(chromium) {
   try {
     const pw = chromium || (await import("playwright")).chromium;
     return await pw.launch({ headless: true });
@@ -171,6 +181,7 @@ async function launch(chromium) {
     throw new RenderUnavailableError(`Chromium could not be launched: ${e && e.message ? e.message.split("\n")[0] : e}`, e);
   }
 }
+const launch = launchBrowser;
 
 // One page: inject → load → fonts.ready → layout() → guard(layout) → JPEG of #canvas. The context is
 // closed on every path; a failed font face is an environment problem, not a draft problem.
@@ -200,11 +211,12 @@ async function renderOne(browser, { templateFile, payload, guard }) {
 //   → { media: [{ kind, file, path, bytes, width, height, sha256, variant, palette, minTextU, minContrast }], variant, palette }
 // Files are written to outDir as image-<n>-<sha8>.jpg (image) / slide-<n>-<sha8>.jpg (carousel); `path` is
 // relDir + file (default 'media/<draftId>/<file>'). An injected `browser` is reused and left open.
-export async function renderDraft({ draft, brand, outDir, relDir, templateDir, templatesRoot = TEMPLATES_DIR, fontsDir = FONTS_DIR, coverageTable, chromium, browser } = {}) {
+export async function renderDraft({ draft, brand, outDir, relDir, templateDir, templatesRoot = TEMPLATES_DIR, fontsDir = FONTS_DIR, coverageTable, chromium, browser, capture, ffmpegPath, ffprobePath } = {}) {
   if (!draft || !brand || !outDir) throw new TypeError("render: draft, brand and outDir are required");
   const format = draft.format;
+  if (format === REEL_FORMAT) return renderReelDraft({ draft, brand, outDir, relDir, templateDir, templatesRoot, fontsDir, coverageTable, chromium, browser, capture, ffmpegPath, ffprobePath });
   const file = FORMATS[format];
-  if (!file) throw new RenderError("media_spec", `${format}: not built yet (phase 2; features.reels is false)`);
+  if (!file) throw new RenderError("media_spec", `${format}: unknown format (image | carousel | reel)`);
   await ensureFonts(fontsDir);
   const table = coverageTable || loadCoverage(join(fontsDir, "coverage.json"));
   const tokens = brandTokens(brand, table);
@@ -236,10 +248,34 @@ export async function renderDraft({ draft, brand, outDir, relDir, templateDir, t
   return { media, variant: media[0] ? media[0].variant : null, palette: media[0] ? media[0].palette : null };
 }
 
-// createRenderer({ chromium?, templatesRoot?, fontsDir?, coverageTable? }) → { renderDraft(draft, brand, { outDir, relDir }), close() }
+// Reel draft (FEAT-201): capture style → capture.js records the product's own pages first (one frame per scene),
+// then video.js turns the template's setProgress(t) frames into the MP4 + poster. CaptureError and the 'ffmpeg'
+// RenderUnavailableError propagate to the Designer, which leaves the draft `written` with renderError.
+async function renderReelDraft({ draft, brand, outDir, relDir, templateDir, templatesRoot, fontsDir, coverageTable, chromium, browser, capture = {}, ffmpegPath, ffprobePath }) {
+  const [{ renderReel }, { captureProduct, framesForScenes }] = await Promise.all([import("./video.js"), import("./capture.js")]);
+  const reel = draft.reel;
+  if (!reel || typeof reel !== "object") throw new RenderError("media_spec", "reel draft without a reel block");
+  const dir = templateDir || templateDirFor(brand, templatesRoot);
+  const own = !browser;
+  const b = browser || (await launch(chromium));
+  try {
+    let frames = null;
+    if (reel.style === "capture") {
+      const shot = await captureProduct({ brand, paths: capture.paths, origin: capture.origin, browser: b, timeoutMs: capture.timeoutMs, scrolls: capture.scrolls });
+      frames = framesForScenes(shot.frames, reel.scenes);
+    }
+    const result = await renderReel({ draft, brand, templateDir: dir, outDir, relDir, frames, browser: b, coverageTable, fontsDir, ffmpegPath, ffprobePath });
+    return { ...result, variant: result.variant, palette: result.palette };
+  } finally {
+    if (own) await b.close().catch(() => {});
+  }
+}
+
+// createRenderer({ chromium?, templatesRoot?, fontsDir?, coverageTable?, capture?, ffmpegPath?, ffprobePath? })
+//   → { renderDraft(draft, brand, { outDir, relDir }), close() }
 // One Chromium for many drafts (the Designer renders every `written` draft of a run); launch is lazy, so a
 // machine without Chromium only fails when a draft actually needs rendering (RenderUnavailableError).
-export function createRenderer({ chromium, templatesRoot = TEMPLATES_DIR, fontsDir = FONTS_DIR, coverageTable } = {}) {
+export function createRenderer({ chromium, templatesRoot = TEMPLATES_DIR, fontsDir = FONTS_DIR, coverageTable, capture, ffmpegPath, ffprobePath } = {}) {
   let browser = null;
   let table = coverageTable || null;
   return {
@@ -249,7 +285,7 @@ export function createRenderer({ chromium, templatesRoot = TEMPLATES_DIR, fontsD
         table = loadCoverage(join(fontsDir, "coverage.json"));
       }
       if (!browser) browser = await launch(chromium);
-      return renderDraft({ draft, brand, outDir, relDir, templatesRoot, fontsDir, coverageTable: table, browser });
+      return renderDraft({ draft, brand, outDir, relDir, templatesRoot, fontsDir, coverageTable: table, browser, capture, ffmpegPath, ffprobePath });
     },
     async close() {
       if (browser) await browser.close().catch(() => {});

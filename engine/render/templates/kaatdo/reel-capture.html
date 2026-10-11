@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>KaatDo · reel capture 1080×1920</title>
+<link rel="stylesheet" href="../common.css">
+</head>
+<body>
+<!-- KaatDo capture reel (design §10, plan D17, FEAT-201): the product's own public pages (window.__FRAMES__, captured by
+     engine/render/capture.js from the brand's capture list) inside a phone frame on the dark console, one caption bar
+     per scene in Space Grotesk (txt), mono scene counter, progress bar, mono footer. Tokens: company/brands/kaatdo.md -->
+<div id="canvas" class="post post-kd reel reel-capture" data-palette="dark console palette">
+  <div class="brand-row">
+    <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <path d="M8 42 L19 30 L27 36 L36 24" fill="none" stroke="#3dff8c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M41 35 H56" fill="none" stroke="#5a6890" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M47 10 L29 54" fill="none" stroke="#ff3b4e" stroke-width="5.5" stroke-linecap="round"/>
+    </svg>
+    <span class="word"><span id="word-a"></span><b id="word-b"></b></span>
+    <span class="slash" id="slash" aria-hidden="true">╱</span>
+    <span class="word-hi" lang="hi" id="word-hi"></span>
+  </div>
+  <div class="phone"><div class="screen"><img id="shot-a" alt=""><img id="shot-b" alt="" hidden></div></div>
+  <div class="caption-wrap"><p class="caption" id="caption" data-variant="B"></p></div>
+  <div class="scene-meta"><span id="counter"></span><span id="meta-right"></span></div>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+  <div class="foot"><span id="foot-left"></span><span class="ig-handle" id="foot-right"></span></div>
+</div>
+<script src="../common.js"></script>
+<script src="../reel.js"></script>
+<script>
+(function () {
+  var H = window.HOSHLAB;
+  var brand = window.__BRAND__ || {};
+  var canvas = document.getElementById("canvas");
+  H.applyTokens(canvas, window.__TOKENS__);
+  var up = String(brand.name || "").toUpperCase();
+  var cut = up.lastIndexOf("DO");
+  document.getElementById("word-a").textContent = cut > 0 ? up.slice(0, cut) : up;
+  document.getElementById("word-b").textContent = cut > 0 ? up.slice(cut) : "";
+  var wordHi = document.getElementById("word-hi");
+  if (brand.nameDevanagari) wordHi.textContent = brand.nameDevanagari;
+  else { wordHi.hidden = true; document.getElementById("slash").hidden = true; }
+  document.getElementById("meta-right").textContent = "ON " + H.siteHost(brand.site).toUpperCase();
+  document.getElementById("foot-left").textContent = H.siteHost(brand.site);
+  document.getElementById("foot-right").textContent = brand.handle ? "@" + brand.handle : "";
+  window.HOSHLAB_REEL.initCapture({
+    imgA: document.getElementById("shot-a"),
+    imgB: document.getElementById("shot-b"),
+    captionEl: document.getElementById("caption"),
+    counterEl: document.getElementById("counter"),
+    barEl: document.getElementById("bar"),
+  });
+})();
+</script>
+</body>
+</html>

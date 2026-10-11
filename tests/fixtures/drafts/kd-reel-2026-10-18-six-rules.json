@@ -1,0 +1,39 @@
+{
+  "id": "kd-reel-2026-10-18-six-rules",
+  "page": "kaatdo",
+  "ideaId": "kd-i0008",
+  "slotId": "kaatdo-2026-10-18-1100",
+  "slotAt": "2026-10-18T11:00:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "written",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-15T05:33:00+05:30",
+  "updatedAt": "2026-10-15T05:33:00+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261015-0531-d4e5f6",
+  "caption": "Six rules. One kill switch.\nmax_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates. Your rule fires: every pending order is cancelled, every position is squared off at market, and the account stays locked until close.\nMonthly ₹999 at the time of posting. 7-day free trial, no card.\nKaatDo is a risk-management tool, not investment advice. KaatDo is not registered with SEBI. Broker API execution is never guaranteed.\nkaatdo.com\nकाट दो.",
+  "hashtags": ["#KaatDo", "#FnO", "#RiskManagement", "#KillSwitch"],
+  "altText": "Reel: Six rules. One kill switch. Console type on a dark panel; footer kaatdo.com",
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      { "text": "Six rules. One kill switch.", "seconds": 4 },
+      { "text": "Your rule fires. Every pending order is cancelled.", "seconds": 4 },
+      { "text": "Every position squared off at market. Locked until close.", "seconds": 4 },
+      { "text": "Not investment advice. Not SEBI-registered. काट दो.", "seconds": 4 }
+    ]
+  },
+  "factsUsed": [
+    { "factId": "kd-f04", "quote": "Six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates" },
+    { "factId": "kd-f05", "quote": "cancels every pending order, squares off every position at market, keeps the account locked until close" },
+    { "factId": "kd-f10", "quote": "not investment advice, and is not registered with SEBI; broker API execution is never guaranteed" },
+    { "factId": "kd-f13", "quote": "काट दो." }
+  ],
+  "writerNote": "Kinetic reel: risk-first — the rule, what fires, what the switch does, the disclaimer and sign-off as the closing scene.",
+  "media": [],
+  "publishAttempts": []
+}

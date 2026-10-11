@@ -36,7 +36,8 @@ function assertStateJob(text, file, { cron, jobId, stepId }) {
   assert.match(text, /git config user\.name hoshlab-bot\s*\n\s+git config user\.email hoshlab-bot@users\.noreply\.github\.com/, `${file}: bot identity (N16)`);
   for (const name of SECRETS) assert.match(text, new RegExp(`^\\s+${name}: \\$\\{\\{ secrets\\.${name} \\}\\}$`, "m"), `${file}: env maps ${name} from secrets`);
   assert.match(text, /^\s+CI: "true"$/m, `${file}: CI=true makes the engine commit + push itself`);
-  assert.match(text, new RegExp(`^\\s+changed: \\$\\{\\{ steps\\.${stepId}\\.outputs\\.changed \\}\\}$`, "m"), `${file}: job output changed from the engine step`);
+  // engine-daily.yml also honours the render_sample step's output (FEAT-201); the publisher has only its engine step
+  assert.match(text, new RegExp(`^\\s+changed: \\$\\{\\{ steps\\.${stepId}\\.outputs\\.changed( \\|\\| steps\\.samples\\.outputs\\.changed)? \\}\\}$`, "m"), `${file}: job output changed from the engine step`);
   assert.match(text, new RegExp(`^\\s+- id: ${stepId}$`, "m"), `${file}: the engine step carries id ${stepId}`);
   assert.match(text, /dry_run:\s*\n\s+description: .+\n\s+type: boolean\s*\n\s+default: false/, `${file}: workflow_dispatch input dry_run is a boolean (the admin dispatches inputs: { dry_run: 'false' })`);
   assert.match(text, /args\+=\(--dry-run\)/, `${file}: dry_run → --dry-run`);
@@ -84,12 +85,12 @@ test("pages.yml (design §3.3): push main + dispatch + workflow_call; checkout r
   assert.ok(!/MOCK_LLM|IG_DRY_RUN|secrets\./.test(text), "pages.yml needs no secrets and no engine env");
 });
 
-test("ci.yml (M10): Chromium with deps, fonts, RENDER_TESTS=1 MOCK_LLM=1 IG_DRY_RUN=1 npm test, build, both audits into audit-out, dry-run-publish, artifact upload even on failure", () => {
+test("ci.yml (M10, P2-01): Chromium with deps, fonts, ffmpeg/ffprobe versions logged, RENDER_TESTS=1 REQUIRE_FFMPEG=1 MOCK_LLM=1 IG_DRY_RUN=1 npm test, build, both audits into audit-out, dry-run-publish, artifact upload even on failure", () => {
   const text = read("ci.yml");
   assert.match(text, /^name: CI$/m);
   assert.match(text, /^on:\s*\n\s+push:\s*\n\s+pull_request:\s*\n\s+workflow_dispatch:/m);
   assert.match(text, /^permissions:\s*\n\s+contents: read\s*$/m, "read-only token");
-  const order = ["- run: npm ci", "- run: npx playwright install --with-deps chromium", "- run: npm run build:fonts", "run: RENDER_TESTS=1 MOCK_LLM=1 IG_DRY_RUN=1 npm test", "run: npm run build", "run: AUDIT_OUT=audit-out npm run audit\n", "run: AUDIT_OUT=audit-out npm run audit:admin", "run: node scripts/dry-run-publish.mjs", "uses: actions/upload-artifact@v", "if: always()", "name: audit-out", "path: audit-out/"];
+  const order = ["- run: npm ci", "- run: npx playwright install --with-deps chromium", "- run: npm run build:fonts", "ffmpeg -version | head -n 1", "ffprobe -version | head -n 1", "run: RENDER_TESTS=1 REQUIRE_FFMPEG=1 MOCK_LLM=1 IG_DRY_RUN=1 npm test", "run: npm run build", "run: AUDIT_OUT=audit-out npm run audit\n", "run: AUDIT_OUT=audit-out npm run audit:admin", "run: node scripts/dry-run-publish.mjs", "uses: actions/upload-artifact@v", "if: always()", "name: audit-out", "path: audit-out/"];
   let pos = 0;
   for (const needle of order) {
     const at = text.indexOf(needle, pos);
@@ -114,6 +115,15 @@ test("engine-daily.yml (design §3.1): cron 0 0 * * * = Daily 05:30 IST; inputs 
   assert.match(text, /args=\(daily --commit\)/, "daily --commit");
   assert.match(text, /args\+=\(--agents "\$INPUT_AGENTS"\)/, "agents → --agents");
   assert.match(text, /args\+=\(--page "\$INPUT_PAGE"\)/, "page → --page");
+  // FEAT-201 / plan D19: render_sample renders one image + one kinetic reel per page into the media branch and skips the agents
+  assert.match(text, /render_sample:\s*\n\s+description: .+\n\s+type: boolean\s*\n\s+default: false/, "input render_sample (boolean)");
+  assert.match(text, /^\s+- id: samples\s*\n\s+name: .+\n\s+if: \$\{\{ inputs\.render_sample == true \}\}$/m, "the samples step runs only when asked");
+  assert.match(text, /^\s+- id: engine\s*\n\s+name: Run the engine\s*\n\s+if: \$\{\{ inputs\.render_sample != true \}\}$/m, "the daily agents are skipped on a render_sample dispatch");
+  assert.match(text, /node engine\/index\.js render-sample --page "\$p" --format image\s*\n\s+node engine\/index\.js render-sample --page "\$p" --format reel --style kinetic/, "one image and one kinetic reel per page");
+  assert.match(text, /for p in \$pages; do/, "every page unless `page` narrows it");
+  assert.match(text, /git -C \.media commit --quiet -m "media: samples"\s*\n\s+git -C \.media push origin HEAD:refs\/heads\/media/, "commit 'media: samples' and push the media branch");
+  assert.match(text, /^\s+changed: \$\{\{ steps\.engine\.outputs\.changed \|\| steps\.samples\.outputs\.changed \}\}$/m, "the deploy job also follows the samples step");
+  assert.match(text, /ffmpeg -version \| head -n 1/, "the runner's ffmpeg is logged before rendering reels");
 });
 
 test("publisher-hourly.yml (design §3.2, M1): cron 0 * * * * = Hourly at :30 IST; same concurrency, secrets, bot and deploy job; no Chromium, no media checkout", () => {

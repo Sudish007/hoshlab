@@ -113,4 +113,9 @@ One regular expression per line (flags `iu`); a match anywhere in the caption, h
 
 - image: template image — 1080×1350; canvas (#f6f5fb) with a white card, Manrope 800 headline in ink, violet accent rule, 2–3 DM Sans fact lines in text, DM Mono tag line, the mark on its gradient tile and footer "jobrez.com"
 - carousel: template carousel — 3–7 slides at 1080×1350; cover slide ink (#0f172a) with white display type and the gradient tile, body slides canvas with ink headings and text body, closing slide repeats the tagline and site
-- reel: not built yet (phase 2; features.reels is false)
+- reel: template reel-kinetic — 1080×1920, 15–30 s, silent, 30 fps; style `kinetic`: each scene's line types on in Manrope 800 over the cream canvas with the mark on its gradient tile, a violet caret, a mono scene counter and the footer; style `capture` (template reel-capture): the product's own public pages from the capture list below inside a phone frame on canvas, one caption bar per scene in ink, footer "jobrez.com". English only (OF-2)
+- capture: verified 2026-10-11 — public pages of jobrez.com recorded at a 1080×1920 phone viewport (curl.exe returned 200 text/html for each; the paths are the SPA's known routes)
+  - `/` — vitae-os/src/data/routes.ts:15
+  - `/features` — vitae-os/src/data/routes.ts:17
+  - `/features/jobs` — vitae-os/src/data/routes.ts:29
+  - `/pricing` — vitae-os/src/data/routes.ts:16

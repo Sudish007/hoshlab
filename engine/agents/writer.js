@@ -28,7 +28,24 @@ export const RECENT_CAPTIONS = 10;
 export const DEFAULT_CAPS = { captionMax: 2200, hashtagCap: 8, altTextMax: 100 };
 export const ARTWORK_CAPS = { headline: 60, subline: 110, fact: 70, facts: 3 };
 export const SLIDE_CAPS = { heading: 40, body: 160, min: 2, max: 10 };
-export const REEL_CAPS = { scene: 60, scenes: [3, 6], seconds: [3, 5] };
+// Reels (design §10/§12, plan D17, FEAT-201): 3–6 scenes of ≤ 60 characters, 3–5 s each; the total and the
+// per-style scene counts come from config.defaults.reel at runtime (reelRules), these are the design defaults.
+export const REEL_CAPS = { scene: 60, scenes: [3, 6], seconds: [3, 5], minSec: 15, maxSec: 30 };
+
+// reelRules(config, brand) → { minSec, maxSec, kineticScenes, captureScenes, seconds, capturePaths } — the live
+// reel limits the validation and the format spec text use (config.defaults.reel; capturePaths from the brand).
+export function reelRules(config, brand) {
+  const r = (config && config.defaults && config.defaults.reel) || {};
+  const pair = (v, fallback) => (Array.isArray(v) && v.length === 2 ? [v[0], v[1]] : fallback);
+  return {
+    minSec: Number.isInteger(r.minSec) ? r.minSec : REEL_CAPS.minSec,
+    maxSec: Number.isInteger(r.maxSec) ? r.maxSec : REEL_CAPS.maxSec,
+    kineticScenes: pair(r.kineticScenes, REEL_CAPS.scenes),
+    captureScenes: pair(r.captureScenes, REEL_CAPS.scenes),
+    seconds: REEL_CAPS.seconds,
+    capturePaths: brand && brand.capture && Array.isArray(brand.capture.paths) ? brand.capture.paths.map((p) => p.path) : [],
+  };
+}
 
 function toDate(v) {
   const d = v instanceof Date ? v : typeof v === "string" ? parseIso(v) : v === undefined ? new Date() : new Date(v);
@@ -55,28 +72,35 @@ export function outputSpec(caps = DEFAULT_CAPS) {
     altText: `str<=${c.altTextMax}`,
     "artwork?": { headline: `str<=${ARTWORK_CAPS.headline}`, subline: `str<=${ARTWORK_CAPS.subline}`, facts: [`str<=${ARTWORK_CAPS.fact}`, { max: ARTWORK_CAPS.facts }], footer: "str" },
     "slides?": [{ heading: `str<=${SLIDE_CAPS.heading}`, body: `str<=${SLIDE_CAPS.body}`, altText: `str<=${c.altTextMax}` }, { min: SLIDE_CAPS.min, max: SLIDE_CAPS.max }],
-    "reel?": { style: "enum[kinetic|capture]", durationSec: "num[1..90]", scenes: [{ text: `str<=${REEL_CAPS.scene}`, seconds: "num[1..10]" }, { min: REEL_CAPS.scenes[0], max: REEL_CAPS.scenes[1] }] },
+    "reel?": { style: "enum[kinetic|capture]", durationSec: "int", scenes: [{ text: `str<=${REEL_CAPS.scene}`, seconds: "int" }, { min: REEL_CAPS.scenes[0], max: REEL_CAPS.scenes[1] }] },
     factsUsed: [{ factId: "str", quote: "str" }, { min: 1 }],
     "writerNote?": "str",
   };
 }
 export const OUTPUT_SPEC = outputSpec();
 
-// The format spec text handed to the model (design §5 Writer row), with the live caps.
-export function formatSpecText(format, caps = DEFAULT_CAPS) {
+// The format spec text handed to the model (design §5 Writer row), with the live caps. The reel text explains
+// both styles: kinetic = the scene lines type on over the brand background; capture = each scene is a caption
+// over one real screen of the product's own public pages (the brand's capture list), so a capture scene says
+// what the viewer is looking at. durationSec is the sum of the scenes' seconds.
+export function formatSpecText(format, caps = DEFAULT_CAPS, reel = reelRules(null, null)) {
   const c = { ...DEFAULT_CAPS, ...caps };
+  const r = reel || reelRules(null, null);
   const common = `caption ≤ ${c.captionMax} characters including the hashtag line; ≤ ${c.hashtagCap} hashtags, each # followed by 2–40 letters, digits or underscores; altText ≤ ${c.altTextMax} characters, a plain description of the image, no hashtags`;
+  const captureNote = r.capturePaths.length ? `the product screens available are ${r.capturePaths.join(", ")}` : "no product screens are listed for this brand, so use kinetic";
   const byFormat = {
     image: `image: artwork.headline ≤ ${ARTWORK_CAPS.headline} characters, artwork.subline ≤ ${ARTWORK_CAPS.subline}, artwork.facts 2–3 lines of ≤ ${ARTWORK_CAPS.fact} characters each, artwork.footer the brand's site domain or sign-off; omit slides and reel`,
     carousel: `carousel: 3–7 slides (the engine accepts ${SLIDE_CAPS.min}–${SLIDE_CAPS.max}), each heading ≤ ${SLIDE_CAPS.heading} and body ≤ ${SLIDE_CAPS.body} characters plus one altText ≤ ${c.altTextMax} per slide; omit artwork and reel`,
-    reel: `reel: ${REEL_CAPS.scenes[0]}–${REEL_CAPS.scenes[1]} scenes of ≤ ${REEL_CAPS.scene} characters, ${REEL_CAPS.seconds[0]}–${REEL_CAPS.seconds[1]} seconds each, style kinetic or capture; omit artwork and slides`,
+    reel: `reel: ${REEL_CAPS.scenes[0]}–${REEL_CAPS.scenes[1]} scenes of ≤ ${REEL_CAPS.scene} characters, ${r.seconds[0]}–${r.seconds[1]} seconds each (whole seconds; kinetic takes ${r.kineticScenes[0]}–${r.kineticScenes[1]} scenes, capture ${r.captureScenes[0]}–${r.captureScenes[1]}); reel.durationSec is the sum of the scenes' seconds and must be ${r.minSec}–${r.maxSec}; reel.style is kinetic or capture — kinetic: each scene's line types on over the brand background, one claim per scene, the first scene is the hook and the cover frame; capture: each scene is a short caption shown over a real screen of the product's own public pages, so write what the viewer sees on that screen (${captureNote}); the reel is silent; omit artwork and slides`,
   };
   return `${byFormat[format] || `${format}: unknown format`}; ${common}`;
 }
 
 // Semantic rules for the model's answer (the router's single repair call): offered facts only, the
-// format's block present, caption + hashtag line within captionMax.
-export function validateWriterOutput(json, { format, offeredIds, caps = DEFAULT_CAPS } = {}) {
+// format's block present, caption + hashtag line within captionMax; for reels (FEAT-201) the scene count of
+// the chosen style, whole seconds of 3–5 per scene, durationSec = Σ seconds within config.defaults.reel, and
+// capture only when the brand lists product screens to capture.
+export function validateWriterOutput(json, { format, offeredIds, caps = DEFAULT_CAPS, reel = null } = {}) {
   const errors = [];
   const offered = offeredIds instanceof Set ? offeredIds : new Set(offeredIds || []);
   (Array.isArray(json.factsUsed) ? json.factsUsed : []).forEach((f, i) => {
@@ -85,9 +109,31 @@ export function validateWriterOutput(json, { format, offeredIds, caps = DEFAULT_
   if (format === "image" && !json.artwork) errors.push("$.artwork: required for format image");
   if (format === "carousel" && !Array.isArray(json.slides)) errors.push("$.slides: required for format carousel");
   if (format === "reel" && !json.reel) errors.push("$.reel: required for format reel");
+  if (format === "reel" && json.reel && typeof json.reel === "object") errors.push(...reelErrors(json.reel, reel || reelRules(null, null)));
   const max = caps.captionMax || DEFAULT_CAPS.captionMax;
   const full = codePoints(fullCaption({ caption: json.caption, hashtags: json.hashtags }));
   if (full > max) errors.push(`$.caption: ${full} characters with the hashtag line, limit ${max}`);
+  return errors;
+}
+
+// reelErrors(reel, rules) → errors[] for the reel block beyond its shape (pure; FEAT-201).
+export function reelErrors(reel, rules) {
+  const errors = [];
+  const scenes = Array.isArray(reel.scenes) ? reel.scenes : [];
+  const range = reel.style === "capture" ? rules.captureScenes : rules.kineticScenes;
+  if ((reel.style === "kinetic" || reel.style === "capture") && (scenes.length < range[0] || scenes.length > range[1])) errors.push(`$.reel.scenes: ${reel.style} reels take ${range[0]}–${range[1]} scenes (${scenes.length})`);
+  if (reel.style === "capture" && rules.capturePaths.length === 0) errors.push("$.reel.style: capture needs product screens to record and this brand lists none; use kinetic");
+  let sum = 0;
+  scenes.forEach((s, i) => {
+    const sec = s && s.seconds;
+    if (!Number.isInteger(sec) || sec < rules.seconds[0] || sec > rules.seconds[1]) errors.push(`$.reel.scenes[${i}].seconds: expected a whole number of ${rules.seconds[0]}–${rules.seconds[1]} seconds (${JSON.stringify(sec)})`);
+    else sum += sec;
+    if (s && typeof s.text === "string" && !s.text.trim()) errors.push(`$.reel.scenes[${i}].text: empty`);
+  });
+  if (scenes.length && errors.every((e) => !e.includes(".seconds"))) {
+    if (reel.durationSec !== sum) errors.push(`$.reel.durationSec: ${JSON.stringify(reel.durationSec)} is not the sum of the scenes' seconds (${sum})`);
+    if (sum < rules.minSec || sum > rules.maxSec) errors.push(`$.reel.scenes: the scenes add up to ${sum} s, a reel must run ${rules.minSec}–${rules.maxSec} s`);
+  }
   return errors;
 }
 
@@ -107,11 +153,14 @@ export function buildTask({ slot, idea, brand, page, config, recentCaptions = []
     for (const k of PREVIOUS_KEYS) if (draft && draft[k] !== undefined) previous[k] = draft[k];
     rework = { revision: draft ? draft.revision : null, reasons: [...qaReasons], previous };
   }
+  const reel = reelRules(config, brand);
+  const format = { name: slot.format, caps: { ...caps, ...ARTWORK_CAPS, slideHeading: SLIDE_CAPS.heading, slideBody: SLIDE_CAPS.body }, spec: formatSpecText(slot.format, caps, reel) };
+  if (slot.format === "reel") format.reel = { minSec: reel.minSec, maxSec: reel.maxSec, kineticScenes: reel.kineticScenes, captureScenes: reel.captureScenes, secondsPerScene: reel.seconds, sceneMax: REEL_CAPS.scene, captureScreens: reel.capturePaths };
   return {
     page: { handle: page.handle, languages: page.languages, emoji: fm.emoji || null, site: fm.site || null },
     slot: { slotId: slot.slotId, at: slot.at, format: slot.format },
     idea: { id: idea.id, title: idea.title, angle: idea.angle, format: idea.format, language: idea.language, factIds: idea.facts || idea.factIds || [], hook: idea.hook || "" },
-    format: { name: slot.format, caps: { ...caps, ...ARTWORK_CAPS, slideHeading: SLIDE_CAPS.heading, slideBody: SLIDE_CAPS.body }, spec: formatSpecText(slot.format, caps) },
+    format,
     brand: {
       name: fm.name || null,
       voice: (brand.voice && brand.voice.bullets) || [],
@@ -187,7 +236,7 @@ export async function runWriter({ slot, idea, brand, page, config, state, router
       task,
       spec: outputSpec(caps),
       context: { brand, page, feedbackDigest },
-      validate: (json) => validateWriterOutput(json, { format: slot.format, offeredIds: offered, caps }),
+      validate: (json) => validateWriterOutput(json, { format: slot.format, offeredIds: offered, caps, reel: reelRules(config, brand) }),
     });
   } catch (e) {
     if (!(e instanceof AgentOutputError)) throw e;

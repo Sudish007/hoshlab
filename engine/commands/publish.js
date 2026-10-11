@@ -39,7 +39,7 @@ import { AGENT, completePermalinks, decide, latestApprovals, publishDraft } from
 
 export const WORKFLOW = "publisher-hourly";
 export const LIVE_STATUSES = ["written", "rendered", "queued", "rework"];
-export const PAGE_OUTCOMES = ["published", "failed", "retry_next_hour", "token_invalid", "page_not_configured", "quota", "quota_check_failed", "idle", "filtered"];
+export const PAGE_OUTCOMES = ["published", "failed", "retry_next_hour", "token_invalid", "page_not_configured", "quota", "quota_check_failed", "reel_not_built", "idle", "filtered"];
 
 function toDate(v) {
   const d = v instanceof Date ? v : typeof v === "string" ? parseIso(v) : v === undefined || v === null ? new Date() : new Date(v);

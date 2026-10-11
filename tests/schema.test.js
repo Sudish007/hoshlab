@@ -181,7 +181,7 @@ function sampleConfig() {
       gemini: PROVIDER("GEMINI_API_KEY", "https://generativelanguage.googleapis.com/v1beta"),
       openai: PROVIDER("OPENAI_API_KEY", "https://api.openai.com/v1/chat/completions"),
     },
-    defaults: { leadDays: 3, backlogWeeks: 2, maxReworkLoops: 2, maxPublishAttempts: 3, minGapHours: 6, lateAfterHours: 6, expireAfterHours: 48, hashtagCap: 8, captionMax: 2200, altTextMax: 100 },
+    defaults: { leadDays: 3, backlogWeeks: 2, maxReworkLoops: 2, maxPublishAttempts: 3, minGapHours: 6, lateAfterHours: 6, expireAfterHours: 48, hashtagCap: 8, captionMax: 2200, altTextMax: 100, reel: { minSec: 15, maxSec: 30, kineticScenes: [3, 6], captureScenes: [3, 6] } },
     ig: { host: "https://graph.instagram.com", version: "v24.0", pollIntervalMs: 5000, pollMaxMs: 300000 },
     pages: [
       {

@@ -2,7 +2,7 @@
   "agent": "writer",
   "case": "ok",
   "page": "job_rez",
-  "note": "Carries both `artwork` and `slides` so one fixture serves every @job_rez cadence slot. Facts jr-f10/f09/f07/f02; the export line follows jr-f09 (Word is Pro, review N19); no exclamation marks; no India-specific tokens (OF-2).",
+  "note": "Carries `artwork`, `slides` and `reel` (kinetic, so no network is needed) so one fixture serves every @job_rez cadence slot. Facts jr-f10/f09/f07/f02; the export line follows jr-f09 (Word is Pro, review N19); no exclamation marks; no country-specific tokens (OF-2).",
   "output": {
     "caption": "Nine templates. Three are free.\nTeXline, Stack First and Campus One are free. Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact and Executive Mono are Pro. Nova has a one-column or two-column switch.\nExport to PDF or plain text — free, unlimited and watermark-free on the free plan. Word export is Pro.\nSix layout rules are measured on the rendered page after every edit. Not a certification against any ATS vendor.\njobrez.com",
     "hashtags": ["#JobRez", "#Resume", "#ResumeTemplates", "#JobSearch"],
@@ -35,6 +35,16 @@
         "altText": "Closing slide: the tagline Build the resume. Land the job. and the site jobrez.com"
       }
     ],
+    "reel": {
+      "style": "kinetic",
+      "durationSec": 16,
+      "scenes": [
+        { "text": "Nine templates. Three are free.", "seconds": 4 },
+        { "text": "TeXline, Stack First and Campus One cost nothing.", "seconds": 4 },
+        { "text": "PDF and plain-text export: free and watermark-free.", "seconds": 4 },
+        { "text": "Build the resume. Land the job. jobrez.com", "seconds": 4 }
+      ]
+    },
     "factsUsed": [
       { "factId": "jr-f10", "quote": "Nine templates: TeXline, Stack First, Campus One (free); Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact, Executive Mono (Pro); Nova has a one-column / two-column switch" },
       { "factId": "jr-f09", "quote": "PDF and plain-text export are unlimited and watermark-free on the free plan; Word (.docx) export is Pro" },

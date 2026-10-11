@@ -34,7 +34,8 @@ export const AGENT = "publisher";
 export const REASONS = ["expired", "not_due", "attempts_exhausted", "token_invalid", "page_not_configured", "rejected", "awaiting_approval", "approval_stale", "min_gap", "autopilot", "approved"];
 export const PREFLIGHT_TIMEOUT_MS = 30000;
 export const QUOTA_HEADROOM = 2;
-const CONTENT_TYPES = { image: "image/jpeg", video: "video/mp4" };
+export const SKIP_REEL_NOT_BUILT = "reel_not_built";
+const CONTENT_TYPES = { image: "image/jpeg", video: "video/mp4", poster: "image/jpeg" };
 
 function toDate(v) {
   const d = v instanceof Date ? v : typeof v === "string" ? parseIso(v) : v === undefined || v === null ? new Date() : new Date(v);
@@ -162,6 +163,12 @@ function flagFor(id) {
 //   draft.slotAt must already be the effective slot time (overrides applied by the caller).
 export async function publishDraft({ draft, page, client, state, config, now, runId, mode = page && page.mode, approval = null, fetchImpl = globalThis.fetch, log = () => {} } = {}) {
   if (!draft || !page || !client || !state || !config) throw new TypeError("publisher: draft, page, client, state and config are required");
+  // FEAT-201 renders reels; the reel publish path (REELS container → status poll → publish, P2-03) is FEAT-202.
+  // Until then a queued reel is a page-level skip (no attempt recorded, tried again next hour), never posted as an image.
+  if (draft.format === "reel" && typeof client.createReelContainer !== "function") {
+    log(`[publisher] ${draft.id}: ${SKIP_REEL_NOT_BUILT} — reel publishing not built yet (FEAT-202)`);
+    return { ok: false, skipped: SKIP_REEL_NOT_BUILT, message: "reel publishing: not built yet (FEAT-202)" };
+  }
   const at = nowIst(toDate(now === undefined ? state.now() : now));
   const d = config.defaults;
   const flags = [];

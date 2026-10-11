@@ -30,7 +30,7 @@
     "hardStop": true
   },
   "features": {
-    "reels": false
+    "reels": true
   },
   "providers": {
     "anthropic": {
@@ -93,7 +93,8 @@
     "expireAfterHours": 48,
     "hashtagCap": 8,
     "captionMax": 2200,
-    "altTextMax": 100
+    "altTextMax": 100,
+    "reel": { "minSec": 15, "maxSec": 30, "kineticScenes": [3, 6], "captureScenes": [3, 6] }
   },
   "ig": {
     "host": "https://graph.instagram.com",
@@ -122,7 +123,8 @@
         "slots": [
           { "dow": "mon", "time": "19:30", "format": "image" },
           { "dow": "wed", "time": "19:30", "format": "carousel" },
-          { "dow": "fri", "time": "19:30", "format": "image" }
+          { "dow": "fri", "time": "19:30", "format": "image" },
+          { "dow": "sat", "time": "19:30", "format": "reel" }
         ]
       }
     },
@@ -144,7 +146,8 @@
         "slots": [
           { "dow": "tue", "time": "08:15", "format": "image" },
           { "dow": "thu", "time": "08:15", "format": "image" },
-          { "dow": "sat", "time": "11:00", "format": "carousel" }
+          { "dow": "sat", "time": "11:00", "format": "carousel" },
+          { "dow": "sun", "time": "11:00", "format": "reel" }
         ]
       }
     },
@@ -167,7 +170,8 @@
           { "dow": "mon", "time": "12:30", "format": "image" },
           { "dow": "tue", "time": "12:30", "format": "image" },
           { "dow": "wed", "time": "12:30", "format": "carousel" },
-          { "dow": "thu", "time": "12:30", "format": "image" }
+          { "dow": "thu", "time": "12:30", "format": "image" },
+          { "dow": "fri", "time": "12:30", "format": "reel" }
         ]
       }
     }

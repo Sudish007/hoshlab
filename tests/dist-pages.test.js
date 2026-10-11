@@ -87,17 +87,24 @@ test("N5: provider names are human labels, never config tokens", () => {
   assert.ok(hr.includes("temperature 0.3"), "HR card prints its temperature");
 });
 
-test("N2: the RishtaPatra card reads '3 posts / week · 1 carousel' and no public page says '1 reel'", () => {
+test("N2: every page card's cadence line is computed from its cadence — '4 posts / week · 1 carousel · 1 reel' now that features.reels is true (FEAT-201); no page claims more reels than its cadence holds", () => {
   const home = page("index.html");
-  const card = home.match(/<article class="card page-card" data-page="rishtapatra">[\s\S]*?<\/article>/)[0];
-  assert.ok(card.includes("3 posts / week · 1 carousel"));
+  const expected = { rishtapatra: "4 posts / week · 1 carousel · 1 reel", kaatdo: "4 posts / week · 1 carousel · 1 reel", job_rez: "5 posts / week · 1 carousel · 1 reel" };
+  const company = JSON.parse(readFileSync(join(COMPANY_DIR, "config.json"), "utf8"));
+  for (const [handle, line] of Object.entries(expected)) {
+    const card = home.match(new RegExp(`<article class="card page-card" data-page="${handle}">[\\s\\S]*?</article>`))[0];
+    assert.ok(card.includes(line), `${handle}: ${line}`);
+    const cadence = company.pages.find((p) => p.handle === handle).cadence.slots;
+    assert.equal(cadence.filter((s) => s.format === "reel").length, 1, `${handle}: one reel slot in the cadence`);
+    assert.equal(cadence.length, Number(line.split(" ")[0]), `${handle}: the posts/week count is the cadence length`);
+  }
   for (const file of publicHtml()) {
     const html = read(file);
-    assert.ok(!html.includes("· 1 reel"), `${file}: a cadence line claims a reel`);
-    // Run-log notes are engine output, not site copy: the fixture's Strategist note honestly says
-    // "1 reel idea refused (reels not built yet)". Everything outside the log lines must not say '1 reel'.
+    assert.ok(!html.includes("· 2 reels"), `${file}: a cadence line claims more reels than the cadence`);
+    // Run-log notes are engine output, not site copy: the fixture's Phase 1 Strategist note honestly said
+    // "1 reel idea refused (reels not built yet)". Everything outside the log lines must not call reels unbuilt.
     const copy = html.replace(/<ul class="run-lines">[\s\S]*?<\/ul>/g, "").replace(/<ol class="activity">[\s\S]*?<\/ol>/g, "");
-    assert.ok(!copy.includes("1 reel"), file);
+    assert.ok(!/reel[^<]*not built yet/i.test(copy), `${file}: reels are built — site copy may not label them 'not built yet'`);
   }
 });
 
@@ -128,9 +135,11 @@ test("M6: the unapproved queued draft is 'in review' on Home and Calendar (never
   for (const w of ["planned", "in progress", "in review", "scheduled", "published"]) assert.ok(legend.includes(`<span class="k">${w}</span>`), `legend: ${w}`);
   assert.equal((calendar.match(/<a class="slot slot-link"/g) || []).length, 2, "the two published posts link to their permalinks");
   const month = calendar.match(/<div class="next-up" aria-label="This month">[\s\S]*?<\/div>/)[0];
-  assert.ok(month.includes("1 published · 1 in review · 3 planned"), "RishtaPatra this month");
+  // planned counts include the cadence after the fixture calendar's horizon (26 Oct 05:33): the Sat 31 Oct RishtaPatra
+  // and Fri 30 Oct JobRez reel slots count now (FEAT-201); KaatDo's Sunday reel falls on 1 Nov
+  assert.ok(month.includes("1 published · 1 in review · 4 planned"), "RishtaPatra this month");
   assert.ok(month.includes("1 published · 1 scheduled · 3 planned"), "KaatDo this month");
-  assert.ok(month.includes("0 published · 4 planned"), "JobRez this month");
+  assert.ok(month.includes("0 published · 5 planned"), "JobRez this month");
 });
 
 test("OF-2: the JobRez card and detail page carry none of the India-specific tokens", () => {
@@ -253,7 +262,11 @@ test("Published: one card per published record with artwork copied from the medi
   const filters = html.match(/<div class="hero-actions" role="group" aria-label="Filter by page">[\s\S]*?<\/div>/)[0];
   assert.equal((filters.match(/data-filter="/g) || []).length, 4);
   assert.ok(filters.includes('data-filter="" aria-pressed="true"') && filters.includes('href="?page=kaatdo" data-filter="kaatdo" aria-pressed="false"'));
-  assert.ok(html.includes("not built yet (phase 2)"), "reel format labelled honestly");
+  // FEAT-201: the reel format is built — the Formats list shows it as such, and the page detail prints its size
+  const formats = html.match(/<div class="next-up" aria-label="Formats">[\s\S]*?<\/div>/)[0];
+  assert.match(formats, /<span class="mono">reel<\/span><span class="who">1080 × 1920 MP4<\/span><span class="chip[^"]*">built<\/span>/, formats);
+  assert.ok(!formats.includes("not built yet"), "no format is labelled not built yet");
+  assert.ok(page("pages/job_rez/index.html").includes("reel · 1080×1920 MP4"), "the page's Formats card prints the reel size");
   assert.ok(page("pages/job_rez/index.html").includes(`href="${BASE}published/?page=job_rez"`));
 });
 

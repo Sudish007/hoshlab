@@ -2,7 +2,7 @@
   "agent": "writer",
   "case": "ok",
   "page": "kaatdo",
-  "note": "Carries both `artwork` and `slides` so one fixture serves every @kaatdo cadence slot. All three disclaimer groups verbatim; ₹999 and 7-day trial from the pricing table; the only Devanagari is the sign-off काट दो.",
+  "note": "Carries `artwork`, `slides` and `reel` (kinetic, so no network is needed) so one fixture serves every @kaatdo cadence slot. All three disclaimer groups verbatim; ₹999 and 7-day trial from the pricing table; the only Devanagari is the sign-off काट दो.",
   "output": {
     "caption": "Six rules. One kill switch.\nmax_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates. Your rule fires: every pending order is cancelled, every position is squared off at market, and the account stays locked until close.\nMonthly ₹999 at the time of posting. 7-day free trial, no card.\nKaatDo is a risk-management tool, not investment advice. KaatDo is not registered with SEBI. Broker API execution is never guaranteed.\nkaatdo.com\nकाट दो.",
     "hashtags": ["#KaatDo", "#FnO", "#RiskManagement", "#KillSwitch"],
@@ -30,6 +30,16 @@
         "altText": "Closing slide: the disclaimer line, the site kaatdo.com and the sign-off."
       }
     ],
+    "reel": {
+      "style": "kinetic",
+      "durationSec": 16,
+      "scenes": [
+        { "text": "Six rules. One kill switch.", "seconds": 4 },
+        { "text": "Your rule fires. Every pending order is cancelled.", "seconds": 4 },
+        { "text": "Every position squared off at market. Locked until close.", "seconds": 4 },
+        { "text": "Not investment advice. Not SEBI-registered. काट दो.", "seconds": 4 }
+      ]
+    },
     "factsUsed": [
       { "factId": "kd-f04", "quote": "Six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates" },
       { "factId": "kd-f05", "quote": "cancels every pending order, squares off every position at market, keeps the account locked until close" },

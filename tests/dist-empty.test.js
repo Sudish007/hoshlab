@@ -46,21 +46,24 @@ test("'Next up' lists four cadence slots labelled planned, in time order, with t
   const nextUp = home.match(/<div class="next-up" aria-label="Next scheduled posts">[\s\S]*?<\/div>/)[0];
   const items = nextUp.match(/<li[\s\S]*?<\/li>/g);
   assert.equal(items.length, 4);
-  for (const li of items) assert.ok(/>(carousel · )?planned</.test(li), li);
+  for (const li of items) assert.ok(/>((carousel|reel) · )?planned</.test(li), li);
   const times = items.map((li) => li.match(/datetime="([^"]+)"/)[1]);
-  assert.deepEqual(times, ["2026-10-01T12:30:00+05:30", "2026-10-02T19:30:00+05:30", "2026-10-03T11:00:00+05:30", "2026-10-05T12:30:00+05:30"]);
+  // Thu 1 Oct JobRez image, Fri 2 Oct JobRez reel (the Phase 2 reel slot, plan D22), Fri 2 Oct RishtaPatra image, Sat 3 Oct KaatDo carousel
+  assert.deepEqual(times, ["2026-10-01T12:30:00+05:30", "2026-10-02T12:30:00+05:30", "2026-10-02T19:30:00+05:30", "2026-10-03T11:00:00+05:30"]);
+  assert.ok(/data-page="job_rez"><time datetime="2026-10-02T12:30:00\+05:30">[\s\S]*?reel · planned/.test(items[1]), items[1]);
   assert.ok(nextUp.includes("From the posting cadence; the Strategist has not planned these slots yet."));
 });
 
 test("Calendar 'This month' prints '0 published · N planned' per page from the cadence (hand-counted for October 2026)", () => {
   const cal = page("calendar/index.html");
   const month = cal.match(/<div class="next-up" aria-label="This month">[\s\S]*?<\/div>/)[0];
-  // Oct 2026 starts on a Thursday. RishtaPatra Mon/Wed/Fri: 4 + 4 + 5 = 13. KaatDo Tue/Thu/Sat: 4 + 5 + 5 = 14,
-  // minus Thu 1 Oct 08:15 (before the 09:30 clock) = 13. JobRez Mon–Thu: 4 + 4 + 4 + 5 = 17 (Thu 1 Oct 12:30 counts).
-  assert.ok(month.includes('data-page="rishtapatra"><span class="mono">@rishtapatra</span><span class="who">0 published · 13 planned</span>'), month);
-  assert.ok(month.includes('data-page="kaatdo"><span class="mono">@kaatdo</span><span class="who">0 published · 13 planned</span>'), month);
-  assert.ok(month.includes('data-page="job_rez"><span class="mono">@job_rez</span><span class="who">0 published · 17 planned</span>'), month);
-  assert.equal((cal.match(/<span class="slot" data-page="/g) || []).length, 43, "13 + 13 + 17 planned slots drawn in the grid");
+  // Oct 2026 starts on a Thursday. RishtaPatra Mon/Wed/Fri: 4 + 4 + 5 = 13, plus the Sat 19:30 reel slot (5 Saturdays) = 18.
+  // KaatDo Tue/Thu/Sat: 4 + 5 + 5 = 14, minus Thu 1 Oct 08:15 (before the 09:30 clock) = 13, plus Sun 11:00 reels (4 Sundays) = 17.
+  // JobRez Mon–Thu: 4 + 4 + 4 + 5 = 17 (Thu 1 Oct 12:30 counts), plus Fri 12:30 reels (5 Fridays) = 22.
+  assert.ok(month.includes('data-page="rishtapatra"><span class="mono">@rishtapatra</span><span class="who">0 published · 18 planned</span>'), month);
+  assert.ok(month.includes('data-page="kaatdo"><span class="mono">@kaatdo</span><span class="who">0 published · 17 planned</span>'), month);
+  assert.ok(month.includes('data-page="job_rez"><span class="mono">@job_rez</span><span class="who">0 published · 22 planned</span>'), month);
+  assert.equal((cal.match(/<span class="slot" data-page="/g) || []).length, 57, "18 + 17 + 22 planned slots drawn in the grid");
   assert.ok(!cal.includes("slot-link"), "nothing published, so no permalinks");
   assert.ok(cal.includes("No calendar has been generated yet"));
   const grid = cal.match(/<div class="calendar" role="grid"[\s\S]*?<\/div>\s*<p class="meta cal-note">/)[0];

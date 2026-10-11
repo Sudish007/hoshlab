@@ -12,9 +12,10 @@
 //   ctx.slotDate       'YYYY-MM-DD' of the slot in IST (default: the leading date of draft.slotAt, which
 //                      carries the +05:30 offset, so its date part IS the IST date)
 //   ctx.recentCaptions the page's last 30 captions (strings), for the duplicate check
-//   ctx.media          [{ kind, bytes, width, height, path? }] — `bytes` is the file content (Uint8Array)
+//   ctx.media          [{ kind, bytes, width, height, path?, probe? }] — `bytes` is the file content (Uint8Array)
 //                      when the caller has it (engine), or the byte count (number) when only the
-//                      draft's metadata is known (admin); default: draft.media
+//                      draft's metadata is known (admin); `probe` is the Designer's ffprobe summary on a
+//                      reel's video row (PROBE_SUMMARY_SPEC); default: draft.media
 //
 // Every check returns ok + a short human detail string that qa.json stores and the admin shows as a chip.
 import { HASHTAG, QA_CHECK_IDS } from "./schema.js";
@@ -24,6 +25,16 @@ export const JOBREZ_HANDLE = "job_rez";
 export const MEDIA_WIDTH = 1080;
 export const MEDIA_HEIGHT = 1350;
 export const MAX_MEDIA_BYTES = 1_500_000; // 1.5 MB (decimal, like the '141 KB' detail in design §4.7)
+// Reels (design §10, FEAT-201): 1080×1920 H.264 yuv420p 30 fps, 3–90 s; house cap 60 MB, git hard cap 100 MB.
+export const REEL_WIDTH = 1080;
+export const REEL_HEIGHT = 1920;
+export const REEL_CODEC = "h264";
+export const REEL_PIX_FMT = "yuv420p";
+export const REEL_FRAME_RATE = "30/1";
+export const REEL_MIN_SEC = 3;
+export const REEL_MAX_SEC = 90;
+export const REEL_HOUSE_CAP_BYTES = 60 * 1024 * 1024;
+export const REEL_HARD_CAP_BYTES = 100 * 1024 * 1024;
 export const DUPLICATE_THRESHOLD = 0.5;
 export const EMOJI_CAP = { none: 0, sparse: 2 };
 // OF-2 tokens for @job_rez (review M14; \b added around B.Tech so 'WebTech' does not trip it).
@@ -190,6 +201,36 @@ export function jpegSize(bytes) {
     i += 2 + length;
   }
   throw new TypeError("jpegSize: no SOF marker found");
+}
+
+const PNG_MAGIC = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+
+// pngSize(bytes) → { width, height } from the IHDR chunk (the first chunk of every PNG: 8 magic bytes,
+// 4 length, 'IHDR', then width and height as big-endian uint32). Throws TypeError on anything else.
+// Used for the product-capture frames (FEAT-201) the same way jpegSize guards the JPEGs: read back, not trusted.
+export function pngSize(bytes) {
+  const b = toBytes(bytes);
+  if (!b) throw new TypeError("pngSize: expected a Uint8Array or ArrayBuffer");
+  if (b.length < 24 || PNG_MAGIC.some((v, i) => b[i] !== v)) throw new TypeError("pngSize: not a PNG (missing \\x89PNG magic)");
+  if (b[12] !== 0x49 || b[13] !== 0x48 || b[14] !== 0x44 || b[15] !== 0x52) throw new TypeError("pngSize: first chunk is not IHDR");
+  const u32 = (i) => ((b[i] << 24) >>> 0) + (b[i + 1] << 16) + (b[i + 2] << 8) + b[i + 3];
+  return { width: u32(16), height: u32(20) };
+}
+
+// reelProbeErrors(probe) → errors[] for a recorded ffprobe summary (PROBE_SUMMARY_SPEC) against the reel spec:
+// codec h264, 1080×1920, yuv420p, 30/1, 3–90 s, ≤ 60 MB house cap, faststart. Browser-safe; the admin and
+// QA's media_spec share it with engine/render/probe.js (which derives the summary from real ffprobe JSON).
+export function reelProbeErrors(p, { houseCapBytes = REEL_HOUSE_CAP_BYTES } = {}) {
+  const errors = [];
+  if (!p || typeof p !== "object") return ["probe missing"];
+  if (p.codec !== REEL_CODEC) errors.push(`codec ${p.codec}, expected ${REEL_CODEC}`);
+  if (p.width !== REEL_WIDTH || p.height !== REEL_HEIGHT) errors.push(`${p.width}x${p.height}, expected ${REEL_WIDTH}x${REEL_HEIGHT}`);
+  if (p.pixFmt !== REEL_PIX_FMT) errors.push(`pix_fmt ${p.pixFmt}, expected ${REEL_PIX_FMT}`);
+  if (p.frameRate !== REEL_FRAME_RATE) errors.push(`frame rate ${p.frameRate}, expected ${REEL_FRAME_RATE}`);
+  if (!(typeof p.durationSec === "number" && p.durationSec >= REEL_MIN_SEC && p.durationSec <= REEL_MAX_SEC)) errors.push(`duration ${p.durationSec} s, expected ${REEL_MIN_SEC}–${REEL_MAX_SEC} s`);
+  if (!(Number.isInteger(p.bytes) && p.bytes > 0 && p.bytes <= houseCapBytes)) errors.push(`${p.bytes} bytes, cap ${houseCapBytes} bytes`);
+  if (p.faststart !== true) errors.push("moov atom after mdat (no +faststart)");
+  return errors;
 }
 
 // The text Instagram receives: caption + blank line + the hashtag line. Hashtags already written
@@ -495,13 +536,78 @@ function checkLanguage({ draft, brand }) {
   return { ok: true, detail: `ok (${pages}; no Devanagari)` };
 }
 
+// media_spec, reel branch (FEAT-201): exactly two items — one `video` whose recorded ffprobe summary
+// (the Designer measured the MP4 with ffprobe; QA passes it through) says ok and meets the reel spec
+// (reelProbeErrors), and one `poster`, a JPEG of 1080×1920 read from its SOF marker, ≤ 1.5 MB. The
+// MP4 bytes themselves are never parsed here (browser-safe code; ffprobe is the measurement).
+function checkReelMediaSpec(media) {
+  const problems = [];
+  if (media.length !== 2) problems.push(`${plural(media.length, "media item")} for reel (expected 2: video + poster)`);
+  const videos = media.filter((m) => m && m.kind === "video");
+  const posters = media.filter((m) => m && m.kind === "poster");
+  if (videos.length !== 1) problems.push(`${plural(videos.length, "video item")}, expected 1`);
+  if (posters.length !== 1) problems.push(`${plural(posters.length, "poster item")}, expected 1`);
+  for (const m of media) if (m && m.kind !== "video" && m.kind !== "poster") problems.push(`${m.path ? String(m.path).split("/").pop() : "item"}: kind ${m.kind}, expected video or poster`);
+  const video = videos[0];
+  let probeDetail = "";
+  if (video) {
+    const label = video.path ? String(video.path).split("/").pop() : "video";
+    const p = video.probe;
+    if (!p || typeof p !== "object") problems.push(`${label}: no ffprobe summary recorded`);
+    else {
+      const errs = reelProbeErrors(p);
+      if (p.ok !== true) errs.unshift("probe ok:false");
+      if (errs.length) problems.push(`${label}: ${[...new Set(errs)].join(", ")}`);
+      else probeDetail = `${p.codec} ${p.width}x${p.height} ${p.pixFmt} ${p.frameRate} ${p.durationSec} s ${kb(p.bytes)} faststart`;
+    }
+    const data = toBytes(video.bytes);
+    const size = data ? data.byteLength : Number.isInteger(video.bytes) ? video.bytes : null;
+    if (size === null) problems.push(`${label}: media bytes not available`);
+    else if (size > REEL_HOUSE_CAP_BYTES) problems.push(`${label}: ${size} bytes > ${REEL_HOUSE_CAP_BYTES} bytes`);
+    else if (video.probe && Number.isInteger(video.probe.bytes) && video.probe.bytes !== size) problems.push(`${label}: ${size} bytes on disk, probe measured ${video.probe.bytes}`);
+  }
+  const poster = posters[0];
+  let posterDetail = "";
+  if (poster) {
+    const label = poster.path ? String(poster.path).split("/").pop() : "poster";
+    const data = toBytes(poster.bytes);
+    let width;
+    let height;
+    let size;
+    let metadataOnly = false;
+    if (data) {
+      size = data.byteLength;
+      if (data.length < 2 || data[0] !== 0xff || data[1] !== 0xd8) problems.push(`${label}: not a JPEG (magic ${hex(data[0])} ${hex(data[1])})`);
+      else {
+        try {
+          ({ width, height } = jpegSize(data));
+        } catch (e) {
+          problems.push(`${label}: ${e.message}`);
+        }
+      }
+    } else if (Number.isInteger(poster.bytes) && poster.bytes > 0) {
+      metadataOnly = true;
+      size = poster.bytes;
+      width = poster.width;
+      height = poster.height;
+    } else problems.push(`${label}: media bytes not available`);
+    if (size !== undefined) {
+      if (width !== undefined && (width !== REEL_WIDTH || height !== REEL_HEIGHT)) problems.push(`${label}: ${width}x${height}, expected ${REEL_WIDTH}x${REEL_HEIGHT}`);
+      if (size > MAX_MEDIA_BYTES) problems.push(`${label}: ${size} bytes > ${MAX_MEDIA_BYTES} bytes`);
+      posterDetail = `poster ${REEL_WIDTH}x${REEL_HEIGHT} jpeg ${kb(size)}${metadataOnly ? " (metadata only: magic and SOF not verified)" : ""}`;
+    }
+  }
+  if (problems.length) return { ok: false, detail: clip(problems.join("; ")) };
+  return { ok: true, detail: `${probeDetail}; ${posterDetail}` };
+}
+
 // media_spec — every media item is a JPEG (magic FF D8) of exactly 1080×1350 read from its SOF
 // marker (jpegSize) and ≤ 1.5 MB; the item count matches the format (1 for image, 2–10 for
 // carousel). When only metadata is available (`bytes` is a number) the stored width/height/bytes
-// are checked and the detail says so. Reel media: not built yet (phase 2).
+// are checked and the detail says so. Reels: see checkReelMediaSpec (video probe + 1080×1920 poster).
 function checkMediaSpec({ draft, media }) {
   const format = draft.format;
-  if (format === "reel") return { ok: false, detail: "reel: not built yet (phase 2)" };
+  if (format === "reel") return checkReelMediaSpec(media);
   const [min, max] = format === "carousel" ? [2, 10] : [1, 1];
   const problems = [];
   if (media.length < min || media.length > max) problems.push(`${plural(media.length, "media item")} for ${format} (expected ${min === max ? min : `${min}–${max}`})`);

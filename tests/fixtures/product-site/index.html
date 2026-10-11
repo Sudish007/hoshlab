@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixture product — home</title>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<!-- tests/fixtures/product-site: a stand-in for a product's public landing page, served by scripts/serve.mjs during
+     tests/capture.test.js so engine/render/capture.js is exercised offline. Tall enough to scroll (three screens on a
+     360×640 viewport) and carrying a dismissible banner with aria-label="Close". Not Hoshlab chrome. -->
+<header class="top"><strong>Fixture product</strong><nav><a href="index.html">Home</a> <a href="pricing.html">Pricing</a></nav></header>
+<div class="banner" role="dialog" aria-label="Cookie notice"><p>This fixture site shows a banner so the capture can dismiss it.</p><button type="button" aria-label="Close" onclick="this.parentElement.remove()">×</button></div>
+<main>
+  <section class="hero" id="top"><h1>One honest master page.</h1><p>Section one of the fixture product site. The capture records this screen at 1080×1920 device pixels.</p></section>
+  <section class="band a" id="how"><h2>How it works</h2><p>Section two sits roughly one screen down, so the 33 % frame shows different content from the top frame.</p></section>
+  <section class="band b" id="features"><h2>Features</h2><p>Section three sits two screens down, so the 66 % frame differs again.</p></section>
+  <section class="band c" id="end"><h2>End of page</h2><p>The last section, below the 66 % mark.</p></section>
+</main>
+<footer class="foot">fixture-product.example · not a real product</footer>
+</body>
+</html>

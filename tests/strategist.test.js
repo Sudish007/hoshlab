@@ -1,6 +1,6 @@
-// engine/agents/strategist.js — pure slot filling (cadence, minGapHours, overrides, no reels in Phase 1,
-// M5 free / re-plan / drop) and runStrategist with the mock router: the engine creates ids and slots,
-// the model only picks (design §3.1 step 4, §4.4, §4.5, §5; review M5.2, N3; plan D9).
+// engine/agents/strategist.js — pure slot filling (cadence incl. the weekly reel slot now that features.reels is
+// true — FEAT-201 / plan D22 —, minGapHours, overrides, M5 free / re-plan / drop) and runStrategist with the mock
+// router: the engine creates ids and slots, the model only picks (design §3.1 step 4, §4.4, §4.5, §5; review M5.2, N3; plan D9).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, rmSync } from "node:fs";
@@ -85,28 +85,28 @@ test("cadence: every page gets backlogWeeks (2) weeks = 14 days of slots, each c
     assertShape({ generatedAt: NOW, horizonDays: r.horizonDays, slots: r.slots }, CALENDAR_SPEC);
   }
   const rp = fillCalendar({ config, page: RP, now: NOW }).slots.map((s) => `${s.slotId}:${s.format}`);
-  assert.deepEqual(rp, ["rishtapatra-2026-10-12-1930:image", "rishtapatra-2026-10-14-1930:carousel", "rishtapatra-2026-10-16-1930:image", "rishtapatra-2026-10-19-1930:image", "rishtapatra-2026-10-21-1930:carousel", "rishtapatra-2026-10-23-1930:image"]);
+  assert.deepEqual(rp, ["rishtapatra-2026-10-12-1930:image", "rishtapatra-2026-10-14-1930:carousel", "rishtapatra-2026-10-16-1930:image", "rishtapatra-2026-10-17-1930:reel", "rishtapatra-2026-10-19-1930:image", "rishtapatra-2026-10-21-1930:carousel", "rishtapatra-2026-10-23-1930:image", "rishtapatra-2026-10-24-1930:reel"], "FEAT-201: the Saturday reel slot is scheduled now that features.reels is true");
   // Monday 05:31 IST is before Monday 19:30, so this Monday's slot is included; a later `now` rolls to next week
   const later = fillCalendar({ config, page: RP, now: "2026-10-12T20:00:00+05:30" }).slots.map((s) => s.slotId);
   assert.equal(later[0], "rishtapatra-2026-10-14-1930");
   assert.ok(later.includes("rishtapatra-2026-10-26-1930"));
   // host time zone never matters: the same instant written in UTC gives the same slots
   assert.deepEqual(fillCalendar({ config, page: RP, now: new Date("2026-10-12T00:01:00Z") }).slots.map((s) => s.slotId), rp.map((x) => x.split(":")[0]));
-  assert.equal(weeklyCadence(config, RP), 3);
-  assert.equal(weeklyCadence(config, pageOf("job_rez")), 4);
+  assert.equal(weeklyCadence(config, RP), 4, "three feed slots + the reel slot");
+  assert.equal(weeklyCadence(config, pageOf("job_rez")), 5);
 });
 
 test("minGapHours: a cadence entry within 6 h of another slot on the same page is not created (reported in skipped); with a 1 h gap both appear", () => {
   const { cfg, page } = withPage("kaatdo", (p) => ({ cadence: { slots: [...p.cadence.slots, { dow: "tue", time: "10:00", format: "carousel" }] } }));
   assert.equal(cfg.defaults.minGapHours, 6);
   const r = fillCalendar({ config: cfg, page, now: NOW });
-  assert.equal(r.slots.length, 6, "the 10:00 entry is dropped both weeks");
+  assert.equal(r.slots.length, 8, "the 10:00 entry is dropped both weeks (4 cadence entries incl. the Sunday reel × 2 weeks)");
   assert.deepEqual(r.skipped.map((s) => s.slotId), ["kaatdo-2026-10-13-1000", "kaatdo-2026-10-20-1000"]);
   assert.match(r.skipped[0].reason, /within 6 h/);
   for (let i = 1; i < r.slots.length; i++) assert.ok(hoursBetween(r.slots[i - 1].at, r.slots[i].at) >= 6, "no two slots within 6 h");
   cfg.defaults.minGapHours = 1;
   const r2 = fillCalendar({ config: cfg, page, now: NOW });
-  assert.equal(r2.slots.length, 8);
+  assert.equal(r2.slots.length, 10);
   assert.deepEqual(r2.skipped, []);
   // a slot moved by the owner also counts: a cadence slot landing within the gap of the moved one is skipped
   const { cfg: cfg3, page: page3 } = withPage("kaatdo", {});
@@ -118,23 +118,29 @@ test("minGapHours: a cadence entry within 6 h of another slot on the same page i
   assert.deepEqual(r3.skipped.map((s) => s.slotId), ["kaatdo-2026-10-17-1100"], "Saturday 11:00 is 3.5 h after the moved slot");
 });
 
-test("no reel slot while features.reels is false, even when the page lists reel in formats and cadence; the switch enables it (N3)", () => {
-  const { cfg, page } = withPage("rishtapatra", (p) => ({ cadence: { slots: [...p.cadence.slots, { dow: "sun", time: "11:00", format: "reel" }] } }));
-  assert.equal(cfg.features.reels, false);
-  assert.ok(page.formats.includes("reel"), "config may list the format");
-  const r = fillCalendar({ config: cfg, page, now: NOW });
-  assert.equal(r.slots.length, 6);
-  assert.ok(r.slots.every((s) => s.format !== "reel"), "no reel slot");
+test("features.reels switch (N3, FEAT-201): the real config schedules the Saturday reel slot (two in a fortnight); with reels off the same cadence yields no reel slot and a reel idea is never auto-assigned", () => {
+  const { cfg, page } = withPage("rishtapatra", {});
+  assert.equal(cfg.features.reels, true, "Phase 2: reels are on (plan D22)");
+  assert.ok(page.formats.includes("reel"));
+  assert.deepEqual(page.cadence.slots.filter((s) => s.format === "reel"), [{ dow: "sat", time: "19:30", format: "reel" }]);
+  const on = fillCalendar({ config: cfg, page, now: NOW });
+  assert.equal(on.slots.length, 8);
+  assert.deepEqual(on.slots.filter((s) => s.format === "reel").map((s) => s.slotId), ["rishtapatra-2026-10-17-1930", "rishtapatra-2026-10-24-1930"]);
+  assert.deepEqual(allowedFormats(cfg, page), ["image", "carousel", "reel"]);
+  assert.equal(weeklyCadence(cfg, page), 4);
+  // a reel idea in the backlog is auto-assigned to a reel slot only (never to an image or carousel slot)
+  const withIdea = fillCalendar({ config: cfg, page, calendar: { generatedAt: NOW, horizonDays: 14, slots: [{ slotId: "rishtapatra-2026-10-17-1930", page: "rishtapatra", at: "2026-10-17T19:30:00+05:30", format: "reel", ideaId: "rp-i0001", draftId: "rp-gone", status: "rejected" }] }, ideas: [idea("rp-i0001", "rishtapatra", "reel", "scheduled"), idea("rp-i0002", "rishtapatra", "reel", "open")], drafts: [], now: NOW });
+  const re = withIdea.slots.find((s) => s.slotId === "rishtapatra-2026-10-17-1930");
+  assert.equal(re.ideaId, "rp-i0002", "the freed reel slot takes the other open reel idea");
+  assert.ok(withIdea.slots.filter((s) => s.format !== "reel").every((s) => s.ideaId === undefined), "feed slots never take a reel idea");
+  // the switch off: the same cadence produces no reel slot and the reel idea stays open
+  cfg.features.reels = false;
+  const off = fillCalendar({ config: cfg, page, now: NOW });
+  assert.equal(off.slots.length, 6);
+  assert.ok(off.slots.every((s) => s.format !== "reel"), "no reel slot");
   assert.deepEqual(allowedFormats(cfg, page), ["image", "carousel"]);
   assert.equal(weeklyCadence(cfg, page), 3);
   assert.deepEqual(cadenceSlots(cfg, page, NOW, 14).filter((s) => s.format === "reel"), []);
-  cfg.features.reels = true;
-  const r2 = fillCalendar({ config: cfg, page, now: NOW });
-  assert.equal(r2.slots.filter((s) => s.format === "reel").length, 2);
-  assert.deepEqual(allowedFormats(cfg, page), ["image", "carousel", "reel"]);
-  assert.equal(weeklyCadence(cfg, page), 4);
-  // a reel idea in the backlog is never auto-assigned while reels are off: no slot has that format
-  cfg.features.reels = false;
   const r3 = fillCalendar({ config: cfg, page, ideas: [idea("rp-i0001", "rishtapatra", "reel", "open")], now: NOW });
   assert.ok(r3.slots.every((s) => s.ideaId === undefined));
   assert.deepEqual(r3.ideas, [], "the reel idea is untouched (still open)");
@@ -158,11 +164,11 @@ test("overrides move a slot: the latest overrides.jsonl slotAt per draftId repla
   assert.equal(moved.status, "queued", "status derived from the draft, not carried over");
   assert.equal(moved.reason, "memo priority 1");
   assert.equal(r.slots.filter((s) => s.slotId === "kaatdo-2026-10-15-0815").length, 1, "not duplicated by the cadence");
-  assert.equal(r.slots.length, 6);
-  assert.deepEqual(r.slots.map((s) => s.slotId), ["kaatdo-2026-10-13-0815", "kaatdo-2026-10-15-0815", "kaatdo-2026-10-17-1100", "kaatdo-2026-10-20-0815", "kaatdo-2026-10-22-0815", "kaatdo-2026-10-24-1100"]);
+  assert.equal(r.slots.length, 8);
+  assert.deepEqual(r.slots.map((s) => s.slotId), ["kaatdo-2026-10-13-0815", "kaatdo-2026-10-15-0815", "kaatdo-2026-10-17-1100", "kaatdo-2026-10-18-1100", "kaatdo-2026-10-20-0815", "kaatdo-2026-10-22-0815", "kaatdo-2026-10-24-1100", "kaatdo-2026-10-25-1100"]);
   assert.ok(Date.parse(r.slots[1].at) < Date.parse(r.slots[2].at), "ordered by the effective time");
   assert.deepEqual(r.ideas, [], "the idea stays scheduled");
-  assert.equal(r.openSlots.length, 5);
+  assert.equal(r.openSlots.length, 7);
 });
 
 test("M5 prove-by: one rejected draft 5 days out → slot freed and re-planned with another open idea; one blocked draft 1 day out → slot dropped; idea attempts +1, dropped at 2", () => {
@@ -215,8 +221,8 @@ test("M5 prove-by: one rejected draft 5 days out → slot freed and re-planned w
   assert.equal(MAX_IDEA_ATTEMPTS, 2);
   for (const i of r.ideas) assertShape(i, IDEA_SPEC);
   assert.ok(!("kd-i0004" in changed), "the untouched open image idea is not re-planned onto a fresh cadence slot by the pure function (the model picks)");
-  assert.equal(r.slots.length, 6, "the three remaining cadence ids are added");
-  assert.deepEqual(r.openSlots.map((s) => s.slotId), ["kaatdo-2026-10-15-0815", "kaatdo-2026-10-20-0815", "kaatdo-2026-10-22-0815", "kaatdo-2026-10-24-1100"], "the dropped slot is not open");
+  assert.equal(r.slots.length, 8, "the five remaining cadence ids (incl. the two Sunday reel slots) are added");
+  assert.deepEqual(r.openSlots.map((s) => s.slotId), ["kaatdo-2026-10-15-0815", "kaatdo-2026-10-18-1100", "kaatdo-2026-10-20-0815", "kaatdo-2026-10-22-0815", "kaatdo-2026-10-24-1100", "kaatdo-2026-10-25-1100"], "the dropped slot is not open");
   assertShape({ generatedAt: NOW, horizonDays: 14, slots: r.slots }, CALENDAR_SPEC);
 });
 
@@ -251,7 +257,7 @@ test("terminal detection: a latest reject approval frees a queued draft; a slot 
   // older than one horizon back → pruned; a past planned slot without a draft → pruned
   const cal3 = { generatedAt: NOW, horizonDays: 14, slots: [{ slotId: "kaatdo-2026-09-20-0815", page: "kaatdo", at: "2026-09-20T08:15:00+05:30", format: "image", draftId: "kd-old", status: "published" }, { slotId: "kaatdo-2026-10-10-0815", page: "kaatdo", at: "2026-10-10T08:15:00+05:30", format: "image", status: "planned" }] };
   const r3 = fillCalendar({ config, page: KD, calendar: cal3, drafts: [], now: NOW });
-  assert.equal(r3.slots.length, 6);
+  assert.equal(r3.slots.length, 8);
   assert.ok(r3.slots.every((s) => !s.slotId.startsWith("kaatdo-2026-09") && s.slotId !== "kaatdo-2026-10-10-0815"));
   assert.deepEqual(r3.freed, []);
 });
@@ -327,15 +333,15 @@ test("validateStrategistOutput: unknown/disputed fact ids, a foreign language, a
   ]);
 });
 
-test("runStrategist under MOCK_LLM=1: the engine creates the ids (rp-i0001…) and slots, 'new:0' is mapped to the generated id on the slot the model picked, the reel idea is refused, calendar.json validates, one usage line mock:true, no network", async () => {
+test("runStrategist under MOCK_LLM=1: the engine creates the ids (rp-i0001…) and slots, 'new:0' is mapped to the generated id on the slot the model picked, the reel idea is accepted and auto-assigned to the Saturday reel slot (FEAT-201), calendar.json validates, one usage line mock:true, no network", async () => {
   const h = harness();
   try {
     const res = await runStrategist({ page: RP, brand: brands.rishtapatra, memo: llm("ceo.ok").output, state: h.state, router: h.router, config, now: NOW, runId: RUN_ID });
     assert.equal(res.modelCalled, true);
     assert.equal(res.mock, true);
     assert.equal(res.calls, 1);
-    assert.equal(res.ideasAdded, 3, "four ideas offered, the reel refused");
-    assert.deepEqual(res.refused.map((r) => [r.index, r.title, r.reason]), [[3, "Tagline reel", "reel: not built yet (features.reels is false)"]]);
+    assert.equal(res.ideasAdded, 4, "four ideas offered, all accepted (reels are on)");
+    assert.deepEqual(res.refused, [], "FEAT-201: the reel idea is no longer refused");
     assert.deepEqual(res.ignored, []);
     assert.deepEqual(
       res.assigned.map((a) => [a.slotId, a.ideaId, a.by]),
@@ -346,12 +352,12 @@ test("runStrategist under MOCK_LLM=1: the engine creates the ids (rp-i0001…) a
       ],
       "model picks honoured; new:<i> → engine ids",
     );
-    assert.deepEqual(res.autoAssigned, [], "nothing left in the backlog for the second week");
-    assert.deepEqual(res.openSlotsLeft, ["rishtapatra-2026-10-19-1930", "rishtapatra-2026-10-21-1930", "rishtapatra-2026-10-23-1930"]);
-    assert.equal(res.note, "3 ideas, 6 slots, 3 assigned, 1 reel idea refused (reels not built yet), 3 open");
+    assert.deepEqual(res.autoAssigned.map((a) => [a.slotId, a.ideaId, a.by]), [["rishtapatra-2026-10-17-1930", "rp-i0004", "engine"]], "the reel idea the model did not place goes to the first open reel slot (format match)");
+    assert.deepEqual(res.openSlotsLeft, ["rishtapatra-2026-10-19-1930", "rishtapatra-2026-10-21-1930", "rishtapatra-2026-10-23-1930", "rishtapatra-2026-10-24-1930"]);
+    assert.equal(res.note, "4 ideas, 8 slots, 4 assigned (1 from the backlog), 4 open");
     // ideas.jsonl: engine ids, status scheduled (assigned), facts from the model, runId/createdAt from the engine
     const ideas = h.state.readJsonl("state/ideas.jsonl");
-    assert.deepEqual(ideas.map((i) => i.id), ["rp-i0001", "rp-i0002", "rp-i0003"]);
+    assert.deepEqual(ideas.map((i) => i.id), ["rp-i0001", "rp-i0002", "rp-i0003", "rp-i0004"]);
     for (const i of ideas) {
       assert.deepEqual(validate(i, IDEA_SPEC), { ok: true, errors: [] });
       assert.equal(i.page, "rishtapatra");
@@ -365,12 +371,12 @@ test("runStrategist under MOCK_LLM=1: the engine creates the ids (rp-i0001…) a
     assert.deepEqual(ideas[0].facts, ["rp-f04", "rp-f07", "rp-f05"]);
     assert.equal(ideas[0].language, "hi");
     assert.equal(ideas[1].format, "carousel");
-    assert.ok(!ideas.some((i) => i.format === "reel"));
+    assert.deepEqual(ideas.filter((i) => i.format === "reel").map((i) => [i.id, i.title, i.status]), [["rp-i0004", "Tagline reel", "scheduled"]]);
     // calendar.json
     const cal = h.state.readJson("state/calendar.json", CALENDAR_SPEC);
     assert.equal(cal.generatedAt, NOW);
     assert.equal(cal.horizonDays, 14);
-    assert.equal(cal.slots.length, 6);
+    assert.equal(cal.slots.length, 8);
     const first = cal.slots[0];
     assert.equal(first.slotId, "rishtapatra-2026-10-12-1930");
     assert.equal(first.ideaId, "rp-i0001");
@@ -378,7 +384,8 @@ test("runStrategist under MOCK_LLM=1: the engine creates the ids (rp-i0001…) a
     assert.equal(first.reason, "Monday image slot; memo priority 1: lead with the free product");
     assert.equal(first.draftId, undefined);
     assert.ok(cal.slots.every((s) => s.status === "planned"));
-    assert.ok(cal.slots.every((s) => s.format !== "reel"));
+    assert.deepEqual(cal.slots.filter((s) => s.format === "reel").map((s) => [s.slotId, s.ideaId || null]), [["rishtapatra-2026-10-17-1930", "rp-i0004"], ["rishtapatra-2026-10-24-1930", null]]);
+    assert.match(cal.slots.find((s) => s.slotId === "rishtapatra-2026-10-17-1930").reason, /^backlog idea rp-i0004 \(Tagline reel\)$/);
     // usage: one mock line for the strategist on this page
     const usage = h.state.readJsonl(h.state.monthLogPath("usage"));
     assert.equal(usage.length, 1);
@@ -390,24 +397,25 @@ test("runStrategist under MOCK_LLM=1: the engine creates the ids (rp-i0001…) a
     // second run, same day: the fixture repeats → duplicate titles merge into the existing ideas,
     // its assignments point at slots that are no longer open → ignored; nothing new is appended
     const again = await runStrategist({ page: RP, brand: brands.rishtapatra, memo: llm("ceo.ok").output, state: h.state, router: h.router, config, now: NOW, runId: RUN_ID });
-    assert.equal(again.modelCalled, true, "backlog target 6 open ideas not met → asked again");
+    assert.equal(again.modelCalled, true, "backlog target 8 open ideas not met → asked again");
     assert.equal(again.ideasAdded, 0);
-    assert.equal(again.ignored.filter((x) => /duplicate title/.test(x.reason)).length, 3);
+    assert.equal(again.ignored.filter((x) => /duplicate title/.test(x.reason)).length, 4);
     assert.equal(again.ignored.filter((x) => x.reason === "not an open slot").length, 3);
-    assert.equal(h.state.readJsonl("state/ideas.jsonl").length, 3, "no superseding records: nothing changed");
+    assert.equal(h.state.readJsonl("state/ideas.jsonl").length, 4, "no superseding records: nothing changed");
     assert.deepEqual(h.state.readJson("state/calendar.json", CALENDAR_SPEC).slots.map((s) => s.ideaId), cal.slots.map((s) => s.ideaId));
 
     // another page joins the same calendar; the first page's slots are untouched
     const kd = await runStrategist({ page: KD, brand: brands.kaatdo, memo: llm("ceo.ok").output, state: h.state, router: h.router, config, now: NOW, runId: RUN_ID });
-    assert.equal(kd.ideasAdded, 3);
+    assert.equal(kd.ideasAdded, 4);
     assert.deepEqual(kd.assigned.map((a) => a.ideaId), ["kd-i0001", "kd-i0002", "kd-i0003"]);
+    assert.deepEqual(kd.autoAssigned.map((a) => [a.slotId, a.ideaId]), [["kaatdo-2026-10-18-1100", "kd-i0004"]], "KaatDo's reel idea lands on the Sunday reel slot");
     const merged = h.state.readJson("state/calendar.json", CALENDAR_SPEC);
-    assert.equal(merged.slots.length, 12);
+    assert.equal(merged.slots.length, 16);
     assert.deepEqual(merged.slots.filter((s) => s.page === "rishtapatra"), cal.slots);
-    assert.equal(merged.slots.filter((s) => s.page === "kaatdo" && s.ideaId).length, 3);
+    assert.equal(merged.slots.filter((s) => s.page === "kaatdo" && s.ideaId).length, 4);
     assert.deepEqual([...merged.slots].sort((a, b) => Date.parse(a.at) - Date.parse(b.at) || a.page.localeCompare(b.page)), merged.slots, "time-ordered across pages");
     const kdIdeas = h.state.readJsonl("state/ideas.jsonl").filter((i) => i.page === "kaatdo");
-    assert.deepEqual(kdIdeas.map((i) => i.id), ["kd-i0001", "kd-i0002", "kd-i0003"]);
+    assert.deepEqual(kdIdeas.map((i) => i.id), ["kd-i0001", "kd-i0002", "kd-i0003", "kd-i0004"]);
   } finally {
     h.cleanup();
   }
@@ -424,10 +432,10 @@ test("runStrategist: open backlog ideas are picked for the slots the model left 
     ];
     for (const i of existing) h.state.appendJsonl("state/ideas.jsonl", i, IDEA_SPEC);
     const res = await runStrategist({ page: RP, brand: brands.rishtapatra, memo: null, state: h.state, router: h.router, config, now: NOW, runId: RUN_ID });
-    assert.equal(res.ideasAdded, 2, "the duplicate title merges into rp-i0007; the reel is refused");
+    assert.equal(res.ideasAdded, 3, "the duplicate title merges into rp-i0007; the reel idea is accepted (FEAT-201)");
     assert.deepEqual(res.ignored.map((x) => x.reason), ["duplicate title of idea rp-i0007"]);
     const ids = h.state.readJsonl("state/ideas.jsonl").map((i) => i.id);
-    assert.ok(ids.includes("rp-i0009") && ids.includes("rp-i0010"), "numbering continues after the highest existing id");
+    assert.ok(ids.includes("rp-i0009") && ids.includes("rp-i0010") && ids.includes("rp-i0011"), "numbering continues after the highest existing id");
     assert.deepEqual(
       res.assigned.map((a) => [a.slotId, a.ideaId]),
       [
@@ -437,9 +445,16 @@ test("runStrategist: open backlog ideas are picked for the slots the model left 
       ],
       "new:0 resolved to the merged existing idea",
     );
-    assert.deepEqual(res.autoAssigned.map((a) => [a.slotId, a.ideaId, a.by]), [["rishtapatra-2026-10-19-1930", "rp-i0008", "engine"]], "the older open image idea fills the next open image slot");
-    assert.match(res.autoAssigned[0].reason, /^backlog idea rp-i0008 \(Older backlog idea\)$/);
-    assert.deepEqual(res.openSlotsLeft, ["rishtapatra-2026-10-21-1930", "rishtapatra-2026-10-23-1930"]);
+    assert.deepEqual(
+      res.autoAssigned.map((a) => [a.slotId, a.ideaId, a.by]),
+      [
+        ["rishtapatra-2026-10-17-1930", "rp-i0011", "engine"],
+        ["rishtapatra-2026-10-19-1930", "rp-i0008", "engine"],
+      ],
+      "the new reel idea fills the Saturday reel slot; the older open image idea fills the next open image slot",
+    );
+    assert.match(res.autoAssigned[1].reason, /^backlog idea rp-i0008 \(Older backlog idea\)$/);
+    assert.deepEqual(res.openSlotsLeft, ["rishtapatra-2026-10-21-1930", "rishtapatra-2026-10-23-1930", "rishtapatra-2026-10-24-1930"]);
     const latest = new Map();
     for (const i of h.state.readJsonl("state/ideas.jsonl")) latest.set(i.id, i);
     assert.equal(latest.get("rp-i0007").status, "scheduled");
@@ -464,10 +479,13 @@ test("runStrategist: open backlog ideas are picked for the slots the model left 
   assert.deepEqual(recentTitles({ published, drafts, ideas, handle: "rishtapatra", limit: 1 }), ["Second title"]);
 });
 
-test("runStrategist: no open slot and a full backlog → the model is not called; a page whose cadence is only reels has zero slots in Phase 1", async () => {
+test("runStrategist: no open slot and a full backlog → the model is not called; a reel-only cadence has zero slots only while features.reels is false (two Sunday reel slots when it is on)", async () => {
   const h = harness();
   try {
     const { cfg, page } = withPage("kaatdo", { cadence: { slots: [{ dow: "sun", time: "11:00", format: "reel" }] } });
+    const on = fillCalendar({ config: cfg, page, now: NOW });
+    assert.deepEqual(on.slots.map((s) => `${s.slotId}:${s.format}`), ["kaatdo-2026-10-18-1100:reel", "kaatdo-2026-10-25-1100:reel"], "FEAT-201: reel slots exist with reels on");
+    cfg.features.reels = false;
     const res = await runStrategist({ page, brand: brands.kaatdo, state: h.state, router: h.router, config: cfg, now: NOW, runId: RUN_ID });
     assert.equal(res.modelCalled, false);
     assert.equal(res.calls, 0);
@@ -506,10 +524,16 @@ test("strategist.bad (missing assignments) → one repair call → AgentOutputEr
 test("applyOutput / autoAssign are deterministic and never touch a slot of the wrong format; the task JSON offers usable facts only and the memo priorities of the page", async () => {
   const ideaMap = new Map();
   const openSlots = fillCalendar({ config, page: RP, now: NOW }).openSlots;
-  const out = applyOutput(llm("strategist.ok").output, { page: RP, prefix: RP.prefix, allIdeaIds: [], ideaMap, openSlots, reelsEnabled: false, at: NOW, runId: RUN_ID });
-  assert.deepEqual(out.records.map((r) => r.id), ["rp-i0001", "rp-i0002", "rp-i0003"]);
-  assert.deepEqual([...out.idMap.entries()], [["new:0", "rp-i0001"], ["new:1", "rp-i0002"], ["new:2", "rp-i0003"], ["new:3", null]]);
-  assert.equal(out.openLeft.length, 3);
+  const out = applyOutput(llm("strategist.ok").output, { page: RP, prefix: RP.prefix, allIdeaIds: [], ideaMap, openSlots, reelsEnabled: true, at: NOW, runId: RUN_ID });
+  assert.deepEqual(out.records.map((r) => r.id), ["rp-i0001", "rp-i0002", "rp-i0003", "rp-i0004"]);
+  assert.deepEqual([...out.idMap.entries()], [["new:0", "rp-i0001"], ["new:1", "rp-i0002"], ["new:2", "rp-i0003"], ["new:3", "rp-i0004"]]);
+  assert.equal(out.openLeft.length, 5, "8 slots, 3 placed by the model");
+  assert.deepEqual(out.refused, []);
+  // with reels off the same answer's reel idea is refused and new:3 maps to null
+  const off = applyOutput(llm("strategist.ok").output, { page: RP, prefix: RP.prefix, allIdeaIds: [], ideaMap: new Map(), openSlots, reelsEnabled: false, at: NOW, runId: RUN_ID });
+  assert.deepEqual(off.records.map((r) => r.id), ["rp-i0001", "rp-i0002", "rp-i0003"]);
+  assert.deepEqual(off.refused.map((r) => [r.index, r.title, r.reason]), [[3, "Tagline reel", "reel: not built yet (features.reels is false)"]]);
+  assert.deepEqual(off.idMap.get("new:3"), null);
   // a wrong-format pick is ignored, not applied
   const wrong = applyOutput({ ideas: [{ title: "T", angle: "a", format: "carousel", language: "en", factIds: ["rp-f04"], hook: "h" }], assignments: [{ slotId: "rishtapatra-2026-10-12-1930", ideaId: "new:0", reason: "r" }] }, { page: RP, prefix: RP.prefix, allIdeaIds: [], ideaMap: new Map(), openSlots, reelsEnabled: false, at: NOW, runId: RUN_ID });
   assert.deepEqual(wrong.assigned, []);
@@ -541,7 +565,7 @@ test("applyOutput / autoAssign are deterministic and never touch a slot of the w
     assert.match(args.context.memoExcerpt, /^Memo 2026-W42 — priorities for @rishtapatra:\n1\. lead with the free product/);
     assert.equal(args.context.feedbackDigest, "owner: fewer prices");
     const task = args.task;
-    assert.deepEqual(task.page, { handle: "rishtapatra", languages: ["hi", "en"], formats: ["image", "carousel"], reelsEnabled: false, cadence: RP.cadence.slots, minGapHours: 6, backlogWeeks: 2 });
+    assert.deepEqual(task.page, { handle: "rishtapatra", languages: ["hi", "en"], formats: ["image", "carousel", "reel"], reelsEnabled: true, cadence: RP.cadence.slots, minGapHours: 6, backlogWeeks: 2 });
     assert.deepEqual(task.priorities.map((p) => p.rank), [1, 2], "this page's priorities only, ranked");
     assert.deepEqual(task.pause, []);
     assert.ok(task.facts.some((f) => f.id === "rp-f08"));
@@ -549,9 +573,10 @@ test("applyOutput / autoAssign are deterministic and never touch a slot of the w
     assert.ok(task.pricing.some((p) => p.sku === "shubh-pass"));
     assert.deepEqual(task.openIdeas, []);
     assert.deepEqual(task.recentTitles, []);
-    assert.deepEqual(task.slots.map((s) => s.slotId), ["rishtapatra-2026-10-12-1930", "rishtapatra-2026-10-14-1930", "rishtapatra-2026-10-16-1930", "rishtapatra-2026-10-19-1930", "rishtapatra-2026-10-21-1930", "rishtapatra-2026-10-23-1930"]);
+    assert.deepEqual(task.slots.map((s) => s.slotId), ["rishtapatra-2026-10-12-1930", "rishtapatra-2026-10-14-1930", "rishtapatra-2026-10-16-1930", "rishtapatra-2026-10-17-1930", "rishtapatra-2026-10-19-1930", "rishtapatra-2026-10-21-1930", "rishtapatra-2026-10-23-1930", "rishtapatra-2026-10-24-1930"]);
     assert.deepEqual(Object.keys(task.slots[0]), ["slotId", "at", "format"]);
-    assert.equal(task.needNewIdeas, 6, "backlogWeeks 2 × weekly cadence 3, no open ideas yet");
+    assert.deepEqual(task.slots.filter((s) => s.format === "reel").length, 2, "the reel slots are offered to the model");
+    assert.equal(task.needNewIdeas, 8, "backlogWeeks 2 × weekly cadence 4 (incl. the reel), no open ideas yet");
     assert.equal(task.feedback, "owner: fewer prices");
     // the validate hook flags a disputed fact
     assert.deepEqual(args.validate({ ideas: [{ title: "x", angle: "y", format: "image", language: "hi", factIds: ["rp-f12"], hook: "h" }], assignments: [] }), ["$.ideas[0].factIds[0]: rp-f12 is not a usable fact of @rishtapatra"]);

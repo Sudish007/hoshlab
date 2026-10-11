@@ -157,8 +157,14 @@ test("render-sample: usage errors exit 2 without touching the renderer; --out in
   assert.equal(await run({ ...base, flags: {}, stdout: sink(), stderr: err }), 2);
   assert.match(err.text(), /--page <handle> is required/);
   err = sink();
-  assert.equal(await run({ ...base, flags: { page: "kaatdo", format: "reel" }, stdout: sink(), stderr: err }), 2);
-  assert.match(err.text(), /--format must be one of image\|carousel/);
+  assert.equal(await run({ ...base, flags: { page: "kaatdo", format: "video" }, stdout: sink(), stderr: err }), 2);
+  assert.match(err.text(), /--format must be one of image\|carousel\|reel/);
+  err = sink();
+  assert.equal(await run({ ...base, flags: { page: "kaatdo", format: "reel", style: "slides" }, stdout: sink(), stderr: err }), 2);
+  assert.match(err.text(), /--style must be one of kinetic\|capture/);
+  err = sink();
+  assert.equal(await run({ ...base, flags: { page: "kaatdo", format: "image", style: "kinetic" }, stdout: sink(), stderr: err }), 2);
+  assert.match(err.text(), /--style applies to --format reel only/);
   err = sink();
   assert.equal(await run({ ...base, flags: { page: "nobody" }, stdout: sink(), stderr: err }), 2);
   assert.match(err.text(), /unknown page nobody/);

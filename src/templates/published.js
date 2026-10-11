@@ -35,7 +35,10 @@ export function monthBox(view) {
 }
 
 function mediaMarkup(post) {
-  const { media, draft, record } = post;
+  const { media: all, draft, record } = post;
+  // a reel's card shows its poster JPEG (the MP4 row is not an image); the video itself plays on Instagram (FEAT-201)
+  const video = record.format === "reel" ? all.find((m) => m.kind === "video") : null;
+  const media = record.format === "reel" ? all.filter((m) => m.kind === "poster") : all;
   if (!media.length) return `<div class="post-frame post-missing"><p class="meta">No artwork recorded for this post.</p></div>`;
   const alt = (i) => (draft.altTexts && draft.altTexts[i]) || (draft.slides && draft.slides[i] && draft.slides[i].altText) || draft.altText || "";
   const frame = (item, i, cls) =>
@@ -44,7 +47,8 @@ function mediaMarkup(post) {
       : `<div class="${cls} post-missing" role="img" aria-label="${escapeHtml(alt(i))}"><p class="meta">Artwork not in this build (media branch not checked out); the Instagram post has it.</p></div>`;
   const first = frame(media[0], 0, "post-frame");
   const rest = media.length > 1 ? `<div class="thumbs" aria-label="${media.length} slides">${media.slice(1).map((m, i) => frame(m, i + 1, "thumb")).join("")}</div>` : "";
-  return `${first}${rest}${record.format === "carousel" ? `<p class="meta">${media.length} slides · swipe on Instagram</p>` : ""}`;
+  const note = record.format === "carousel" ? `<p class="meta">${media.length} slides · swipe on Instagram</p>` : record.format === "reel" ? `<p class="meta">reel${video && typeof video.durationSec === "number" ? ` · ${escapeHtml(String(video.durationSec))} s` : ""} · silent · plays on Instagram</p>` : "";
+  return `${first}${rest}${note}`;
 }
 
 export function postCard(view, post) {

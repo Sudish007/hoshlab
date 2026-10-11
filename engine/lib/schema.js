@@ -229,6 +229,14 @@ export function configRules(config) {
     const p = providers[name];
     if (p && p.enabled && Object.keys(p.models || {}).length === 0) errors.push(`$.providers.${name}.models: enabled provider needs at least one model`);
   }
+  const reel = config.defaults && config.defaults.reel;
+  if (reel) {
+    if (reel.minSec > reel.maxSec) errors.push(`$.defaults.reel: minSec ${reel.minSec} above maxSec ${reel.maxSec}`);
+    for (const key of ["kineticScenes", "captureScenes"]) {
+      const r = reel[key];
+      if (Array.isArray(r) && r.length === 2 && r[0] > r[1]) errors.push(`$.defaults.reel.${key}: ${r[0]} above ${r[1]}`);
+    }
+  }
   return errors;
 }
 
@@ -504,6 +512,8 @@ export const CONFIG_SPEC = {
     hashtagCap: "int[0..30]",
     captionMax: "int[1..2200]",
     altTextMax: "int[1..200]",
+    // Reels (Phase 2, FEAT-201; plan D17/D22): total length in seconds and the scene count per style.
+    reel: { minSec: "int[3..90]", maxSec: "int[3..90]", kineticScenes: ["int[1..12]", { min: 2, max: 2 }], captureScenes: ["int[1..12]", { min: 2, max: 2 }] },
   },
   // versionSource/versionVerifiedAt: where and when ig.version was last checked against Meta's changelog (plan D5, FEAT-107).
   ig: { host: "url", version: "pattern:^v\\d+\\.\\d+$", "versionSource?": "url", "versionVerifiedAt?": "date", pollIntervalMs: "int[100..60000]", pollMaxMs: "int[1000..3600000]" },
@@ -584,8 +594,22 @@ export const SLOT_SPEC = {
 export const CALENDAR_SPEC = { generatedAt: "iso-datetime", horizonDays: "int[1..90]", slots: [SLOT_SPEC] };
 
 // §4.6 drafts/<id>/draft.json (M5 enums, D9)
+// Reel media (FEAT-201): one `video` row (the MP4, with the ffprobe summary the Designer measured) and one
+// `poster` row (frame 0 as a 1080×1920 JPEG); QA's media_spec reads the probe back from the row.
+export const PROBE_SUMMARY_SPEC = {
+  ok: "bool",
+  codec: "str",
+  width: "int[1..10000]",
+  height: "int[1..10000]",
+  pixFmt: "str",
+  frameRate: "str",
+  durationSec: "num[0..600]",
+  bytes: "int[1..1000000000]",
+  faststart: "bool",
+  "errors?": ["str"],
+};
 export const MEDIA_ITEM_SPEC = {
-  kind: "enum[image|video]",
+  kind: "enum[image|video|poster]",
   path: "str",
   bytes: "int[1..1000000000]",
   width: "int[1..10000]",
@@ -594,6 +618,7 @@ export const MEDIA_ITEM_SPEC = {
   rawUrl: "url",
   pagesUrl: "url",
   "durationSec?": "num[0..600]",
+  "probe?": PROBE_SUMMARY_SPEC,
 };
 export const PUBLISH_ATTEMPT_SPEC = {
   at: "iso-datetime",
@@ -609,10 +634,15 @@ export const PUBLISH_ATTEMPT_SPEC = {
 export const ARTWORK_SPEC = { headline: "str<=60", subline: "str<=110", facts: ["str<=70", { max: 3 }], footer: "str", "variant?": "enum[A|B|C]" };
 // Designer refusal (design §10 guards, §11 "Render" row; FEAT-106, R1-02): the draft goes to `rework` (or
 // `blocked` at the cap) and carries why, for the Writer (qaReasons) and the admin card (renderError).
-export const RENDER_ERROR_CODES = ["overflow", "missing_glyphs", "text_floor", "contrast", "media_spec", "render_failed"];
+// Reel deferrals (FEAT-201): `capture_unreachable` (the product site did not answer) and `ffmpeg` (ffmpeg/ffprobe
+// missing or the encoded file failed the probe) leave the draft `written` — not the Writer's fault — for the next run.
+export const RENDER_ERROR_CODES = ["overflow", "missing_glyphs", "text_floor", "contrast", "media_spec", "render_failed", "capture_unreachable", "ffmpeg"];
 export const RENDER_ERROR_SPEC = { code: `enum[${RENDER_ERROR_CODES.join("|")}]`, "detail?": "str<=1000", at: "iso-datetime" };
 export const SLIDE_SPEC = { heading: "str<=40", body: "str<=160", altText: "str<=200" };
-export const REEL_SPEC = { style: "enum[kinetic|capture]", durationSec: "num[1..90]", scenes: [{ text: "str<=60", seconds: "num[1..10]" }, { min: 3, max: 6 }] };
+// Reel (design §10, plan D17): style kinetic (type-on typography) or capture (captions over the product's own
+// screens); whole seconds per scene, durationSec = the sum of the scenes (the Writer's validation enforces it).
+export const REEL_STYLES = ["kinetic", "capture"];
+export const REEL_SPEC = { style: `enum[${REEL_STYLES.join("|")}]`, durationSec: "int[3..90]", scenes: [{ text: "str<=60", seconds: "int[1..10]" }, { min: 3, max: 6 }] };
 
 export const DRAFT_SPEC = {
   id: "id",
