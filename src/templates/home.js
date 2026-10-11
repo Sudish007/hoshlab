@@ -4,7 +4,7 @@
 import { layout } from "./layout.js";
 import { url } from "../lib/urls.js";
 import { escapeHtml } from "../lib/xml.js";
-import { modeLabel, flagSentence, cadenceLine } from "../lib/labels.js";
+import { modeLabel, flagSentence, cadenceLine, tokenDaysLeft } from "../lib/labels.js";
 import { formatIstDay, formatIstTime, formatIst, monthName } from "../lib/dates.js";
 import { hi, chip, timeTag, sectionHead, hostOf, excerpt, numberWord, hasDevanagari, languagesLabel } from "./partials.js";
 
@@ -34,10 +34,31 @@ export function statusStrip(view) {
         : { k: "Month budget", v: `USD ${u.usedUsd.toFixed(2)} of ${u.limitUsd}`, s: `${monthName(u.month)} · ${u.calls} call${u.calls === 1 ? "" : "s"} logged · ${u.providers.length} provider${u.providers.length === 1 ? "" : "s"}` },
     );
   }
-  const flags = (status.flags || []).map((f) => `<p class="flag">${escapeHtml(flagSentence(f, { month: monthName(view.usage.month) }))}</p>`).join("\n");
   return `<div class="status-strip" aria-label="Company status">
         ${cells.map((c) => `<div><span class="k">${escapeHtml(c.k)}</span><span class="v">${escapeHtml(c.v)}</span><span class="s">${escapeHtml(c.s)}</span></div>`).join("\n        ")}
-      </div>${flags ? `\n      <div class="flags" aria-label="Status notes">${flags}</div>` : ""}`;
+      </div>`;
+}
+
+// status.flags[] as plain sentences (design §4.12), one <p class="flag"> each, in a band that spans both hero
+// columns above the hero copy and the status box (FEAT-202 banners, P2-09). Rendered only when a flag is set,
+// so the no-flag Home is byte-identical to before. Spanning the row (and, at ≥ 64em, flowing into auto-fit
+// columns) keeps the band from making the side stack taller than the hero copy — OF-4 at 1920/2560 held with
+// three banners in the audit; a stack inside .hero-side did not.
+export function flagsBand(view) {
+  const flags = (view.status.flags || []).map((f) => `<p class="flag">${escapeHtml(flagSentence(f, flagOptions(view, f)))}</p>`).join("\n");
+  return flags ? `<div class="flags span-all" aria-label="Status notes">${flags}</div>\n    ` : "";
+}
+
+// The sentence inputs for one flag: the budget month name, and for token_expiring:<page> the whole days left
+// from status.pages[<page>].tokenExpiresAt at the build clock (null → 'expires soon'). FEAT-202, P2-09.
+export function flagOptions(view, flag) {
+  const [kind, page] = String(flag).split(":");
+  const opts = { month: monthName(view.usage.month) };
+  if (kind === "token_expiring") {
+    const pageState = view.status.pages && view.status.pages[page];
+    opts.daysLeft = tokenDaysLeft(pageState && pageState.tokenExpiresAt, view.now);
+  }
+  return opts;
 }
 
 export function nextUpList(view) {
@@ -123,7 +144,7 @@ export function homePage(view) {
   const handleList = handles.length > 1 ? `${handles.slice(0, -1).join(", ")} and ${handles[handles.length - 1]}` : handles.join("");
   const lastRun = view.runs[0];
   const body = `<section class="hero">
-    <div>
+    ${flagsBand(view)}<div>
       <p class="eyebrow">${escapeHtml(config.company.name)} · <span lang="hi">${escapeHtml(config.company.nameDevanagari)}</span></p>
       <h1>${escapeHtml(capitalize(numberWord(agents.length)))} AI agents run the Instagram pages for ${escapeHtml(numberWord(config.pages.length))} real products.</h1>
       <p class="lede">A CEO sets priorities, HR keeps the roster honest, and a Strategist, Writer, Designer, QA editor, Publisher and Analyst turn them into posts for ${handleList}. Everything runs on GitHub Actions; every draft, approval and published post is a file in this repository.</p>

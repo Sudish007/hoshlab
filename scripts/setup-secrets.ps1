@@ -1,10 +1,12 @@
-# setup-secrets.ps1 - stores the six Hoshlab secrets as GitHub Actions repository secrets and writes the
-# NON-secret Instagram ids into company/config.json (design.md section 16, review M15, plan D5, P1-20).
+# setup-secrets.ps1 - stores the seven Hoshlab secrets as GitHub Actions repository secrets and writes the
+# NON-secret Instagram ids into company/config.json (design.md section 16, review M15, plan D5, P1-20; FEAT-202).
 #
 #     powershell -ExecutionPolicy Bypass -File scripts\setup-secrets.ps1 [-Repo Sudish007/hoshlab] [-SkipValidate]
 #
-# Secret names come from company/config.json (providers.*.secret, pages[].tokenSecret):
-#   ANTHROPIC_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY, IG_TOKEN_RISHTAPATRA, IG_TOKEN_KAATDO, IG_TOKEN_JOB_REZ
+# Secret names come from company/config.json (providers.*.secret, pages[].tokenSecret), plus the phase-2 PAT:
+#   ANTHROPIC_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY, IG_TOKEN_RISHTAPATRA, IG_TOKEN_KAATDO, IG_TOKEN_JOB_REZ,
+#   HOSHLAB_SECRETS_PAT (fine-grained PAT, this repository only, Repository permissions Secrets: Read and write;
+#   the weekly token-refresh.yml run uses it as GH_TOKEN for `gh secret set` - GITHUB_TOKEN cannot write secrets)
 # Each value is typed at a hidden prompt (Read-Host -AsSecureString; Enter keeps the existing secret), lives
 # in a variable only, reaches `gh secret set <NAME> --repo <Repo>` on standard input (never as a command-line
 # argument, never echoed) and is reported only as '<NAME>: set (<length> chars)' or '<NAME>: kept'.
@@ -18,6 +20,8 @@
 #     commit; the local reset only keeps your checkout in step.
 #   * Provider keys: `node engine/index.js check-models` with the keys entered this session in that process's
 #     environment only (removed afterwards). Keys that were kept cannot be checked here and are reported as such.
+#   * HOSHLAB_SECRETS_PAT: `gh api repos/<Repo>/actions/secrets/public-key` with the PAT as GH_TOKEN in that
+#     process's environment only (the endpoint needs Secrets: Read; the write half is proven by the first weekly run).
 # Nothing is committed: the script ends by naming EVERY changed file (config.json and/or state/status.json) and
 # telling you to `git pull --ff-only` first (the bot rewrites status.json hourly), then what to commit.
 # Requires: Windows PowerShell 5.1 (';' between commands, no double-ampersand, no ternary), gh on PATH and
@@ -154,6 +158,26 @@ function Get-HttpErrorDetail {
     return $body
 }
 
+# gh api repos/<Repo>/actions/secrets/public-key with the PAT as GH_TOKEN (process environment only, removed
+# afterwards) -> @{ Ok; KeyId } or @{ Ok = $false; Error }. Reading the public key needs Secrets: Read on this
+# repository, which is what the fine-grained PAT must carry (Read and write) for the weekly `gh secret set`.
+function Test-SecretsPat {
+    param([string]$Pat, [string]$Repository)
+    $previousToken = [Environment]::GetEnvironmentVariable('GH_TOKEN', 'Process')
+    try {
+        [Environment]::SetEnvironmentVariable('GH_TOKEN', $Pat, 'Process')
+        $output = Invoke-Native $script:GhPath @('api', ('repos/' + $Repository + '/actions/secrets/public-key'), '--jq', '.key_id') -AllowFail
+    }
+    finally {
+        [Environment]::SetEnvironmentVariable('GH_TOKEN', $previousToken, 'Process')
+    }
+    $text = (($output | ForEach-Object { "$_" }) -join ' ').Trim()
+    if ($script:NativeExit -ne 0) {
+        return [pscustomobject]@{ Ok = $false; Error = (Hide-Secret $text $Pat) }
+    }
+    return [pscustomobject]@{ Ok = $true; KeyId = $text }
+}
+
 # GET /<version>/me?fields=id,user_id,username -> @{ Ok; Id; UserId; Username } or @{ Ok = $false; Error }.
 # The request URL carries the token and is never printed.
 function Test-InstagramToken {
@@ -190,6 +214,11 @@ foreach ($prop in $config.providers.PSObject.Properties) {
 foreach ($page in $config.pages) {
     $entries += [pscustomobject]@{ Name = [string]$page.tokenSecret; Kind = 'instagram'; Provider = ''; Page = [string]$page.handle; Status = ''; Length = 0; Value = '' }
 }
+# Phase 2 (FEAT-202): the fine-grained PAT the weekly token-refresh job uses for `gh secret set`. Create it at
+# GitHub -> Settings -> Developer settings -> Personal access tokens -> Fine-grained tokens -> Generate new token ->
+# Only select repositories -> Sudish007/hoshlab -> Repository permissions -> Secrets: Read and write. Same hidden
+# prompt, same stdin handling; Enter keeps the stored one.
+$entries += [pscustomobject]@{ Name = 'HOSHLAB_SECRETS_PAT'; Kind = 'pat'; Provider = ''; Page = ''; Status = ''; Length = 0; Value = '' }
 
 Write-Host ('setup-secrets: repository ' + $Repo + ', ' + $entries.Count + ' secrets, Instagram API ' + $igVersion)
 Write-Host 'setup-secrets: values are hidden while you type; press Enter to keep a secret that is already set.'
@@ -274,6 +303,20 @@ if (-not $SkipValidate) {
             if ($text -match 'written to') { $configChanged = $true }
             if ($text -match 'tokenState .* -> unknown') { $statusChanged = $true }
         }
+    }
+
+    foreach ($entry in $entries) {
+        if ($entry.Kind -ne 'pat') { continue }
+        if ($entry.Value.Length -eq 0) {
+            Write-Host ($entry.Name + ': not validated (no value entered this session)')
+            continue
+        }
+        $patCheck = Test-SecretsPat -Pat $entry.Value -Repository $Repo
+        if (-not $patCheck.Ok) {
+            Write-Host ($entry.Name + ': gh api repos/' + $Repo + '/actions/secrets/public-key failed - ' + $patCheck.Error + ' (the PAT needs Repository permissions Secrets: Read and write on ' + $Repo + ')')
+            continue
+        }
+        Write-Host ($entry.Name + ': gh api repos/' + $Repo + '/actions/secrets/public-key ok - the PAT can read this repository''s secrets (write is proven by the first weekly token-refresh run)')
     }
 
     $providerEntries = @($entries | Where-Object { $_.Kind -eq 'provider' })

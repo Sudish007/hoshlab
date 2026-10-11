@@ -70,6 +70,43 @@ export function updateIndex(mediaRoot, draftId, files, { sample = false, page, f
   return sorted;
 }
 
+// Files an index entry lists, whichever shape it has (a draft's plain list, a sample object, or a retired entry).
+export function indexFiles(entry) {
+  if (Array.isArray(entry)) return [...entry];
+  if (entry && typeof entry === "object" && Array.isArray(entry.files)) return [...entry.files];
+  return [];
+}
+
+// retireFiles(mediaRoot, draftId, files, { at }) → the whole index after the write (design §8.6 retention,
+// FEAT-202). Deletes media/<draftId>/<file> for each name and turns the draft's index entry into
+//   { files: [what remains, e.g. the poster], removed: [{ file, removedAt }, …] }
+// so the entry survives (the Published page keeps its poster; the record says what left and when).
+// A sample entry keeps its sample:true/page/format/at fields. Returns the index; `removed` lists what was deleted.
+export function retireFiles(mediaRoot, draftId, files, { at } = {}) {
+  if (!ID_RE.test(String(draftId))) throw new TypeError(`media: bad draft id ${JSON.stringify(draftId)}`);
+  if (!Array.isArray(files) || !files.length || files.some((f) => typeof f !== "string" || !f || f.includes("/") || f.includes("\\"))) throw new TypeError("media: files must be a non-empty list of file names");
+  if (typeof at !== "string" || !at) throw new TypeError("media: retireFiles needs an ISO `at`");
+  const index = readIndex(mediaRoot);
+  const entry = index[draftId];
+  const before = indexFiles(entry);
+  const removed = [];
+  for (const file of files) {
+    const path = join(mediaRoot, "media", draftId, file);
+    if (existsSync(path)) {
+      rmSync(path, { force: true });
+      removed.push(file);
+    } else if (before.includes(file)) removed.push(file); // indexed but already gone from disk: drop it from the list too
+  }
+  const next = entry && typeof entry === "object" && !Array.isArray(entry) ? { ...entry } : {};
+  next.files = before.filter((f) => !removed.includes(f));
+  next.removed = [...(Array.isArray(next.removed) ? next.removed : []), ...removed.map((file) => ({ file, removedAt: at }))];
+  index[draftId] = next;
+  const sorted = Object.fromEntries(Object.keys(index).sort().map((k) => [k, index[k]]));
+  mkdirSync(mediaRoot, { recursive: true });
+  writeAtomic(join(mediaRoot, INDEX_FILE), JSON.stringify(sorted, null, 2) + "\n");
+  return { index: sorted, removed };
+}
+
 // True when .media/ is a git worktree of the media branch (M16: the engine never creates it).
 export function mediaBranchPresent(mediaRoot) {
   return existsSync(join(mediaRoot, ".git"));

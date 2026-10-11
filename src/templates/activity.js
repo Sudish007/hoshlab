@@ -7,7 +7,7 @@ import { formatIst, formatIstTime, monthName, previousMonth } from "../lib/dates
 import { chip, sectionHead, sideBox, timeTag } from "./partials.js";
 import { agentTitle } from "./home.js";
 
-const WORKFLOW_LABEL = { "engine-daily": "Daily engine run", "publisher-hourly": "Publisher run" };
+const WORKFLOW_LABEL = { "engine-daily": "Daily engine run", "publisher-hourly": "Publisher run", "token-refresh": "Weekly token refresh" };
 const TRIGGER_LABEL = { schedule: "scheduled", dispatch: "on demand", local: "local run" };
 
 export function usd(n) {

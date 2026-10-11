@@ -4,8 +4,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { COMPANY_DIR, FETCH_ATTEMPTS } from "./helpers.js";
-import { IgError, MEDIA_FETCH_CODES, PARAM_ERROR_CODES, RATE_LIMIT_CODES, TOKEN_ERROR_CODES, classifyError, createClient, parseEnvelope } from "../engine/ig/client.js";
-import { DRY_ME, DRY_USER_ID, LINE_PREFIX, createDryRunClient, formatCall, isDryRun, sha8 } from "../engine/ig/dry-run.js";
+import { IgError, MEDIA_FETCH_CODES, PARAM_ERROR_CODES, RATE_LIMIT_CODES, REFRESH_GRANT, REFRESH_PATH, TOKEN_ERROR_CODES, classifyError, createClient, parseEnvelope } from "../engine/ig/client.js";
+import { DRY_ME, DRY_REFRESH_EXPIRES_IN, DRY_USER_ID, LINE_PREFIX, createDryRunClient, formatCall, isDryRun, sha8 } from "../engine/ig/dry-run.js";
 
 const config = JSON.parse(readFileSync(join(COMPANY_DIR, "config.json"), "utf8"));
 const TOKEN = "FAKE-IG-TOKEN-" + "k".repeat(48);
@@ -322,5 +322,114 @@ test("dry-run client: same surface, deterministic dry-<sha8> ids, DRYRUN permali
   assert.equal(isDryRun({}, { "dry-run": true }), true);
   assert.equal(isDryRun({ IG_DRY_RUN: "0" }, {}), false);
   assert.equal(isDryRun({}, {}), false);
+  assert.equal(FETCH_ATTEMPTS.length, 0);
+});
+
+// ---------------------------------------------------------------------------------------
+// FEAT-202: reels and the token refresh
+
+const MP4 = "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-reel-x/reel-a1b2c3d4.mp4";
+const POSTER = "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-reel-x/poster-e5f6a7b8.jpg";
+
+test("reel sequence (design §9 column Reel): POST media media_type=REELS video_url caption cover_url share_to_feed → GET /{id}?fields=status_code,status (IN_PROGRESS, FINISHED) → media_publish; status codes are upper-cased, free text kept", async () => {
+  const fetchImpl = scriptedFetch([{ id: "17890010" }, { id: "17890010", status_code: "IN_PROGRESS", status: "In progress" }, { id: "17890010", status_code: "finished", status: "Finished" }, { id: "17990011" }]);
+  const client = createClient({ config, token: TOKEN, igUserId: IG_USER, fetchImpl });
+  const c = await client.createReelContainer({ videoUrl: MP4, caption: "Six rules.\n\n#KaatDo", coverUrl: POSTER });
+  assert.deepEqual(c, { id: "17890010" });
+  const s1 = await client.containerStatus(c.id);
+  assert.deepEqual([s1.statusCode, s1.status], ["IN_PROGRESS", "In progress"]);
+  const s2 = await client.containerStatus(c.id);
+  assert.deepEqual([s2.statusCode, s2.status], ["FINISHED", "Finished"]);
+  assert.equal((await client.publish(c.id)).id, "17990011");
+  const [r1, r2, r3, r4] = fetchImpl.requests;
+  assert.equal(r1.url, `${BASE}/${IG_USER}/media`);
+  assert.deepEqual(Object.fromEntries(r1.body), { media_type: "REELS", video_url: MP4, caption: "Six rules.\n\n#KaatDo", cover_url: POSTER, share_to_feed: "true", access_token: TOKEN });
+  for (const r of [r2, r3]) {
+    assert.equal(r.init.method, "GET");
+    const u = new URL(r.url);
+    assert.equal(`${u.origin}${u.pathname}`, `${BASE}/17890010`);
+    assert.equal(u.searchParams.get("fields"), "status_code,status");
+    assert.equal(u.searchParams.get("access_token"), TOKEN);
+  }
+  assert.deepEqual(Object.fromEntries(r4.body), { creation_id: "17890010", access_token: TOKEN });
+  assert.deepEqual(client.calls[0].fields, { media_type: "REELS", video_url: MP4, caption: "Six rules.\n\n#KaatDo", cover_url: POSTER, share_to_feed: "true" });
+  // share_to_feed false is sent as given; a missing cover is omitted
+  const f2 = scriptedFetch([{ id: "x1" }]);
+  const c2 = createClient({ config, token: TOKEN, igUserId: IG_USER, fetchImpl: f2 });
+  await c2.createReelContainer({ videoUrl: MP4, caption: "c", shareToFeed: false });
+  assert.deepEqual(Object.fromEntries(f2.requests[0].body), { media_type: "REELS", video_url: MP4, caption: "c", share_to_feed: "false", access_token: TOKEN });
+  await assert.rejects(() => c2.createReelContainer({ caption: "no video" }), /videoUrl is required/);
+  await assert.rejects(() => c2.containerStatus(""), /containerId is required/);
+  // an error envelope on the status GET is an IgError at stage status; a 190 there is tokenInvalid
+  const f3 = scriptedFetch([envelope(190, "Invalid OAuth 2.0 Access Token")]);
+  const c3 = createClient({ config, token: TOKEN, igUserId: IG_USER, fetchImpl: f3 });
+  await assert.rejects(
+    () => c3.containerStatus("17890010"),
+    (err) => {
+      assert.ok(err instanceof IgError);
+      assert.deepEqual([err.stage, err.code, err.tokenInvalid], ["status", 190, true]);
+      return true;
+    },
+  );
+  // a status body without status_code → statusCode null (the publisher keeps polling until pollMaxMs)
+  const f4 = scriptedFetch([{ id: "17890010" }]);
+  const c4 = createClient({ config, token: TOKEN, igUserId: IG_USER, fetchImpl: f4 });
+  assert.deepEqual(await c4.containerStatus("17890010"), { statusCode: null, status: null, raw: { id: "17890010" } });
+  assert.equal(FETCH_ATTEMPTS.length, 0);
+});
+
+test("refreshToken (design §3.4): GET https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=… — unversioned, as Meta documents it; → { accessToken, expiresIn, tokenType }; the new value is in the return value only (never in calls[]); a 190 → tokenInvalid; a body without access_token is an error", async () => {
+  const NEW = "IGQVJ-NEW-TOKEN-" + "n".repeat(60);
+  const fetchImpl = scriptedFetch([{ access_token: NEW, token_type: "bearer", expires_in: 5183944 }]);
+  const client = createClient({ config, token: TOKEN, igUserId: IG_USER, fetchImpl });
+  const r = await client.refreshToken();
+  assert.deepEqual(r, { accessToken: NEW, expiresIn: 5183944, tokenType: "bearer" });
+  assert.equal(REFRESH_PATH, "/refresh_access_token");
+  assert.equal(REFRESH_GRANT, "ig_refresh_token");
+  const u = new URL(fetchImpl.requests[0].url);
+  assert.equal(`${u.origin}${u.pathname}`, `${config.ig.host}/refresh_access_token`, "no version segment");
+  assert.ok(!u.pathname.includes(config.ig.version));
+  assert.equal(u.searchParams.get("grant_type"), "ig_refresh_token");
+  assert.equal(u.searchParams.get("access_token"), TOKEN, "the OLD token authenticates the refresh");
+  assert.equal(fetchImpl.requests[0].init.method, "GET");
+  assert.deepEqual(
+    client.calls.map((x) => [x.method, x.path, x.fields]),
+    [["GET", "/refresh_access_token", { grant_type: "ig_refresh_token" }]],
+  );
+  assert.ok(!JSON.stringify(client.calls).includes(NEW), "the new token never reaches calls[]");
+  assert.ok(!JSON.stringify(client.calls).includes(TOKEN));
+
+  const dead = createClient({ config, token: TOKEN, igUserId: IG_USER, fetchImpl: scriptedFetch([envelope(190, "Error validating access token: Session has expired")]) });
+  await assert.rejects(
+    () => dead.refreshToken(),
+    (err) => {
+      assert.ok(err instanceof IgError);
+      assert.deepEqual([err.code, err.tokenInvalid, err.retryable], [190, true, false]);
+      assert.ok(!err.message.includes(TOKEN));
+      return true;
+    },
+  );
+  const odd = createClient({ config, token: TOKEN, igUserId: IG_USER, fetchImpl: scriptedFetch([{ token_type: "bearer" }]) });
+  await assert.rejects(() => odd.refreshToken(), /response without access_token\/expires_in \(keys: token_type\)/);
+  const digits = createClient({ config, token: TOKEN, igUserId: IG_USER, fetchImpl: scriptedFetch([{ access_token: NEW, expires_in: "5184000" }]) });
+  assert.equal((await digits.refreshToken()).expiresIn, 5184000, "digit strings are accepted");
+  assert.equal(FETCH_ATTEMPTS.length, 0);
+});
+
+test("dry-run client mirrors the three: REELS container recorded, containerStatus IN_PROGRESS then FINISHED per container, refreshToken → a DRYRUN- token (never a real shape) with 60 days", async () => {
+  const client = createDryRunClient({ igUserId: IG_USER, stdout: null });
+  const c = await client.createReelContainer({ videoUrl: MP4, caption: "c", coverUrl: POSTER });
+  assert.match(c.id, /^dry-[0-9a-f]{8}$/);
+  assert.deepEqual(client.calls[0].fields, { media_type: "REELS", video_url: MP4, caption: "c", cover_url: POSTER, share_to_feed: "true" });
+  assert.equal((await client.containerStatus(c.id)).statusCode, "IN_PROGRESS");
+  assert.equal((await client.containerStatus(c.id)).statusCode, "FINISHED");
+  assert.equal((await client.containerStatus(c.id)).statusCode, "FINISHED", "stays finished");
+  assert.equal((await client.containerStatus("another")).statusCode, "IN_PROGRESS", "per container");
+  assert.deepEqual(client.calls[1].fields, { fields: "status_code,status" });
+  const r = await client.refreshToken();
+  assert.match(r.accessToken, /^DRYRUN-dry-[0-9a-f]{8}-0{48}$/);
+  assert.equal(r.expiresIn, DRY_REFRESH_EXPIRES_IN);
+  assert.equal(DRY_REFRESH_EXPIRES_IN, 5184000);
+  assert.deepEqual(client.calls.at(-1).fields, { grant_type: "ig_refresh_token" });
   assert.equal(FETCH_ATTEMPTS.length, 0);
 });

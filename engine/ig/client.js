@@ -5,14 +5,19 @@
 //     .createImageContainer({ imageUrl, caption, altText })  POST /{igUserId}/media            image_url, caption, alt_text
 //     .createCarouselItem({ imageUrl, altText })          POST /{igUserId}/media            image_url, is_carousel_item=true, alt_text
 //     .createCarousel({ children, caption })              POST /{igUserId}/media            media_type=CAROUSEL, children, caption
+//     .createReelContainer({ videoUrl, caption, coverUrl, shareToFeed })  POST /{igUserId}/media  media_type=REELS, video_url, caption, cover_url, share_to_feed
+//     .containerStatus(containerId)                       GET  /{containerId}?fields=status_code,status   (reels: poll until FINISHED)
 //     .publish(creationId)                                POST /{igUserId}/media_publish    creation_id
 //     .getPermalink(mediaId)                              GET  /{mediaId}?fields=permalink,timestamp
 //     .getMe()                                            GET  /me?fields=id,user_id,username
+//     .refreshToken()                                     GET  /refresh_access_token?grant_type=ig_refresh_token  (unversioned, as Meta documents it)
 //
 // Base URL is `${ig.host}/${ig.version}` (config.json; v26.0 verified against Meta's changelog on
 // 2026-10-10). Every request aborts after 30 s. The token travels ONLY as the `access_token` form field
 // (POST) or query parameter (GET) — never in a header, a path, an Error or a log line: every message is
 // passed through log.scrub() with the token, and the recorded `calls[]` carry the fields without it.
+// refreshToken() returns the NEW token value to the caller in memory only (design §3.4): it is never put
+// into calls[], a log line or an error; engine/commands/refresh-tokens.js pipes it to `gh secret set`.
 //
 // Failures are IgError instances carrying Meta's envelope ({ code, error_subcode, message, type,
 // fbtrace_id }) plus the publisher's reading of it (classifyError): which `stage` to record on the
@@ -30,6 +35,12 @@ export const PARAM_ERROR_CODES = [100];
 export const TOKEN_ERROR_CODES = [190, 10, 200];
 export const RATE_LIMIT_CODES = [4, 17, 32, 613, 9007];
 export const ERROR_KINDS = ["media_fetch", "param", "token", "rate_limit", "network", "other"];
+// Container status_code values (design §9 step 2): the Publisher polls a REELS container until FINISHED;
+// ERROR and EXPIRED end the attempt; PUBLISHED means an earlier run already published it.
+export const CONTAINER_STATUS_CODES = ["EXPIRED", "ERROR", "FINISHED", "IN_PROGRESS", "PUBLISHED"];
+// Unversioned Graph endpoint (https://graph.instagram.com/refresh_access_token, Meta's reference page shows no version segment).
+export const REFRESH_PATH = "/refresh_access_token";
+export const REFRESH_GRANT = "ig_refresh_token";
 
 export class IgError extends Error {
   // new IgError({ code, subcode, message, stage, status, type, fbtraceId, secrets })
@@ -106,20 +117,22 @@ export function createClient({ config, token, igUserId, fetchImpl = globalThis.f
   requireString("token", token);
   requireString("igUserId", igUserId);
   if (typeof fetchImpl !== "function") throw new TypeError("ig: fetchImpl must be a function");
-  const base = `${String(config.ig.host).replace(/\/+$/, "")}/${config.ig.version}`;
+  const host = String(config.ig.host).replace(/\/+$/, "");
+  const base = `${host}/${config.ig.version}`;
   const secrets = [token];
   const calls = [];
   const fetchWithTimeout = withTimeout(fetchImpl, timeoutMs);
   const clock = () => (typeof now === "function" ? now() : now);
 
   // One request → parsed JSON; throws IgError (scrubbed) on network failure, non-2xx or an error envelope.
-  async function request(method, path, fields, stage) {
+  // `unversioned` requests go to the host root (refresh_access_token has no version segment).
+  async function request(method, path, fields, stage, { unversioned = false } = {}) {
     const clean = {};
     for (const [k, v] of Object.entries(fields || {})) if (v !== undefined && v !== null && k !== "access_token") clean[k] = typeof v === "boolean" ? String(v) : String(v);
     calls.push({ method, path, fields: clean, at: clock().toISOString() });
     if (log) log(`[ig] ${method} ${path} ${Object.keys(clean).join(",")}`);
     const params = new URLSearchParams({ ...clean, access_token: token });
-    let url = `${base}${path}`;
+    let url = `${unversioned ? host : base}${path}`;
     const init = { method, headers: { accept: "application/json" } };
     if (method === "GET") url += `?${params.toString()}`;
     else {
@@ -185,6 +198,20 @@ export function createClient({ config, token, igUserId, fetchImpl = globalThis.f
       const json = await request("POST", `/${igUserId}/media`, { media_type: "CAROUSEL", children: children.join(","), caption }, "container");
       return { id: idOf(json, "carousel container", "container") };
     },
+    // Reel (design §9 column "Reel", P2-03): the video is fetched by Instagram from video_url (the preflighted
+    // raw/Pages URL of the MP4), cover_url is the poster JPEG, share_to_feed puts the reel on the grid too.
+    async createReelContainer({ videoUrl, caption, coverUrl, shareToFeed = true }) {
+      requireString("videoUrl", videoUrl);
+      const json = await request("POST", `/${igUserId}/media`, { media_type: "REELS", video_url: videoUrl, caption, cover_url: coverUrl, share_to_feed: shareToFeed }, "container");
+      return { id: idOf(json, "reel container", "container") };
+    },
+    // → { statusCode: 'FINISHED'|'IN_PROGRESS'|'ERROR'|'EXPIRED'|'PUBLISHED'|null, status: '<free text or null>', raw }
+    async containerStatus(containerId) {
+      requireString("containerId", containerId);
+      const json = await request("GET", `/${containerId}`, { fields: "status_code,status" }, "status");
+      const code = typeof json.status_code === "string" ? json.status_code.toUpperCase() : null;
+      return { statusCode: code, status: typeof json.status === "string" ? json.status : null, raw: json };
+    },
     async publish(creationId) {
       requireString("creationId", creationId);
       const json = await request("POST", `/${igUserId}/media_publish`, { creation_id: creationId }, "publish");
@@ -198,6 +225,19 @@ export function createClient({ config, token, igUserId, fetchImpl = globalThis.f
     async getMe() {
       const json = await request("GET", "/me", { fields: "id,user_id,username" }, "skip");
       return { id: json.id === undefined ? null : String(json.id), user_id: json.user_id === undefined ? null : String(json.user_id), username: json.username === undefined ? null : String(json.username) };
+    },
+    // Refreshes the long-lived token this client holds (design §3.4; Meta: ≥ 24 h old, unexpired, valid for 60 days
+    // from the refresh). → { accessToken, expiresIn (seconds), tokenType }. The new value exists only in this
+    // return value: calls[], logs and IgError messages never carry it (the old token is scrubbed; the new one is
+    // scrubbed by the caller's logger once it knows it). A code 190 here means the stored token is dead.
+    async refreshToken() {
+      const json = await request("GET", REFRESH_PATH, { grant_type: REFRESH_GRANT }, "skip", { unversioned: true });
+      const accessToken = typeof json.access_token === "string" ? json.access_token : "";
+      const expiresIn = intOrNull(json.expires_in);
+      if (!accessToken || expiresIn === null || expiresIn <= 0) {
+        throw new IgError({ message: `ig GET ${REFRESH_PATH}: response without access_token/expires_in (keys: ${Object.keys(json).join(",") || "none"})`, stage: "skip", status: 200, secrets });
+      }
+      return { accessToken, expiresIn, tokenType: typeof json.token_type === "string" ? json.token_type : null };
     },
   };
 }

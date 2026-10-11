@@ -166,6 +166,9 @@ strong { font-weight: 650; }
 .empty { font-size: var(--fs-sm); color: var(--ink-2); border: 1px dashed var(--rule-2); border-radius: var(--radius); padding: 1rem; margin: 0; }
 .flag { margin: 0; font-size: var(--fs-sm); color: var(--warn); border-left: 3px solid var(--warn); padding: 0.25rem 0 0.25rem 0.75rem; }
 .flags { display: grid; gap: 0.5rem; }
+/* Home banners span the hero (span-all) and, on monitors, flow into columns so a band of several sentences
+   fills the width instead of stacking into a tall, half-empty strip (OF-4). The admin keeps the plain stack. */
+@media (min-width: 64em) { .hero .flags { grid-template-columns: repeat(auto-fit, minmax(26rem, 1fr)); gap: 0.5rem 1.5rem; align-content: start; } }
 
 .grid { display: grid; gap: 1rem; }
 .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr; }
