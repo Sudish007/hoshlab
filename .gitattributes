@@ -1,0 +1,12 @@
+# Hoshlab is LF-only on every host (the engine commits state from a Linux runner; the owner's machine is Windows with a
+# system-wide core.autocrlf=true). Pin it in the repo so the two never disagree and `git status` stays quiet.
+* text=auto eol=lf
+
+# Binaries: never normalised, never diffed as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.woff2 binary
+*.woff binary
+*.mp4 binary
