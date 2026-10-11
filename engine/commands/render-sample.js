@@ -1,18 +1,23 @@
 // render-sample (plan D19 — live proof without owner keys):
-//   node engine/index.js render-sample --page <handle> [--out <dir>] [--format image|carousel]
+//   node engine/index.js render-sample --page <handle> [--out <dir>] [--format image|carousel|reel] [--style kinetic|capture]
 // Renders the matching fixture draft from tests/fixtures/drafts/ (or, for a format the page has no draft
 // fixture for, the page's tests/fixtures/llm/writer.ok*.json output) into <out or .media>/media/sample-<handle>/
-// and records the files in <out>/index.json under "sample-<handle>" with sample:true, so the verify step can
-// push the media branch and prove the raw/Pages URLs. Writes NOTHING under company/. Prints every file's
-// path, bytes and dimensions. Exit 0 rendered · 1 refused/unavailable · 2 usage.
+// (reels: sample-<handle>-reel/) and records the files in <out>/index.json under that key with sample:true, so
+// the verify step can push the media branch and prove the raw/Pages URLs. Writes NOTHING under company/.
+// Prints every file's path, bytes and dimensions. Exit 0 rendered · 1 refused/unavailable/deferred · 2 usage.
+// --format reel (FEAT-201) takes the page's tests/fixtures/drafts/<prefix>-reel-*.json; --style overrides the
+// draft's reel.style (capture records the LIVE product site, so it needs the network; kinetic is offline).
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import { loadCompany } from "../../src/lib/company.js";
 import { updateIndex } from "../lib/media.js";
+import { REEL_STYLES } from "../lib/schema.js";
 import { nowIst } from "../lib/time.js";
+import { CaptureError } from "../render/capture.js";
 import { RenderError, RenderUnavailableError, createRenderer } from "../render/render.js";
 
-export const FORMATS = ["image", "carousel"];
+export const FORMATS = ["image", "carousel", "reel"];
+export const STYLES = REEL_STYLES;
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8").replace(/^\uFEFF/, ""));
@@ -42,8 +47,10 @@ export function sampleDraft({ root, page, format }) {
     delete base.artwork;
     delete base.slides;
     delete base.altTexts;
+    delete base.reel;
     if (format === "carousel" && Array.isArray(out.slides)) return { ...base, slides: out.slides, altTexts: out.slides.map((s) => s.altText) };
     if (format === "image" && out.artwork) return { ...base, artwork: out.artwork };
+    if (format === "reel" && out.reel) return { ...base, reel: out.reel };
   }
   return null;
 }
@@ -65,6 +72,15 @@ export async function run({ root, companyDir, flags = {}, stdout = console.log, 
     stderr(`render-sample: --format must be one of ${FORMATS.join("|")}, got ${format}`);
     return 2;
   }
+  const style = flags.style === undefined ? null : String(flags.style);
+  if (style !== null && !STYLES.includes(style)) {
+    stderr(`render-sample: --style must be one of ${STYLES.join("|")}, got ${style}`);
+    return 2;
+  }
+  if (style !== null && format !== "reel") {
+    stderr("render-sample: --style applies to --format reel only");
+    return 2;
+  }
   let company;
   try {
     company = loadCompany({ companyDir, warn: (m) => stderr(`warn: ${m}`) });
@@ -82,12 +98,13 @@ export async function run({ root, companyDir, flags = {}, stdout = console.log, 
     stderr(`render-sample: --out ${out} is inside the company folder; render-sample never writes under company/`);
     return 2;
   }
-  const draft = sampleDraft({ root, page, format });
+  let draft = sampleDraft({ root, page, format });
   if (!draft) {
     stderr(`render-sample: no fixture draft for ${page}${format ? ` in format ${format}` : ""} under tests/fixtures/ — not built yet`);
     return 2;
   }
-  const key = `sample-${page}`;
+  if (draft.format === "reel" && style) draft = { ...draft, reel: { ...draft.reel, style } };
+  const key = draft.format === "reel" ? `sample-${page}-reel` : `sample-${page}`;
   const relDir = `media/${key}/`;
   const outDir = join(out, "media", key);
   const r = renderer || createRenderer();
@@ -95,16 +112,25 @@ export async function run({ root, companyDir, flags = {}, stdout = console.log, 
     const result = await r.renderDraft(draft, brand, { outDir, relDir });
     const at = nowIst();
     updateIndex(out, key, result.media.map((m) => m.file), { sample: true, page, format: draft.format, at });
-    for (const m of result.media) stdout(`${join(outDir, m.file)}  ${m.bytes} bytes  ${m.width}x${m.height}  sha256 ${m.sha256.slice(0, 8)}…  variant ${m.variant}${m.palette ? ` · ${m.palette}` : ""}  minTextU ${m.minTextU}  minContrast ${m.minContrast}`);
-    stdout(`render-sample: ${page} ${draft.format} (${draft.id}) → ${result.media.length} file${result.media.length === 1 ? "" : "s"} under ${outDir}; index ${join(out, "index.json")} [${key}] sample:true`);
+    for (const m of result.media) {
+      const extra = m.kind === "video" ? `  ${m.durationSec} s  ${m.probe ? `${m.probe.codec} ${m.probe.pixFmt} ${m.probe.frameRate}${m.probe.faststart ? " faststart" : ""}` : ""}` : `  variant ${m.variant}${m.palette ? ` · ${m.palette}` : ""}  minTextU ${m.minTextU}  minContrast ${m.minContrast}`;
+      stdout(`${join(outDir, m.file)}  ${m.bytes} bytes  ${m.width}x${m.height}  sha256 ${m.sha256.slice(0, 8)}…${extra}`);
+    }
+    const what = draft.format === "reel" ? `reel ${result.style} (${draft.id}, ${result.scenes} scenes, ${result.durationSec} s, ${result.frames} frames)` : `${draft.format} (${draft.id})`;
+    stdout(`render-sample: ${page} ${what} → ${result.media.length} file${result.media.length === 1 ? "" : "s"} under ${outDir}; index ${join(out, "index.json")} [${key}] sample:true`);
     return 0;
   } catch (err) {
     if (err instanceof RenderError) {
       stderr(`render-sample: ${page} ${draft.format} refused — ${err.code}: ${err.detail}`);
       return 1;
     }
+    if (err instanceof CaptureError) {
+      stderr(`render-sample: ${page} reel capture deferred — ${err.code}: ${err.detail}`);
+      return 1;
+    }
     if (err instanceof RenderUnavailableError) {
-      stderr(`render-sample: renderer unavailable — ${err.message}`);
+      // code ffmpeg: the message already ends in '— reel: untested' (ffmpeg/ffprobe missing or the probe failed)
+      stderr(err.code === "ffmpeg" ? `render-sample: ${page} reel deferred — ${err.message}` : `render-sample: renderer unavailable — ${err.message}`);
       return 1;
     }
     throw err;

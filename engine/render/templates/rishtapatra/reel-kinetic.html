@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RishtaPatra · reel kinetic 1080×1920</title>
+<link rel="stylesheet" href="../common.css">
+</head>
+<body>
+<!-- RishtaPatra kinetic reel (design §10, plan D17, FEAT-201): brand row, gold rule, the scene text typing on in
+     Cormorant Garamond (Hindi runs in Tiro Devanagari Hindi) over cream, scene counter, progress bar, footer.
+     Every frame is window.setProgress(t) (reel.js). Tokens: company/brands/rishtapatra.md -->
+<div id="canvas" class="post post-rp reel reel-kinetic" data-palette="cream and maroon">
+  <div class="brand-row">
+    <svg viewBox="0 0 104 110" aria-hidden="true" focusable="false">
+      <defs><clipPath id="rp-clip"><path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z"/></clipPath></defs>
+      <rect x="4" y="7" width="96" height="96" rx="24" fill="#7a1f2b"/>
+      <g transform="translate(21.4 21.7) scale(0.45)">
+        <path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z" fill="#fff8ee" opacity="0.92"/>
+        <path d="M74 0V26H100Z" fill="#e6cf8a"/>
+        <g transform="translate(36 28)"><path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z" fill="#fff8ee"/><path d="M74 0V26H100Z" fill="#e6cf8a"/></g>
+        <g clip-path="url(#rp-clip)"><path transform="translate(36 28)" d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z" fill="#c9a227"/></g>
+      </g>
+    </svg>
+    <span class="word" id="word"></span><span class="word-hi" lang="hi" id="word-hi"></span>
+  </div>
+  <div class="rule" aria-hidden="true"></div>
+  <div class="scene-wrap">
+    <h2 class="headline scene-text" id="scene-text" data-variant="A"></h2>
+  </div>
+  <div class="scene-meta"><span id="counter"></span><span id="meta-right"></span></div>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+  <div class="foot"><span id="foot-left"></span><span class="ig-handle" id="foot-right"></span></div>
+</div>
+<span class="caret" id="caret" aria-hidden="true" hidden></span>
+<script src="../common.js"></script>
+<script src="../reel.js"></script>
+<script>
+(function () {
+  var H = window.HOSHLAB;
+  var brand = window.__BRAND__ || {};
+  var canvas = document.getElementById("canvas");
+  H.applyTokens(canvas, window.__TOKENS__);
+  document.getElementById("word").textContent = brand.name || "";
+  var wordHi = document.getElementById("word-hi");
+  if (brand.nameDevanagari) wordHi.textContent = brand.nameDevanagari; else wordHi.hidden = true;
+  document.getElementById("meta-right").textContent = "Reel";
+  H.setText(document.getElementById("foot-left"), H.siteHost(brand.site));
+  document.getElementById("foot-right").textContent = brand.handle ? "@" + brand.handle : "";
+  window.HOSHLAB_REEL.initKinetic({
+    textEl: document.getElementById("scene-text"),
+    caretEl: document.getElementById("caret"),
+    counterEl: document.getElementById("counter"),
+    barEl: document.getElementById("bar"),
+  });
+})();
+</script>
+</body>
+</html>

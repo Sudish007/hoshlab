@@ -1,0 +1,37 @@
+{
+  "note": "Rejected: an audio-only file.",
+  "streams": [
+    {
+      "index": 0,
+      "codec_name": "aac",
+      "codec_type": "audio",
+      "sample_rate": "48000",
+      "channels": 2,
+      "duration": "16.000000"
+    }
+  ],
+  "format": {
+    "filename": "out.mp4",
+    "nb_streams": 1,
+    "nb_programs": 0,
+    "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+    "format_long_name": "QuickTime / MOV",
+    "start_time": "0.000000",
+    "duration": "16.000000",
+    "size": "2457600",
+    "bit_rate": "1228800",
+    "probe_score": 100,
+    "tags": {
+      "major_brand": "isom",
+      "minor_version": "512",
+      "compatible_brands": "isomiso2avc1mp41",
+      "encoder": "Lavf60.16.100"
+    }
+  },
+  "faststart": {
+    "ok": true,
+    "moovOffset": 40,
+    "mdatOffset": 3896,
+    "source": "trace"
+  }
+}

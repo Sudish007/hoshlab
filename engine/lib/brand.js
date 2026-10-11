@@ -13,6 +13,8 @@
 //   ## Tokens                 - colour <name>: #rrggbb — <source>   also font/Devanagari/logo/gradient/note
 //   ## Allowed domains        - host
 //   ## Formats                - <format>: template <name> — <notes>
+//                             - capture: verified YYYY-MM-DD — <notes>, then indented `- `/path` — <source>` bullets:
+//                               the public product paths a capture reel may record (FEAT-201, plan D17)
 // Every `source` cell is `<repo-folder>/<path>:<range>(,<range>)*` joined by ' ; ' (SOURCE_RE).
 import { SOURCE_RE, parseSource } from "./schema.js";
 
@@ -199,21 +201,50 @@ function parseAllowedDomains(lines) {
   return bullets(lines).map(stripTicks).map((d) => d.toLowerCase()).filter(Boolean);
 }
 
+// ## Formats: top-level bullets `- <format>: template <name> — <notes>` plus, for reels (FEAT-201, plan D17),
+// `- capture: verified YYYY-MM-DD — <notes>` followed by indented bullets, one public product path each:
+//   `  - \`/kundali\` — shubhpatra/src/lib/routes.ts:12`   (path on the brand's allowed domain — source pointer)
+// → { formats: { image: { template, notes }, … }, capture: { verifiedAt, notes, paths: [{ path, source }] } | null }
 function parseFormats(lines) {
-  const out = {};
-  for (const b of bullets(lines)) {
-    const m = /^([a-z]+):\s*(.*)$/.exec(b);
-    if (!m) continue;
-    let rest = m[2].trim();
-    let template = null;
-    const t = /^template\s+`?([\w-]+)`?\s*(?:—\s*)?(.*)$/.exec(rest);
-    if (t) {
-      template = t[1];
-      rest = t[2].trim();
+  const formats = {};
+  let capture = null;
+  let inCapture = false;
+  for (const raw of lines) {
+    const top = /^[-*] (.*)$/.exec(raw);
+    const nested = /^\s+[-*] (.*)$/.exec(raw);
+    if (top) {
+      const b = top[1].trim();
+      const m = /^([a-z]+):\s*(.*)$/.exec(b);
+      inCapture = false;
+      if (!m) continue;
+      let rest = m[2].trim();
+      if (m[1] === "capture") {
+        inCapture = true;
+        let verifiedAt = null;
+        const v = /^verified\s+(\d{4}-\d{2}-\d{2})\s*(?:—\s*)?(.*)$/.exec(rest);
+        if (v) {
+          verifiedAt = v[1];
+          rest = v[2].trim();
+        }
+        capture = { verifiedAt, notes: rest, paths: [] };
+        continue;
+      }
+      let template = null;
+      const t = /^template\s+`?([\w-]+)`?\s*(?:—\s*)?(.*)$/.exec(rest);
+      if (t) {
+        template = t[1];
+        rest = t[2].trim();
+      }
+      formats[m[1]] = { template, notes: rest };
+    } else if (nested && inCapture && capture) {
+      const b = nested[1].trim();
+      const dash = b.lastIndexOf(" — ");
+      const path = stripTicks(dash >= 0 ? b.slice(0, dash) : b);
+      const source = dash >= 0 ? stripTicks(b.slice(dash + 3)) : null;
+      capture.paths.push({ path, source });
     }
-    out[m[1]] = { template, notes: rest };
   }
-  return out;
+  return { formats, capture };
 }
 
 // parseBrand(markdown) → structured brand; throws BrandError only when the file has no front matter.
@@ -227,6 +258,7 @@ export function parseBrand(markdown, file = "brand.md") {
   const body = lines.slice(end + 1);
   const sections = splitSections(body);
   const get = (name) => sections.get(name) || [];
+  const { formats, capture } = parseFormats(get("Formats"));
   return {
     file,
     frontMatter,
@@ -238,7 +270,8 @@ export function parseBrand(markdown, file = "brand.md") {
     forbidden: parseForbidden(get("Forbidden")),
     tokens: parseTokens(get("Tokens")),
     allowedDomains: parseAllowedDomains(get("Allowed domains")),
-    formats: parseFormats(get("Formats")),
+    formats,
+    capture,
   };
 }
 
@@ -333,7 +366,29 @@ export function validateBrand(parsed) {
     if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(d)) errors.push(`Allowed domains: ${JSON.stringify(d)} is not a bare host`);
   });
   if (Object.keys(parsed.formats).length === 0) errors.push("Formats: empty");
+  // Reel capture list (FEAT-201): the reel format needs it; every path is a site-relative path (optionally with
+  // a #fragment) that stays on the brand's own domain, carries a source pointer, and the list is dated.
+  const cap = parsed.capture;
+  if (parsed.formats.reel && !cap) errors.push("Formats: reel listed but no `capture:` list of public product paths");
+  if (cap) {
+    if (!cap.verifiedAt) errors.push("Formats capture: missing 'verified YYYY-MM-DD'");
+    else if (!DATE_RE.test(cap.verifiedAt)) errors.push(`Formats capture: verified date ${JSON.stringify(cap.verifiedAt)} is not YYYY-MM-DD`);
+    if (cap.paths.length === 0) errors.push("Formats capture: no paths");
+    const seen = new Set();
+    cap.paths.forEach((p, i) => {
+      const where = `Formats capture path ${i + 1}${p.path ? ` (${p.path})` : ""}`;
+      if (!/^\/(?:[\w.~-]+\/?)*(?:#[\w-]+)?$/.test(p.path)) errors.push(`${where}: expected a site-relative path like /kundali or /#pricing`);
+      if (seen.has(p.path)) errors.push(`${where}: duplicate path`);
+      seen.add(p.path);
+      checkSource(p.source, where, errors);
+    });
+  }
   return errors;
+}
+
+// capturePaths(parsed) → ['/', '/kundali', …] — the public product paths a capture reel may record (FEAT-201).
+export function capturePaths(parsed) {
+  return parsed && parsed.capture ? parsed.capture.paths.map((p) => p.path) : [];
 }
 
 export function assertBrand(parsed) {

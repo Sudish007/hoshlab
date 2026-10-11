@@ -94,16 +94,18 @@ test("isApproved requires an approve record for the draft's current revision", (
   assert.equal(isApproved({ revision: 2 }, undefined), false);
 });
 
-test("N2: cadenceLine counts posts and carousels from the cadence and reels only when features.reels", () => {
-  assert.equal(cadenceLine(page("rishtapatra"), config.features), "3 posts / week · 1 carousel");
-  assert.equal(cadenceLine(page("kaatdo"), config.features), "3 posts / week · 1 carousel");
-  assert.equal(cadenceLine(page("job_rez"), config.features), "4 posts / week · 1 carousel");
-  const withReel = { cadence: { slots: [...page("rishtapatra").cadence.slots, { dow: "sun", time: "11:00", format: "reel" }] } };
+test("N2: cadenceLine counts posts and carousels from the cadence and reels only when features.reels (true since FEAT-201: '· 1 reel' per page)", () => {
+  assert.equal(config.features.reels, true);
+  assert.equal(cadenceLine(page("rishtapatra"), config.features), "4 posts / week · 1 carousel · 1 reel");
+  assert.equal(cadenceLine(page("kaatdo"), config.features), "4 posts / week · 1 carousel · 1 reel");
+  assert.equal(cadenceLine(page("job_rez"), config.features), "5 posts / week · 1 carousel · 1 reel");
+  assert.equal(cadenceLine(page("rishtapatra"), { reels: false }), "3 posts / week · 1 carousel", "the reel slot is not counted while reels are off");
+  const withReel = { cadence: { slots: [...page("rishtapatra").cadence.slots.filter((s) => s.format !== "reel"), { dow: "sun", time: "11:00", format: "reel" }] } };
   assert.equal(cadenceLine(withReel, { reels: false }), "3 posts / week · 1 carousel", "a reel slot is not counted while reels are off");
   assert.equal(cadenceLine(withReel, { reels: true }), "4 posts / week · 1 carousel · 1 reel");
   assert.equal(cadenceLine({ cadence: { slots: [{ dow: "mon", time: "09:00", format: "image" }] } }), "1 post / week");
   assert.equal(cadenceLine({ cadence: { slots: [{ dow: "mon", time: "09:00", format: "carousel" }, { dow: "wed", time: "09:00", format: "carousel" }] } }), "2 posts / week · 2 carousels");
-  for (const p of config.pages) assert.ok(!cadenceLine(p, config.features).includes("reel"), p.handle);
+  for (const p of config.pages) assert.equal((cadenceLine(p, config.features).match(/reel/g) || []).length, p.cadence.slots.filter((s) => s.format === "reel").length, p.handle);
 });
 
 test("flagSentence: one plain sentence per status flag, unknown flags throw", () => {

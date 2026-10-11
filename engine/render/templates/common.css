@@ -136,3 +136,52 @@ body { width: 1080px; }
 .post-jr .dots i { background: var(--c-line); }
 .post-jr .dots i.on { background: var(--c-violet); }
 .post-jr.slide-recap .foot { margin-top: auto; }
+
+/* ---------- Reels, 1080×1920 (design §10, FEAT-201; templates <brand>/reel-kinetic.html + reel-capture.html) ----------
+   Every frame is a deterministic function of window.setProgress(t) (reel.js): no CSS animations or transitions
+   may run, so a frame screenshotted twice is byte-identical. --u stays 1/1080 of the width; the text floor,
+   contrast and per-script rules apply to every scene (layout() measures each scene in turn). */
+#canvas.reel { height: 1920px; }
+#canvas.reel, #canvas.reel * { transition: none !important; animation: none !important; }
+.reel .scene-wrap { margin: auto 0; padding: calc(var(--u) * 40) 0; }
+.reel .scene-text { overflow-wrap: normal; }
+/* the type-on caret is a painted block, not a glyph (nothing for the coverage table to miss) */
+.reel .caret { display: inline-block; width: calc(var(--u) * 10); height: 0.82em; vertical-align: -0.06em; margin-left: calc(var(--u) * 12); }
+.reel .scene-meta { display: flex; justify-content: space-between; align-items: center; margin-top: calc(var(--u) * 48); font-size: calc(var(--u) * 30); letter-spacing: 0.18em; text-transform: uppercase; }
+.reel .progress { height: calc(var(--u) * 6); width: 100%; margin-top: calc(var(--u) * 24); }
+.reel .progress i { display: block; height: 100%; width: 0; }
+.reel .foot { margin-top: calc(var(--u) * 48); }
+/* capture: the product's own screen inside a phone-shaped frame (9:16 like the 1080×1920 shots) */
+.reel .phone { width: calc(var(--u) * 594); height: calc(var(--u) * 1056); margin: calc(var(--u) * 48) auto 0; border-radius: calc(var(--u) * 54); padding: calc(var(--u) * 14); flex: none; }
+.reel .screen { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: calc(var(--u) * 42); background: #ffffff; }
+.reel .screen img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; transform-origin: 50% 50%; display: block; }
+.reel .caption { margin-top: calc(var(--u) * 44); font-size: calc(var(--u) * 54); line-height: 1.22; min-height: calc(var(--u) * 132); }
+.reel .caption-wrap { margin: auto 0; }
+/* RishtaPatra */
+.post-rp.reel .scene-text { font-family: var(--font-display); font-weight: 700; color: var(--c-brand); letter-spacing: -0.01em; }
+.post-rp.reel .scene-text [lang="hi"] { font-weight: 400; }
+.post-rp.reel .caret { background: var(--c-accent); }
+.post-rp.reel .scene-meta { color: var(--c-ink-2); }
+.post-rp.reel .progress { background: var(--c-line); }
+.post-rp.reel .progress i { background: var(--c-brand); }
+.post-rp.reel .phone { background: var(--c-brand); }
+.post-rp.reel .caption { font-family: var(--font-display); font-weight: 700; color: var(--c-brand); }
+.post-rp.reel .caption [lang="hi"] { font-weight: 400; }
+/* KaatDo */
+.post-kd.reel .scene-text { font-weight: 700; color: var(--c-txt); letter-spacing: -0.02em; margin-top: 0; }
+.post-kd.reel .scene-text [lang="hi"] { color: var(--c-red); font-weight: 700; }
+.post-kd.reel .caret { background: var(--c-green); }
+.post-kd.reel .scene-meta { font-family: var(--font-mono); color: var(--c-dim); letter-spacing: 0.2em; }
+.post-kd.reel .progress { background: var(--c-edge); }
+.post-kd.reel .progress i { background: var(--c-green); }
+.post-kd.reel .phone { background: var(--c-edge2); }
+.post-kd.reel .caption { color: var(--c-txt); font-weight: 500; }
+.post-kd.reel .caption [lang="hi"] { color: var(--c-red); }
+/* JobRez */
+.post-jr.reel .scene-text { font-family: var(--font-display); font-weight: 800; color: var(--c-ink); letter-spacing: -0.035em; margin-top: 0; line-height: 1.04; }
+.post-jr.reel .caret { background: var(--c-violet); }
+.post-jr.reel .scene-meta { font-family: var(--font-mono); color: var(--c-muted); letter-spacing: 0.08em; }
+.post-jr.reel .progress { background: var(--c-line); }
+.post-jr.reel .progress i { background: var(--c-violet); }
+.post-jr.reel .phone { background: var(--c-ink); }
+.post-jr.reel .caption { font-family: var(--font-display); font-weight: 800; color: var(--c-ink); letter-spacing: -0.02em; }

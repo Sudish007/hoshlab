@@ -1,0 +1,38 @@
+{
+  "id": "jr-reel-2026-10-16-templates",
+  "page": "job_rez",
+  "ideaId": "jr-i0004",
+  "slotId": "job_rez-2026-10-16-1230",
+  "slotAt": "2026-10-16T12:30:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "written",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-13T05:33:00+05:30",
+  "updatedAt": "2026-10-13T05:33:00+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261013-0531-f1e2d3",
+  "caption": "Nine templates. Three are free.\nTeXline, Stack First and Campus One are free. Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact and Executive Mono are Pro. Nova has a one-column or two-column switch.\nExport to PDF or plain text — free, unlimited and watermark-free on the free plan. Word export is Pro.\nSix layout rules are measured on the rendered page after every edit. Not a certification against any ATS vendor.\njobrez.com",
+  "hashtags": ["#JobRez", "#Resume", "#ResumeTemplates", "#JobSearch"],
+  "altText": "Reel: Nine templates. Three are free. Ink type on cream with the JobRez mark.",
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      { "text": "Nine templates. Three are free.", "seconds": 4 },
+      { "text": "TeXline, Stack First and Campus One cost nothing.", "seconds": 4 },
+      { "text": "PDF and plain-text export: free and watermark-free.", "seconds": 4 },
+      { "text": "Build the resume. Land the job. jobrez.com", "seconds": 4 }
+    ]
+  },
+  "factsUsed": [
+    { "factId": "jr-f10", "quote": "Nine templates: TeXline, Stack First, Campus One (free); Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact, Executive Mono (Pro)" },
+    { "factId": "jr-f09", "quote": "PDF and plain-text export are unlimited and watermark-free on the free plan" },
+    { "factId": "jr-f02", "quote": "Build the resume. Land the job." }
+  ],
+  "writerNote": "Kinetic reel: template count, the free three, the export rule, the tagline with the site as the closing scene. No exclamation marks, no country tokens.",
+  "media": [],
+  "publishAttempts": []
+}

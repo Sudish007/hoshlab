@@ -29,8 +29,9 @@ for (const [label, config] of Object.entries(configs)) {
     assert.equal(config.schedule.actionsDelayNote, "Actions cron may start 10–30 min late");
   });
 
-  test(`${label}: N3 features.reels present and false; D9/M15 defaults; ig.version pinned with its source (D5)`, () => {
-    assert.equal(config.features.reels, false);
+  test(`${label}: N3 features.reels present and true (Phase 2, plan D22); defaults.reel 15–30 s with 3–6 scenes per style; D9/M15 defaults; ig.version pinned with its source (D5)`, () => {
+    assert.equal(config.features.reels, true);
+    assert.deepEqual(config.defaults.reel, { minSec: 15, maxSec: 30, kineticScenes: [3, 6], captureScenes: [3, 6] });
     assert.equal(config.defaults.expireAfterHours, 48);
     assert.equal(config.defaults.altTextMax, 100);
     assert.equal(config.defaults.captionMax, 2200);
@@ -47,9 +48,10 @@ for (const [label, config] of Object.entries(configs)) {
     assert.equal(config.site.url, "https://sudish007.github.io/hoshlab");
   });
 
-  test(`${label}: cadence — slots ≤ 7/week per page, every slot.format ∈ page.formats, no reel slots while features.reels is false, unique handles/prefixes`, () => {
+  test(`${label}: cadence — slots ≤ 7/week per page, every slot.format ∈ page.formats, exactly one reel slot per page (plan D22: Sat 19:30 / Sun 11:00 / Fri 12:30), unique handles/prefixes`, () => {
     const handles = new Set();
     const prefixes = new Set();
+    const reelSlots = {};
     for (const page of config.pages) {
       assert.ok(!handles.has(page.handle), `duplicate handle ${page.handle}`);
       assert.ok(!prefixes.has(page.prefix), `duplicate prefix ${page.prefix}`);
@@ -61,6 +63,7 @@ for (const [label, config] of Object.entries(configs)) {
         if (!config.features.reels) assert.notEqual(slot.format, "reel", `${page.handle}: reel slot while features.reels is false`);
         assert.match(slot.time, /^(?:[01]\d|2[0-3]):[0-5]\d$/);
       }
+      reelSlots[page.handle] = page.cadence.slots.filter((s) => s.format === "reel").map((s) => `${s.dow} ${s.time}`);
       assert.equal(page.mode, "approve_first");
       assert.equal(page.igUserId, "");
       assert.equal(page.appScopedId, "");
@@ -68,9 +71,25 @@ for (const [label, config] of Object.entries(configs)) {
     }
     assert.deepEqual([...handles], ["rishtapatra", "kaatdo", "job_rez"]);
     assert.deepEqual([...prefixes], ["rp", "kd", "jr"]);
-    assert.equal(config.pages.reduce((n, p) => n + p.cadence.slots.length, 0), 10);
+    assert.deepEqual(reelSlots, { rishtapatra: ["sat 19:30"], kaatdo: ["sun 11:00"], job_rez: ["fri 12:30"] });
+    assert.equal(config.pages.reduce((n, p) => n + p.cadence.slots.length, 0), 13);
   });
 }
+
+test("CONFIG_SPEC requires defaults.reel and rejects minSec above maxSec or an inverted scene range (FEAT-201)", () => {
+  const noReel = structuredClone(real);
+  delete noReel.defaults.reel;
+  assert.match(validate(noReel, CONFIG_SPEC).errors.join("\n"), /\$\.defaults\.reel: required/);
+  const inverted = structuredClone(real);
+  inverted.defaults.reel.minSec = 40;
+  assert.match(validate(inverted, CONFIG_SPEC).errors.join("\n"), /minSec 40 above maxSec 30/);
+  const scenes = structuredClone(real);
+  scenes.defaults.reel.captureScenes = [6, 3];
+  assert.match(validate(scenes, CONFIG_SPEC).errors.join("\n"), /captureScenes: 6 above 3/);
+  const three = structuredClone(real);
+  three.defaults.reel.kineticScenes = [3, 6, 9];
+  assert.match(validate(three, CONFIG_SPEC).errors.join("\n"), /kineticScenes: expected at most 2 items/);
+});
 
 test("CONFIG_SPEC rejects a slot format outside page.formats, a reel-only slot list on a page without reel, a config without features.reels, a 7+ slot cadence", () => {
   const c1 = structuredClone(real);

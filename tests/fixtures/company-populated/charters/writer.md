@@ -22,7 +22,7 @@ Format caps (the engine enforces them; exceeding one fails validation):
 - Caption ≤ 2200 characters including hashtags; ≤ 8 hashtags, each `#` + 2–40 letters, digits or underscores (Devanagari allowed on @rishtapatra); alt text ≤ 100 characters, plain description of what is on the image, no hashtags.
 - `image`: `artwork.headline` ≤ 60 characters, `artwork.subline` ≤ 110, `artwork.facts` 2–3 lines of ≤ 70 characters each, `artwork.footer` the brand's site domain or sign-off.
 - `carousel`: 3–7 `slides`, each `heading` ≤ 40 and `body` ≤ 160 characters, plus one `altText` per slide ≤ 100.
-- `reel` (only when the task offers it): 3–6 `scenes`, each ≤ 60 characters and 3–5 seconds.
+- `reel` (only when the task offers it): 3–6 `scenes`, each ≤ 60 characters and 3–5 whole seconds; `durationSec` is the sum of the scenes (15–30 s). `style` is `kinetic` — each scene's line types on over the brand background, one claim per scene, the first scene is the hook and the cover — or `capture` — each scene is a caption shown over a real screen of the product's own public pages (the task lists which screens exist), so write what the viewer sees there. The reel is silent; the caption still carries every disclaimer.
 
 Work in this order:
 

@@ -9,7 +9,8 @@ import { createState } from "../engine/lib/state.js";
 import { DRAFT_SPEC, validate } from "../engine/lib/schema.js";
 import { mediaPaths, pagesUrl, rawUrl, readIndex, updateIndex } from "../engine/lib/media.js";
 import { RenderError, RenderUnavailableError } from "../engine/render/render.js";
-import { runDesigner, designNote, mediaRows, renderReason, RENDER_REASON_PREFIX, SKIP_MEDIA_BRANCH_MISSING, FLAG_RENDER_FAILED } from "../engine/agents/designer.js";
+import { CaptureError } from "../engine/render/capture.js";
+import { runDesigner, designNote, isDeferral, mediaRows, renderReason, RENDER_REASON_PREFIX, SKIP_MEDIA_BRANCH_MISSING, FLAG_RENDER_FAILED } from "../engine/agents/designer.js";
 
 const company = loadCompany({ companyDir: join(ROOT, "company"), warn: () => {} });
 const { brands, config } = company;
@@ -241,6 +242,122 @@ test("RenderUnavailableError: the step stops with ok:false and flag render_faile
     assert.deepEqual(h.state.readDraft(kd.id), kd, "the draft that hit the unavailable renderer is untouched");
     assert.deepEqual(h.state.readDraft(jr.id), jr, "later drafts are not attempted");
     assert.equal(r.calls.filter((c) => c.id).length, 2);
+  } finally {
+    h.cleanup();
+  }
+});
+
+// FEAT-201: reels — media rows (video with the probe summary + poster), the design note, and the two deferrals that
+// leave the draft `written` (capture_unreachable, ffmpeg) while images in the same run still render.
+const REEL = JSON.parse(readFileSync(join(ROOT, "tests", "fixtures", "drafts", "kd-reel-2026-10-18-six-rules.json"), "utf8"));
+const PROBE = { ok: true, codec: "h264", width: 1080, height: 1920, pixFmt: "yuv420p", frameRate: "30/1", durationSec: 16, bytes: 2457600, faststart: true };
+function reelResult(relDir) {
+  const v = "a1b2c3d4".repeat(8);
+  const p = "e5f6a7b8".repeat(8);
+  return {
+    media: [
+      { kind: "video", file: `reel-${v.slice(0, 8)}.mp4`, path: `${relDir}reel-${v.slice(0, 8)}.mp4`, bytes: 2457600, width: 1080, height: 1920, durationSec: 16, sha256: v, probe: PROBE, variant: "A", palette: "dark console palette" },
+      { kind: "poster", file: `poster-${p.slice(0, 8)}.jpg`, path: `${relDir}poster-${p.slice(0, 8)}.jpg`, bytes: 88000, width: 1080, height: 1920, sha256: p, variant: "A", palette: "dark console palette" },
+    ],
+    style: "kinetic",
+    scenes: 4,
+    durationSec: 16,
+    frames: 480,
+    variant: "A",
+    palette: "dark console palette",
+  };
+}
+
+test("reel rendered: media[] = video row (durationSec + ffprobe summary) and poster row, both URLs, designNote 'reel kinetic · 4 scenes · 16 s · 480 frames · palette', DRAFT_SPEC valid, index lists both files", async () => {
+  const h = harness([REEL]);
+  try {
+    writeFileSync(join(h.mediaRoot, ".git"), "gitdir: x\n");
+    const r = {
+      calls: [],
+      async renderDraft(draft, brand, { outDir, relDir }) {
+        this.calls.push(draft.id);
+        mkdirSync(outDir, { recursive: true });
+        const res = reelResult(relDir);
+        for (const m of res.media) writeFileSync(join(outDir, m.file), Buffer.from([0]));
+        return res;
+      },
+      async close() {},
+    };
+    const res = await runDesigner({ drafts: [REEL], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r, now: NOW, runId: "engine-daily-20261015-0540-abcdef" });
+    assert.deepEqual([res.ok, res.rendered, res.refused, res.deferred], [true, 1, 0, 0]);
+    assert.equal(res.note, "1 rendered, 0 refused");
+    const out = h.state.readDraft(REEL.id);
+    assert.equal(out.status, "rendered");
+    assert.equal(out.designNote, "reel kinetic · 4 scenes · 16 s · 480 frames · dark console palette");
+    assert.deepEqual(validate(out, DRAFT_SPEC), { ok: true, errors: [] });
+    assert.equal(out.media.length, 2);
+    assert.deepEqual(out.media.map((m) => m.kind), ["video", "poster"]);
+    assert.equal(out.media[0].durationSec, 16);
+    assert.deepEqual(out.media[0].probe, PROBE);
+    assert.equal(out.media[1].probe, undefined);
+    assert.equal(out.media[1].durationSec, undefined);
+    assert.equal(out.media[0].rawUrl, rawUrl(config, out.media[0].path));
+    assert.equal(out.media[1].pagesUrl, pagesUrl(config, out.media[1].path));
+    assert.deepEqual(readIndex(h.mediaRoot)[REEL.id], out.media.map((m) => m.path.split("/").pop()));
+    assert.equal(designNote({ media: [{ palette: "cream and maroon" }], style: "capture", scenes: 3, durationSec: 15, frames: 450 }, { format: "reel" }), "reel capture · 3 scenes · 15 s · 450 frames · cream and maroon");
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("reel deferrals (FEAT-201): capture_unreachable and a missing ffmpeg leave the draft `written` with renderError and empty media, flag render_failed, the note says 'reel: untested — ffmpeg not installed', and the next image still renders", async () => {
+  const rp = written("rp-2026-10-14-kundali-free");
+  const captureReel = { ...REEL, id: "kd-reel-capture", reel: { ...REEL.reel, style: "capture" } };
+  const h = harness([REEL, captureReel, rp]);
+  try {
+    writeFileSync(join(h.mediaRoot, ".git"), "gitdir: x\n");
+    const plan = {
+      [REEL.id]: new RenderUnavailableError("ffmpeg not installed (spawn ENOENT) — reel: untested", null, "ffmpeg"),
+      [captureReel.id]: new CaptureError("https://kaatdo.com/status: HTTP 503", { path: "/status", url: "https://kaatdo.com/status", status: 503, reason: "http_error" }),
+    };
+    const r = fakeRenderer(plan);
+    const res = await runDesigner({ drafts: [REEL, captureReel, rp], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r, now: NOW, runId: "engine-daily-20261015-0540-abcdef" });
+    assert.equal(res.ok, true, "a deferral never stops the step");
+    assert.deepEqual([res.rendered, res.refused, res.deferred, res.toRework, res.blocked], [1, 0, 2, 0, 0]);
+    assert.deepEqual(res.flags, [FLAG_RENDER_FAILED]);
+    assert.equal(res.note, "1 rendered, 0 refused, 2 deferred (still written) — reel: untested — ffmpeg not installed");
+    assert.deepEqual(res.results.map((x) => [x.id, x.status, x.code || null, x.deferred || false]), [
+      [REEL.id, "written", "ffmpeg", true],
+      [captureReel.id, "written", "capture_unreachable", true],
+      [rp.id, "rendered", null, false],
+    ]);
+    const kinetic = h.state.readDraft(REEL.id);
+    assert.equal(kinetic.status, "written", "stays written — not the Writer's fault");
+    assert.equal(kinetic.reworkCount, 0);
+    assert.equal(kinetic.qaReasons, undefined, "no QA reason: the copy is fine");
+    assert.deepEqual(kinetic.media, []);
+    assert.deepEqual(kinetic.renderError, { code: "ffmpeg", detail: "ffmpeg not installed (spawn ENOENT) — reel: untested", at: NOW });
+    assert.equal(kinetic.runId, "engine-daily-20261015-0540-abcdef");
+    assert.deepEqual(validate(kinetic, DRAFT_SPEC), { ok: true, errors: [] });
+    const capture = h.state.readDraft(captureReel.id);
+    assert.equal(capture.status, "written");
+    assert.deepEqual(capture.renderError, { code: "capture_unreachable", detail: "https://kaatdo.com/status: HTTP 503", at: NOW });
+    assert.deepEqual(validate(capture, DRAFT_SPEC), { ok: true, errors: [] });
+    assert.equal(h.state.readDraft(rp.id).status, "rendered", "the image after the deferred reels still rendered");
+    assert.equal(readIndex(h.mediaRoot)[REEL.id], undefined);
+    assert.ok(isDeferral(plan[REEL.id]) && isDeferral(plan[captureReel.id]));
+    assert.ok(!isDeferral(new RenderUnavailableError("Chromium could not be launched")), "a dead browser is still a step failure");
+    assert.ok(!isDeferral(new RenderError("overflow", "x")));
+    // a later run with ffmpeg present renders it and clears renderError
+    const r2 = {
+      async renderDraft(draft, brand, { outDir, relDir }) {
+        mkdirSync(outDir, { recursive: true });
+        const out = reelResult(relDir);
+        for (const m of out.media) writeFileSync(join(outDir, m.file), Buffer.from([0]));
+        return out;
+      },
+      async close() {},
+    };
+    await runDesigner({ drafts: [h.state.readDraft(REEL.id)], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r2, now: NOW });
+    const again = h.state.readDraft(REEL.id);
+    assert.equal(again.status, "rendered");
+    assert.equal(again.renderError, undefined);
+    assert.equal(again.media.length, 2);
   } finally {
     h.cleanup();
   }

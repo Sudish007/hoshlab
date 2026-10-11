@@ -23,6 +23,8 @@ import {
   jpegSize,
   nfc,
   numberTokens,
+  pngSize,
+  reelProbeErrors,
   runChecks,
   shingles3,
 } from "../engine/lib/checks.js";
@@ -98,7 +100,20 @@ test("the three fixture drafts validate against DRAFT_SPEC, their media rows mat
     const { result } = run(draft);
     assert.equal(result.passed, true, `${draft.id}: ${JSON.stringify(result.checks.filter((c) => !c.ok))}`);
   }
-  assert.deepEqual(readdirSync(DRAFTS_DIR).sort(), ["jr-2026-10-15-templates.json", "kd-2026-10-13-six-rules.json", "rp-2026-10-14-kundali-free.json"]);
+  assert.deepEqual(readdirSync(DRAFTS_DIR).sort(), ["jr-2026-10-15-templates.json", "jr-reel-2026-10-16-templates.json", "kd-2026-10-13-six-rules.json", "kd-reel-2026-10-18-six-rules.json", "rp-2026-10-14-kundali-free.json", "rp-reel-2026-10-17-kundali-free.json"]);
+  // FEAT-201: the reel fixtures (one kinetic reel per page, media: [] — rendered by the reel tests) validate and pass
+  // every text check; media_spec fails honestly because nothing is rendered yet
+  for (const file of readdirSync(DRAFTS_DIR).filter((f) => f.includes("-reel-"))) {
+    const reel = JSON.parse(readFileSync(join(DRAFTS_DIR, file), "utf8"));
+    assert.equal(reel.format, "reel");
+    assert.equal(reel.status, "written");
+    assert.deepEqual(reel.media, []);
+    assert.deepEqual(validate(reel, DRAFT_SPEC), { ok: true, errors: [] }, reel.id);
+    assert.equal(reel.reel.durationSec, reel.reel.scenes.reduce((s, sc) => s + sc.seconds, 0), `${reel.id}: durationSec is the scenes' sum`);
+    const { result } = run(reel, {}, { media: [] });
+    const failed = result.checks.filter((c) => !c.ok).map((c) => c.id);
+    assert.deepEqual(failed, ["media_spec"], `${reel.id}: ${JSON.stringify(result.checks.filter((c) => !c.ok))}`);
+  }
   // N19: the JobRez fixture states the export rule as jr-f09 does (Word is Pro, not free)
   assert.match(JR.caption, /Export to PDF or plain text — free, unlimited and watermark-free on the free plan\. Word export is Pro\./);
   assert.ok(!/Word or plain text\. Free/.test(JR.caption));
@@ -359,9 +374,60 @@ test("media_spec: fail — 1080×1080 from the SOF marker, > 1.5 MB, wrong count
   assert.equal(missing.ok, false);
   assert.match(missing.detail, /image-1-abc\.jpg: media bytes not available/);
   assert.equal(run(RP, {}, { media: [] }).check("media_spec").ok, false);
+  // a reel draft with image media is not a reel's media set
   const reel = run(RP, { format: "reel" }).check("media_spec");
   assert.equal(reel.ok, false);
-  assert.equal(reel.detail, "reel: not built yet (phase 2)");
+  assert.match(reel.detail, /1 media item for reel \(expected 2: video \+ poster\)/);
+});
+
+// FEAT-201: media_spec for reels — one video row whose ffprobe summary (recorded by the Designer, passed through by QA)
+// meets the reel spec and one 1080×1920 JPEG poster ≤ 1.5 MB; pngSize reads the capture frames back.
+test("media_spec (reel): video probe ok + 1080×1920 poster passes; a wrong codec / size / fps / duration / cap / faststart, a missing probe, a 1080×1350 poster or a wrong item count fails with the reason named", () => {
+  const probe = (over = {}) => ({ ok: true, codec: "h264", width: 1080, height: 1920, pixFmt: "yuv420p", frameRate: "30/1", durationSec: 16, bytes: 2_400_000, faststart: true, ...over });
+  const poster = patchedJpeg(1080, 1920);
+  const reelDraft = { ...RP, format: "reel", reel: { style: "kinetic", durationSec: 16, scenes: [{ text: "a", seconds: 4 }, { text: "b", seconds: 4 }, { text: "c", seconds: 4 }, { text: "d", seconds: 4 }] } };
+  delete reelDraft.artwork;
+  const media = (p = probe(), posterBytes = poster, videoBytes = 2_400_000) => [
+    { kind: "video", bytes: videoBytes, width: 1080, height: 1920, path: "media/x/reel-abcdef12.mp4", durationSec: 16, probe: p },
+    { kind: "poster", bytes: posterBytes, width: 1080, height: 1920, path: "media/x/poster-12345678.jpg" },
+  ];
+  const check = (m) => runChecks(reelDraft, brands.rishtapatra, { config, media: m }).checks.find((c) => c.id === "media_spec");
+  const ok = check(media());
+  assert.equal(ok.ok, true, ok.detail);
+  assert.match(ok.detail, /h264 1080x1920 yuv420p 30\/1 16 s 2400 KB faststart; poster 1080x1920 jpeg/);
+  const metaOnly = check(media(probe(), 9432));
+  assert.equal(metaOnly.ok, true, metaOnly.detail);
+  assert.match(metaOnly.detail, /metadata only/);
+  const cases = [
+    [media(probe({ codec: "hevc", ok: false })), /codec hevc, expected h264/],
+    [media(probe({ width: 1080, height: 1080 })), /1080x1080, expected 1080x1920/],
+    [media(probe({ frameRate: "25/1" })), /frame rate 25\/1, expected 30\/1/],
+    [media(probe({ durationSec: 2 })), /duration 2 s, expected 3–90 s/],
+    [media(probe({ durationSec: 95 })), /duration 95 s, expected 3–90 s/],
+    [media(probe({ bytes: 70 * 1024 * 1024 }), poster, 70 * 1024 * 1024), /bytes, cap 62914560 bytes/],
+    [media(probe({ pixFmt: "yuv444p" })), /pix_fmt yuv444p, expected yuv420p/],
+    [media(probe({ faststart: false })), /moov atom after mdat/],
+    [media(probe({ ok: false })), /probe ok:false/],
+    [media(null), /no ffprobe summary recorded/],
+    [media(probe(), patchedJpeg(1080, 1350)), /1080x1350, expected 1080x1920/],
+    [media(probe(), PNG), /not a JPEG \(magic 89 50\)/],
+    [media().slice(0, 1), /1 media item for reel \(expected 2: video \+ poster\)/],
+    [[...media(), ...media()], /4 media items for reel/],
+    [media(probe(), poster, 2_400_001), /2400001 bytes on disk, probe measured 2400000/],
+  ];
+  for (const [m, re] of cases) {
+    const r = check(m);
+    assert.equal(r.ok, false, `${re}: ${r.detail}`);
+    assert.match(r.detail, re);
+  }
+  assert.deepEqual(reelProbeErrors(probe()), []);
+  assert.deepEqual(reelProbeErrors(null), ["probe missing"]);
+  assert.equal(reelProbeErrors(probe({ bytes: 61 * 1024 * 1024 })).length, 1);
+  // pngSize reads the IHDR of a real PNG header and refuses JPEG bytes
+  const ihdr = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52, 0, 0, 0x04, 0x38, 0, 0, 0x07, 0x80, 8, 6, 0, 0, 0]);
+  assert.deepEqual(pngSize(ihdr), { width: 1080, height: 1920 });
+  assert.throws(() => pngSize(JPEG), /not a PNG/);
+  assert.throws(() => pngSize(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13, 0x49, 0x44, 0x41, 0x54, 0, 0, 0, 1, 0, 0, 0, 1])), /first chunk is not IHDR/);
 });
 
 test("jpegSize: the fixture JPEG is 1080×1350; throws on PNG bytes, on non-bytes and on a truncated marker chain", () => {

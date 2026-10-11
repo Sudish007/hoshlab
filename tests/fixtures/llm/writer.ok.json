@@ -2,7 +2,7 @@
   "agent": "writer",
   "case": "ok",
   "page": "rishtapatra",
-  "note": "Carries both `artwork` (image slots) and `slides` (carousel slots) so one fixture serves every @rishtapatra cadence slot; the engine keeps the block the slot's format needs and drops the other. Facts rp-f04/f07/f08/f09 only; kundali disclaimer verbatim in both languages.",
+  "note": "Carries `artwork` (image slots), `slides` (carousel slots) and `reel` (reel slots, kinetic so no network is needed) so one fixture serves every @rishtapatra cadence slot; the engine keeps the block the slot's format needs and drops the others. Facts rp-f04/f07/f08/f09 only; kundali disclaimer verbatim in both languages.",
   "output": {
     "caption": "मुफ़्त जन्म कुंडली — अपने डिवाइस पर।\nJanam Kundali on RishtaPatra is free and computed on your device; no request carries your birth details.\nRishta Connect shows a 36-point Guna Milan score on every match card.\nकुंडली का फल indicative है — अपने पंडित से सलाह लें।\nrishtapatra.com",
     "hashtags": ["#RishtaPatra", "#JanamKundali", "#Biodata", "#Rishta"],
@@ -30,6 +30,16 @@
         "altText": "Closing slide: the kundali disclaimer in Hindi and the site rishtapatra.com"
       }
     ],
+    "reel": {
+      "style": "kinetic",
+      "durationSec": 16,
+      "scenes": [
+        { "text": "मुफ़्त जन्म कुंडली — अपने डिवाइस पर।", "seconds": 4 },
+        { "text": "Computed on your device. No request carries birth details.", "seconds": 4 },
+        { "text": "Rishta Connect: 36-point Guna Milan on every card.", "seconds": 4 },
+        { "text": "Indicative — अपने पंडित से सलाह लें। rishtapatra.com", "seconds": 4 }
+      ]
+    },
     "factsUsed": [
       { "factId": "rp-f04", "quote": "Janam Kundali (free)" },
       { "factId": "rp-f07", "quote": "computed client-side; no request carries birth data" },

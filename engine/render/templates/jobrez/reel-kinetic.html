@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>JobRez · reel kinetic 1080×1920</title>
+<link rel="stylesheet" href="../common.css">
+</head>
+<body>
+<!-- JobRez kinetic reel (design §10, plan D17, FEAT-201): the mark on its violet gradient tile (the only gradient in
+     Hoshlab media; data-bg is the solid approximation used for contrast), Job|Rez wordmark, the scene text typing on
+     in Manrope 800 over cream with a violet caret, mono scene counter, progress bar, mono footer. English only (OF-2):
+     no Devanagari family, so any Devanagari run fails the per-script rule. Tokens: company/brands/jobrez.md -->
+<div id="canvas" class="post post-jr reel reel-kinetic" data-palette="violet on cream">
+  <div class="brand-row">
+    <span class="tile" data-bg="#9247f2" aria-hidden="true">
+      <svg viewBox="0 0 32 32" focusable="false">
+        <path d="M7 6.5 h9.5 l5 5 V24 a2 2 0 0 1 -2 2 H7 a2 2 0 0 1 -2 -2 V8.5 a2 2 0 0 1 2 -2 z" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M16.5 6.5 V11.5 h5" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M9.5 16 h7.5 M9.5 20 h5" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" opacity="0.75"/>
+        <circle cx="23.5" cy="23.5" r="6.5" fill="#22c55e"/>
+        <path d="M20.6 23.6 l2 2 l3.9 -4.2" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="word"><span id="word-a"></span><span id="word-b"></span></span>
+  </div>
+  <div class="scene-wrap">
+    <h2 class="headline scene-text" id="scene-text" data-variant="A"></h2>
+  </div>
+  <div class="scene-meta"><span id="counter"></span><span id="meta-right"></span></div>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+  <div class="foot"><span id="foot-left"></span><span class="ig-handle" id="foot-right"></span></div>
+</div>
+<span class="caret" id="caret" aria-hidden="true" hidden></span>
+<script src="../common.js"></script>
+<script src="../reel.js"></script>
+<script>
+(function () {
+  var H = window.HOSHLAB;
+  var brand = window.__BRAND__ || {};
+  var canvas = document.getElementById("canvas");
+  H.applyTokens(canvas, window.__TOKENS__);
+  // two-tone wordmark "Job" + "Rez" (jr-f01): split before the second capital letter
+  var name = String(brand.name || "");
+  var m = /^([A-Z][a-z]+)([A-Z].*)$/.exec(name);
+  document.getElementById("word-a").textContent = m ? m[1] : name;
+  document.getElementById("word-b").textContent = m ? m[2] : "";
+  document.getElementById("meta-right").textContent = "reel";
+  document.getElementById("foot-left").textContent = H.siteHost(brand.site);
+  document.getElementById("foot-right").textContent = brand.handle ? "@" + brand.handle : "";
+  window.HOSHLAB_REEL.initKinetic({
+    textEl: document.getElementById("scene-text"),
+    caretEl: document.getElementById("caret"),
+    counterEl: document.getElementById("counter"),
+    barEl: document.getElementById("bar"),
+  });
+})();
+</script>
+</body>
+</html>

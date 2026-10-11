@@ -27,6 +27,10 @@ on:
         description: "MOCK_LLM=1: answer every model call from tests/fixtures/llm (no provider key spent)"
         type: boolean
         default: false
+      render_sample:
+        description: "Render the fixture samples (one image + one kinetic reel per page) into the media branch and deploy; the daily agents do not run (plan D19, FEAT-201)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -41,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     outputs:
-      changed: ${{ steps.engine.outputs.changed }}
+      changed: ${{ steps.engine.outputs.changed || steps.samples.outputs.changed }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -75,8 +79,41 @@ jobs:
         run: |
           git config user.name hoshlab-bot
           git config user.email hoshlab-bot@users.noreply.github.com
+      # render_sample=true (plan D19, FEAT-201): the live proof without owner keys — one fixture image and one
+      # kinetic reel per page land on the media branch as 'media: samples' (sample:true in index.json, never listed on
+      # the site), then the deploy job copies them to Pages. Kinetic only: the capture style records the live product
+      # sites and is proven by the CI reel test against the fixture product site instead. The daily agents are skipped.
+      - id: samples
+        name: Render samples into the media branch (render_sample)
+        if: ${{ inputs.render_sample == true }}
+        env:
+          INPUT_PAGE: ${{ inputs.page }}
+        run: |
+          if ! git -C .media rev-parse --verify HEAD >/dev/null 2>&1; then
+            echo "media branch not configured yet (run scripts/init-media-branch.ps1 once) — nothing to render into"
+            exit 1
+          fi
+          ffmpeg -version | head -n 1
+          pages="rishtapatra kaatdo job_rez"
+          if [ -n "$INPUT_PAGE" ]; then pages="$INPUT_PAGE"; fi
+          for p in $pages; do
+            node engine/index.js render-sample --page "$p" --format image
+            node engine/index.js render-sample --page "$p" --format reel --style kinetic
+          done
+          git -C .media config user.name hoshlab-bot
+          git -C .media config user.email hoshlab-bot@users.noreply.github.com
+          git -C .media add -- media index.json
+          if git -C .media diff --cached --quiet; then
+            echo "media: samples unchanged (nothing to commit)"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git -C .media commit --quiet -m "media: samples"
+            git -C .media push origin HEAD:refs/heads/media
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
       - id: engine
         name: Run the engine
+        if: ${{ inputs.render_sample != true }}
         env:
           CI: "true"
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

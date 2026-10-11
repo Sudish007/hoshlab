@@ -184,8 +184,8 @@ test("task JSON: brand summaries carry usable facts only (no rp-f12), cadence, p
     const rp = task.brands[0];
     assert.ok(rp.facts.some((f) => f.id === "rp-f08"));
     assert.ok(!rp.facts.some((f) => f.id === "rp-f12"), "disputed fact excluded (P1-04)");
-    assert.deepEqual(rp.formats, ["image", "carousel"], "reel excluded while features.reels is false");
-    assert.equal(rp.cadence.length, 3);
+    assert.deepEqual(rp.formats, ["image", "carousel", "reel"], "reel offered now that features.reels is true (FEAT-201)");
+    assert.equal(rp.cadence.length, 4, "three feed slots plus the Saturday reel slot (plan D22)");
     assert.equal(rp.mode, "approve_first");
     assert.ok(rp.pricing.some((p) => p.sku === "shubh-pass"));
     assert.equal(rp.disclaimers.length, 1);

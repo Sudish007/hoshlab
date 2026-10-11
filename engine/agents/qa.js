@@ -42,31 +42,39 @@ function toBytes(v) {
   return null;
 }
 
-// Media metadata for the task JSON (never pixels): byte count, dimensions, kind, file name.
+// Media metadata for the task JSON (never pixels): byte count, dimensions, kind, file name; a reel's video
+// row adds its duration and the Designer's ffprobe summary (FEAT-201).
 export function mediaSummary(media = []) {
   return media.map((m) => {
     const data = toBytes(m && m.bytes);
-    return {
+    const out = {
       kind: (m && m.kind) || "image",
       bytes: data ? data.byteLength : Number.isInteger(m && m.bytes) ? m.bytes : null,
       width: (m && m.width) ?? null,
       height: (m && m.height) ?? null,
       path: (m && m.path) || null,
     };
+    if (m && typeof m.durationSec === "number") out.durationSec = m.durationSec;
+    if (m && m.probe) out.probe = m.probe;
+    return out;
   });
 }
 
 // Reads the rendered files named in draft.media[] from the media worktree root (default `.media`);
 // paths are 'media/<draftId>/<file>' and also resolve when the root already IS the media/ folder
-// (tests/fixtures/media). A missing file yields bytes:null so media_spec fails honestly.
+// (tests/fixtures/media). A missing file yields bytes:null so media_spec fails honestly. The video row's
+// `probe` (the Designer's ffprobe summary) and `durationSec` pass through for the reel branch of media_spec.
 export function loadMedia(draft, mediaRoot = ".media") {
   return (draft.media || []).map((m) => {
     const rel = String(m.path || "").replace(/\\/g, "/");
     const candidates = [join(mediaRoot, rel), join(mediaRoot, rel.replace(/^media\//, ""))];
     const file = candidates.find((p) => rel && existsSync(p));
-    if (!file) return { kind: m.kind, bytes: null, width: m.width, height: m.height, path: m.path };
+    const base = { kind: m.kind, width: m.width, height: m.height, path: m.path };
+    if (typeof m.durationSec === "number") base.durationSec = m.durationSec;
+    if (m.probe) base.probe = m.probe;
+    if (!file) return { ...base, bytes: null };
     const buf = readFileSync(file);
-    return { kind: m.kind, bytes: new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength), width: m.width, height: m.height, path: m.path };
+    return { ...base, bytes: new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength) };
   });
 }
 
