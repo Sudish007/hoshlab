@@ -39,7 +39,7 @@ import { AGENT, completePermalinks, decide, latestApprovals, publishDraft } from
 
 export const WORKFLOW = "publisher-hourly";
 export const LIVE_STATUSES = ["written", "rendered", "queued", "rework"];
-export const PAGE_OUTCOMES = ["published", "failed", "retry_next_hour", "token_invalid", "page_not_configured", "quota", "quota_check_failed", "reel_not_built", "idle", "filtered"];
+export const PAGE_OUTCOMES = ["published", "failed", "retry_next_hour", "token_invalid", "page_not_configured", "quota", "quota_check_failed", "idle", "filtered"];
 
 function toDate(v) {
   const d = v instanceof Date ? v : typeof v === "string" ? parseIso(v) : v === undefined || v === null ? new Date() : new Date(v);
@@ -82,7 +82,8 @@ export function queueCounts(drafts, config) {
   return { queue, blocked };
 }
 
-function seedStatus(config, state, now) {
+// The first status.json, before any run wrote one (also used by refresh-tokens.js when it runs first).
+export function seedStatus(config, state, now) {
   const pages = {};
   for (const p of config.pages) pages[p.handle] = { mode: p.mode, tokenState: "not_configured", tokenExpiresAt: null, lastPublishedAt: null };
   return { updatedAt: nowIst(now), lastRun: null, lastRuns: [], queue: {}, blocked: {}, budget: { month: istMonthKey(now), usedUsd: monthUsedUsd(state, now), limitUsd: config.budget.monthlyUsd, exhausted: false }, pages, flags: [] };
@@ -232,8 +233,11 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
       if (clientFactory) return clientFactory(effPage, token, { dryRun, fetchImpl, now: clock, stdout });
       return dryRun ? createDryRunClient({ igUserId: effPage.igUserId, stdout, now: clock }) : createClient({ config, token, igUserId: effPage.igUserId, fetchImpl, now: clock });
     };
+    // 'expiring' is set by refresh-tokens (FEAT-202) from the stored expiry, which only that job knows: an accepted
+    // call confirms the token works today, so 'invalid'/'unknown' become 'ok' but 'expiring' is left for the
+    // weekly refresh to clear (status.flags token_expiring:<page> is cleared there too).
     const tokenWorked = () => {
-      if (!dryRun) pageState.tokenState = "ok";
+      if (!dryRun && pageState.tokenState !== "expiring") pageState.tokenState = "ok";
     };
     const tokenDied = () => {
       pageState.tokenState = "invalid";

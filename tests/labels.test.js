@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT } from "./helpers.js";
-import { modeLabel, providerLabel, tokenStateLabel, slotLabel, cadenceLine, flagSentence, isApproved, TERMINAL, SLOT_WORDS } from "../src/lib/labels.js";
+import { modeLabel, providerLabel, tokenStateLabel, slotLabel, cadenceLine, flagSentence, tokenDaysLeft, isApproved, TERMINAL, SLOT_WORDS } from "../src/lib/labels.js";
 import { DRAFT_STATUSES, SLOT_STATUSES, TOKEN_STATES } from "../engine/lib/schema.js";
 
 const config = JSON.parse(readFileSync(join(ROOT, "company", "config.json"), "utf8"));
@@ -114,6 +114,21 @@ test("flagSentence: one plain sentence per status flag, unknown flags throw", ()
   assert.equal(flagSentence("budget_warn", { month: "October 2026" }), "Budget for October 2026 is past the warning level.");
   assert.equal(flagSentence("token_invalid:kaatdo"), "Token for @kaatdo is invalid — run setup-secrets.");
   assert.match(flagSentence("token_expiring:job_rez"), /^Token for @job_rez expires soon/);
+  // FEAT-202 (P2-09): with the whole days left the sentence counts down; unknown → 'expires soon'
+  assert.equal(flagSentence("token_expiring:job_rez"), "Token for @job_rez expires soon — run setup-secrets or wait for the weekly refresh.");
+  assert.equal(flagSentence("token_expiring:kaatdo", { daysLeft: 5 }), "Token for @kaatdo expires in 5 days — run setup-secrets or wait for the weekly refresh.");
+  assert.equal(flagSentence("token_expiring:kaatdo", { daysLeft: 1 }), "Token for @kaatdo expires in 1 day — run setup-secrets or wait for the weekly refresh.");
+  assert.equal(flagSentence("token_expiring:kaatdo", { daysLeft: 0 }), "Token for @kaatdo expires today — run setup-secrets.");
+  assert.equal(flagSentence("token_expiring:kaatdo", { daysLeft: -2 }), "Token for @kaatdo has passed its expiry date — run setup-secrets.");
+  assert.equal(flagSentence("token_expiring:kaatdo", { daysLeft: null }), flagSentence("token_expiring:kaatdo"));
+  assert.equal(flagSentence("token_expiring:kaatdo", { daysLeft: 5.5 }), flagSentence("token_expiring:kaatdo"), "only whole days count");
+  assert.equal(tokenDaysLeft("2026-10-17T20:00:00+05:30", new Date("2026-10-12T09:30:00+05:30")), 5);
+  assert.equal(tokenDaysLeft("2026-10-12T20:00:00+05:30", new Date("2026-10-12T09:30:00+05:30")), 0);
+  assert.equal(tokenDaysLeft("2026-10-11T20:00:00+05:30", new Date("2026-10-12T09:30:00+05:30")), -1);
+  assert.equal(tokenDaysLeft("2026-12-11T07:30:00+05:30", Date.parse("2026-10-12T07:30:00+05:30")), 60);
+  assert.equal(tokenDaysLeft(null, new Date()), null);
+  assert.equal(tokenDaysLeft("not a date", new Date()), null);
+  assert.equal(tokenDaysLeft("2026-10-17T20:00:00+05:30", "garbage"), null);
   assert.match(flagSentence("render_failed"), /Designer refused/);
   // R1-02: a refused draft goes back to the Writer (or is blocked at the cap); it never "stays with the Writer"
   assert.ok(!flagSentence("render_failed").includes("stays with the Writer"), flagSentence("render_failed"));

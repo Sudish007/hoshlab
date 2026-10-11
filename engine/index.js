@@ -19,8 +19,8 @@ export const COMMANDS = {
   "set-page": { summary: "switch a page between approve_first and autopilot (owner tool; --page, --mode)", planned: "FEAT-108", load: () => import("./commands/set-page.js") },
   analyst: { summary: "weekly insights report", planned: "FEAT-203 / phase 2", load: null },
   hr: { summary: "monthly roster review", planned: "FEAT-204 / phase 2", load: null },
-  "refresh-tokens": { summary: "refresh Instagram long-lived tokens", planned: "FEAT-202 / phase 2", load: null },
-  retention: { summary: "compact the media branch", planned: "FEAT-202 / phase 2", load: null },
+  "refresh-tokens": { summary: "weekly: refresh Instagram long-lived tokens < 20 days from expiry, store them with gh secret set, record tokens.json (--dry-run, --commit, --page)", planned: "FEAT-202", load: () => import("./commands/refresh-tokens.js") },
+  retention: { summary: "weekly: delete reel MP4s published > 90 days ago from the media branch, keep posters (--dry-run, --commit, --days)", planned: "FEAT-202", load: () => import("./commands/retention.js") },
 };
 
 // Flags that never take a value (so `--commit extra` keeps 'extra' positional); later FEATs extend this.

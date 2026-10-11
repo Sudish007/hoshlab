@@ -163,6 +163,8 @@ export function adminPage({ config: company, roster, year }) {
   </nav>
   <p class="form-error" id="dash-error" role="alert" hidden></p>
   <p class="meta" id="loading" role="status" hidden>Loading company/state…</p>
+  <!-- status.json flags as the same plain sentences the Home page prints (labels.js flagSentence), above every view -->
+  <div class="flags" id="status-flags" role="status" aria-label="Status notes" hidden></div>
 
   <section id="view-queue" class="view" hidden aria-label="Approval queue">
     <p class="meta" id="queue-summary"></p>

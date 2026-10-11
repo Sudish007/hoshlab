@@ -75,9 +75,21 @@ export function cadenceLine(page, features = { reels: false }) {
   return line;
 }
 
-// flagSentence(flag, { month }) → one plain sentence per status.flags[] entry (design §4.12).
+// tokenDaysLeft(expiresAt, now) → whole days until the ISO expiry (floor; negative once past), or null when the
+// expiry is not known. Home passes status.pages[<page>].tokenExpiresAt with the build clock, the admin with Date.now().
+export function tokenDaysLeft(expiresAt, now = new Date()) {
+  if (typeof expiresAt !== "string" || !expiresAt) return null;
+  const ms = Date.parse(expiresAt);
+  const nowMs = now instanceof Date ? now.getTime() : typeof now === "number" ? now : Date.parse(String(now));
+  if (Number.isNaN(ms) || Number.isNaN(nowMs)) return null;
+  return Math.floor((ms - nowMs) / 86400000);
+}
+
+// flagSentence(flag, { month, daysLeft }) → one plain sentence per status.flags[] entry (design §4.12).
 // `month` is the display name of the budget month (e.g. 'October 2026'); it defaults to 'this month'.
-export function flagSentence(flag, { month = "this month" } = {}) {
+// `daysLeft` (whole days, from tokenDaysLeft) turns token_expiring into 'expires in <n> days'; without it the
+// sentence says 'expires soon' (expiry not known yet).
+export function flagSentence(flag, { month = "this month", daysLeft = null } = {}) {
   const [kind, arg] = String(flag).split(":");
   switch (kind) {
     case "budget_exhausted":
@@ -86,8 +98,13 @@ export function flagSentence(flag, { month = "this month" } = {}) {
       return `Budget for ${month} is past the warning level.`;
     case "token_invalid":
       return `Token for @${arg} is invalid — run setup-secrets.`;
-    case "token_expiring":
-      return `Token for @${arg} expires soon — run setup-secrets or wait for the refresh job.`;
+    case "token_expiring": {
+      const n = Number.isInteger(daysLeft) ? daysLeft : null;
+      if (n === null) return `Token for @${arg} expires soon — run setup-secrets or wait for the weekly refresh.`;
+      if (n < 0) return `Token for @${arg} has passed its expiry date — run setup-secrets.`;
+      if (n === 0) return `Token for @${arg} expires today — run setup-secrets.`;
+      return `Token for @${arg} expires in ${n} day${n === 1 ? "" : "s"} — run setup-secrets or wait for the weekly refresh.`;
+    }
     case "render_failed":
       return "The Designer refused at least one draft in the last run; it goes back to the Writer, or is blocked for the owner once the rework limit is reached.";
     case "provider_down":

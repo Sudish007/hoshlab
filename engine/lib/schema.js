@@ -620,6 +620,9 @@ export const MEDIA_ITEM_SPEC = {
   "durationSec?": "num[0..600]",
   "probe?": PROBE_SUMMARY_SPEC,
 };
+// Reel status failures (FEAT-202, design §11 row "IG video status") carry no Graph error code: `reason` says
+// why the stage-`status` attempt ended — timeout (IN_PROGRESS past ig.pollMaxMs), error or expired (status_code).
+export const STATUS_REASONS = ["timeout", "error", "expired"];
 export const PUBLISH_ATTEMPT_SPEC = {
   at: "iso-datetime",
   ok: "bool",
@@ -627,6 +630,7 @@ export const PUBLISH_ATTEMPT_SPEC = {
   "code?": "int",
   // Graph API error_subcode (e.g. 2207052 under code 9004 "media download has failed"), when the envelope carries one.
   "subcode?": "int",
+  "reason?": `enum[${STATUS_REASONS.join("|")}]`,
   "message?": "str",
   "mediaUrlUsed?": "enum[raw|pages]",
   "runId?": "id",
@@ -790,6 +794,9 @@ export const PUBLISH_PAGE_SPEC = { outcome: "str", "draftId?": "id", "quotaUsage
 // `rejected` (R1-06: live drafts stamped 'rejected' from the owner's reject record) is optional so the run
 // records written before it existed still validate.
 export const PUBLISH_RUN_SPEC = { decisions: [PUBLISH_DECISION_SPEC], staleEdits: ["id"], expired: ["id"], "rejected?": ["id"], pages: { "*": PUBLISH_PAGE_SPEC } };
+// Token-refresh detail on a token-refresh run record (design §3.4, FEAT-202): one outcome per page, the whole
+// days left at that moment (negative once past the expiry) and the expiry it recorded — never a token value.
+export const TOKEN_RUN_PAGE_SPEC = { outcome: "str", "daysLeft?": "int", "expiresAt?": "iso-datetime" };
 export const RUN_SPEC = {
   id: "id",
   workflow: "pattern:^[a-z][a-z0-9-]{1,40}$",
@@ -803,6 +810,7 @@ export const RUN_SPEC = {
   budgetUsedUsd: "num[0..100000]",
   "dryRun?": "bool",
   "publisher?": PUBLISH_RUN_SPEC,
+  "tokens?": { "*": TOKEN_RUN_PAGE_SPEC },
 };
 
 // §4.12 status.json (M9 lastRuns ≤ 20)
@@ -824,7 +832,9 @@ export const STATUS_SPEC = {
   flags: [STATUS_FLAG, { max: 50 }],
 };
 
-// §3.4 tokens.json (Phase 2; non-secret metadata only)
+// §3.4 tokens.json (Phase 2, FEAT-202; non-secret metadata only — never a token value). One entry per page
+// handle: expiresAt null = 'expiry not known yet' (the page has a working token but no refresh has answered
+// yet); refreshedAt = the last successful refresh_access_token + gh secret set; state mirrors status.json.
 export const TOKENS_SPEC = {
   updatedAt: "iso-datetime",
   pages: {

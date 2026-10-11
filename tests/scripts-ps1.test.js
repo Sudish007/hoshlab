@@ -76,6 +76,16 @@ test("setup-secrets.ps1 (P1-20, M15, design §16): hidden prompts, Enter keeps, 
   assert.match(text, /SetEnvironmentVariable\(\$entry\.Name, \$entry\.Value, 'Process'\)/, "keys reach check-models through the process environment only…");
   assert.match(text, /SetEnvironmentVariable\(\$entry\.Name, \$null, 'Process'\)/, "… and are removed afterwards");
   assert.match(text, /config: instagram ids/, "tells the owner what to commit");
+  // FEAT-202 (P2-09): HOSHLAB_SECRETS_PAT joins the prompt list with the same hidden input + stdin path, validated read-only
+  assert.match(text, /\$entries \+= \[pscustomobject\]@\{ Name = 'HOSHLAB_SECRETS_PAT'; Kind = 'pat';/, "the PAT is one more entry of the same loop (same Read-Host -AsSecureString, same Set-RepoSecret on stdin)");
+  assert.match(text, /Fine-grained tokens -> Generate new token ->\s*\n#\s*Only select repositories -> Sudish007\/hoshlab -> Repository permissions -> Secrets: Read and write/, "the click path is in the script's comment");
+  assert.match(text, /function Test-SecretsPat/, "the PAT is validated…");
+  assert.match(text, /'repos\/' \+ \$Repository \+ '\/actions\/secrets\/public-key'/, "… with gh api repos/<Repo>/actions/secrets/public-key (needs Secrets: Read)");
+  assert.match(text, /SetEnvironmentVariable\('GH_TOKEN', \$Pat, 'Process'\)/, "the PAT reaches gh as GH_TOKEN through the process environment only…");
+  assert.match(text, /SetEnvironmentVariable\('GH_TOKEN', \$previousToken, 'Process'\)/, "… and the previous value is restored afterwards");
+  assert.match(text, /\$patCheck = Test-SecretsPat -Pat \$entry\.Value -Repository \$Repo/);
+  assert.match(text, /write is proven by the first weekly token-refresh run/, "honest about what the read-only probe proves");
+  assert.ok(!/'--body'|--body/.test(text), "the PAT travels on stdin like every other secret");
   // R1-01: the summary names company/state/status.json whenever $statusChanged, independently of $configChanged
   // (a token replacement for the same account leaves config.json unchanged), and says to pull first.
   const summary = text.slice(text.indexOf("setup-secrets: summary for"));

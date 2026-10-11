@@ -13,7 +13,7 @@ import { createAdminState } from "./lib/state.js";
 import { ROSTER_SPEC, TERMINAL_DRAFT_STATUSES, validate } from "./lib/schema.js";
 import { runChecks, fullCaption, codePoints } from "./lib/checks.js";
 import { parseBrand, validateBrand } from "./lib/brand.js";
-import { modeLabel, slotLabel, isApproved, tokenStateLabel } from "./lib/labels.js";
+import { modeLabel, slotLabel, isApproved, tokenStateLabel, flagSentence, tokenDaysLeft } from "./lib/labels.js";
 
 const cfg = JSON.parse(document.getElementById("admin-config").textContent);
 const store = createStore();
@@ -254,10 +254,40 @@ async function loadData() {
   d.latest = latestByDraft(d.approvals);
   S.data = d;
   show($("loading"), false);
+  renderFlags();
   const q = queueDrafts().length;
   $("queue-count").textContent = String(q);
   show($("queue-count"), true);
   log(`loaded ${d.drafts.size} drafts, ${d.approvals.length} approvals, ${d.edits.size} edits from company/state`);
+}
+// status.json flags as plain sentences above every view — the same words the Home page prints (labels.js is
+// byte-copied into dist/admin/lib/). token_expiring:<page> counts the days from pages[<page>].tokenExpiresAt.
+function renderFlags() {
+  const box = $("status-flags");
+  clear(box);
+  const status = S.data && S.data.status;
+  const flags = (status && status.flags) || [];
+  for (const flag of flags) {
+    const [kind, page] = String(flag).split(":");
+    const opts = { month: status.budget && status.budget.month ? monthLabel(status.budget.month) : "this month" };
+    if (kind === "token_expiring") {
+      const pageState = status.pages && status.pages[page];
+      opts.daysLeft = tokenDaysLeft(pageState && pageState.tokenExpiresAt, new Date());
+    }
+    let text;
+    try {
+      text = flagSentence(flag, opts);
+    } catch {
+      text = "The engine raised a status flag this admin has no sentence for yet; see Raw file → state/status.json.";
+    }
+    box.append(el("p", { class: "flag", text }));
+  }
+  show(box, flags.length > 0);
+}
+// 'October 2026' from a 'YYYY-MM' budget month key.
+function monthLabel(key) {
+  const m = /^(\d{4})-(\d{2})$/.exec(String(key));
+  return m ? `${MONTHS[Number(m[2]) - 1]} ${m[1]}` : "this month";
 }
 async function ensureData() {
   if (S.data) return true;

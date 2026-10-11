@@ -4,12 +4,15 @@
 //   [ig dry-run] POST /dry-user/media image_url=https://… caption="…" alt_text="…"
 // Ids are deterministic: 'dry-' + the first 8 hex of sha256(method, path, fields), so the same draft
 // always yields the same container/media ids and permalink https://www.instagram.com/p/DRYRUN<sha8>/.
+// Reels (FEAT-202): createReelContainer records the REELS fields; containerStatus answers IN_PROGRESS on the
+// first poll of a container and FINISHED from the second; refreshToken returns a clearly fake 'DRYRUN-' token.
 // Selected by engine/commands/publish.js when IG_DRY_RUN=1 or --dry-run (isDryRun()).
 import { createHash } from "node:crypto";
 
 export const DRY_USER_ID = "dry-user";
 export const DRY_ME = { id: "dry-app", user_id: DRY_USER_ID, username: "dry" };
 export const DRY_QUOTA = { quotaUsage: 0, quotaTotal: 50, quotaDuration: 86400 };
+export const DRY_REFRESH_EXPIRES_IN = 5184000; // 60 days, what Meta answers for a fresh long-lived token
 export const LINE_PREFIX = "[ig dry-run]";
 const VALUE_MAX = 80;
 
@@ -40,6 +43,7 @@ export function formatCall({ method, path, fields }) {
 export function createDryRunClient({ igUserId = DRY_USER_ID, stdout = (s) => process.stdout.write(s + "\n"), now = () => new Date() } = {}) {
   const uid = typeof igUserId === "string" && igUserId.length > 0 ? igUserId : DRY_USER_ID;
   const calls = [];
+  const polls = new Map(); // containerId → number of status polls so far
   const clock = () => (typeof now === "function" ? now() : now);
 
   function record(method, path, fields = {}) {
@@ -79,6 +83,17 @@ export function createDryRunClient({ igUserId = DRY_USER_ID, stdout = (s) => pro
     async createCarousel({ children, caption }) {
       return { id: record("POST", `/${uid}/media`, { media_type: "CAROUSEL", children: (children || []).join(","), caption }) };
     },
+    async createReelContainer({ videoUrl, caption, coverUrl, shareToFeed = true }) {
+      return { id: record("POST", `/${uid}/media`, { media_type: "REELS", video_url: videoUrl, caption, cover_url: coverUrl, share_to_feed: shareToFeed }) };
+    },
+    // IN_PROGRESS on the first poll, FINISHED from the second — the publisher's poll loop runs at least twice.
+    async containerStatus(containerId) {
+      record("GET", `/${containerId}`, { fields: "status_code,status" });
+      const n = (polls.get(containerId) || 0) + 1;
+      polls.set(containerId, n);
+      const statusCode = n >= 2 ? "FINISHED" : "IN_PROGRESS";
+      return { statusCode, status: statusCode === "FINISHED" ? "Finished" : "In progress", raw: { id: containerId, status_code: statusCode } };
+    },
     async publish(creationId) {
       return { id: record("POST", `/${uid}/media_publish`, { creation_id: creationId }) };
     },
@@ -89,6 +104,11 @@ export function createDryRunClient({ igUserId = DRY_USER_ID, stdout = (s) => pro
     async getMe() {
       record("GET", "/me", { fields: "id,user_id,username" });
       return { ...DRY_ME };
+    },
+    // A fake token that could never pass for a real one (prefix DRYRUN-, deterministic), 60 days of validity.
+    async refreshToken() {
+      const id = record("GET", "/refresh_access_token", { grant_type: "ig_refresh_token" });
+      return { accessToken: `DRYRUN-${id}-${"0".repeat(48)}`, expiresIn: DRY_REFRESH_EXPIRES_IN, tokenType: "bearer" };
     },
   };
 }

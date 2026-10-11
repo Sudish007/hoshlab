@@ -1,0 +1,106 @@
+# Hoshlab — the weekly token refresh + media retention run (design.md §3.4, §8.6, §11; P2-09, P2-10; FEAT-202).
+# `node engine/index.js refresh-tokens --commit` refreshes every Instagram long-lived token that is less than
+# 20 days from its expiry (or whose expiry is not known yet) through GET /refresh_access_token and stores the new
+# value with `gh secret set <NAME> --repo Sudish007/hoshlab` on STDIN, authenticated by GH_TOKEN = the
+# HOSHLAB_SECRETS_PAT repository secret (a fine-grained PAT, this repository only, Secrets: Read and write —
+# GITHUB_TOKEN cannot write secrets). It records company/state/tokens.json (expiry, username; never a token),
+# mirrors the expiry into status.json and raises token_expiring:<page> under 7 days (Home + admin banner).
+# `node engine/index.js retention --commit` then deletes reel MP4s published more than 90 days ago from the media
+# branch (posters stay). Shares the `hoshlab-state` concurrency group with engine-daily.yml and publisher-hourly.yml;
+# the deploy job rebuilds the site only when a token state, an expiry, a flag or the media branch changed.
+# Token refresh: Mondays 07:30 IST (cron 0 2 * * 1) · the tokens are refreshed when under 20 days remain
+# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+name: Hoshlab token refresh (weekly)
+
+on:
+  schedule:
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: list what would be refreshed and removed; no call to Instagram, no gh secret set, nothing committed, no deploy"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hoshlab-state
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      changed: ${{ steps.refresh.outputs.changed == 'true' || steps.retention.outputs.changed == 'true' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - id: media
+        uses: actions/checkout@v7
+        with:
+          ref: media
+          path: .media
+        continue-on-error: true
+      # M16: the engine never creates branches; a failed checkout of a not-yet-existing `media` branch leaves an
+      # initialised but empty .media/.git behind, which `retention` would mistake for a checkout — remove it.
+      - name: Media branch check (M16)
+        run: |
+          if [ "${{ steps.media.outcome }}" != "success" ] || ! git -C .media rev-parse --verify HEAD >/dev/null 2>&1; then
+            echo "media branch not checked out (not configured yet: run scripts/init-media-branch.ps1 once) — retention will skip"
+            rm -rf .media
+          else
+            echo "media branch at $(git -C .media rev-parse --short HEAD)"
+          fi
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Bot identity (N16)
+        run: |
+          git config user.name hoshlab-bot
+          git config user.email hoshlab-bot@users.noreply.github.com
+      - id: refresh
+        name: Refresh Instagram tokens (refresh-tokens)
+        env:
+          CI: "true"
+          IG_TOKEN_RISHTAPATRA: ${{ secrets.IG_TOKEN_RISHTAPATRA }}
+          IG_TOKEN_KAATDO: ${{ secrets.IG_TOKEN_KAATDO }}
+          IG_TOKEN_JOB_REZ: ${{ secrets.IG_TOKEN_JOB_REZ }}
+          # gh reads GH_TOKEN; the engine reads HOSHLAB_SECRETS_PAT first and GH_TOKEN as the fallback (same value).
+          HOSHLAB_SECRETS_PAT: ${{ secrets.HOSHLAB_SECRETS_PAT }}
+          GH_TOKEN: ${{ secrets.HOSHLAB_SECRETS_PAT }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          args=(refresh-tokens --commit)
+          if [ "$INPUT_DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          echo "node engine/index.js ${args[*]}"
+          node engine/index.js "${args[@]}"
+      - id: retention
+        name: Media retention (reel MP4s published more than 90 days ago)
+        env:
+          CI: "true"
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          args=(retention --commit)
+          if [ "$INPUT_DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          echo "node engine/index.js ${args[*]}"
+          node engine/index.js "${args[@]}"
+
+  # N17: identical to engine-daily.yml's deploy job — the caller holds the `pages` group.
+  deploy:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    uses: ./.github/workflows/pages.yml

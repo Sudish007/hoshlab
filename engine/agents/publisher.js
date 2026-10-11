@@ -22,6 +22,9 @@
 //   publishDraft({ … })                      quota guard → preflight → container(s) → publish → permalink
 //                                            → published.jsonl record + draft `published`; failures append
 //                                            publishAttempts[] and move the draft/page as design §11 says
+//   waitForContainer({ … })                  reel (P2-03): poll containerStatus every ig.pollIntervalMs until
+//                                            FINISHED; IN_PROGRESS past ig.pollMaxMs → timeout; ERROR/EXPIRED
+//                                            → ContainerStatusError (attempt stage 'status', reason, no code)
 //   completePermalinks({ … })                fills permalink:null records from an earlier run
 import { PUBLISHED_SPEC, assertShape } from "../lib/schema.js";
 import { fullCaption } from "../lib/checks.js";
@@ -34,8 +37,49 @@ export const AGENT = "publisher";
 export const REASONS = ["expired", "not_due", "attempts_exhausted", "token_invalid", "page_not_configured", "rejected", "awaiting_approval", "approval_stale", "min_gap", "autopilot", "approved"];
 export const PREFLIGHT_TIMEOUT_MS = 30000;
 export const QUOTA_HEADROOM = 2;
-export const SKIP_REEL_NOT_BUILT = "reel_not_built";
 const CONTENT_TYPES = { image: "image/jpeg", video: "video/mp4", poster: "image/jpeg" };
+const defaultSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// A reel container that did not reach FINISHED (design §11 row "IG video status"): retryable next hour with
+// a NEW container (the publisher never re-polls an old one), recorded as stage 'status' with `reason`.
+export class ContainerStatusError extends Error {
+  constructor({ reason, containerId, statusCode = null, status = null, elapsedMs = 0, polls = 0 }) {
+    const detail = reason === "timeout" ? `still ${statusCode || "IN_PROGRESS"} after ${Math.round(elapsedMs / 1000)} s and ${polls} poll${polls === 1 ? "" : "s"} (ig.pollMaxMs)` : `status_code ${statusCode}${status ? ` — ${status}` : ""}`;
+    super(`reel container ${containerId}: ${detail}; a new container is created next hour`);
+    this.name = "ContainerStatusError";
+    this.reason = reason;
+    this.stage = "status";
+    this.containerId = containerId;
+    this.statusCode = statusCode;
+    this.status = status;
+    this.retryable = true;
+    this.tokenInvalid = false;
+  }
+}
+
+// waitForContainer({ client, containerId, config, sleep, clock }) → { statusCode: 'FINISHED'|'PUBLISHED', polls, elapsedMs }
+//   Polls GET /{containerId}?fields=status_code,status every config.ig.pollIntervalMs (no wait before the first
+//   poll; a dry-run client is polled without sleeping) until FINISHED (PUBLISHED counts as finished). Throws
+//   ContainerStatusError({ reason: 'timeout' }) when the container is still IN_PROGRESS once pollMaxMs have
+//   elapsed, 'error' / 'expired' for those status codes; an IgError from the GET propagates (stage 'status').
+export async function waitForContainer({ client, containerId, config, sleep = defaultSleep, clock = () => Date.now() } = {}) {
+  if (!client || !containerId || !config) throw new TypeError("publisher: client, containerId and config are required");
+  const intervalMs = client.dryRun === true ? 0 : config.ig.pollIntervalMs;
+  const maxMs = config.ig.pollMaxMs;
+  const started = clock();
+  let polls = 0;
+  for (;;) {
+    const r = await client.containerStatus(containerId);
+    polls++;
+    const code = r && typeof r.statusCode === "string" ? r.statusCode : null;
+    const elapsedMs = clock() - started;
+    if (code === "FINISHED" || code === "PUBLISHED") return { statusCode: code, polls, elapsedMs };
+    if (code === "ERROR") throw new ContainerStatusError({ reason: "error", containerId, statusCode: code, status: r.status, elapsedMs, polls });
+    if (code === "EXPIRED") throw new ContainerStatusError({ reason: "expired", containerId, statusCode: code, status: r.status, elapsedMs, polls });
+    if (elapsedMs >= maxMs) throw new ContainerStatusError({ reason: "timeout", containerId, statusCode: code, status: r.status, elapsedMs, polls });
+    await sleep(intervalMs);
+  }
+}
 
 function toDate(v) {
   const d = v instanceof Date ? v : typeof v === "string" ? parseIso(v) : v === undefined || v === null ? new Date() : new Date(v);
@@ -155,20 +199,26 @@ function flagFor(id) {
   return `publish_failed:${id}`;
 }
 
-// publishDraft({ draft, page, client, state, config, now, runId, mode, approval, fetchImpl, log })
+// The reel's two media rows (FEAT-201): the MP4 (kind video) Instagram fetches and the poster JPEG for cover_url.
+function reelRows(draft) {
+  const media = draft.media || [];
+  const video = media.find((m) => m.kind === "video");
+  const poster = media.find((m) => m.kind === "poster");
+  if (!video) throw new TypeError(`publisher: reel ${draft.id} has no video media row`);
+  return { video, poster };
+}
+
+// publishDraft({ draft, page, client, state, config, now, runId, mode, approval, fetchImpl, log, sleep, clock })
 //   → { ok:true, record, draft, quota, mediaUrlUsed }
 //   | { ok:false, skipped:'quota'|'quota_check_failed', quota?, error?, tokenInvalid? }                 (page-level, no draft attempt)
-//   | { ok:false, stage, code, subcode, message, retryable, tokenInvalid, draft, failed, flags[], quota }  (attempt recorded on the draft)
+//   | { ok:false, stage, code, subcode, reason?, message, retryable, tokenInvalid, draft, failed, flags[], quota }  (attempt recorded on the draft)
 //   `quota` present means content_publishing_limit answered, i.e. the token was accepted by the API.
 //   draft.slotAt must already be the effective slot time (overrides applied by the caller).
-export async function publishDraft({ draft, page, client, state, config, now, runId, mode = page && page.mode, approval = null, fetchImpl = globalThis.fetch, log = () => {} } = {}) {
+//   Reels (P2-03): preflight MP4 (video/mp4) + poster (image/jpeg) → createReelContainer → waitForContainer
+//   (sleep/clock injectable for tests) → publish → permalink. A status timeout/ERROR/EXPIRED is a failed attempt
+//   with stage 'status' and `reason`; the next hour creates a new container (maxPublishAttempts still applies).
+export async function publishDraft({ draft, page, client, state, config, now, runId, mode = page && page.mode, approval = null, fetchImpl = globalThis.fetch, log = () => {}, sleep = defaultSleep, clock = () => Date.now() } = {}) {
   if (!draft || !page || !client || !state || !config) throw new TypeError("publisher: draft, page, client, state and config are required");
-  // FEAT-201 renders reels; the reel publish path (REELS container → status poll → publish, P2-03) is FEAT-202.
-  // Until then a queued reel is a page-level skip (no attempt recorded, tried again next hour), never posted as an image.
-  if (draft.format === "reel" && typeof client.createReelContainer !== "function") {
-    log(`[publisher] ${draft.id}: ${SKIP_REEL_NOT_BUILT} — reel publishing not built yet (FEAT-202)`);
-    return { ok: false, skipped: SKIP_REEL_NOT_BUILT, message: "reel publishing: not built yet (FEAT-202)" };
-  }
   const at = nowIst(toDate(now === undefined ? state.now() : now));
   const d = config.defaults;
   const flags = [];
@@ -210,7 +260,7 @@ export async function publishDraft({ draft, page, client, state, config, now, ru
   const mediaUrlUsed = pre.used;
   const caption = fullCaption(draft);
 
-  // 3. container(s) → publish → permalink
+  // 3. container(s) → (reels: status poll) → publish → permalink
   let igMediaId;
   let stage = "container";
   try {
@@ -222,16 +272,25 @@ export async function publishDraft({ draft, page, client, state, config, now, ru
         children.push(child.id);
       }
       creationId = (await client.createCarousel({ children, caption })).id;
+    } else if (draft.format === "reel") {
+      // pre.urls is in draft.media order: the preflighted URL of the video row and of the poster row
+      const { video, poster } = reelRows(draft);
+      const urlOf = (row) => pre.urls[draft.media.indexOf(row)];
+      creationId = (await client.createReelContainer({ videoUrl: urlOf(video), caption, coverUrl: poster ? urlOf(poster) : undefined, shareToFeed: true })).id;
+      stage = "status";
+      const w = await waitForContainer({ client, containerId: creationId, config, sleep, clock });
+      log(`[publisher] ${draft.id} reel container ${creationId} ${w.statusCode} after ${w.polls} poll${w.polls === 1 ? "" : "s"}`);
     } else {
       creationId = (await client.createImageContainer({ imageUrl: pre.urls[0], caption, altText: draft.altText })).id;
     }
     stage = "publish";
     igMediaId = (await client.publish(creationId)).id;
   } catch (err) {
-    if (!(err instanceof IgError)) throw err;
-    const a = attempt({ stage: err.stage || stage, code: err.code, subcode: err.subcode, message: err.message, mediaUrlUsed });
-    if (a.code === null) delete a.code;
-    if (a.subcode === null) delete a.subcode;
+    if (!(err instanceof IgError) && !(err instanceof ContainerStatusError)) throw err;
+    const a = attempt({ stage: err.stage || stage, code: err.code, subcode: err.subcode, reason: err.reason, message: err.message, mediaUrlUsed });
+    if (a.code === null || a.code === undefined) delete a.code;
+    if (a.subcode === null || a.subcode === undefined) delete a.subcode;
+    if (a.reason === undefined) delete a.reason;
     const attemptsAfter = failedAttempts(draft) + 1;
     let status = draft.status;
     if (err.tokenInvalid) {
@@ -241,8 +300,9 @@ export async function publishDraft({ draft, page, client, state, config, now, ru
       flags.push(flagFor(draft.id));
     }
     const next = writeAttempt(a, status);
-    log(`[publisher] ${draft.id} ${a.stage} failed (code ${a.code === undefined ? "none" : a.code}${a.subcode !== undefined ? `/${a.subcode}` : ""})${status === "failed" ? " → failed" : err.tokenInvalid ? " → token invalid, page paused" : " → retry next hour"}`);
-    return { ok: false, stage: a.stage, code: err.code, subcode: err.subcode, message: err.message, retryable: err.retryable, tokenInvalid: err.tokenInvalid === true, draft: next, failed: status === "failed", flags, mediaUrlUsed, quota };
+    const why = a.reason ? `reason ${a.reason}` : `code ${a.code === undefined ? "none" : a.code}${a.subcode !== undefined ? `/${a.subcode}` : ""}`;
+    log(`[publisher] ${draft.id} ${a.stage} failed (${why})${status === "failed" ? " → failed" : err.tokenInvalid ? " → token invalid, page paused" : " → retry next hour"}`);
+    return { ok: false, stage: a.stage, code: err.code === undefined ? null : err.code, subcode: err.subcode === undefined ? null : err.subcode, reason: a.reason, message: err.message, retryable: err.retryable, tokenInvalid: err.tokenInvalid === true, draft: next, failed: status === "failed", flags, mediaUrlUsed, quota };
   }
 
   let permalink = null;
