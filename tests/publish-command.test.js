@@ -13,6 +13,8 @@ import { fullCaption } from "../engine/lib/checks.js";
 import { IgError } from "../engine/ig/client.js";
 import { LINE_PREFIX } from "../engine/ig/dry-run.js";
 import { LIVE_STATUSES, WORKFLOW, applyEdit, latestOverrides, queueCounts, runPublish, triggerFrom } from "../engine/commands/publish.js";
+import { TERMINAL_SLOT_DRAFT_STATUSES } from "../engine/agents/strategist.js";
+import { slotLabel } from "../src/lib/labels.js";
 
 const NOW = "2026-10-14T20:00:00+05:30"; // the kd slot (Tue 13th 08:15) is due and late, the rp slot (Wed 14th 19:30) is due
 const KD = "kd-2026-10-13-six-rules";
@@ -270,7 +272,7 @@ test("approving rp (revision 1) publishes it in the next dry run; a stale approv
   }
 });
 
-test("a fake client returning code 190 → status.json pages.kaatdo.tokenState 'invalid', flag token_invalid:kaatdo, attempt on the draft without the token; the page is skipped afterwards (no client built)", async () => {
+test("a fake client returning code 190 → status.json pages.kaatdo.tokenState 'invalid', flag token_invalid:kaatdo, attempt on the draft without the token; the next hour only probes the page (R1-01) and, on another 190, skips it", async () => {
   const fx = copyFixture({ configure: true });
   const out = sink();
   try {
@@ -299,20 +301,145 @@ test("a fake client returning code 190 → status.json pages.kaatdo.tokenState '
     assert.equal(fx.published().length, BASE_PUBLISHED, "nothing new published");
     assert.equal(r.changed, true, "the draft changed (attempt recorded)");
 
-    // next hour: the page is skipped without building a client; the draft decision reads token_invalid
-    const r2 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T21:00:00+05:30", processEnv: ENV_KD, clientFactory: () => (factoryCalls++, client), stdout: () => {} });
-    assert.equal(factoryCalls, 1, "no client for an invalid page");
+    // next hour: the dead token still answers 190 → the probe (one content_publishing_limit call, R1-01) keeps the
+    // pause; no preflight, no container, no new attempt; the draft decision reads token_invalid
+    const stillDead = fakeClient({ publishingLimit: new IgError({ code: 190, message: `Invalid OAuth 2.0 Access Token ${TOKEN}`, stage: "quota", status: 400, type: "IGApiException", secrets: [TOKEN] }) });
+    const r2 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T21:00:00+05:30", processEnv: ENV_KD, clientFactory: () => (factoryCalls++, stillDead), stdout: () => {} });
+    assert.equal(factoryCalls, 2, "one client, for the probe only");
+    assert.deepEqual(stillDead.calls.map((c) => c[0]), ["publishingLimit"]);
     assert.deepEqual(r2.run.publisher.pages.kaatdo, { outcome: "token_invalid" });
     assert.deepEqual(r2.run.publisher.decisions.find((d) => d.page === "kaatdo"), { draftId: KD, page: "kaatdo", publish: false, reason: "token_invalid" });
     assert.equal(fx.status().pages.kaatdo.tokenState, "invalid");
     assert.deepEqual(fx.status().flags, ["token_invalid:kaatdo"], "flag not duplicated");
     assert.equal(fx.draft(KD).publishAttempts.length, 1, "no new attempt");
     assert.equal(r2.changed, false);
-    // ... and once the token works again (a replaced secret) the page recovers by publishing
+    // without a well-formed secret the invalid page is not even probed (not_configured wins)
+    const r3 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T22:00:00+05:30", processEnv: {}, clientFactory: () => (factoryCalls++, fakeClient()), stdout: () => {} });
+    assert.equal(factoryCalls, 2, "no client: secret missing");
+    assert.equal(fx.status().pages.kaatdo.tokenState, "not_configured");
+    assert.deepEqual(r3.run.publisher.pages.kaatdo, { outcome: "page_not_configured" });
+  } finally {
+    fx.cleanup();
+  }
+});
+
+test("R1-01: a page stored 'invalid' (flag token_invalid:<h>) with its secret and igUserId present is probed once with content_publishing_limit — an answer resumes the page in the same run (tokenState ok, flag gone, the due approved draft publishes); a code-190 answer keeps the pause with no container/publish call; another error leaves the state untouched", async () => {
+  // seed the paused state the way the previous test produces it: one 190 from the container call
+  const paused = async () => {
+    const fx = copyFixture({ configure: true });
+    const dead = fakeClient({ createImageContainer: new IgError({ code: 190, message: "Invalid OAuth 2.0 Access Token", stage: "container", status: 400, type: "IGApiException" }) });
+    await runPublish({ companyDir: fx.dir, now: NOW, processEnv: ENV_KD, clientFactory: () => dead, stdout: () => {} });
+    assert.equal(fx.status().pages.kaatdo.tokenState, "invalid");
+    assert.deepEqual(fx.status().flags, ["token_invalid:kaatdo"]);
+    assert.equal(fx.draft(KD).status, "queued");
+    return fx;
+  };
+
+  // 1. the replaced secret works: publishingLimit answers → resumed → the queued approved kd draft publishes now
+  const fx = await paused();
+  const out = sink();
+  try {
     const good = fakeClient();
-    const r3 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T22:00:00+05:30", processEnv: ENV_KD, clientFactory: () => good, stdout: () => {} });
-    assert.deepEqual(r3.run.publisher.pages.kaatdo, { outcome: "token_invalid" }, "a stored invalid state needs the owner (design §11: run setup-secrets)");
-    assert.equal(good.calls.length, 0);
+    let factoryCalls = 0;
+    const r = await runPublish({ companyDir: fx.dir, now: "2026-10-14T21:00:00+05:30", processEnv: ENV_KD, clientFactory: () => (factoryCalls++, good), stdout: out });
+    assert.equal(r.ok, true, out.text());
+    assert.equal(factoryCalls, 1, "one client per page per run; the probe and the publish share it");
+    assert.deepEqual(good.calls.map((c) => c[0]), ["publishingLimit", "publishingLimit", "preflight", "createImageContainer", "publish", "getPermalink"], "probe, then the normal quota guard + publish sequence in the same run");
+    assert.ok(out.lines.some((l) => l === "[publisher] kaatdo: the token is accepted again (content_publishing_limit answered) — page resumed"), out.text());
+    const status = fx.status();
+    assert.equal(status.pages.kaatdo.tokenState, "ok");
+    assert.deepEqual(status.flags, [], "token_invalid:kaatdo dropped by the publisher itself — no owner commit of status.json needed");
+    assert.equal(fx.draft(KD).status, "published");
+    assert.equal(fx.published().at(-1).draftId, KD);
+    assert.deepEqual(r.run.publisher.pages.kaatdo, { outcome: "published", draftId: KD, quotaUsage: 3, quotaTotal: 50 });
+    assert.deepEqual(r.run.publisher.decisions.filter((d) => d.page === "kaatdo").map((d) => [d.draftId, d.publish, d.reason]), [[KD, true, "approved"]]);
+    assert.deepEqual(validate(status, STATUS_SPEC), { ok: true, errors: [] });
+    assert.ok(!out.text().includes(TOKEN), "token never printed");
+    // the hour after: a normal run, no probe (tokenState is ok), one quota call
+    const next = fakeClient();
+    const r2 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T22:00:00+05:30", processEnv: ENV_KD, clientFactory: () => next, stdout: () => {} });
+    assert.deepEqual(r2.run.publisher.pages.kaatdo, { outcome: "idle" });
+    assert.deepEqual(next.calls.map((c) => c[0]), [], "nothing queued and nothing to probe → no call at all");
+  } finally {
+    fx.cleanup();
+  }
+
+  // 2. the probe answers 190 (the owner has not replaced the token yet): stays paused, no draft attempt
+  const fx2 = await paused();
+  const out2 = sink();
+  try {
+    const still = fakeClient({ publishingLimit: new IgError({ code: 190, message: `Invalid OAuth 2.0 Access Token ${TOKEN}`, stage: "quota", status: 400, type: "IGApiException", secrets: [TOKEN] }) });
+    const r = await runPublish({ companyDir: fx2.dir, now: "2026-10-14T21:00:00+05:30", processEnv: ENV_KD, clientFactory: () => still, stdout: out2 });
+    assert.equal(r.ok, true);
+    assert.deepEqual(still.calls.map((c) => c[0]), ["publishingLimit"], "one probe, no preflight/container/publish");
+    assert.equal(fx2.status().pages.kaatdo.tokenState, "invalid");
+    assert.deepEqual(fx2.status().flags, ["token_invalid:kaatdo"]);
+    assert.equal(fx2.draft(KD).status, "queued");
+    assert.equal(fx2.draft(KD).publishAttempts.length, 1, "no new attempt recorded on the draft");
+    assert.deepEqual(r.run.publisher.pages.kaatdo, { outcome: "token_invalid" });
+    assert.deepEqual(r.run.publisher.decisions.filter((d) => d.page === "kaatdo"), [{ draftId: KD, page: "kaatdo", publish: false, reason: "token_invalid" }]);
+    assert.ok(out2.lines.some((l) => l === "[publisher] kaatdo: token probe failed with code 190 — page stays paused (run setup-secrets with a new token)"), out2.text());
+    assert.ok(!out2.text().includes(TOKEN) && !JSON.stringify(r.run).includes(TOKEN), "token scrubbed everywhere");
+    assert.equal(r.changed, false);
+
+    // 3. the probe fails for another reason (rate limit): state untouched, the next hour probes again
+    const flaky = fakeClient({ publishingLimit: new IgError({ code: 4, message: "Application request limit reached", stage: "quota", status: 400 }) });
+    const r3 = await runPublish({ companyDir: fx2.dir, now: "2026-10-14T22:00:00+05:30", processEnv: ENV_KD, clientFactory: () => flaky, stdout: () => {} });
+    assert.deepEqual(flaky.calls.map((c) => c[0]), ["publishingLimit"]);
+    assert.equal(fx2.status().pages.kaatdo.tokenState, "invalid", "a non-190 error neither clears nor re-stamps the state");
+    assert.deepEqual(fx2.status().flags, ["token_invalid:kaatdo"]);
+    assert.deepEqual(r3.run.publisher.pages.kaatdo, { outcome: "token_invalid" });
+    assert.equal(fx2.draft(KD).publishAttempts.length, 1);
+
+    // 4. a dry run never probes a stored 'invalid' page (it proves nothing about the token): the page is skipped as before
+    const dry = fakeClient();
+    const r4 = await runPublish({ companyDir: fx2.dir, now: "2026-10-14T23:00:00+05:30", processEnv: {}, dryRun: true, clientFactory: () => dry, stdout: () => {} });
+    assert.equal(dry.calls.length, 0);
+    assert.deepEqual(r4.run.publisher.pages.kaatdo, { outcome: "token_invalid" });
+    assert.equal(fx2.status().pages.kaatdo.tokenState, "invalid");
+  } finally {
+    fx2.cleanup();
+  }
+  assert.equal(FETCH_ATTEMPTS.length, 0);
+});
+
+test("R1-06: a live draft whose latest approval is a reject is stamped status 'rejected' by the publisher (updatedAt = run clock), leaves status.json.queue, is listed in the run's publisher.rejected and the note; blocked counts and the other drafts are unchanged; a second run changes nothing", async () => {
+  const fx = copyFixture();
+  try {
+    const appr = join(fx.dir, "state", "approvals.jsonl");
+    writeFileSync(appr, readFileSync(appr, "utf8") + JSON.stringify({ draftId: RP, decision: "reject", revision: 1, at: "2026-10-14T19:40:00+05:30", by: "owner", reason: "Not this week — the kundali page is being rewritten." }) + "\n", "utf8");
+    // a reject on a draft that is already terminal (jr is blocked) is not re-stamped
+    writeFileSync(appr, readFileSync(appr, "utf8") + JSON.stringify({ draftId: JR, decision: "reject", revision: 3, at: "2026-10-14T19:41:00+05:30", by: "owner", reason: "Stays blocked; the owner just adds a note here." }) + "\n", "utf8");
+    const out = sink();
+    const r = await runPublish({ companyDir: fx.dir, now: NOW, processEnv: {}, dryRun: true, stdout: out });
+    assert.equal(r.ok, true, out.text());
+    const rp = fx.draft(RP);
+    assert.equal(rp.status, "rejected");
+    assert.equal(rp.updatedAt, NOW);
+    assert.equal(rp.revision, 1, "nothing else on the draft changes");
+    assert.deepEqual(validate(rp, DRAFT_SPEC), { ok: true, errors: [] });
+    assert.equal(fx.draft(JR).status, "blocked", "terminal drafts are left alone");
+    assert.equal(fx.draft(KD).status, "published", "the approved kd draft still publishes in the same run");
+    assert.deepEqual(r.run.publisher.rejected, [RP]);
+    assert.deepEqual(r.run.publisher.expired, []);
+    assert.deepEqual(validate(r.run, RUN_SPEC), { ok: true, errors: [] });
+    assert.deepEqual(r.run.publisher.decisions.map((d) => [d.draftId, d.publish, d.reason]), [[KD, true, "approved"]], "a rejected draft is no longer a candidate, so it has no decision row");
+    assert.equal(r.run.agents[0].note, "1 published, 0 waiting, 0 failed, 0 expired, 1 rejected");
+    assert.ok(r.run.changed.includes(`company/state/drafts/${RP}/draft.json`));
+    assert.ok(out.lines.some((l) => l.startsWith(`[publisher] ${RP} rejected (owner's reject record for revision 1, 2026-10-14T19:40:00+05:30)`)), out.text());
+    const status = fx.status();
+    assert.deepEqual(status.queue, { rishtapatra: 0, kaatdo: 0, job_rez: 0 }, "the rejected draft is not counted as queued any more");
+    assert.deepEqual(status.blocked, { job_rez: 1 }, "blocked counts unchanged");
+    assert.deepEqual(queueCounts([fx.draft(RP), fx.draft(KD), fx.draft(JR)], fx.config()), { queue: { rishtapatra: 0, kaatdo: 0, job_rez: 0 }, blocked: { job_rez: 1 } });
+    assert.deepEqual(validate(status, STATUS_SPEC), { ok: true, errors: [] });
+    // the Strategist's and the site's reading agree: rejected frees the slot and is hidden from the public calendar
+    assert.ok(TERMINAL_SLOT_DRAFT_STATUSES.includes("rejected"));
+    assert.equal(slotLabel({ slotId: rp.slotId, status: "rejected", draftId: RP }, rp, { decision: "reject", revision: 1 }, "approve_first"), null);
+    // next hour: nothing to stamp, nothing changed
+    const r2 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T21:00:00+05:30", processEnv: {}, dryRun: true, stdout: () => {} });
+    assert.deepEqual(r2.run.publisher.rejected, []);
+    assert.equal(r2.changed, false);
+    assert.equal(fx.draft(RP).updatedAt, NOW);
   } finally {
     fx.cleanup();
   }
@@ -485,15 +612,24 @@ test("CLI: `publish --dry-run --now <iso>` runs on a temp copy (fixture byte-ide
   assert.equal(await main(["publish", "--dry-run", "--now", "yesterday"], { stdout: sink(), stderr: e3, processEnv: {}, companyDir: COMPANY_DIR }), EXIT.usage);
   assert.match(e3.text(), /invalid ISO datetime/);
 
-  // IG_DRY_RUN=1 without --dry-run writes to the given company dir (tests and scripts/dry-run-publish.mjs use a temp copy)
+  // R1-03: IG_DRY_RUN=1 without --dry-run ALSO works on a temp copy — the dry-run client would otherwise mark the
+  // real queued drafts 'published' with dry- ids (tests and scripts/dry-run-publish.mjs call runPublish directly)
   const fx = copyFixture();
   try {
+    const envBefore = treeHash(fx.dir);
     const out4 = sink();
-    assert.equal(await main(["publish", "--page", "job_rez", "--now", NOW], { stdout: out4, stderr: sink(), processEnv: { IG_DRY_RUN: "1" }, companyDir: fx.dir }), EXIT.ok);
+    assert.equal(await main(["publish", "--now", NOW], { stdout: out4, stderr: sink(), processEnv: { IG_DRY_RUN: "1" }, companyDir: fx.dir }), EXIT.ok, out4.text());
+    assert.equal(treeHash(fx.dir), envBefore, "the given company dir is byte-identical afterwards");
     assert.equal(fx.published().length, BASE_PUBLISHED);
-    assert.equal(fx.runs().length, BASE_RUNS + 1);
-    assert.deepEqual(fx.runs().at(-1).publisher.pages, { rishtapatra: { outcome: "filtered" }, kaatdo: { outcome: "filtered" }, job_rez: { outcome: "idle" } });
-    assert.ok(out4.lines.some((l) => l === "[publisher] job_rez: idle (no queued drafts)"), out4.text());
+    assert.equal(fx.runs().length, BASE_RUNS, "no run record in the given dir either");
+    assert.equal(fx.draft(KD).status, "queued", "the approved due draft is still queued in the real dir");
+    assert.match(out4.lines[0], /^publish: IG_DRY_RUN=1 works on a temp copy .*hoshlab-publish-dry-run-.* \(the repo's company dir is untouched\)$/);
+    assert.ok(out4.lines.some((l) => l.startsWith(`[publisher] kaatdo: published ${KD}`)), "the dry-run publish happened — on the copy");
+    assert.match(out4.lines.at(-1), /^publish: dry run complete — state written under .*; nothing committed$/);
+    const tmp4 = out4.lines[0].match(/temp copy (.+) \(the repo/)[1];
+    assert.equal(JSON.parse(readFileSync(join(tmp4, "state", "drafts", KD, "draft.json"), "utf8")).status, "published", "the copy carries the dry- publish");
+    assert.equal(createState({ companyDir: tmp4, now: NOW }).readJsonl("state/published.jsonl").at(-1).dryRun, true);
+    rmSync(join(tmp4, ".."), { recursive: true, force: true });
   } finally {
     fx.cleanup();
   }

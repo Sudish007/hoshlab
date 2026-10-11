@@ -607,7 +607,8 @@ export const PUBLISH_ATTEMPT_SPEC = {
   "runId?": "id",
 };
 export const ARTWORK_SPEC = { headline: "str<=60", subline: "str<=110", facts: ["str<=70", { max: 3 }], footer: "str", "variant?": "enum[A|B|C]" };
-// Designer refusal (design §10 guards, §11 "Render" row; FEAT-106): the draft stays `written` and carries why.
+// Designer refusal (design §10 guards, §11 "Render" row; FEAT-106, R1-02): the draft goes to `rework` (or
+// `blocked` at the cap) and carries why, for the Writer (qaReasons) and the admin card (renderError).
 export const RENDER_ERROR_CODES = ["overflow", "missing_glyphs", "text_floor", "contrast", "media_spec", "render_failed"];
 export const RENDER_ERROR_SPEC = { code: `enum[${RENDER_ERROR_CODES.join("|")}]`, "detail?": "str<=1000", at: "iso-datetime" };
 export const SLIDE_SPEC = { heading: "str<=40", body: "str<=160", altText: "str<=200" };
@@ -756,7 +757,9 @@ export const RUN_AGENT_SPEC = { name: AGENT, ok: "bool", ms: "int[0..86400000]",
 // the drafts stamped expired (M5.1) and one outcome line per page.
 export const PUBLISH_DECISION_SPEC = { draftId: "id", page: "handle", publish: "bool", reason: "str", "stage?": "str", "code?": "int", "igMediaId?": "str" };
 export const PUBLISH_PAGE_SPEC = { outcome: "str", "draftId?": "id", "quotaUsage?": "int", "quotaTotal?": "int" };
-export const PUBLISH_RUN_SPEC = { decisions: [PUBLISH_DECISION_SPEC], staleEdits: ["id"], expired: ["id"], pages: { "*": PUBLISH_PAGE_SPEC } };
+// `rejected` (R1-06: live drafts stamped 'rejected' from the owner's reject record) is optional so the run
+// records written before it existed still validate.
+export const PUBLISH_RUN_SPEC = { decisions: [PUBLISH_DECISION_SPEC], staleEdits: ["id"], expired: ["id"], "rejected?": ["id"], pages: { "*": PUBLISH_PAGE_SPEC } };
 export const RUN_SPEC = {
   id: "id",
   workflow: "pattern:^[a-z][a-z0-9-]{1,40}$",

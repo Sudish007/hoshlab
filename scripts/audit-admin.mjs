@@ -1,7 +1,8 @@
 // Real-browser audit of dist/admin/ with api.github.com and raw.githubusercontent.com fully mocked (design §15,
 // §17 P1-19; review M2/M5.5/M9/M12/N1/N6/N11/N20; structure of ai-batkahi scripts/audit-admin.mjs). Playwright
 // Chromium comes from the `playwright` dependency (plan D16). Every call to api.github.com is answered by an
-// in-memory repository seeded from tests/fixtures/company-populated (every company/** file) and every call to
+// in-memory repository seeded from tests/fixtures/company-populated (every company/** file; the queue step adds one
+// render-blocked draft the on-disk fixture cannot hold — see RENDER_BLOCKED) and every call to
 // raw.githubusercontent.com by tests/fixtures/media/** as image/jpeg; CORS preflights are answered too. No real
 // token exists: the only token strings here are the documented fakes ghp_FAKE_OK (push), ghp_FAKE_READONLY
 // (push: false), ghp_FAKE_RATE (403 + x-ratelimit-remaining: 0) and ghp_FAKE_BAD (401). The real GitHub path
@@ -23,6 +24,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import config from "../site.config.js";
 import { MODE_CONSEQUENCES, WORKFLOWS } from "../src/templates/admin.js";
+import { DRAFT_SPEC, validate } from "../engine/lib/schema.js";
 import { collectPaintRects, emptyRegion } from "./lib/empty-region.js";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
@@ -155,13 +157,54 @@ const CORS = {
 };
 
 // Every company/** file of the fixture, keyed by its repo path; writes, dispatches and runs are recorded.
-function makeFakeRepo() {
+// `overlayDrafts` adds draft.json files the fixture on disk cannot hold (see RENDER_BLOCKED below).
+function makeFakeRepo({ overlayDrafts = [] } = {}) {
   const files = new Map();
   for (const file of walk(FIXTURE)) {
     const content = readFileSync(file);
     files.set(`company/${relative(FIXTURE, file).split(sep).join("/")}`, { content, sha: blobSha(content) });
   }
+  for (const draft of overlayDrafts) {
+    const content = Buffer.from(JSON.stringify(draft, null, 2) + "\n", "utf8");
+    files.set(`company/state/drafts/${draft.id}/draft.json`, { content, sha: blobSha(content) });
+  }
   return { files, puts: [], dispatches: [], runs: [], commits: [], conflictOnce: new Set(), nextRunId: 1000, apiCalls: 0, rawCalls: 0, rawServed: 0 };
+}
+
+// R1-02: the draft the engine writes when the Designer refuses a render at the rework cap (engine/agents/designer.js):
+// status blocked, media [], qaReasons[0] 'render: <code> — <detail>', renderError kept for the card. Every draft of the
+// populated fixture carries committed JPEGs (tests/fixtures-integrity.test.js), so this one is overlaid onto the queue
+// step's fake repo only; it is derived from the fixture's rp draft and validated against DRAFT_SPEC before use.
+const RENDER_BLOCKED = "rp-2026-10-16-kundali-arrow";
+const RENDER_DETAIL = "U+2192 not in Tiro Devanagari Hindi: “→ मुफ़्त जन्म कुंडली”";
+function renderBlockedDraft() {
+  const base = FIX.draft(RP);
+  const at = "2026-10-12T05:36:40+05:30"; // the fixture's Monday run; older than jr's updatedAt, so jr stays first in the list
+  const draft = {
+    ...base,
+    id: RENDER_BLOCKED,
+    ideaId: "rp-i0032",
+    slotId: "rishtapatra-2026-10-16-1930",
+    slotAt: "2026-10-16T19:30:00+05:30",
+    status: "blocked",
+    revision: FIX.config.defaults.maxReworkLoops + 1,
+    reworkCount: FIX.config.defaults.maxReworkLoops,
+    createdAt: "2026-10-12T05:33:10+05:30",
+    updatedAt: at,
+    runId: "engine-daily-20261012-0531-9a8b7c",
+    artwork: { ...base.artwork, headline: "→ मुफ़्त जन्म कुंडली" },
+    altText: "Cream card with a maroon Hindi headline behind an arrow: free Janam Kundali, computed on your device.",
+    writerNote: "Third revision; the arrow in the headline was kept each time.",
+    media: [],
+    publishAttempts: [],
+    qaReasons: [`render: missing_glyphs — ${RENDER_DETAIL}`],
+    renderError: { code: "missing_glyphs", detail: RENDER_DETAIL, at },
+  };
+  delete draft.qaRef;
+  delete draft.designNote;
+  const r = validate(draft, DRAFT_SPEC);
+  if (!r.ok) throw new Error(`audit-admin: the render-blocked overlay draft does not validate — ${r.errors.join("; ")}`);
+  return draft;
 }
 
 // GitHub's directory listing: files and sub-directories one level under `dir`, sorted by name.
@@ -717,10 +760,11 @@ async function lock() {
 }
 
 // Queue render against the fixture (counts, thumbnails from the fake raw host, 12 QA chips + model verdict, brand
-// colour via data-page), the blocked list, then Approve rp and Reject kd with the PUT bodies asserted.
+// colour via data-page), the blocked list (the fixture's QA-blocked jr draft + the overlaid render-blocked draft,
+// R1-02), then Approve rp and Reject kd with the PUT bodies asserted.
 async function queue() {
   console.log("queue: render, blocked, approve, reject");
-  const { ctx, page, fake } = await newCtx({ width: 1440, height: 900, token: TOKEN_OK });
+  const { ctx, page, fake } = await newCtx({ width: 1440, height: 900, token: TOKEN_OK, fake: makeFakeRepo({ overlayDrafts: [renderBlockedDraft()] }) });
   await open(page, "#/");
   await waitView(page, "queue");
   // Thumbnails are loading="lazy": bring every card into view, then wait for the loads to finish.
@@ -732,7 +776,7 @@ async function queue() {
   const kd = q.cards.find((c) => c.id === KD);
   const draftRp = FIX.draft(RP);
   const draftKd = FIX.draft(KD);
-  record("queue cards (fixture)", "queue", 1440, q.cards.length === 2 && q.cards[0].id === KD && q.cards[1].id === RP && q.count === "2" && !q.countHidden && q.summary === "2 in the queue (@rishtapatra 1 · @kaatdo 1 · @job_rez 0) · 1 awaiting your approval · 1 blocked, failed, expired or rejected" && q.emptyHidden && q.dashError === null && q.title === "Approval queue" && rp.head.includes("awaiting approval") && rp.buttons.join("|") === "Approve|Edit caption|Move slot|Reject with reason" && kd.head.some((h) => /^approved rev 1 · /.test(h)) && kd.buttons.join("|") === "Edit caption|Move slot|Reject with reason" && rp.head.includes("rev 1") && rp.head.includes("image · 1080×1350 · 97 KB") && rp.lang === "hi" && kd.lang === null && rp.note.includes("Writer note:") && rp.note.includes("alt text:"), { count: q.count, summary: q.summary, order: q.cards.map((c) => c.id), rp: { head: rp && rp.head, buttons: rp && rp.buttons }, kd: { head: kd && kd.head, buttons: kd && kd.buttons }, dashError: q.dashError });
+  record("queue cards (fixture)", "queue", 1440, q.cards.length === 2 && q.cards[0].id === KD && q.cards[1].id === RP && q.count === "2" && !q.countHidden && q.summary === "2 in the queue (@rishtapatra 1 · @kaatdo 1 · @job_rez 0) · 1 awaiting your approval · 2 blocked, failed, expired or rejected" && q.emptyHidden && q.dashError === null && q.title === "Approval queue" && rp.head.includes("awaiting approval") && rp.buttons.join("|") === "Approve|Edit caption|Move slot|Reject with reason" && kd.head.some((h) => /^approved rev 1 · /.test(h)) && kd.buttons.join("|") === "Edit caption|Move slot|Reject with reason" && rp.head.includes("rev 1") && rp.head.includes("image · 1080×1350 · 97 KB") && rp.lang === "hi" && kd.lang === null && rp.note.includes("Writer note:") && rp.note.includes("alt text:"), { count: q.count, summary: q.summary, order: q.cards.map((c) => c.id), rp: { head: rp && rp.head, buttons: rp && rp.buttons }, kd: { head: kd && kd.head, buttons: kd && kd.buttons }, dashError: q.dashError });
   record("queue thumbnails (fake raw host)", "queue", 1440, q.cards.every((c) => c.thumb && c.thumb.src.startsWith(`${RAW}/${OWNER}/${REPO}/${MEDIA_BRANCH}/media/`) && c.thumb.complete && c.thumb.naturalWidth === 1080 && c.thumb.naturalHeight === 1350 && !c.thumb.missing) && rp.thumb.src === draftRp.media[0].rawUrl && kd.thumb.src === draftKd.media[0].rawUrl && rp.open === draftRp.media[0].rawUrl && fake.rawServed >= 2, { thumbs: q.cards.map((c) => c.thumb), rawRequests: fake.rawCalls, rawServed: fake.rawServed });
   const qaOk = (c) => c.qa.length === QA_IDS.length + 1 && QA_IDS.every((id, i) => c.qa[i].ok && c.qa[i].text.startsWith(`${id.replace(/_/g, " ")} · `)) && /^model: pass · tone \d\/5$/.test(c.qa[QA_IDS.length].text) && c.qa[QA_IDS.length].ok;
   record("queue QA chips 12 + model (N20)", "queue", 1440, q.cards.every(qaOk), q.cards.map((c) => ({ id: c.id, chips: c.qa.length, texts: c.qa.map((x) => x.text) })));
@@ -743,7 +787,11 @@ async function queue() {
   await go(page, "blocked");
   const b = await page.evaluate(cardsEval, "blocked");
   const jr = b.cards[0];
-  record("blocked list (fixture)", "blocked", 1440, b.cards.length === 1 && jr.id === JR && jr.head.includes("blocked") && jr.buttons.length === 0 && jr.links.length === 2 && jr.head.some((h) => /^slot: .*18:30 IST · moved$/.test(h)) && jr.head.includes("rev 3") && jr.reasons && jr.reasons.startsWith("Reasons: ") && jr.head.includes("carousel · 4 slides · 354 KB"), { cards: b.cards.map((c) => ({ id: c.id, head: c.head, buttons: c.buttons, reasons: c.reasons })) });
+  record("blocked list (fixture)", "blocked", 1440, b.cards.length === 2 && jr.id === JR && jr.head.includes("blocked") && jr.buttons.length === 0 && jr.links.length === 2 && jr.head.some((h) => /^slot: .*18:30 IST · moved$/.test(h)) && jr.head.includes("rev 3") && jr.reasons && jr.reasons.startsWith("Reasons: ") && jr.head.includes("carousel · 4 slides · 354 KB"), { cards: b.cards.map((c) => ({ id: c.id, head: c.head, buttons: c.buttons, reasons: c.reasons })) });
+  // R1-02: the render-blocked draft (Designer refusal at the rework cap) is listed with its render reason, no artwork
+  // and no actions — the owner sees why the slot was lost instead of a draft that exists in no list.
+  const rb = b.cards.find((c) => c.id === RENDER_BLOCKED);
+  record("blocked list: render-refused draft (R1-02)", "blocked", 1440, Boolean(rb) && b.cards[1] === rb && rb.head.includes("blocked") && rb.head.includes("rev 3") && rb.head.includes("image · not rendered yet") && rb.reasons === `Reasons: render: missing_glyphs — ${RENDER_DETAIL}` && rb.buttons.length === 0 && rb.links.length === 1 && rb.links[0].text === "Raw draft" && rb.thumb && rb.thumb.missing && rb.thumb.src === null && rb.open === null && rb.lang === "hi" && rb.note.includes("Writer note: Third revision"), rb ? { head: rb.head, reasons: rb.reasons, buttons: rb.buttons, links: rb.links, thumb: rb.thumb, open: rb.open } : { cards: b.cards.map((c) => c.id) });
 
   // Approve rp -> PUT company/state/approvals.jsonl: old content + one JSON line, sha of the old file, message.
   await go(page, "queue");
@@ -784,7 +832,7 @@ async function queue() {
   await go(page, "blocked");
   const blockedAfter = await page.evaluate(cardsEval, "blocked");
   const kdBlocked = blockedAfter.cards.find((c) => c.id === KD);
-  record("reject PUTs (approvals + feedback)", "queue", 1440, rejectOk && afterReject.cards.length === 1 && afterReject.cards[0].id === RP && afterReject.count === "1" && blockedAfter.cards.length === 2 && kdBlocked && kdBlocked.head.includes("rejected by owner") && kdBlocked.reasons === `Reasons: Owner: ${REASON}`, { approvals: rejPut && { status: rejPut.status, message: rejPut.message, last: rj.last }, feedback: fbPut && { status: fbPut.status, message: fbPut.message, last: fb.last }, queueAfter: afterReject.cards.map((c) => c.id), blockedAfter: blockedAfter.cards.map((c) => ({ id: c.id, head: c.head })) });
+  record("reject PUTs (approvals + feedback)", "queue", 1440, rejectOk && afterReject.cards.length === 1 && afterReject.cards[0].id === RP && afterReject.count === "1" && blockedAfter.cards.length === 3 && kdBlocked && kdBlocked.head.includes("rejected by owner") && kdBlocked.reasons === `Reasons: Owner: ${REASON}`, { approvals: rejPut && { status: rejPut.status, message: rejPut.message, last: rj.last }, feedback: fbPut && { status: fbPut.status, message: fbPut.message, last: fb.last }, queueAfter: afterReject.cards.map((c) => c.id), blockedAfter: blockedAfter.cards.map((c) => ({ id: c.id, head: c.head })) });
   await closeCtx(ctx, page, "queue");
 }
 

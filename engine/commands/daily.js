@@ -8,11 +8,14 @@
 //      drafts are created (M5.4); used ≥ warnAtPct → budget_warn.
 //   3. CEO when Monday IST or this ISO week's memo is missing;  4. HR → skipped: phase2 (D18);
 //   5. Strategist per page;  6. Writer for slots within leadDays without a live draft + drafts in rework;
-//   7. Designer for `written` drafts (skipped: media_branch_missing when .media/.git is absent, M16);
+//   7. Designer for `written` drafts (skipped: media_branch_missing when .media/.git is absent, M16); a
+//      refused draft goes to `rework` like a failed QA check (R1-02);
 //   8. QA for `rendered` drafts;  9. one inline rework loop (Writer → Designer → QA) for the drafts QA
-//      sent to rework in this run;  10. finish: status.json (queue/blocked counts, budget, pages, flags,
-//      lastRuns ≤ 20 — M9), calendar slots re-linked to the drafts written today, runs/<month>.jsonl
-//      record, one scrubbed stdout line per agent.
+//      or the Designer sent to rework in this run;  10. finish: status.json (queue/blocked counts, budget,
+//      pages, flags, lastRuns ≤ 20 — M9), calendar slots re-linked to the drafts written today,
+//      runs/<month>.jsonl record, one scrubbed stdout line per agent.
+//   An AllProvidersFailedError ends that agent's work (row ok:false, run still ok — design §11) and flags
+//   provider_down:<name> for every provider that was actually attempted (R1-05).
 //   --dry-run copies the company dir (and .media when present) to a temp dir, runs there and prints the
 //   path; nothing in the repo changes. Commit + push happen only with CI=true or --commit (git.js).
 import { cpSync, existsSync, mkdtempSync } from "node:fs";
@@ -136,9 +139,10 @@ export function relinkCalendar(calendar, drafts) {
   return changed ? { ...calendar, slots } : null;
 }
 
-// runDaily({ companyDir, mediaRoot, now, processEnv, fetchImpl, flags: { agents, page, dryRun }, renderer, stdout, runId, trigger })
+// runDaily({ companyDir, mediaRoot, now, processEnv, fetchImpl, flags: { agents, page, dryRun }, renderer, sleep, stdout, runId, trigger })
 //   → { ok, changed, changedFiles, run, status, agents, errors, flags, summary, companyDir }
-export async function runDaily({ companyDir, mediaRoot, now, processEnv = process.env, fetchImpl = globalThis.fetch, flags: runFlags = {}, renderer, stdout = (s) => process.stdout.write(s + "\n"), runId, trigger = triggerFrom(processEnv), workflow = WORKFLOW } = {}) {
+//   `sleep` reaches the router's retry backoff (tests stub it); the default is the router's own.
+export async function runDaily({ companyDir, mediaRoot, now, processEnv = process.env, fetchImpl = globalThis.fetch, flags: runFlags = {}, renderer, sleep, stdout = (s) => process.stdout.write(s + "\n"), runId, trigger = triggerFrom(processEnv), workflow = WORKFLOW } = {}) {
   if (!companyDir) throw new TypeError("daily: companyDir is required");
   const startedAt = toDate(now);
   const clock = () => startedAt;
@@ -175,7 +179,9 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   if (pageFilter && !config.pages.some((p) => p.handle === pageFilter)) throw new TypeError(`daily: unknown page ${JSON.stringify(pageFilter)} (--page takes ${config.pages.map((p) => p.handle).join("|")})`);
   const pages = config.pages.filter((p) => !pageFilter || p.handle === pageFilter);
   const d = config.defaults;
-  const router = createRouter({ config, roster, state, fetchImpl, now: clock, runId: id, charters, processEnv });
+  const routerOptions = { config, roster, state, fetchImpl, now: clock, runId: id, charters, processEnv };
+  if (typeof sleep === "function") routerOptions.sleep = sleep;
+  const router = createRouter(routerOptions);
   // every stdout line passes through scrub() with the provider keys (the router already scrubs its errors)
   const logger = createLogger({ secrets: readEnv(Object.values(config.providers).map((p) => p.secret), processEnv).secrets(), stdout, stderr: stdout });
   const log = (s) => logger.info(s);
@@ -205,6 +211,13 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     const r = rec(name);
     r.ok = false;
     r.notes.push(scrub(text));
+  };
+  // R1-05: when no provider answered, every provider that was actually called (attempts > 0 — not the ones
+  // skipped for a missing secret or `enabled: false`) is flagged provider_down:<name>, so the Home page says
+  // so even when the router raised no 401 flag of its own. Stale provider_down flags are dropped each run.
+  const providersDown = (err) => {
+    if (!(err instanceof AllProvidersFailedError)) return;
+    for (const f of err.failures || []) if (f && f.attempts > 0 && config.providers[f.provider]) addFlag(`provider_down:${f.provider}`);
   };
   // Budget crossed mid-run (the router's gate throws before the call): the rest of the model steps skip.
   const budgetHit = (name) => {
@@ -245,6 +258,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
         if (err instanceof BudgetExhaustedError) return budgetHit("ceo");
         if (!isRouterError(err)) throw err;
         fail("ceo", `${err.name}: ${err.message}`);
+        providersDown(err);
       }
     });
     settle("ceo");
@@ -279,6 +293,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
           }
           if (!isRouterError(err)) throw err;
           fail("strategist", `${page.handle}: ${err.name}: ${err.message}`);
+          providersDown(err);
           if (err instanceof AllProvidersFailedError) stop = true;
         }
       });
@@ -336,6 +351,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
           }
           if (!isRouterError(err)) throw err;
           fail("writer", `${existing ? existing.id : slot.slotId}: ${err.name}: ${err.message}`);
+          providersDown(err);
           if (err instanceof AllProvidersFailedError) stop = true;
         }
       });
@@ -360,10 +376,12 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   else await writerPass(writerTargets(), "");
   settle("writer");
 
-  // 7. Designer — every `written` draft; skipped cleanly without the media worktree (M16)
+  // 7. Designer — every `written` draft; skipped cleanly without the media worktree (M16). A refused draft
+  //    is in `rework` afterwards (R1-02) and joins the inline rework loop below like a QA failure.
   const mediaPresent = mediaBranchPresent(media);
   let ownRenderer = null;
   const theRenderer = () => renderer || (ownRenderer = ownRenderer || createRenderer());
+  const designerReworked = [];
   async function designerPass(only = null, label = "") {
     if (!mediaPresent) {
       addFlag(SKIP_MEDIA_BRANCH_MISSING);
@@ -374,7 +392,10 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     const r = await timed("designer", () => runDesigner({ drafts: queue, brands, config, state, mediaRoot: media, renderer: theRenderer(), now: startedAt, runId: id, log }));
     changedFiles.push(...r.changed);
     for (const f of r.flags) addFlag(f);
-    for (const x of r.results) if (x.status === "rendered") mediaCommits.push({ draftId: x.id, files: x.files });
+    for (const x of r.results) {
+      if (x.status === "rendered") mediaCommits.push({ draftId: x.id, files: x.files });
+      if (x.status === "rework" && !only) designerReworked.push(x.id);
+    }
     if (!r.ok) fail("designer", `${label}${r.note}`);
     else note("designer", `${label}${r.note}`);
     return r;
@@ -410,6 +431,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
           }
           if (!isRouterError(err)) throw err;
           fail("qa", `${draft.id}: ${err.name}: ${err.message}`);
+          providersDown(err);
           if (err instanceof AllProvidersFailedError) stop = true;
         }
       });
@@ -423,14 +445,15 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   else qaResult = await qaPass();
   settle("qa");
 
-  // 9. one inline rework loop so a first-pass QA failure does not cost a day (design §3.1 step 7)
-  if (qaResult.reworked.length && !exhausted && wants("writer") && wants("designer") && wants("qa")) {
-    const ids = new Set(qaResult.reworked);
-    const w = await writerPass(writerTargets(ids), "rework loop: ");
+  // 9. one inline rework loop so a first-pass QA failure — or a Designer refusal (R1-02) — does not cost a
+  //    day (design §3.1 step 7)
+  const reworkIds = new Set([...designerReworked, ...qaResult.reworked]);
+  if (reworkIds.size && !exhausted && wants("writer") && wants("designer") && wants("qa")) {
+    const w = await writerPass(writerTargets(reworkIds), "rework loop: ");
     settle("writer");
     if (w.reworked > 0) {
-      await designerPass(ids, "rework loop: ");
-      await qaPass(ids, "rework loop: ");
+      await designerPass(reworkIds, "rework loop: ");
+      await qaPass(reworkIds, "rework loop: ");
       settle("qa");
     }
   }

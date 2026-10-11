@@ -4,8 +4,9 @@
 // runs the template's layout() and applies the guards IN THIS ORDER — overflow, per-script rule,
 // glyph coverage, text floor (30 u), contrast (4.5:1, 3:1 at ≥ 60 u) — then screenshots #canvas as
 // JPEG quality 90, names the file by its sha256 and reads width/height back from the JPEG SOF marker.
-// A guard failure is a RenderError (per-draft: the draft stays `written`); a browser that cannot be
-// launched is a RenderUnavailableError (the Designer step fails, the run continues).
+// A guard failure is a RenderError (per-draft: the Designer sends the draft back to the Writer as `rework`,
+// or `blocked` at the rework cap — R1-02); a browser that cannot be launched is a RenderUnavailableError
+// (the Designer step fails, the run continues).
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
@@ -25,7 +26,7 @@ export const LARGE_TEXT_U = 60;
 // RenderError codes raised here: overflow | missing_glyphs | text_floor | contrast | media_spec (schema RENDER_ERROR_CODES)
 export const FORMATS = { image: "image.html", carousel: "carousel.html" };
 
-// Per-draft refusal: the draft stays `written`, renderError = { code, detail, at } (design §11).
+// Per-draft refusal: the draft goes to `rework` with renderError = { code, detail, at } (design §11, R1-02).
 export class RenderError extends Error {
   constructor(code, detail, extra = {}) {
     super(`${code}: ${detail}`);

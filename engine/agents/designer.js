@@ -5,19 +5,30 @@
 //
 //   • .media/.git absent → { skipped: 'media_branch_missing' }: nothing rendered, no draft touched; the
 //     caller adds the `media_branch_missing` flag (M16 — the engine never creates the branch).
-//   • RenderError (overflow, missing_glyphs, text_floor, contrast, media_spec) → the draft stays
-//     `written` with renderError { code, detail, at }; the run continues with the next draft and the
-//     step reports flag `render_failed` (design §11 "Render" row) while staying ok.
+//   • RenderError (overflow, missing_glyphs, text_floor, contrast, media_spec) is treated like a failed
+//     deterministic QA check (Phase 1 review R1-02, an endorsed deviation from design §11's "stays written"):
+//     the draft goes to `rework` with qaReasons[0] = 'render: <code> — <detail>' and reworkCount + 1, or to
+//     `blocked` once reworkCount has reached config.defaults.maxReworkLoops (qa.nextStatus — the same cap);
+//     media is emptied, renderError { code, detail, at } is kept for the admin card; the run continues with
+//     the next draft and the step reports flag `render_failed` (design §11 "Render" row) while staying ok.
+//     The caller (engine/commands/daily.js) feeds the `rework` ids into the inline rework loop.
 //   • RenderUnavailableError (Chromium missing, font face failed) → the step stops: ok:false, flag
 //     `render_failed`; drafts not yet rendered stay `written` untouched.
 import { join } from "node:path";
 import { mediaBranchPresent, mediaPaths, pagesUrl, rawUrl, updateIndex } from "../lib/media.js";
 import { nowIst } from "../lib/time.js";
 import { RenderError, RenderUnavailableError, createRenderer } from "../render/render.js";
+import { nextStatus } from "./qa.js";
 
 export const AGENT = "designer";
 export const SKIP_MEDIA_BRANCH_MISSING = "media_branch_missing";
 export const FLAG_RENDER_FAILED = "render_failed";
+export const RENDER_REASON_PREFIX = "render: ";
+
+// The qaReasons entry a refusal leaves for the Writer: 'render: missing_glyphs — U+2192 not in Inter: “…”'.
+export function renderReason(err) {
+  return `${RENDER_REASON_PREFIX}${err.code} — ${String(err.detail).slice(0, 1000)}`;
+}
 
 function toDate(v) {
   if (v === undefined || v === null) return new Date();
@@ -57,6 +68,8 @@ export async function runDesigner({ drafts = [], brands, config, state, mediaRoo
   const r = renderer || createRenderer();
   let rendered = 0;
   let refused = 0;
+  let toRework = 0;
+  let blocked = 0;
   let failure = null;
   try {
     for (const draft of queue) {
@@ -77,11 +90,19 @@ export async function runDesigner({ drafts = [], brands, config, state, mediaRoo
       } catch (err) {
         if (err instanceof RenderError) {
           refused++;
-          const next = { ...draft, status: "written", updatedAt: at, media: [], renderError: { code: err.code, detail: String(err.detail).slice(0, 1000), at } };
+          // R1-02: a refusal is a deterministic QA failure — rework (reworkCount + 1) or blocked at the cap
+          const status = nextStatus(draft, false, config);
+          const reason = renderReason(err);
+          const next = { ...draft, status, updatedAt: at, media: [], qaReasons: [reason, ...(draft.qaReasons || []).filter((x) => x !== reason)], renderError: { code: err.code, detail: String(err.detail).slice(0, 1000), at } };
+          if (status === "rework") {
+            next.reworkCount = (draft.reworkCount || 0) + 1;
+            toRework++;
+          } else blocked++;
+          if (runId) next.runId = runId;
           delete next.designNote;
           changed.push(state.writeDraft(next));
-          results.push({ id: draft.id, status: "written", code: err.code, detail: err.detail });
-          log(`[designer] ${draft.id} refused: ${err.code} — ${err.detail}`);
+          results.push({ id: draft.id, status, code: err.code, detail: err.detail });
+          log(`[designer] ${draft.id} refused: ${err.code} — ${err.detail} → ${status === "rework" ? `rework (${next.reworkCount} of ${config.defaults.maxReworkLoops})` : "blocked for the owner"}`);
           continue;
         }
         if (err instanceof RenderUnavailableError) {
@@ -99,6 +120,7 @@ export async function runDesigner({ drafts = [], brands, config, state, mediaRoo
   }
   // design §11 "Render" row: any render failure — a refused draft or a dead renderer — raises render_failed
   if (refused > 0 && !flags.includes(FLAG_RENDER_FAILED)) flags.push(FLAG_RENDER_FAILED);
-  const note = failure ? `${rendered} rendered, ${refused} refused, stopped: ${failure.message}` : `${rendered} rendered, ${refused} refused`;
-  return { ok: !failure, rendered, refused, results, changed, flags, note, error: failure || undefined };
+  const refusedNote = refused > 0 ? `${refused} refused (${toRework} to rework, ${blocked} blocked)` : `${refused} refused`;
+  const note = failure ? `${rendered} rendered, ${refusedNote}, stopped: ${failure.message}` : `${rendered} rendered, ${refusedNote}`;
+  return { ok: !failure, rendered, refused, toRework, blocked, results, changed, flags, note, error: failure || undefined };
 }

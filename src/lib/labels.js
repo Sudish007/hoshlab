@@ -89,9 +89,9 @@ export function flagSentence(flag, { month = "this month" } = {}) {
     case "token_expiring":
       return `Token for @${arg} expires soon — run setup-secrets or wait for the refresh job.`;
     case "render_failed":
-      return "The Designer refused at least one draft in the last run; it stays with the Writer.";
+      return "The Designer refused at least one draft in the last run; it goes back to the Writer, or is blocked for the owner once the rework limit is reached.";
     case "provider_down":
-      return `${providerLabel(arg)} was unreachable in the last run; the fallback provider was used.`;
+      return `${providerLabel(arg)} was unreachable in the last run.`;
     case "media_branch_missing":
       return "Media branch not configured yet; nothing is rendered until it exists.";
     case "publish_failed":

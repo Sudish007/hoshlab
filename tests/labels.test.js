@@ -113,7 +113,14 @@ test("flagSentence: one plain sentence per status flag, unknown flags throw", ()
   assert.equal(flagSentence("token_invalid:kaatdo"), "Token for @kaatdo is invalid — run setup-secrets.");
   assert.match(flagSentence("token_expiring:job_rez"), /^Token for @job_rez expires soon/);
   assert.match(flagSentence("render_failed"), /Designer refused/);
+  // R1-02: a refused draft goes back to the Writer (or is blocked at the cap); it never "stays with the Writer"
+  assert.ok(!flagSentence("render_failed").includes("stays with the Writer"), flagSentence("render_failed"));
+  assert.match(flagSentence("render_failed"), /goes back to the Writer/);
+  assert.match(flagSentence("render_failed"), /blocked for the owner/);
   assert.match(flagSentence("provider_down:gemini"), /^Google Gemini was unreachable/);
+  // R1-05: the sentence claims nothing about a fallback — every fallback may have failed too
+  assert.equal(flagSentence("provider_down:anthropic"), "Anthropic was unreachable in the last run.");
+  assert.ok(!flagSentence("provider_down:anthropic").includes("was used"));
   assert.match(flagSentence("media_branch_missing"), /not configured yet/);
   assert.match(flagSentence("publish_failed:kd-2026-10-13-six-rules"), /^Publishing failed for kd-2026-10-13-six-rules/);
   for (const f of ["budget_warn", "budget_exhausted", "token_invalid:kaatdo", "token_expiring:kaatdo", "render_failed", "provider_down:anthropic", "media_branch_missing", "publish_failed:x-1"]) {

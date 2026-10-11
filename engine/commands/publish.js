@@ -3,19 +3,23 @@
 //
 //   1. loadCompany; apply edits/<id>.json over drafts when edit.baseRevision === draft.revision (stale
 //      edits are ignored and listed as staleEdits[]); apply the latest overrides.jsonl slotAt per draft.
-//   2. Drafts whose effective slot passed more than expireAfterHours ago → status 'expired' (M5.1).
-//   3. Per page with tokenState ≠ invalid: queued drafts sorted by slotAt; publisher.decide() for each;
-//      at most ONE publish attempt per page per run (minGapHours, spreads load).
+//   2. Live drafts whose latest approvals.jsonl decision is a reject → status 'rejected' (M5, R1-06); the
+//      others whose effective slot passed more than expireAfterHours ago → status 'expired' (M5.1).
+//   3. Per page: a page paused by a code 190 (tokenState 'invalid') whose secret and igUserId are present is
+//      probed once with content_publishing_limit (R1-01) — an answer means the replaced token works, so the
+//      page resumes in the same run; a 190 keeps the pause; then queued drafts sorted by slotAt,
+//      publisher.decide() for each, at most ONE publish attempt per page per run (minGapHours, spreads load).
 //   4. status.json pages[h].lastPublishedAt / tokenState / mode, flags, queue counts, lastRuns (M9);
 //      run record appended to runs/<IST month>.jsonl with the publisher block (decisions, staleEdits,
-//      expired, pages).
+//      expired, rejected, pages).
 //   Returns { ok, changed, changedFiles, summary, run } — `changed` is true only when published.jsonl or a
 //   draft changed (that is what triggers the Pages deploy; git commit/push wiring is FEAT-108).
 //
 // Tokens: process.env[page.tokenSecret] is read into a variable and handed to createClient only; a missing
 // or malformed token makes the page 'page_not_configured'. IG_DRY_RUN=1 or --dry-run selects the dry-run
-// client (logs the exact call sequence, sends nothing; pages without an igUserId use 'dry-user').
-// --dry-run additionally runs on a temp copy of the company dir, so nothing in the repo changes.
+// client (logs the exact call sequence, sends nothing; pages without an igUserId use 'dry-user') AND makes
+// the CLI run on a temp copy of the company dir, so nothing in the repo changes (R1-03: the env var alone
+// used to write dry- ids into the real queue).
 // --now <iso> fixes the clock and is accepted only together with a dry-run client.
 import { cpSync, existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -29,7 +33,7 @@ import { createLogger, scrub, stepLine } from "../lib/log.js";
 import { EDIT_SPEC, RUN_SPEC, STATUS_SPEC, SchemaError } from "../lib/schema.js";
 import { createState, latestByKey } from "../lib/state.js";
 import { hoursBetween, istMonthKey, nowIst, parseIso } from "../lib/time.js";
-import { createClient } from "../ig/client.js";
+import { IgError, createClient } from "../ig/client.js";
 import { DRY_USER_ID, createDryRunClient, isDryRun } from "../ig/dry-run.js";
 import { AGENT, completePermalinks, decide, latestApprovals, publishDraft } from "../agents/publisher.js";
 
@@ -157,11 +161,25 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
     effective.set(draft.id, eff);
   }
 
-  // 2. expiry (M5.1): live drafts whose effective slot passed more than expireAfterHours ago
+  // 2. terminal stamps (M5): a live draft whose latest approval is a reject becomes 'rejected' (R1-06 — the
+  //    owner's decision was already final for decide(), the admin and the Strategist; now the draft file and
+  //    status.json.queue say so too); otherwise a live draft whose effective slot passed more than
+  //    expireAfterHours ago becomes 'expired' (M5.1).
   const expired = [];
+  const rejected = [];
   for (const draft of drafts) {
     const eff = effective.get(draft.id);
     if (!LIVE_STATUSES.includes(draft.status)) continue;
+    const approval = approvals.get(draft.id);
+    if (approval && approval.decision === "reject") {
+      const next = { ...draft, status: "rejected", updatedAt: nowIst(startedAt) };
+      changedFiles.push(state.writeDraft(next));
+      draft.status = "rejected";
+      eff.status = "rejected";
+      rejected.push(draft.id);
+      log(`[publisher] ${draft.id} rejected (owner's reject record for revision ${approval.revision}, ${approval.at})`);
+      continue;
+    }
     if (hoursBetween(eff.slotAt, startedAt) > d.expireAfterHours) {
       const next = { ...draft, status: "expired", updatedAt: nowIst(startedAt) };
       changedFiles.push(state.writeDraft(next));
@@ -179,7 +197,7 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
   let failedCount = 0;
   let waiting = 0;
   let publishedChanged = false;
-  let draftsChanged = expired.length > 0;
+  let draftsChanged = expired.length > 0 || rejected.length > 0;
   const WAITING = new Set(["awaiting_approval", "not_due", "approval_stale", "min_gap"]);
   for (const page of config.pages) {
     const h = page.handle;
@@ -191,8 +209,8 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
       continue;
     }
     // token presence is derived every run: secret + igUserId present → configured ('unknown' until a call
-    // succeeds, then 'ok'); either missing → 'not_configured'; a stored 'invalid' is only cleared by a
-    // later successful call with a replaced secret.
+    // succeeds, then 'ok'); either missing → 'not_configured'; a stored 'invalid' is cleared by the probe
+    // below once a call with the (replaced) secret is accepted — or locally by setup-secrets.ps1.
     const token = env.present[page.tokenSecret] ? env.get(page.tokenSecret) : undefined;
     const tokenOk = token !== undefined && env.shape(page.tokenSecret).ok;
     const configured = dryRun || (tokenOk && Boolean(page.igUserId));
@@ -221,6 +239,24 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
       pageState.tokenState = "invalid";
       addFlag(flags, `token_invalid:${h}`);
     };
+    // R1-01: a page paused by a code 190 is probed once per run while a well-formed secret is present. The
+    // content_publishing_limit call carries no draft: an answer means Instagram accepts the (replaced) token,
+    // so the pause ends here and the normal loop below runs in the same hour; a 190 keeps the pause with no
+    // draft attempt; any other error leaves the stored state untouched (the next hour probes again).
+    // decide() stays pure — it reads pageState.tokenState after the probe. One GET per hour per paused page.
+    if (!dryRun && configured && pageState.tokenState === "invalid") {
+      client = client || makeClient();
+      try {
+        await client.publishingLimit();
+        tokenWorked();
+        const i = flags.indexOf(`token_invalid:${h}`);
+        if (i >= 0) flags.splice(i, 1);
+        log(`[publisher] ${h}: the token is accepted again (content_publishing_limit answered) — page resumed`);
+      } catch (err) {
+        if (!(err instanceof IgError)) throw err;
+        log(err.tokenInvalid ? `[publisher] ${h}: token probe failed with code ${err.code} — page stays paused (run setup-secrets with a new token)` : `[publisher] ${h}: token probe failed — ${err.message}; page stays paused until a later probe answers`);
+      }
+    }
     for (const eff of candidates) {
       const decision = decide(eff, approvals, effPage, startedAt, config, effPageState, recent);
       const entry = { draftId: eff.id, page: h, publish: decision.publish, reason: decision.reason };
@@ -305,7 +341,7 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
   status.flags = flags;
   const ms = Date.now() - t0;
   const endedAt = new Date(startedAt.getTime() + ms);
-  const note = `${publishedCount} published, ${waiting} waiting, ${failedCount} failed, ${expired.length} expired${staleEdits.length ? `, ${staleEdits.length} stale edit${staleEdits.length === 1 ? "" : "s"}` : ""}`;
+  const note = `${publishedCount} published, ${waiting} waiting, ${failedCount} failed, ${expired.length} expired${rejected.length ? `, ${rejected.length} rejected` : ""}${staleEdits.length ? `, ${staleEdits.length} stale edit${staleEdits.length === 1 ? "" : "s"}` : ""}`;
   const run = {
     id,
     workflow,
@@ -317,7 +353,7 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
     changed: [],
     errors,
     budgetUsedUsd: monthUsedUsd(state, startedAt),
-    publisher: { decisions, staleEdits, expired, pages },
+    publisher: { decisions, staleEdits, expired, rejected, pages },
   };
   if (dryRun) run.dryRun = true;
   const unique = (arr) => [...new Set(arr)];
@@ -329,12 +365,14 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
   changedFiles.push(state.appendLog("runs", run, RUN_SPEC, startedAt));
   const summary = stepLine(AGENT, run.ok, ms, 0, 0, note);
   log(summary);
-  return { ok: run.ok, changed: publishedChanged || draftsChanged, changedFiles: unique(changedFiles), summary, run, decisions, staleEdits, expired, pages, status, errors, config };
+  return { ok: run.ok, changed: publishedChanged || draftsChanged, changedFiles: unique(changedFiles), summary, run, decisions, staleEdits, expired, rejected, pages, status, errors, config };
 }
 
 // CLI entry: ctx from engine/index.js → exit code (0 ok, 1 failed, 2 usage).
 // Commit + push (design §3.2 step 5) happen only with CI=true or --commit; `changed` reaches
 // $GITHUB_OUTPUT so the deploy job runs only when published.jsonl or a draft changed.
+// A dry run — --dry-run or IG_DRY_RUN=1 (R1-03) — always works on a temp copy: the dry-run client writes
+// dry- ids and status 'published' into drafts, which must never land in the repo's queue.
 export async function run({ root, companyDir, processEnv = process.env, fetchImpl = globalThis.fetch, stdout = console.log, stderr = console.error, flags = {} } = {}) {
   const dryRunFlag = flags["dry-run"] === true;
   const dryRun = isDryRun(processEnv, flags);
@@ -353,14 +391,14 @@ export async function run({ root, companyDir, processEnv = process.env, fetchImp
   }
   const page = typeof flags.page === "string" ? flags.page : null;
   let dir = companyDir;
-  if (dryRunFlag) {
+  if (dryRun) {
     if (!existsSync(companyDir)) {
       stderr(`publish: company dir ${companyDir} does not exist`);
       return 1;
     }
     dir = join(mkdtempSync(join(tmpdir(), "hoshlab-publish-dry-run-")), "company");
     cpSync(companyDir, dir, { recursive: true });
-    stdout(`publish: --dry-run works on a temp copy ${dir} (the repo's company dir is untouched)`);
+    stdout(`publish: ${dryRunFlag ? "--dry-run" : "IG_DRY_RUN=1"} works on a temp copy ${dir} (the repo's company dir is untouched)`);
   }
   let result;
   try {
@@ -369,7 +407,7 @@ export async function run({ root, companyDir, processEnv = process.env, fetchImp
     stderr(scrub(`publish: ${err && err.message ? err.message : String(err)}`));
     return 1;
   }
-  if (dryRunFlag) {
+  if (dryRun) {
     stdout(`publish: dry run complete — state written under ${dir}; nothing committed`);
     return result.ok ? 0 : 1;
   }
