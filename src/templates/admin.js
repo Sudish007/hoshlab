@@ -138,7 +138,7 @@ export function adminPage({ config: company, roster, year }) {
       <li>No server, no database; the token never leaves the browser.</li>
       <li>Instagram tokens live only in repository secrets — the admin cannot read them and cannot post directly.</li>
       <li>An approval takes effect on the next publisher run (${escapeHtml(company.schedule.publisherLabel)}; ${escapeHtml(company.schedule.actionsDelayNote)}).</li>
-      <li>One owner; no roles, no comments. Reports and analytics: not built yet (phase 2).</li>
+      <li>One owner; no roles, no comments. Analytics are Instagram's own media insights (reach, views, likes, comments, saves, shares at 48 h and 7 d), read by the Analyst on Sundays or on demand; the weekly reports are on the public site.</li>
     </ul>
   </div>
 </section>
@@ -196,8 +196,8 @@ export function adminPage({ config: company, roster, year }) {
   <section id="view-run" class="view" hidden aria-labelledby="run-heading">
     <div class="panel">
       <h2 id="run-heading" class="h3">Run now</h2>
-      <p class="meta">Dispatches the workflow on <span class="mono">${escapeHtml(branch)}</span> (needs Actions: read and write on the token). The run's state and link appear below while it runs; the engine's own commits show on the site after its Pages deploy.</p>
-      <div class="q-actions"><button type="button" class="btn" id="run-engine">Run engine</button><button type="button" class="btn" id="run-publisher">Run publisher</button><button type="button" class="btn btn-quiet" id="run-analyst" disabled aria-disabled="true">Run analyst — not built yet (phase 2)</button></div>
+      <p class="meta">Dispatches the workflow on <span class="mono">${escapeHtml(branch)}</span> (needs Actions: read and write on the token). The run's state and link appear below while it runs; the engine's own commits show on the site after its Pages deploy. "Run analyst" dispatches the engine with only the Analyst selected: Instagram insights for the posts live 48 h / 7 d, then this week's report (nothing is written while no post has insights yet).</p>
+      <div class="q-actions"><button type="button" class="btn" id="run-engine">Run engine</button><button type="button" class="btn" id="run-publisher">Run publisher</button><button type="button" class="btn" id="run-analyst">Run analyst</button></div>
       <p class="meta" id="run-status" role="status"></p>
       <p class="meta"><a id="run-link" href="${repoUrl}/actions" rel="noopener" hidden>Open the Actions run</a></p>
     </div>

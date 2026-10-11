@@ -36,7 +36,8 @@ test("sitemap.xml is well-formed and lists exactly the public routes under siteU
   const xml = read(join(DIST, "sitemap.xml"));
   assert.equal(XMLValidator.validate(xml), true);
   const urls = [].concat(parser.parse(xml).urlset.url).map((u) => u.loc);
-  const expected = ["", "team/", "pages/", ...fixtureConfig.pages.map((p) => `pages/${p.handle}/`), "activity/", "calendar/", "published/", "reports/", "about/"].map((p) => `${config.siteUrl}/${p}`);
+  // FEAT-203: one URL per Analyst report (the populated fixture carries state/reports/2026-W41.md)
+  const expected = ["", "team/", "pages/", ...fixtureConfig.pages.map((p) => `pages/${p.handle}/`), "activity/", "calendar/", "published/", "reports/", "reports/2026-W41/", "about/"].map((p) => `${config.siteUrl}/${p}`);
   assert.deepEqual(urls, expected);
   for (const u of urls) assert.ok(u.startsWith(config.siteUrl) && !/admin/.test(u), u);
 });

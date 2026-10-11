@@ -50,7 +50,8 @@ test("registry: every designed command is listed; unbuilt ones print 'not built 
   assert.equal(typeof COMMANDS["set-page"].load, "function", "set-page is built (FEAT-108)");
   assert.equal(typeof COMMANDS["refresh-tokens"].load, "function", "refresh-tokens is built (FEAT-202)");
   assert.equal(typeof COMMANDS.retention.load, "function", "retention is built (FEAT-202)");
-  const expected = { analyst: "FEAT-203 / phase 2", hr: "FEAT-204 / phase 2" };
+  assert.equal(typeof COMMANDS.analyst.load, "function", "analyst is built (FEAT-203)");
+  const expected = { hr: "FEAT-204 / phase 2" };
   for (const [name, planned] of Object.entries(expected)) {
     const out = sink();
     const err = sink();
@@ -68,8 +69,10 @@ test("registry: every designed command is listed; unbuilt ones print 'not built 
   const help = sink();
   assert.equal(await main(["help"], { stdout: help, stderr: sink(), processEnv: {} }), EXIT.ok);
   assert.equal(help.text(), usage());
-  assert.ok(usage().includes("analyst") && usage().includes("not built yet (planned in FEAT-203 / phase 2)"));
+  assert.ok(usage().includes("hr") && usage().includes("not built yet (planned in FEAT-204 / phase 2)"));
   assert.ok(!usage().includes("planned in FEAT-202"), "refresh-tokens and retention no longer read 'not built yet'");
+  assert.ok(!usage().includes("planned in FEAT-203"), "analyst no longer reads 'not built yet' (FEAT-203)");
+  assert.ok(usage().includes("daily --agents analyst"), "the analyst command names its daily equivalent");
 });
 
 test("check-models without keys: one 'not configured yet (secret <NAME> missing)' line per enabled provider, exit 1, no network, no key material", async () => {

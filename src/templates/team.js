@@ -15,7 +15,7 @@ const GROUP_TITLE = { leadership: "Leadership", studio: "Studio", operations: "O
 const ROLE = {
   ceo: {
     monogram: "CEO",
-    what: "Writes the weekly memo: priorities per page, what to push, what to pause, the budget split. Reads the owner's feedback first; the Analyst's report joins in phase 2.",
+    what: "Writes the weekly memo: priorities per page, what to push, what to pause, the budget split. Reads the owner's feedback first; answering the Analyst's report in the memo is not built yet (phase 2).",
     output: "company/state/memos/YYYY-Www.md",
   },
   hr: {
@@ -51,9 +51,8 @@ const ROLE = {
   },
   analyst: {
     monogram: "AN",
-    what: "Pulls insights per published post, writes the weekly report with what worked and what did not, and files findings the CEO must answer in the next memo.",
+    what: "Pulls Instagram insights for every published post at 48 hours and 7 days, writes the weekly report with what worked and what did not, and files findings the CEO must answer in the next memo. The engine rejects a report whose numbers are not in the metrics log.",
     output: "metrics/YYYY-MM.jsonl, reports/YYYY-Www.md",
-    phase2: "Weekly insights: not built yet (phase 2)",
   },
 };
 
@@ -125,7 +124,7 @@ export function teamPage(view) {
     { when: config.schedule.engineLabel, who: agents.filter((a) => a.schedule === "daily").map((a) => a.title || a.name).join(" · "), what: "the engine run" },
     { when: config.schedule.publisherLabel, who: agents.filter((a) => a.schedule === "hourly").map((a) => a.title || a.name).join(" · "), what: "posts what is due and approved" },
     { when: "Mondays", who: agents.filter((a) => a.schedule === "weekly-monday").map((a) => a.title || a.name).join(" · "), what: "weekly memo" },
-    { when: "Sundays", who: agents.filter((a) => a.schedule === "weekly-sunday").map((a) => a.title || a.name).join(" · "), what: "weekly report · not built yet (phase 2)" },
+    { when: "Sundays", who: agents.filter((a) => a.schedule === "weekly-sunday").map((a) => a.title || a.name).join(" · "), what: "insights at 48 h and 7 d + the weekly report" },
     { when: "1st of the month", who: agents.filter((a) => a.schedule === "monthly-1st").map((a) => a.title || a.name).join(" · "), what: "review + roster proposal · not built yet (phase 2)" },
   ].filter((r) => r.who);
   const body = `<section class="hero">

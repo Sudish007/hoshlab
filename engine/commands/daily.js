@@ -11,9 +11,12 @@
 //   7. Designer for `written` drafts (skipped: media_branch_missing when .media/.git is absent, M16); a
 //      refused draft goes to `rework` like a failed QA check (R1-02);
 //   8. QA for `rendered` drafts;  9. one inline rework loop (Writer → Designer → QA) for the drafts QA
-//      or the Designer sent to rework in this run;  10. finish: status.json (queue/blocked counts, budget,
-//      pages, flags, lastRuns ≤ 20 — M9), calendar slots re-linked to the drafts written today,
-//      runs/<month>.jsonl record, one scrubbed stdout line per agent.
+//      or the Designer sent to rework in this run;  9b. Analyst (FEAT-203, design §3.1 step 8) on Sundays IST or
+//      when --agents names it: Instagram insights for the posts live ≥ 48 h / ≥ 7 d and not measured yet →
+//      metrics/<month>.jsonl (dry-run client under IG_DRY_RUN=1 / --dry-run: zeros labelled dryRun), then the
+//      weekly report reports/<week>.md (skipped: no_metrics while nothing is measured; status.lastReport);
+//      10. finish: status.json (queue/blocked counts, budget, pages, flags, lastRuns ≤ 20 — M9), calendar
+//      slots re-linked to the drafts written today, runs/<month>.jsonl record, one scrubbed stdout line per agent.
 //   An AllProvidersFailedError ends that agent's work (row ok:false, run still ok — design §11) and flags
 //   provider_down:<name> for every provider that was actually attempted (R1-05).
 //   --dry-run copies the company dir (and .media when present) to a temp dir, runs there and prints the
@@ -34,8 +37,11 @@ import { istMonthKey, nowIst, parseIso } from "../lib/time.js";
 import { AgentOutputError, AllProvidersFailedError, BudgetExhaustedError, createRouter } from "../llm/router.js";
 import { MockFixtureError } from "../llm/mock.js";
 import { createRenderer } from "../render/render.js";
+import { createClient } from "../ig/client.js";
+import { DRY_USER_ID, createDryRunClient, isDryRun } from "../ig/dry-run.js";
 import { readMemo, runCeo, shouldRun as ceoShouldRun } from "../agents/ceo.js";
 import * as hr from "../agents/hr.js";
+import { collectMetrics, readMetrics, runAnalyst, shouldRun as analystShouldRun } from "../agents/analyst.js";
 import { TERMINAL_SLOT_DRAFT_STATUSES, runStrategist, slotStatusFor } from "../agents/strategist.js";
 import { runWriter } from "../agents/writer.js";
 import { SKIP_MEDIA_BRANCH_MISSING, runDesigner } from "../agents/designer.js";
@@ -43,8 +49,8 @@ import { runQa } from "../agents/qa.js";
 import { queueCounts, triggerFrom } from "./publish.js";
 
 export const WORKFLOW = "engine-daily";
-export const AGENT_ORDER = ["ceo", "hr", "strategist", "writer", "designer", "qa"];
-export const LLM_AGENTS = ["ceo", "strategist", "writer", "qa"];
+export const AGENT_ORDER = ["ceo", "hr", "strategist", "writer", "designer", "qa", "analyst"];
+export const LLM_AGENTS = ["ceo", "strategist", "writer", "qa", "analyst"];
 export const SKIP_BUDGET = "skipped: budget_exhausted";
 export const FLAG_BUDGET_EXHAUSTED = "budget_exhausted";
 export const FLAG_BUDGET_WARN = "budget_warn";
@@ -139,10 +145,12 @@ export function relinkCalendar(calendar, drafts) {
   return changed ? { ...calendar, slots } : null;
 }
 
-// runDaily({ companyDir, mediaRoot, now, processEnv, fetchImpl, flags: { agents, page, dryRun }, renderer, sleep, stdout, runId, trigger })
+// runDaily({ companyDir, mediaRoot, now, processEnv, fetchImpl, flags: { agents, page, dryRun }, renderer, sleep, stdout, runId, trigger, clientFactory })
 //   → { ok, changed, changedFiles, run, status, agents, errors, flags, summary, companyDir }
 //   `sleep` reaches the router's retry backoff (tests stub it); the default is the router's own.
-export async function runDaily({ companyDir, mediaRoot, now, processEnv = process.env, fetchImpl = globalThis.fetch, flags: runFlags = {}, renderer, sleep, stdout = (s) => process.stdout.write(s + "\n"), runId, trigger = triggerFrom(processEnv), workflow = WORKFLOW } = {}) {
+//   `clientFactory(page, token, { dryRun, fetchImpl, now, stdout })` → the Analyst's Instagram client for a page (tests
+//   inject fakes); the default is createClient / createDryRunClient, as in publish.js.
+export async function runDaily({ companyDir, mediaRoot, now, processEnv = process.env, fetchImpl = globalThis.fetch, flags: runFlags = {}, renderer, sleep, stdout = (s) => process.stdout.write(s + "\n"), runId, trigger = triggerFrom(processEnv), workflow = WORKFLOW, clientFactory = null } = {}) {
   if (!companyDir) throw new TypeError("daily: companyDir is required");
   const startedAt = toDate(now);
   const clock = () => startedAt;
@@ -182,8 +190,10 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   const routerOptions = { config, roster, state, fetchImpl, now: clock, runId: id, charters, processEnv };
   if (typeof sleep === "function") routerOptions.sleep = sleep;
   const router = createRouter(routerOptions);
-  // every stdout line passes through scrub() with the provider keys (the router already scrubs its errors)
-  const logger = createLogger({ secrets: readEnv(Object.values(config.providers).map((p) => p.secret), processEnv).secrets(), stdout, stderr: stdout });
+  // every stdout line passes through scrub() with the provider keys and the page tokens (the router already scrubs
+  // its errors; the Analyst's Instagram client scrubs its own)
+  const env = readEnv([...Object.values(config.providers).map((p) => p.secret), ...config.pages.map((p) => p.tokenSecret)], processEnv);
+  const logger = createLogger({ secrets: env.secrets(), stdout, stderr: stdout });
   const log = (s) => logger.info(s);
   const changedFiles = [];
   const errors = [];
@@ -458,6 +468,54 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     }
   }
   if (ownRenderer) await ownRenderer.close();
+
+  // 9b. Analyst — Sundays IST, or whenever --agents names it (design §3.1 step 8, P2-04, FEAT-203): insights for the
+  //     posts live ≥ 48 h / ≥ 7 d and not measured yet → metrics/<month>.jsonl, then this week's report. Company-wide:
+  //     a --page filter skips it unless --agents names it. The insights fetch costs no model budget, so it runs even
+  //     when the month is spent; only the report (the model call) is skipped then.
+  const analystSelected = Boolean(selected && selected.has("analyst"));
+  if (!wants("analyst")) skip("analyst", "skipped: not selected (--agents)", "not_selected");
+  else if (pageFilter && !analystSelected) skip("analyst", "skipped: --page filter (company-wide agent)", "page_filter");
+  else if (!analystSelected && !analystShouldRun(startedAt)) skip("analyst", "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)", "not_due");
+  else {
+    await timed("analyst", async () => {
+      const igDry = isDryRun(processEnv, { dryRun });
+      const clients = new Map();
+      const clientFor = (handle) => {
+        if (clients.has(handle)) return clients.get(handle);
+        const page = config.pages.find((p) => p.handle === handle);
+        let client = null;
+        if (page) {
+          const token = env.present[page.tokenSecret] && env.shape(page.tokenSecret).ok ? env.get(page.tokenSecret) : undefined;
+          const effPage = igDry ? { ...page, igUserId: page.igUserId || DRY_USER_ID } : page;
+          if (clientFactory) client = clientFactory(effPage, token, { dryRun: igDry, fetchImpl, now: clock, stdout: log });
+          else if (igDry) client = createDryRunClient({ igUserId: effPage.igUserId, stdout: log, now: clock });
+          else if (token) client = createClient({ config, token, igUserId: page.igUserId || "me", fetchImpl, now: clock });
+        }
+        clients.set(handle, client);
+        return client;
+      };
+      const collected = await collectMetrics({ published: state.readJsonl("state/published.jsonl"), existing: readMetrics(state, startedAt), clientFor, now: startedAt, runId: id, state, log });
+      changedFiles.push(...collected.changed);
+      if (collected.errors.length) fail("analyst", `${collected.note} — ${collected.errors.slice(0, 3).join("; ")}`);
+      else note("analyst", collected.note);
+      if (exhausted) return skip("analyst", SKIP_BUDGET, "budget_exhausted");
+      try {
+        const memoDoc = readMemo(state, startedAt);
+        const r = await runAnalyst({ config, router, state, now: startedAt, runId: id, memo: memoDoc ? memoDoc.memo : null, log });
+        if (r.skipped) return skip("analyst", `skipped: ${r.skipped} — ${r.note}`, r.skipped);
+        changedFiles.push(r.rel);
+        status.lastReport = { week: r.week, path: r.path, at: r.at };
+        note("analyst", r.note);
+      } catch (err) {
+        if (err instanceof BudgetExhaustedError) return budgetHit("analyst");
+        if (!isRouterError(err)) throw err;
+        fail("analyst", `${err.name}: ${err.message}`);
+        providersDown(err);
+      }
+    });
+    settle("analyst");
+  }
   for (const f of router.flags) addFlag(f);
 
   // 10. finish — calendar re-link, status.json, run record

@@ -96,7 +96,7 @@ test("every tests/fixtures/llm/<agent>.ok*.json output passes assertShape(OUTPUT
   for (const f of files) assert.ok(agents.has(f.split(".")[0]), `${f}: names a known agent`);
 });
 
-test("the *.bad.json fixtures fail validation the way their note says (shape for strategist/writer, semantic for ceo)", async () => {
+test("the *.bad.json fixtures fail validation the way their note says (shape for strategist/writer, semantic for ceo and analyst)", async () => {
   const mods = Object.fromEntries((await agentModules()).map((m) => [m.agent, m.spec]));
   const bad = (name) => JSON.parse(readFileSync(join(LLM_FIXTURES, `${name}.bad.json`), "utf8")).output;
   assert.throws(() => assertShape(bad("strategist"), mods.strategist), /assignments: required/);
@@ -104,4 +104,8 @@ test("the *.bad.json fixtures fail validation the way their note says (shape for
   assert.doesNotThrow(() => assertShape(bad("ceo"), mods.ceo), "ceo.bad is shape-valid; the 120 % split is caught by validateCeoOutput");
   const split = bad("ceo").budgetSplitPct;
   assert.equal(Object.values(split).reduce((a, b) => a + b, 0), 120);
+  // FEAT-203: analyst.bad is shape-valid; the 999 that no metrics record holds is caught by validateAnalystOutput (tests/analyst.test.js)
+  assert.doesNotThrow(() => assertShape(bad("analyst"), mods.analyst), "analyst.bad is shape-valid");
+  assert.equal(bad("analyst").perPage.find((p) => p.page === "kaatdo").reach, 999);
+  assert.ok(bad("analyst").reportMarkdown.includes("reached 999 accounts"));
 });

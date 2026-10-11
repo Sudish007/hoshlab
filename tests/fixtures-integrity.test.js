@@ -14,7 +14,8 @@ import { jpegSize } from "../engine/lib/checks.js";
 import { MAX_MEDIA_BYTES } from "../engine/lib/checks.js";
 import { pagesUrl, rawUrl } from "../engine/lib/media.js";
 import { parseMemo, outputSpec, validateCeoOutput } from "../engine/agents/ceo.js";
-import { assertShape } from "../engine/lib/schema.js";
+import { OUTPUT_SPEC as ANALYST_OUTPUT_SPEC, aggregate, allowedNumbers, numberTokens, parseReport, renderReport, validateAnalystOutput } from "../engine/agents/analyst.js";
+import { METRIC_SPEC, assertShape } from "../engine/lib/schema.js";
 import { loadCompany } from "../src/lib/company.js";
 import { usableFacts } from "../engine/lib/brand.js";
 import { queueCounts } from "../engine/commands/publish.js";
@@ -126,9 +127,9 @@ test("status.json: budget.usedUsd equals the sum of usage/2026-10.jsonl costUsd 
 test("every fixture state file validates against its spec; memos carry a CEO JSON block that validates; the fixture tree is exactly what validateTree knows", () => {
   const tree = validateTree(COMPANY_DIR);
   assert.deepEqual(tree.errors, []);
-  assert.ok(tree.files.length >= 23, `${tree.files.length} files`);
+  assert.ok(tree.files.length >= 25, `${tree.files.length} files`);
   const kinds = new Set(tree.files.map((f) => f.kind));
-  for (const k of ["config", "roster", "status", "calendar", "idea", "approval", "override", "feedback", "published", "run", "usage", "draft", "qa", "memo"]) assert.ok(kinds.has(k), k);
+  for (const k of ["config", "roster", "status", "calendar", "idea", "approval", "override", "feedback", "published", "run", "usage", "draft", "qa", "memo", "metric", "report"]) assert.ok(kinds.has(k), k);
   const memos = tree.files.filter((f) => f.kind === "memo").map((f) => f.rel);
   assert.deepEqual(memos, ["state/memos/2026-W41.md", "state/memos/2026-W42.md"]);
   const handles = config.pages.map((p) => p.handle);
@@ -147,4 +148,57 @@ test("every fixture state file validates against its spec; memos carry a CEO JSO
     assert.equal(slot.status, d.status);
     assert.equal(slot.slotId, d.slotId);
   }
+});
+
+// FEAT-203 (P2-04): the metrics fixture holds one 48 h record per published post, each fetched ≥ 48 h after the post
+// (no 7 d record can exist before the build clock: both posts are younger than 7 days then), and the report fixture
+// is byte-for-byte what the engine writes from tests/fixtures/llm/analyst.ok.json with every number in it accounted for.
+test("metrics/2026-10.jsonl + reports/2026-W41.md: records are due-window fetches of the published posts; the report is renderReport(analyst.ok) and every number in it exists in the metrics (or is an engine count); status.lastReport points at it", () => {
+  const published = state.readJsonl("state/published.jsonl");
+  const metrics = state.readJsonl("state/metrics/2026-10.jsonl");
+  assert.equal(metrics.length, published.length, "one record per published post");
+  for (const m of metrics) {
+    assertShape(m, METRIC_SPEC);
+    const p = published.find((x) => x.draftId === m.draftId);
+    assert.ok(p, `${m.draftId} is a published post`);
+    assert.equal(m.igMediaId, p.igMediaId);
+    assert.equal(m.page, p.page);
+    assert.equal(m.window, "48h");
+    const hours = (Date.parse(m.at) - Date.parse(p.publishedAt)) / 3600000;
+    assert.ok(hours >= 48 && hours < 168, `${m.draftId}: fetched ${hours.toFixed(1)} h after publishing (48 h window, not yet 7 d)`);
+    assert.ok(!m.dryRun, "fixture insights are not dry-run zeros");
+    assert.deepEqual(m.raw.data.map((r) => [r.name, r.value]), Object.entries(m.metrics), "raw mirrors the recorded values");
+    assert.ok(Object.values(m.metrics).every((v) => Number.isInteger(v) && v >= 0));
+  }
+  const markdown = state.readText("state/reports/2026-W41.md");
+  const parsed = parseReport(markdown);
+  assert.ok(parsed, "JSON block present");
+  assertShape(parsed.report, ANALYST_OUTPUT_SPEC);
+  const ok = JSON.parse(readFileSync(join(ROOT, "tests", "fixtures", "llm", "analyst.ok.json"), "utf8")).output;
+  assert.deepEqual(parsed.report, ok, "the block is the analyst.ok output");
+  assert.equal(renderReport(ok, parsed.engine), markdown, "the file is exactly what renderReport writes");
+  assert.equal(parsed.engine.week, "2026-W41");
+  assert.deepEqual(parsed.engine.metricsUsed.map((m) => [m.draftId, m.window, m.at]), metrics.map((m) => [m.draftId, m.window, m.at]), "provenance names every metrics record");
+  assert.ok(Date.parse(parsed.engine.generatedAt) >= Math.max(...metrics.map((m) => Date.parse(m.at))), "written after the last fetch");
+  // the engine's own rule, run here against the fixture
+  const aggregates = aggregate({ pages: config.pages, published, metrics });
+  const allowed = allowedNumbers({ metrics, aggregates, published, now: parsed.engine.generatedAt });
+  assert.deepEqual(validateAnalystOutput(ok, { week: "2026-W41", pages: config.pages, aggregates, allowed }), []);
+  // and an independent one: every number token of the Markdown body is a metrics value, a count/sum the engine computes,
+  // a window constant or a calendar number of the week
+  const values = new Set(metrics.flatMap((m) => Object.values(m.metrics).map(String)));
+  const sums = new Set();
+  for (const page of config.pages) {
+    const mine = metrics.filter((m) => m.page === page.handle);
+    sums.add(String(mine.length));
+    for (const name of Object.keys(metrics[0].metrics)) sums.add(String(mine.reduce((s, m) => s + m.metrics[name], 0)));
+  }
+  const calendar = new Set(["2026", "41", "5", "6", "7", "8", "9", "10", "11", "13", "16", "48", "7", "2", "28", "0"]);
+  const tokens = [...new Set(numberTokens(parsed.body))];
+  const unexplained = tokens.filter((t) => !values.has(t) && !sums.has(t) && !calendar.has(t));
+  assert.deepEqual(unexplained, [], `numbers in the report body not traceable: ${unexplained.join(", ")}`);
+  assert.ok(tokens.some((t) => values.has(t)), "the body quotes metrics values");
+  assert.ok(ok.forCeo.length >= 1);
+  const status = state.readJson("state/status.json");
+  assert.deepEqual(status.lastReport, { week: "2026-W41", path: "reports/2026-W41.md", at: parsed.engine.generatedAt });
 });

@@ -1,0 +1,65 @@
+{
+  "agent": "analyst",
+  "case": "bad",
+  "note": "Shape-valid; @kaatdo reach 999 (perPage, an observation and the Markdown) is a number absent from the metrics fixture, so validateAnalystOutput rejects it → one repair call → AgentOutputError 'report number not in metrics'.",
+  "output": {
+    "week": "2026-W41",
+    "perPage": [
+      {
+        "page": "rishtapatra",
+        "posts": 1,
+        "reach": 655,
+        "views": 790,
+        "saved": 23,
+        "topDraftId": "rp-2026-10-09-your-biodata-on-your-device",
+        "bottomDraftId": "rp-2026-10-09-your-biodata-on-your-device",
+        "observations": [
+          "The local-first biodata post reached 655 accounts and was saved 23 times within 48 hours — saves are the strongest signal of the two pages this week.",
+          "Hypothesis: the Hindi headline carried the reach; the next Hindi-first image post will tell."
+        ]
+      },
+      {
+        "page": "kaatdo",
+        "posts": 1,
+        "reach": 999,
+        "views": 538,
+        "saved": 17,
+        "topDraftId": "kd-2026-10-06-reconnect-every-trading-morning",
+        "bottomDraftId": "kd-2026-10-06-reconnect-every-trading-morning",
+        "observations": [
+          "The reconnect post reached 999 accounts with 17 saves within 48 hours; comments stayed at 4.",
+          "Hypothesis: a routine-shaped post (do this every morning) gets saved rather than discussed."
+        ]
+      },
+      {
+        "page": "job_rez",
+        "posts": 0,
+        "reach": 0,
+        "views": 0,
+        "saved": 0,
+        "topDraftId": "",
+        "bottomDraftId": "",
+        "observations": [
+          "No post published in the window; nothing to measure yet."
+        ]
+      }
+    ],
+    "experiments": [
+      {
+        "page": "kaatdo",
+        "hypothesis": "A carousel that walks through the six rules will be saved more than the single image.",
+        "test": "Keep the Saturday carousel slot on the six rules next week.",
+        "measure": "Saves at 7 days against this week's 17."
+      }
+    ],
+    "forCeo": [
+      "Keep leading @rishtapatra with the local-first promise: it reached 655 accounts and was saved 23 times in 48 hours.",
+      "@job_rez has published nothing yet; the first JobRez post is the one to watch next week."
+    ],
+    "reportMarkdown": "# Weekly report 2026-W41\n\nWeek of 5–11 October 2026. Two posts went live in the last 28 days — one on @kaatdo (6 October) and one on @rishtapatra (9 October) — and both have their 48-hour insights; neither has reached the 7-day window yet. @job_rez published nothing in the window.\n\n## Summary\n\n- @rishtapatra: 1 post, reach 655, views 790, saves 23 (48 hours).\n- @kaatdo: 1 post, reach 412, views 538, saves 17 (48 hours).\n- @job_rez: 0 posts.\n\n## @rishtapatra\n\n| post | window | reach | views | likes | comments | saves | shares |\n|---|---|---:|---:|---:|---:|---:|---:|\n| rp-2026-10-09-your-biodata-on-your-device | 48 hours | 655 | 790 | 58 | 9 | 23 | 12 |\n\nObservations:\n\n- The local-first biodata post reached 655 accounts and was saved 23 times within 48 hours — saves are the strongest signal of the two pages this week.\n- Hypothesis: the Hindi headline carried the reach; the next Hindi-first image post will tell.\n\n## @kaatdo\n\n| post | window | reach | views | likes | comments | saves | shares |\n|---|---|---:|---:|---:|---:|---:|---:|\n| kd-2026-10-06-reconnect-every-trading-morning | 48 hours | 412 | 538 | 31 | 4 | 17 | 6 |\n\nObservations:\n\n- The reconnect post reached 999 accounts with 17 saves within 48 hours; comments stayed at 4.\n- Hypothesis: a routine-shaped post (do this every morning) gets saved rather than discussed.\n\n## @job_rez\n\nNo post published in the window; nothing to measure yet.\n\n## Experiments\n\n1. @kaatdo — Hypothesis: a carousel that walks through the six rules will be saved more than the single image. Test: keep the Saturday carousel slot on the six rules next week. Measure: saves at 7 days against this week's 17.\n\n## For the CEO\n\n1. Keep leading @rishtapatra with the local-first promise: it reached 655 accounts and was saved 23 times in 48 hours.\n2. @job_rez has published nothing yet; the first JobRez post is the one to watch next week.\n\n## Missing data\n\n- 7-day insights for both posts are not due yet (@kaatdo on 13 October, @rishtapatra on 16 October).\n"
+  },
+  "usage": {
+    "inputTokens": 4860,
+    "outputTokens": 1210
+  }
+}

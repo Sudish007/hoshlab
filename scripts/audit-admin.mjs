@@ -1014,7 +1014,8 @@ async function modes() {
 }
 
 // Run now: workflow_dispatch POST bodies asserted, the run strip follows the fake run (queued -> running ->
-// succeeded) with Playwright's clock driving the 10 s poll; 'Run analyst' is honestly disabled.
+// succeeded) with Playwright's clock driving the 10 s poll; 'Run analyst' dispatches engine-daily.yml with
+// inputs.agents = analyst (FEAT-203).
 async function runNow() {
   console.log("runNow: dispatch POSTs + run strip (fake clock)");
   const { ctx, page, fake } = await newCtx({ width: 1440, height: 900, token: TOKEN_OK });
@@ -1024,7 +1025,7 @@ async function runNow() {
   layoutRows("run", 1440, r);
   const strip = () => page.evaluate(() => ({ status: document.getElementById("run-status").textContent, linkHidden: document.getElementById("run-link").hidden, linkHref: document.getElementById("run-link").href, engineDisabled: document.getElementById("run-engine").disabled, publisherDisabled: document.getElementById("run-publisher").disabled, analyst: { disabled: document.getElementById("run-analyst").disabled, ariaDisabled: document.getElementById("run-analyst").getAttribute("aria-disabled"), text: document.getElementById("run-analyst").textContent } }));
   const s0 = await strip();
-  record("run analyst not built yet", "run", 1440, s0.analyst.disabled && s0.analyst.ariaDisabled === "true" && s0.analyst.text === "Run analyst — not built yet (phase 2)" && s0.status === "" && s0.linkHidden, s0);
+  record("run analyst button enabled (FEAT-203)", "run", 1440, !s0.analyst.disabled && s0.analyst.ariaDisabled === null && s0.analyst.text === "Run analyst" && s0.status === "" && s0.linkHidden, s0);
   const waitStatus = (text) => page.waitForFunction((t) => document.getElementById("run-status").textContent === t, text, { timeout: 8000, polling: 100 });
   await page.click("#run-engine");
   for (let i = 0; i < 100 && fake.dispatches.length === 0; i++) await sleep(50);
@@ -1048,6 +1049,13 @@ async function runNow() {
   await waitStatus("publisher-hourly.yml: queued").catch(() => {});
   const s2 = await strip();
   record("run dispatch POST (publisher-hourly.yml)", "run", 1440, p && p.file === WORKFLOWS.publisher && p.url.endsWith(`/actions/workflows/${WORKFLOWS.publisher}/dispatches`) && JSON.stringify(p.body) === JSON.stringify({ ref: BRANCH, inputs: { dry_run: "false" } }) && s2.status === "publisher-hourly.yml: queued", { dispatch: p, status: s2.status });
+  // Run analyst: the same engine workflow with inputs.agents = analyst (and dry_run false); the strip names the input.
+  await page.click("#run-analyst");
+  for (let i = 0; i < 100 && fake.dispatches.length < 3; i++) await sleep(50);
+  const a = fake.dispatches[2];
+  await waitStatus("engine-daily.yml (agents=analyst): queued").catch(() => {});
+  const s3 = await strip();
+  record("run analyst dispatch POST (engine-daily.yml agents=analyst)", "run", 1440, a && a.file === WORKFLOWS.engine && a.method === "POST" && a.url === `${API}${REPO_PATH}/actions/workflows/${WORKFLOWS.engine}/dispatches` && a.hasAuthorization && JSON.stringify(a.body) === JSON.stringify({ ref: BRANCH, inputs: { agents: "analyst", dry_run: "false" } }) && fake.dispatches.length === 3 && s3.status === "engine-daily.yml (agents=analyst): queued" && s3.analyst.disabled, { dispatch: a || "no dispatch recorded", status: s3.status, analystDisabledWhileRunning: s3.analyst.disabled });
   await closeCtx(ctx, page, "run");
 }
 

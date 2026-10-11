@@ -106,6 +106,7 @@ test("engine-daily.yml (design §3.1): cron 0 0 * * * = Daily 05:30 IST; inputs 
   assert.equal(config.schedule.engineCron, "0 0 * * *");
   assertStateJob(text, "engine-daily.yml", { cron: config.schedule.engineCron, jobId: "engine", stepId: "engine" });
   for (const input of ["agents", "page"]) assert.match(text, new RegExp(`${input}:\\s*\\n\\s+description: .+\\n\\s+type: string\\s*\\n\\s+default: ""`), `input ${input} (string, default empty)`);
+  assert.match(text, /agents:\s*\n\s+description: "[^"\n]*\banalyst\b[^"\n]*Run analyst/, "the agents input names analyst and the admin's Run analyst button (FEAT-203)");
   assert.match(text, /mock_llm:\s*\n\s+description: .+\n\s+type: boolean\s*\n\s+default: false/, "input mock_llm");
   assert.match(text, /^\s+MOCK_LLM: \$\{\{ inputs\.mock_llm == true && '1' \|\| '' \}\}$/m, "MOCK_LLM = inputs.mock_llm ? '1' : '' (N16)");
   assert.match(text, /uses: actions\/checkout@v7\s*\n\s+with:\s*\n\s+ref: media\s*\n\s+path: \.media\s*\n\s+continue-on-error: true/, "media checkout with continue-on-error");

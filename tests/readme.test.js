@@ -131,6 +131,20 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("## Phase 2 — not built yet");
   for (const s of ["not built yet", "not configured yet", "untested"]) has(`**${s}**`, "honesty label");
   has("`—` / `No runs yet`", "the launch-day empty state");
+  // FEAT-203 (P2-04/P2-05): the Analyst step, its number rule, the insights metric names with their source and date, the
+  // on-demand command and the honest first-report sentence
+  has("8. **Sunday 05:30 IST — Analyst**");
+  has("`GET /{igMediaId}/insights?metric=reach,views,likes,comments,saved,shares`");
+  has("a metric Meta leaves out is never written as 0");
+  has("\"report number not in metrics\"");
+  has("**Reports quote only fetched numbers.**");
+  has("https://developers.facebook.com/docs/instagram-platform/reference/instagram-media/insights (verified 2026-10-11");
+  has("`views` replaced `impressions`");
+  has("node --env-file=.env engine/index.js analyst --dry-run");
+  has('"Run analyst" dispatches `engine-daily.yml` with `agents: analyst`');
+  has("the first real report appears after the first Sunday with a post that has been live for 48 hours");
+  assert.ok(!readme.includes("Strategist and Analyst (phase 2)"), "the roster line no longer calls the Analyst phase 2");
+  assert.ok(!readme.includes('as "not built yet (phase 2)": the Analyst'), "the Analyst left the unbuilt list");
 });
 
 test("numbers in the README are the config's", () => {

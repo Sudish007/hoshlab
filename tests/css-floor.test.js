@@ -38,11 +38,15 @@ test("44 px controls: --control is 44px and applies to buttons, inputs, selects,
   assert.ok(!/min-height:\s*40px/.test(css), "no 40 px control (the mock's segmented buttons)");
 });
 
-test("chrome rules: no gradients, no box-shadow except the nav underline, no overflow-x scroll rows, light only, no max-width cap", () => {
+test("chrome rules: no gradients, no box-shadow except the nav underline, no overflow-x scroll rows beyond the captioned .table-wrap (M12), light only, no max-width cap", () => {
   assert.ok(!/gradient\(/.test(css), "no gradient");
   const shadows = [...css.matchAll(/box-shadow:\s*([^;]+);/g)].map((m) => m[1]);
   assert.deepEqual(shadows, ["inset 0 -2px 0 var(--ink)"]);
-  assert.ok(!/overflow-x:\s*(auto|scroll)/.test(css), "no horizontal scroll container (OF-8)");
+  // OF-8 forbids scroll rows in the chrome; review M12 allows exactly one horizontal scroller, the captioned
+  // .table-wrap the Analyst's report tables sit in (FEAT-203) — the same rule tests/dist-admin.test.js applies to admin.css.
+  assert.equal((css.match(/overflow-x:\s*(auto|scroll)/g) || []).length, 1, "the captioned .table-wrap is the only horizontal scroller (OF-8, M12)");
+  assert.match(css, /\.table-wrap \{[^}]*overflow-x: auto/);
+  assert.ok(!/\.site-nav[^{]*\{[^}]*overflow-x/.test(css), "the nav never scrolls (OF-8)");
   assert.ok(!/overflow:\s*(auto|scroll)/.test(css), "no scroll container");
   assert.ok(!/prefers-color-scheme/.test(css), "light theme only");
   assert.match(css, /color-scheme: light/);

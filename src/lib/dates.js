@@ -76,6 +76,23 @@ export function dateKeyOf(d) {
   return istDate(typeof d === "string" ? parseIso(d) : d);
 }
 
+// The Monday and Sunday (IST calendar dates) of an ISO week id: isoWeekRange('2026-W41') →
+// { start: '2026-10-05', end: '2026-10-11', label: 'Mon 5 Oct – Sun 11 Oct 2026' }. ISO 8601: 4 January is always in
+// week 1, so week 1's Monday is the Monday on or before it; the week's dates are plain calendar arithmetic.
+export function isoWeekRange(weekId) {
+  const m = /^(\d{4})-W(\d{2})$/.exec(String(weekId));
+  if (!m) throw new TypeError(`dates: week id must be YYYY-Www, got ${JSON.stringify(weekId)}`);
+  const year = Number(m[1]);
+  const week = Number(m[2]);
+  const jan4 = Date.UTC(year, 0, 4);
+  const monday1 = jan4 - ((new Date(jan4).getUTCDay() + 6) % 7) * 86400000;
+  const start = new Date(monday1 + (week - 1) * 7 * 86400000);
+  const end = new Date(start.getTime() + 6 * 86400000);
+  const key = (d) => `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`;
+  const day = (d) => `${DOW[d.getUTCDay()]} ${d.getUTCDate()} ${MON[d.getUTCMonth()]}`;
+  return { start: key(start), end: key(end), label: `${day(start)} – ${day(end)} ${end.getUTCFullYear()}` };
+}
+
 // Atom/RFC 3339 timestamp: the normalised IST ISO string (offsets are valid RFC 3339).
 export function toAtomDate(d) {
   return isoIst(d);

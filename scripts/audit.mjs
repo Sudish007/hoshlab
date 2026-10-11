@@ -15,7 +15,7 @@ import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 import { get } from "node:http";
 import { request as httpsRequest } from "node:https";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
@@ -29,7 +29,8 @@ const SHOTS = join(OUT, "shots-public");
 mkdirSync(SHOTS, { recursive: true });
 
 // The admin lock screen (last entry) is audited only when the server answers 200 for it (FEAT-111);
-// until then one informational row says "admin: not built yet".
+// until then one informational row says "admin: not built yet". The newest Analyst report page
+// (reports/<week>/, FEAT-203) is inserted after "reports" when one exists (newestReportPath()).
 const PAGES = [
   { key: "home", path: "" },
   { key: "team", path: "team/" },
@@ -96,6 +97,36 @@ function status(url) {
     req.on("error", () => resolveStatus(0));
     if (url.startsWith("https:")) req.end();
   });
+}
+function text(url) {
+  return new Promise((resolveText) => {
+    const onRes = (res) => {
+      let body = "";
+      res.setEncoding("utf8");
+      res.on("data", (chunk) => (body += chunk));
+      res.on("end", () => resolveText(res.statusCode === 200 ? body : ""));
+    };
+    const req = url.startsWith("https:") ? httpsRequest(url, { method: "GET" }, onRes) : get(url, onRes);
+    req.on("error", () => resolveText(""));
+    if (url.startsWith("https:")) req.end();
+  });
+}
+// FEAT-203 (P2-05): the newest Analyst report page, when one exists — from dist/reports/<week>/ for a local dist,
+// from the served /reports/ index for AUDIT_URL. null = no report built yet (the real company until its first Sunday
+// with a 48 h-old post; the fixture build carries 2026-W41).
+async function newestReportPath() {
+  if (!process.env.AUDIT_URL) {
+    const dir = join(DIST, "reports");
+    if (!existsSync(dir)) return null;
+    const weeks = readdirSync(dir)
+      .filter((n) => /^\d{4}-W\d{2}$/.test(n) && existsSync(join(dir, n, "index.html")))
+      .sort()
+      .reverse();
+    return weeks.length ? `reports/${weeks[0]}/` : null;
+  }
+  const html = await text(BASE + "reports/");
+  const m = html.match(/href="[^"]*\/reports\/(\d{4}-W\d{2})\/"/);
+  return m ? `reports/${m[1]}/` : null;
 }
 async function startServer() {
   if (process.env.AUDIT_URL) return { origin: process.env.AUDIT_URL.replace(/\/$/, ""), child: null };
@@ -418,6 +449,11 @@ try {
     pages = PAGES.filter((p) => !p.admin);
     record("admin", "admin-lock", 0, true, `admin: not built yet (${BASE}admin/ answered HTTP ${adminStatus}; FEAT-111)`);
   }
+  const reportPath = await newestReportPath();
+  if (reportPath) {
+    const at = pages.findIndex((p) => p.key === "reports") + 1;
+    pages = [...pages.slice(0, at), { key: "report", path: reportPath }, ...pages.slice(at)];
+  } else record("report", "report", 0, true, "report detail page: no report built yet (company/state/reports/ is empty until the first Sunday with a 48 h-old post); the fixture build carries one — FEAT-203");
   await matrix(pages);
   await lightForced(pages);
 } catch (err) {

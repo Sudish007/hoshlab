@@ -3,8 +3,9 @@
 // already-validated state; the only clock is `now` (the build clock; BUILD_NOW pins it in tests).
 import { addDays, nextCadenceSlots, parseIso, slotIdFor, nowIst, istParts, istDateTime } from "../../engine/lib/time.js";
 import { fullCaption } from "../../engine/lib/checks.js";
+import { parseReport } from "../../engine/agents/analyst.js";
 import { slotLabel, isApproved, TERMINAL } from "./labels.js";
-import { monthKeyOf, dateKeyOf } from "./dates.js";
+import { monthKeyOf, dateKeyOf, isoWeekRange } from "./dates.js";
 
 const DOWS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
@@ -168,6 +169,12 @@ export function buildView(input) {
     return { record, draft, caption: draft ? fullCaption(draft) : "", media };
   });
 
+  // The Analyst's weekly reports (FEAT-203), newest week first: the Markdown body, the JSON block (model output +
+  // engine provenance, validated by the builder) and what the Reports pages print from it.
+  const reports = (input.reports || [])
+    .map((entry) => reportEntry(entry))
+    .sort((a, b) => b.week.localeCompare(a.week));
+
   return {
     now: nowDate,
     nowIso: nowIst(nowDate),
@@ -198,6 +205,32 @@ export function buildView(input) {
     mediaFiles,
     modeOf,
     terminal: TERMINAL,
+    metrics: (input.metrics || []).filter((m) => !m.dryRun),
+    reports,
+    latestReport: reports[0] || null,
+  };
+}
+
+// One report file → { week, path, rel, url, range, report, engine, body, generatedAt, fetchDates, windows, metricsCount, mock }.
+export function reportEntry({ week, path, rel, markdown }) {
+  const parsed = parseReport(markdown);
+  if (!parsed) throw new TypeError(`view: ${rel} has no JSON block`);
+  const engine = parsed.engine || {};
+  const used = Array.isArray(engine.metricsUsed) ? engine.metricsUsed : [];
+  return {
+    week,
+    path,
+    rel,
+    url: `reports/${week}/`,
+    range: isoWeekRange(week),
+    report: parsed.report,
+    engine: { reportDays: 28, publishedInWindow: 0, unmeasured: [], runId: "—", windows: [], insightsDoc: null, ...engine, metricsUsed: used },
+    body: parsed.body,
+    generatedAt: engine.generatedAt || null,
+    fetchDates: [...new Set(used.map((m) => dateKeyOf(m.at)))].sort(),
+    windows: [...new Set(used.map((m) => m.window))].sort(),
+    metricsCount: used.length,
+    mock: engine.mock === true,
   };
 }
 
