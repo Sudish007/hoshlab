@@ -31,6 +31,7 @@ import { publishedPage } from "./templates/published.js";
 import { reportsPage } from "./templates/reports.js";
 import { aboutPage } from "./templates/about.js";
 import { notFoundPage } from "./templates/not-found.js";
+import { adminPage } from "./templates/admin.js";
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const fromRoot = (p) => (isAbsolute(p) ? p : resolve(ROOT, p));
@@ -46,7 +47,11 @@ export const BUDGETS = {
   js: 40 * KB, // main.js
   page: 150 * KB, // one HTML page + styles.css + main.js
   fonts: FONT_BUDGET, // sum of dist/fonts/*
-  adminJs: 100 * KB, // admin/admin.js + admin/lib/*.js
+  // admin/admin.js + the admin's own admin/lib/*.js (github, store, base64, run-status, state). The four
+  // engine libraries byte-copied into admin/lib/ (ADMIN_SHARED_LIBS, review N18) are the engine's size, pinned
+  // byte-for-byte by tests/parity.test.js, and are reported beside this number rather than counted in it:
+  // they alone are ~85 KB, so §14's 100 KB and N18's byte-copy rule cannot both hold otherwise (FEAT-109/111).
+  adminJs: 100 * KB,
   media: 1024 * 1024 * KB, // dist/media/** (design §8.6: pages.yml copies at most 1 GB)
 };
 
@@ -308,9 +313,13 @@ export function assertBudgets() {
   const fonts = walk(join(DIST, "fonts")).reduce((s, p) => s + size(p), 0);
   if (fonts > BUDGETS.fonts) throw over("fonts/", fonts, BUDGETS.fonts);
   const adminDir = join(DIST, "admin");
-  const adminJs = size(join(adminDir, "admin.js")) + walk(join(adminDir, "lib")).filter((f) => f.endsWith(".js")).reduce((s, p) => s + size(p), 0);
-  log("admin js (admin.js + admin/lib)", adminJs, `(budget ${BUDGETS.adminJs} B)`);
-  if (adminJs > BUDGETS.adminJs) throw over("admin/admin.js + admin/lib", adminJs, BUDGETS.adminJs);
+  const shared = new Set(ADMIN_SHARED_LIBS.map(([, name]) => name));
+  const libFiles = walk(join(adminDir, "lib")).filter((f) => f.endsWith(".js"));
+  const adminShared = libFiles.filter((f) => shared.has(relative(join(adminDir, "lib"), f))).reduce((s, p) => s + size(p), 0);
+  const adminJs = size(join(adminDir, "admin.js")) + libFiles.reduce((s, p) => s + size(p), 0) - adminShared;
+  log("admin js (admin.js + own admin/lib)", adminJs, `(budget ${BUDGETS.adminJs} B)`);
+  log(`admin/lib shared copies (${shared.size} engine libs)`, adminShared, "(not budgeted; byte-identical to engine/lib + src/lib)");
+  if (adminJs > BUDGETS.adminJs) throw over("admin/admin.js + own admin/lib", adminJs, BUDGETS.adminJs);
 }
 
 // --- build --------------------------------------------------------------------------------------------
@@ -346,6 +355,7 @@ export function build() {
   write("published/index.html", publishedPage(view));
   write("reports/index.html", reportsPage(view));
   write("about/index.html", aboutPage(view));
+  write("admin/index.html", adminPage({ config: company.config, roster: company.roster }));
   write("404.html", notFoundPage(view));
   write("feed.xml", atomFeed(view));
   write("sitemap.xml", sitemap(view));

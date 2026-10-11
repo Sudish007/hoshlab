@@ -1,0 +1,129 @@
+/* Hoshlab admin (dist/admin/). Tokens and the shared classes (buttons, chips, hero, panel-like boxes,
+   calendar grid, activity list) come from styles.css; this file adds the admin-only layout from the
+   design mock (mock.css "Admin" rules converted to classes — review M2: no inline styles anywhere) with
+   the review fixes: tabs WRAP instead of scrolling (M12), segmented mode buttons are 44 px (N11), the
+   only horizontal scroller is a captioned .table-wrap (M12). Flat surfaces, hairline rules, no gradients,
+   no box-shadow, light theme only, 12 px floor, every control >= var(--control). Brand colours arrive
+   through var(--brand), set by dist/brands.css on [data-page]. */
+
+/* ---------- utilities (replace the mock's style= attributes) ---------- */
+.m-0 { margin: 0; }
+.mt-1 { margin-top: 1rem; }
+.h2 { font-size: var(--fs-h2); }
+.h3 { font-size: var(--fs-h3); }
+.title-compact { font-size: var(--fs-base); margin-bottom: 0.5rem; }
+.section-tight { padding-top: 1.25rem; }
+.who-plain, .next-up .who.plain { font-weight: 500; border-left-color: var(--rule-2); }
+
+/* ---------- lock screen ---------- */
+.lock-grid { display: grid; gap: 1.5rem; }
+@media (min-width: 64em) { .lock-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+#signin { display: grid; gap: 0.75rem; }
+.admin label { display: block; font-size: var(--fs-sm); font-weight: 600; }
+.admin input:not([type="checkbox"]), .admin select, .admin textarea {
+  font: inherit; font-size: var(--fs-base); line-height: 1.4; width: 100%; min-height: var(--control);
+  padding: 0.5rem 0.75rem; border: 1px solid var(--ink-2); border-radius: var(--radius); background: var(--surface); color: var(--ink);
+}
+.admin input[type="password"], .admin input[type="datetime-local"], .admin #mode-handle, .admin #json-path { font-family: var(--font-mono); font-size: var(--fs-sm); }
+.admin textarea { font-family: var(--font-mono); font-size: var(--fs-sm); line-height: 1.6; min-height: 8rem; resize: vertical; }
+.check { display: flex; align-items: center; gap: 0.5rem; min-height: var(--control); }
+.check input { width: 20px; height: 20px; min-height: 0; margin: 0; }
+.check label { font-weight: 400; display: flex; align-items: center; min-height: var(--control); margin: 0; }
+.help ol, .help ul { padding-left: 1.2rem; font-size: var(--fs-sm); margin: 0; display: grid; gap: 0.4rem; }
+/* Inline links in the help get a >= 44px hit area without moving the lines (ai-batkahi pattern). */
+.help li a { padding-block: 0.85em; }
+.form-error, .errors { color: var(--bad); font-size: var(--fs-sm); margin: 0.5rem 0 0; }
+.errors { border: 1px solid var(--bad); border-radius: var(--radius); padding: 0.75rem 1rem 0.75rem 2rem; list-style: disc; overflow-wrap: anywhere; }
+.errors:empty { display: none; }
+.errors.valid { border-color: var(--ok); color: var(--ok); list-style: none; padding-left: 1rem; }
+tr.bad td.mono:nth-child(3) { color: var(--bad); }
+
+/* ---------- dashboard chrome ---------- */
+.admin-tabs { display: flex; flex-wrap: wrap; overflow: visible; gap: 0.25rem; border-bottom: 1px solid var(--rule); margin-bottom: 1.25rem; }
+.admin-tabs a { display: inline-flex; align-items: center; gap: 0.4rem; min-height: var(--control); padding: 0 0.9rem; text-decoration: none; color: var(--ink); font-size: var(--fs-sm); white-space: nowrap; border-radius: var(--radius) var(--radius) 0 0; }
+.admin-tabs a:hover { background: var(--surface-2); }
+.admin-tabs a[aria-current="page"] { font-weight: 650; box-shadow: inset 0 -2px 0 var(--ink); }
+.view { display: grid; gap: 1rem; align-content: start; }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1rem; display: grid; gap: 0.75rem; align-content: start; }
+.panel h3 { font-size: var(--fs-h3); }
+.admin-grid { display: grid; gap: 1rem; align-items: start; }
+@media (min-width: 64em) { .admin-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
+.editor-grid { display: grid; gap: 1rem; align-items: start; }
+@media (min-width: 64em) { .editor-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+
+/* ---------- queue cards ---------- */
+.queue { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.queue-item { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); display: grid; gap: 1rem; padding: 1rem; grid-template-columns: 1fr; }
+.queue-item .thumb { display: block; width: 100%; max-width: 240px; aspect-ratio: 4 / 5; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; position: relative; background: var(--surface-2); margin: 0; }
+.queue-item .thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.queue-item .thumb img.missing { display: none; }
+.queue-item .thumb-missing { position: absolute; inset: 0; display: grid; place-items: center; padding: 1rem; text-align: center; font-size: var(--fs-sm); color: var(--ink-2); }
+.queue-item .q-body { display: grid; gap: 0.5rem; min-width: 0; align-content: start; }
+.q-head, .q-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.queue-item .caption { font-size: var(--fs-sm); white-space: pre-wrap; border-left: 2px solid var(--rule-2); padding-left: 0.75rem; margin: 0; overflow-wrap: anywhere; }
+.qa { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; margin: 0; padding: 0; }
+.qa .chip { white-space: normal; text-align: left; }
+.chip-handle { color: var(--brand, var(--ink)); border-color: var(--brand, var(--rule-2)); font-family: var(--font-mono); letter-spacing: 0; }
+.queue-item.is-terminal .thumb { opacity: 0.85; }
+@media (min-width: 48em) { .queue-item { grid-template-columns: 200px minmax(0, 1fr); } }
+@media (min-width: 120em) { .queue-item { grid-template-columns: 240px minmax(0, 1fr); } }
+
+/* ---------- admin calendar (grid rules shared with styles.css) ---------- */
+.calendar button.slot { font: inherit; font-size: var(--fs-xs); text-align: left; background: transparent; border: 0; border-left: 3px solid var(--brand, var(--ink)); border-radius: 0; padding: 0.2rem 0.3rem; min-height: var(--control); cursor: pointer; display: grid; align-content: center; width: 100%; color: var(--ink); }
+.calendar button.slot:hover { background: var(--surface-2); }
+.calendar span.slot { min-height: var(--control); align-content: center; }
+
+/* ---------- modes ---------- */
+.mode-row { display: grid; grid-template-columns: 1fr; gap: 0.5rem; align-items: center; padding: 0.75rem 0; border-top: 1px solid var(--rule); }
+.mode-row:first-child { border-top: 0; }
+.mode-row .who { font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: 650; border-left: 3px solid var(--brand, var(--ink)); padding-left: 0.5rem; }
+.seg { display: inline-flex; border: 1px solid var(--ink); border-radius: var(--radius); overflow: hidden; }
+.seg button { min-height: var(--control); padding: 0 0.9rem; border: 0; border-radius: 0; background: var(--surface); color: var(--ink); font: inherit; font-size: var(--fs-sm); font-weight: 600; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: #FFFFFF; }
+.seg button:disabled { cursor: default; }
+@media (min-width: 48em) { .mode-row { grid-template-columns: 10rem minmax(0, 1fr) auto; } }
+
+/* ---------- dialogs ---------- */
+dialog.admin-dialog { width: min(40rem, calc(100vw - 2rem)); padding: 1.25rem; border: 1px solid var(--rule-2); border-radius: var(--radius); background: var(--surface); color: var(--ink); }
+dialog.admin-dialog-wide { width: min(72rem, calc(100vw - 2rem)); }
+dialog.admin-dialog form { display: grid; gap: 0.75rem; }
+dialog.admin-dialog::backdrop { background: rgba(23, 23, 26, 0.45); }
+dialog.confirm { border-color: var(--warn); background: var(--warn-tint); }
+dialog.confirm input { font-family: var(--font-mono); max-width: 20rem; }
+.chips-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chips-list:empty { display: none; }
+.diff { font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.5; margin: 0; padding: 0.75rem; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface-2); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 24rem; overflow-y: auto; }
+.diff .del { color: var(--bad); background: var(--bad-tint); text-decoration: none; display: block; }
+.diff .ins { color: var(--ok); background: var(--ok-tint); text-decoration: none; display: block; }
+.diff .same { color: var(--ink-2); display: block; }
+
+/* ---------- tables (brand facts) ---------- */
+.table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); background: var(--surface); border: 1px solid var(--rule); min-width: 40rem; }
+.table th, .table td { text-align: left; padding: 0.6rem 0.75rem; border-top: 1px solid var(--rule); vertical-align: top; overflow-wrap: anywhere; }
+.table th { background: var(--surface-2); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); border-top: 0; }
+.table td.mono, .table .mono { font-size: var(--fs-xs); }
+.table tr.disputed td { background: var(--warn-tint); }
+/* The one permitted horizontal scroller: the caption says so (review M12). */
+.table-wrap { margin: 0; overflow-x: auto; display: grid; gap: 0.25rem; }
+.table-wrap figcaption { font-family: var(--font-mono); font-size: var(--fs-xs); }
+
+/* ---------- activity / json ---------- */
+.activity .actor { font-weight: 650; }
+.activity li.failed .actor { color: var(--bad); }
+.activity li.skipped { color: var(--ink-2); }
+.activity .runline { display: grid; gap: 0.15rem; min-width: 0; }
+.activity .runline ul { margin: 0; padding-left: 1.1rem; font-size: var(--fs-xs); color: var(--ink-2); }
+.json { font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.5; margin: 0; padding: 0.75rem 1rem; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); white-space: pre-wrap; overflow-wrap: anywhere; min-height: 4rem; max-height: 70vh; overflow-y: auto; }
+#json-form { align-items: end; }
+#json-form input { max-width: 28rem; }
+.admin .section-head h1 { margin: 0; }
+.admin .empty { background: var(--surface); }
+
+/* styles.css declares `.btn, button.btn`, which outranks the `.btn-primary` / `.btn-danger` / `.btn-quiet`
+   variants on a <button>; the admin's buttons get the variants back here (same colours, no new tokens). */
+.admin button.btn-primary { background: var(--ink); color: #FFFFFF; border-color: var(--ink); }
+.admin button.btn-primary:hover { background: #2A2A2F; color: #FFFFFF; }
+.admin button.btn-danger { border-color: var(--bad); color: var(--bad); }
+.admin button.btn-danger:hover { background: var(--bad-tint); }
+.admin button.btn-quiet { border-color: var(--rule-2); font-weight: 500; }

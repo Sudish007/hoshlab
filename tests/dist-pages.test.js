@@ -24,7 +24,8 @@ test("P1-12: every public page, the 404 and the three feeds exist", () => {
     assert.ok(existsSync(join(DIST, ...rel.split("/"))), rel);
   }
   assert.ok(existsSync(join(DIST, "admin", "lib", "labels.js")), "shared libs copied for the admin (N18)");
-  assert.ok(!existsSync(join(ROOT, "public", "admin", "lib")), "shared libs are never committed under public/admin/lib (N18)");
+  for (const name of ["schema.js", "checks.js", "brand.js", "labels.js"]) assert.ok(!existsSync(join(ROOT, "public", "admin", "lib", name)), `shared lib ${name} is never committed under public/admin/lib (N18)`);
+  assert.ok(existsSync(join(DIST, "admin", "index.html")), "admin page built (FEAT-111)");
   assert.equal(publicHtml().length, 12);
 });
 

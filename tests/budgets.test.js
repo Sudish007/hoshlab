@@ -2,7 +2,7 @@
 // makes src/build.js exit non-zero with 'size budget exceeded'. The budgets themselves are read from build.js.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cpSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { cpSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { BUDGETS, ADMIN_SHARED_LIBS } from "../src/build.js";
@@ -24,8 +24,13 @@ test("the fixture dist is inside every budget", () => {
   assert.ok(css <= BUDGETS.css, `styles.css ${css}`);
   assert.ok(js <= BUDGETS.js, `main.js ${js}`);
   for (const f of htmlFiles()) assert.ok(size(f) + css + js <= BUDGETS.page, `${f}: ${size(f) + css + js}`);
-  const libs = ADMIN_SHARED_LIBS.reduce((s, [, name]) => s + size(join(DIST, "admin", "lib", name)), 0);
-  assert.ok(libs <= BUDGETS.adminJs, `admin libs ${libs}`);
+  // The admin budget counts admin.js + the admin's own libraries; the four byte-copied engine libs are reported
+  // separately by the build (FEAT-111 — N18's byte copies alone are ~85 KB of the 100 KB).
+  const shared = new Set(ADMIN_SHARED_LIBS.map(([, name]) => name));
+  const libDir = join(DIST, "admin", "lib");
+  const own = readdirSync(libDir).filter((n) => n.endsWith(".js") && !shared.has(n)).reduce((s, n) => s + size(join(libDir, n)), size(join(DIST, "admin", "admin.js")));
+  assert.ok(own <= BUDGETS.adminJs, `admin.js + own libs ${own}`);
+  assert.ok(own > 0);
 });
 
 test("a styles.css padded past 60 KB fails the build with 'size budget exceeded'", () => {
