@@ -1,7 +1,7 @@
 // N18 / plan D12: the browser-shared libraries are byte copies made at build time, never committed copies.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ADMIN_SHARED_LIBS } from "../src/build.js";
 import { ROOT, DIST } from "./helpers.js";
@@ -17,5 +17,8 @@ test("dist/admin/lib/* are byte-identical to their sources and import nothing fr
       assert.ok(ADMIN_SHARED_LIBS.some(([, n]) => `./${n}` === m[1]), `${name} imports ${m[1]}, which must also be copied`);
     }
   }
-  assert.ok(!existsSync(join(ROOT, "public", "admin", "lib")), "no committed copies under public/admin/lib");
+  // public/admin/lib holds only the admin's own libraries (github, store, base64, run-status, state); the four
+  // shared files exist there in dist/ only.
+  for (const [, name] of ADMIN_SHARED_LIBS) assert.ok(!existsSync(join(ROOT, "public", "admin", "lib", name)), `no committed copy public/admin/lib/${name}`);
+  assert.deepEqual(readdirSync(join(ROOT, "public", "admin", "lib")).sort(), ["base64.js", "github.js", "run-status.js", "state.js", "store.js"]);
 });
