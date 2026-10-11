@@ -1,0 +1,63 @@
+# Hoshlab — build and deploy the public site to GitHub Pages (design.md §3.3; model: ai-batkahi pages.yml).
+# Runs on every push to main (owner and admin commits), on manual dispatch, and as a workflow_call from
+# engine-daily.yml / publisher-hourly.yml after the bot pushed state: pushes made with GITHUB_TOKEN never
+# trigger `push` workflows (GitHub's recursion guard), so the callers deploy explicitly in the same run.
+# `ref: main` builds the commit the engine just pushed, not the SHA the cron started with. The `media`
+# checkout is optional until the branch exists (review M16); src/build.js prints "not copied" honestly.
+# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time (group `pages`, never cancelled). When this workflow is CALLED, the caller's deploy
+# job already holds the `pages` group (review N17) and GitHub evaluates this top-level concurrency inside
+# that job: a second claim on the same group would be a deadlock GitHub cancels ("Canceling since a
+# deadlock for concurrency group … was detected"). `github.workflow` is the caller's name in a called run,
+# so the called run gets its own group keyed by the run id while standalone runs keep `pages`.
+concurrency:
+  group: ${{ github.workflow == 'Deploy to GitHub Pages' && 'pages' || format('pages-call-{0}', github.run_id) }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: actions/checkout@v7
+        with:
+          ref: media
+          path: .media
+        continue-on-error: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
