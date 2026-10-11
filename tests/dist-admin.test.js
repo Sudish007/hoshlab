@@ -11,6 +11,7 @@ import config from "../site.config.js";
 import { PREPAINT, PREPAINT_SHA256 } from "../src/templates/layout.js";
 import { adminCsp, MODE_CONSEQUENCES, WORKFLOWS } from "../src/templates/admin.js";
 import { CONSEQUENCES } from "../engine/commands/set-page.js";
+import { istParts } from "../engine/lib/time.js";
 import { DIST, COMPANY_DIR, htmlFiles, read } from "./helpers.js";
 
 const BASE = config.basePath;
@@ -127,4 +128,23 @@ test("admin-config JSON carries what admin.js reads, from the fixture config", (
   assert.equal(cfg.timezone, "Asia/Kolkata");
   assert.deepEqual(cfg.charter.headings, ["## Identity", "## Method", "## Output"]);
   assert.equal(cfg.charter.maxChars, 12000);
+});
+
+test("the admin footer prints the build clock's year like every public page (integration seam: adminPage receives view.year)", () => {
+  // scripts/test.mjs pins BUILD_NOW to 2026-10-12T09:30:00+05:30; view.year is the IST year of that clock.
+  const year = istParts(new Date(process.env.BUILD_NOW || Date.now())).y;
+  const footer = html.match(/<footer class="site-footer">[\s\S]*?<\/footer>/)[0];
+  assert.ok(footer.includes(`© ${year} Hoshlab`), footer);
+  const home = read(join(DIST, "index.html")).match(/<footer class="site-footer">[\s\S]*?<\/footer>/)[0];
+  assert.equal(footer, home, "the admin and the public pages share one footer, byte for byte");
+});
+
+test("no JavaScript value leaks into any built file: undefined, NaN, [object Object], Invalid Date, __BASE__", () => {
+  const files = [...htmlFiles(), join(DIST, "feed.xml"), join(DIST, "sitemap.xml"), join(DIST, "robots.txt"), join(DIST, "brands.css"), join(DIST, "styles.css"), join(DIST, "admin", "admin.css")];
+  for (const file of files) {
+    const text = read(file);
+    for (const re of [/\bundefined\b/, /\bNaN\b/, /\[object Object\]/, /\bInvalid Date\b/, /__BASE__/]) {
+      assert.doesNotMatch(text, re, `${file} leaks ${re}`);
+    }
+  }
 });

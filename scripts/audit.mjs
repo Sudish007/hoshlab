@@ -300,6 +300,20 @@ function pageEval({ navUnderline, minFont, minControl }) {
   out.cellsOutsideRow = [...document.querySelectorAll("[role=gridcell]")].filter((el) => !el.closest("[role=row]")).length;
   out.timeNoDatetime = document.querySelectorAll("time:not([datetime])").length;
   out.styleAttrs = document.querySelectorAll("[style]").length;
+  // Integration seam: a JavaScript value rendered as text or into an attribute (text nodes outside <script>,
+  // hidden markup included; every attribute value).
+  const leakRe = /\bundefined\b|\bNaN\b|\[object Object\]|Invalid Date/;
+  out.leaks = [];
+  const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = tw.nextNode(); n && out.leaks.length < 20; n = tw.nextNode()) {
+    const parent = n.parentElement;
+    if (!parent || parent.closest("script")) continue;
+    if (leakRe.test(n.nodeValue)) out.leaks.push(`text in <${parent.tagName.toLowerCase()}${parent.id ? "#" + parent.id : ""}>: ${n.nodeValue.trim().slice(0, 120)}`);
+  }
+  for (const el of all) {
+    if (out.leaks.length >= 20) break;
+    for (const a of el.attributes) if (leakRe.test(a.value)) out.leaks.push(`<${el.tagName.toLowerCase()}${el.id ? "#" + el.id : ""} ${a.name}="${a.value.slice(0, 120)}">`);
+  }
   return out;
 }
 
@@ -332,6 +346,7 @@ async function auditPage(page, p, vp, sink) {
   if (key === "team") record("OF-6 aiLabels", key, width, r.aiLabels.total === AI_LABELS && r.aiLabels.labelled === AI_LABELS, r.aiLabels);
   record("aria (N10)", key, width, r.cellsOutsideRow === 0 && r.timeNoDatetime === 0, { gridcells: r.gridcells, cellsOutsideRow: r.cellsOutsideRow, timeNoDatetime: r.timeNoDatetime });
   record("inlineStyles (M2)", key, width, r.styleAttrs === 0, `${r.styleAttrs} [style] attributes`);
+  record("valueLeaks (text/attributes)", key, width, r.leaks.length === 0, r.leaks.length ? r.leaks : "no undefined/NaN/[object Object]/Invalid Date in the DOM");
   record("pageErrors", key, width, sink.errors.length === 0 && sink.bad.length === 0, sink.errors.length || sink.bad.length ? { errors: [...sink.errors], badResponses: [...sink.bad] } : "no page errors, no failed same-origin responses");
 
   let empty = null;

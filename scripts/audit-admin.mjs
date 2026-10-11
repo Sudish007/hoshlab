@@ -426,8 +426,30 @@ async function closeCtx(ctx, page, label) {
   record("authTargets (N6)", label, width, offTarget.length === 0 && rawWithAuth.length === 0, { requests: reqs.length, withAuthorization: withAuth.length, offTarget: offTarget.map((r) => r.url), rawWithAuthorization: rawWithAuth.length, hosts });
   const logs = reqs.filter((r) => /company\/state\/(runs|usage|metrics)\//.test(r.url));
   record("noLogRequests (M9)", label, width, logs.length === 0, logs.length ? logs.map((r) => r.url) : "no request for state/runs|usage|metrics");
+  // Integration seam: a JavaScript value rendered as text ("undefined", "NaN", "[object Object]", "Invalid Date")
+  // anywhere in the final DOM — static markup, hidden views and the data the flows rendered — or in an attribute.
+  const valueLeaks = await page.evaluate(valueLeaksEval).catch(() => ["(page gone)"]);
+  record("valueLeaks (text/attributes)", label, width, valueLeaks.length === 0, valueLeaks.length ? valueLeaks : "no undefined/NaN/[object Object]/Invalid Date in the DOM");
   requestLog.push({ step: label, width, requests: reqs.map((r) => ({ method: r.method, url: r.url, hasAuthorization: r.hasAuthorization, body: r.body })) });
   await ctx.close();
+}
+// Runs in the page: text nodes (outside the admin-config JSON and other scripts) and attribute values.
+function valueLeaksEval() {
+  const re = /\bundefined\b|\bNaN\b|\[object Object\]|Invalid Date/;
+  const out = [];
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = walker.nextNode(); n && out.length < 20; n = walker.nextNode()) {
+    const parent = n.parentElement;
+    if (!parent || parent.closest("script")) continue;
+    if (re.test(n.nodeValue)) out.push(`text in <${parent.tagName.toLowerCase()}${parent.id ? "#" + parent.id : ""}>: ${n.nodeValue.trim().slice(0, 120)}`);
+  }
+  for (const el of document.body.querySelectorAll("*")) {
+    if (out.length >= 20) break;
+    for (const a of el.attributes) {
+      if (re.test(a.value)) out.push(`<${el.tagName.toLowerCase()}${el.id ? "#" + el.id : ""} ${a.name}="${a.value.slice(0, 120)}">`);
+    }
+  }
+  return out;
 }
 function pngSize(file) {
   const b = readFileSync(file);
