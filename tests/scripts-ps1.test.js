@@ -14,6 +14,7 @@ const TERNARY = /\$\w+\s*\?\s*[^:\n]+:\s*[^\n]+/; // `$x ? a : b` (PowerShell 7 
 test("scripts/*.ps1 exist and each is UTF-8 without BOM, ASCII-clean where it must be, free of && / --body / ternary, and writes files with [IO.File]::WriteAllText", () => {
   const files = ps1();
   assert.ok(files.includes("init-media-branch.ps1"), files.join());
+  assert.ok(files.includes("setup-secrets.ps1"), files.join());
   for (const f of files) {
     const buf = readFileSync(join(SCRIPTS, f));
     assert.ok(!(buf[0] === 0xef && buf[1] === 0xbb && buf[2] === 0xbf), `${f}: UTF-8 BOM`);
@@ -45,4 +46,41 @@ test("init-media-branch.ps1 (M16): checks `git ls-remote --heads origin media`, 
   assert.match(text, /'worktree', 'add', '--track', '-b', 'media', \$mediaDir, 'origin\/media'/, "existing remote branch without a local one → tracking worktree");
   assert.ok(!/'branch', '-D'|'--force'|'push', '-f'/.test(text), "no git call deletes a branch or force-pushes (the only mention is in an error message for the owner)");
   assert.match(text, /already present/, "idempotent: an existing worktree is left alone");
+});
+
+test("setup-secrets.ps1 (P1-20, M15, design §16): hidden prompts, Enter keeps, gh secret set on stdin, names + lengths only, /me user_id → igUserId through set-page-ids.mjs, check-models for provider keys, no commit; ASCII only", () => {
+  const text = readFileSync(join(SCRIPTS, "setup-secrets.ps1"), "utf8");
+  for (const ch of text) assert.ok(ch.charCodeAt(0) < 128, `non-ASCII character U+${ch.charCodeAt(0).toString(16)} in setup-secrets.ps1`);
+  assert.match(text, /\[string\]\$Repo = 'Sudish007\/hoshlab'/, "-Repo defaults to Sudish007/hoshlab");
+  assert.match(text, /\[switch\]\$SkipValidate/, "-SkipValidate");
+  for (const name of ["ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY", "IG_TOKEN_RISHTAPATRA", "IG_TOKEN_KAATDO", "IG_TOKEN_JOB_REZ"]) assert.ok(text.includes(name), `names ${name}`);
+  assert.match(text, /providers\.PSObject\.Properties/, "secret names come from config providers.*.secret");
+  assert.match(text, /\$page\.tokenSecret/, "… and pages[].tokenSecret");
+  assert.match(text, /Read-Host -Prompt \$prompt -AsSecureString/, "hidden prompt");
+  assert.match(text, /\(Enter keeps the existing secret\)/, "Enter keeps the existing secret");
+  assert.match(text, /SecureStringToBSTR|PtrToStringBSTR/, "SecureString → plain text in a variable (PS 5.1 has no -AsPlainText)");
+  assert.match(text, /\$psi\.Arguments = 'secret set ' \+ \$Name \+ ' --repo ' \+ \$Repository/, "gh secret set <NAME> --repo <Repo>");
+  assert.match(text, /RedirectStandardInput = \$true/, "the value travels on stdin");
+  assert.match(text, /\$proc\.StandardInput\.Write\(\$Value\)/, "… written to the process's stdin");
+  assert.match(text, /'set \(' \+ \$plain\.Length \+ ' chars\)'/, "prints 'NAME: set (<length> chars)'");
+  assert.match(text, /\$entry\.Status = 'kept'/, "prints 'NAME: kept'");
+  assert.match(text, /'\/me\?fields=id,user_id,username'/, "GET /me?fields=id,user_id,username");
+  assert.match(text, /graph\.instagram\.com\/' \+ \$Version/, "the pinned ig.version from config.json");
+  assert.match(text, /\$igVersion = \[string\]\$config\.ig\.version/, "version read from config.json, not hard-coded");
+  assert.match(text, /Invoke-RestMethod -Method Get -Uri \$uri/, "the probe");
+  assert.match(text, /'--ig-user-id', \$me\.UserId/, "user_id → igUserId (M15/D5)");
+  assert.match(text, /'--app-scoped-id', \$me\.Id/, "id → appScopedId");
+  assert.match(text, /'--reset-token-state'/, "a stored tokenState 'invalid' is reset after a successful probe (FEAT-107)");
+  assert.match(text, /scripts\\lib\\set-page-ids\.mjs/, "config.json is written by the Node helper (JSON round-trip, UTF-8 no BOM)");
+  assert.match(text, /'check-models'/, "provider keys validated with check-models");
+  assert.match(text, /SetEnvironmentVariable\(\$entry\.Name, \$entry\.Value, 'Process'\)/, "keys reach check-models through the process environment only…");
+  assert.match(text, /SetEnvironmentVariable\(\$entry\.Name, \$null, 'Process'\)/, "… and are removed afterwards");
+  assert.match(text, /config: instagram ids/, "tells the owner what to commit");
+  assert.ok(!/git (add|commit|push)[^"']*$/m.test(text.replace(/Write-Host.*$/gm, "")), "the script itself never commits");
+  assert.ok(!/ConvertFrom-SecureString -AsPlainText/.test(text), "PowerShell 7 only");
+  for (const [i, line] of text.split(/\r?\n/).entries()) {
+    if (!/Write-Host|Write-Output|Write-Verbose/.test(line)) continue;
+    assert.ok(!/\$plain|\$Token|\$Value\b|\.Value\b|\$uri|\$secure/.test(line), `${i + 1}: a print statement names a secret-bearing variable: ${line.trim()}`);
+  }
+  assert.ok(!/\$plain\b.*\+.*Write-Host|Write-Host.*\$plain\b/.test(text), "the plain value is never printed");
 });

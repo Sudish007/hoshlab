@@ -1,0 +1,76 @@
+# Hoshlab — the hourly publisher run (design.md §3.2; review M1, N16, N17; plan D1).
+# `node engine/index.js publish` posts at most one queued, due and approved (or Autopilot) draft per page,
+# commits the state as hoshlab-bot and writes `changed` to $GITHUB_OUTPUT — true only when published.jsonl
+# or a draft changed, so the deploy job (pages.yml via workflow_call) runs only then. No Chromium and no
+# media checkout: the publisher preflights the media URLs over HTTP and never renders. Shares the
+# `hoshlab-state` concurrency group with engine-daily.yml.
+# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+name: Hoshlab publisher (hourly)
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run on a temp copy with the dry-run Instagram client: nothing posted, nothing committed, no deploy"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: hoshlab-state
+  cancel-in-progress: false
+
+jobs:
+  publisher:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      changed: ${{ steps.publish.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Bot identity (N16)
+        run: |
+          git config user.name hoshlab-bot
+          git config user.email hoshlab-bot@users.noreply.github.com
+      - id: publish
+        name: Run the publisher
+        env:
+          CI: "true"
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          IG_TOKEN_RISHTAPATRA: ${{ secrets.IG_TOKEN_RISHTAPATRA }}
+          IG_TOKEN_KAATDO: ${{ secrets.IG_TOKEN_KAATDO }}
+          IG_TOKEN_JOB_REZ: ${{ secrets.IG_TOKEN_JOB_REZ }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          args=(publish --commit)
+          if [ "$INPUT_DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          echo "node engine/index.js ${args[*]}"
+          node engine/index.js "${args[@]}"
+
+  # N17: identical to engine-daily.yml's deploy job — the caller holds the `pages` group.
+  deploy:
+    needs: publisher
+    if: needs.publisher.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    uses: ./.github/workflows/pages.yml

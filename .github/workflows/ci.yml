@@ -1,0 +1,50 @@
+# Hoshlab — CI (review M10, plan D16): the full offline proof on ubuntu-latest. Unit + dist tests WITH the
+# render smoke (RENDER_TESTS=1 needs Chromium and the fonts build), the real `npm run build` (public-surface
+# greps and budgets fail it by design), both Playwright audits (0 failing rows or exit 1) and the end-to-end
+# dry run on a temp copy (P1-22). No secrets are used: MOCK_LLM=1 answers every model call from
+# tests/fixtures/llm and IG_DRY_RUN=1 publishes nothing. audit-out/ (results JSON + viewport PNGs) is
+# uploaded as the run's artifact even when a step fails. Phase 2 adds REQUIRE_FFMPEG=1 for the reel tests.
+# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build:fonts
+      - name: Unit, dist and render smoke tests (render smoke must run, not skip — M10)
+        run: RENDER_TESTS=1 MOCK_LLM=1 IG_DRY_RUN=1 npm test
+      - name: Build the real company site (public-surface greps + budgets are build failures)
+        run: npm run build
+      - name: Public audit (OF-1/4/5/6/8, design rules at 390–2560)
+        run: AUDIT_OUT=audit-out npm run audit
+      - name: Admin audit (GitHub + raw host mocked, no network beyond 127.0.0.1)
+        run: AUDIT_OUT=audit-out npm run audit:admin
+      - name: End-to-end dry run on a temp copy (mock LLM → render → QA → dry-run publish)
+        run: node scripts/dry-run-publish.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: audit-out
+          path: audit-out/
+          if-no-files-found: warn

@@ -1,0 +1,114 @@
+# Hoshlab — the daily engine run (design.md §3.1; review M16, N16, N17; plan D19).
+# CEO (Mondays) → Strategist → Writer → Designer → QA on the runner; the engine itself commits the state as
+# hoshlab-bot, pushes the media branch first and then main (rebase-retry), and writes `changed` to
+# $GITHUB_OUTPUT; the deploy job then calls pages.yml so the site shows the new state in the same run.
+# Shares the `hoshlab-state` concurrency group with publisher-hourly.yml: the two never write state at once.
+# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+name: Hoshlab engine (daily)
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      agents:
+        description: "Agents to run, comma-separated (ceo,hr,strategist,writer,designer,qa); empty = all"
+        type: string
+        default: ""
+      page:
+        description: "Only this page handle (rishtapatra, kaatdo, job_rez); empty = every page"
+        type: string
+        default: ""
+      dry_run:
+        description: "Dry run on a temp copy: nothing committed, no deploy"
+        type: boolean
+        default: false
+      mock_llm:
+        description: "MOCK_LLM=1: answer every model call from tests/fixtures/llm (no provider key spent)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: hoshlab-state
+  cancel-in-progress: false
+
+jobs:
+  engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      changed: ${{ steps.engine.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - id: media
+        uses: actions/checkout@v7
+        with:
+          ref: media
+          path: .media
+        continue-on-error: true
+      # M16: the engine never creates branches. A failed checkout of a not-yet-existing `media` branch leaves
+      # an initialised but empty .media/.git behind; remove it so the Designer records
+      # `skipped: media_branch_missing` instead of committing into an unborn branch.
+      - name: Media branch check (M16)
+        run: |
+          if [ "${{ steps.media.outcome }}" != "success" ] || ! git -C .media rev-parse --verify HEAD >/dev/null 2>&1; then
+            echo "media branch not checked out (not configured yet: run scripts/init-media-branch.ps1 once) — the Designer will skip"
+            rm -rf .media
+          else
+            echo "media branch at $(git -C .media rev-parse --short HEAD)"
+          fi
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build:fonts
+      - name: Bot identity (N16)
+        run: |
+          git config user.name hoshlab-bot
+          git config user.email hoshlab-bot@users.noreply.github.com
+      - id: engine
+        name: Run the engine
+        env:
+          CI: "true"
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          IG_TOKEN_RISHTAPATRA: ${{ secrets.IG_TOKEN_RISHTAPATRA }}
+          IG_TOKEN_KAATDO: ${{ secrets.IG_TOKEN_KAATDO }}
+          IG_TOKEN_JOB_REZ: ${{ secrets.IG_TOKEN_JOB_REZ }}
+          # N16: an empty MOCK_LLM means real providers; '1' only when the dispatch asked for it.
+          MOCK_LLM: ${{ inputs.mock_llm == true && '1' || '' }}
+          INPUT_AGENTS: ${{ inputs.agents }}
+          INPUT_PAGE: ${{ inputs.page }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+        # Build the argument list so empty inputs add nothing; --dry-run runs on a temp copy and commits nothing.
+        run: |
+          args=(daily --commit)
+          if [ -n "$INPUT_AGENTS" ]; then args+=(--agents "$INPUT_AGENTS"); fi
+          if [ -n "$INPUT_PAGE" ]; then args+=(--page "$INPUT_PAGE"); fi
+          if [ "$INPUT_DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          echo "node engine/index.js ${args[*]}  (MOCK_LLM='${MOCK_LLM}')"
+          node engine/index.js "${args[@]}"
+
+  # N17: the caller holds the `pages` group so this deploy and a push-triggered pages.yml never overlap;
+  # pages.yml itself uses a per-run group when called (see its comment).
+  deploy:
+    needs: engine
+    if: needs.engine.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    uses: ./.github/workflows/pages.yml
