@@ -1,0 +1,91 @@
+{
+  "agent": "hr",
+  "case": "bad",
+  "note": "Shape-valid; rejected by engine/agents/hr.js validateHrOutput: qa is missing from the review (every agent exactly once) and the Writer's qaRejectionRate 0.6 is not the engine's stat (0.2 in the populated fixture). Were those two fixed, the one change a model can make to sideline QA — a provider swap to openai while qa keeps gemini-3.8-flash — is caught next: the resulting roster is re-validated against ROSTER_SPEC and its model is not in the new provider's table (tests/hr.test.js proves that step on its own). Removing or disabling qa is not even expressible: the four change fields cannot do it. The router's single repair call returns the same fixture → AgentOutputError, nothing written.",
+  "output": {
+    "month": "2026-10",
+    "review": [
+      {
+        "agent": "ceo",
+        "verdict": "keep",
+        "evidence": {},
+        "proposal": "no runs this month"
+      },
+      {
+        "agent": "hr",
+        "verdict": "keep",
+        "evidence": {},
+        "proposal": "no runs this month"
+      },
+      {
+        "agent": "strategist",
+        "verdict": "keep",
+        "evidence": {
+          "calls": 1,
+          "failedCalls": 0,
+          "costUsd": 0.00068,
+          "avgMs": 6420,
+          "runs": 1,
+          "costPerApprovedPost": 0.026809
+        },
+        "proposal": "One call, no failures; the cost per approved post is shared with the Writer and QA. Keep."
+      },
+      {
+        "agent": "writer",
+        "verdict": "tune",
+        "evidence": {
+          "calls": 3,
+          "qaRejectionRate": 0.6
+        },
+        "proposal": "One of five drafts failed QA and used both rework loops before it was blocked, and the owner rejected a KaatDo draft for tone. Keep the model, lower the temperature from 0.8 to 0.7 for a month."
+      },
+      {
+        "agent": "designer",
+        "verdict": "keep",
+        "evidence": {
+          "runs": 2,
+          "failedRuns": 0
+        },
+        "proposal": "Deterministic; rendered in both runs without a refusal. Keep."
+      },
+      {
+        "agent": "publisher",
+        "verdict": "keep",
+        "evidence": {
+          "runs": 1,
+          "failedRuns": 0
+        },
+        "proposal": "Deterministic; one publisher run, no failure. Keep."
+      },
+      {
+        "agent": "analyst",
+        "verdict": "keep",
+        "evidence": {},
+        "proposal": "no runs this month"
+      }
+    ],
+    "rosterProposal": {
+      "changes": [
+        {
+          "agent": "qa",
+          "field": "provider",
+          "from": "gemini",
+          "to": "openai",
+          "why": "move QA to the Strategist's provider"
+        },
+        {
+          "agent": "writer",
+          "field": "temperature",
+          "from": "0.8",
+          "to": "0.7",
+          "why": "qaRejectionRate 0.2 and reworkLoops 2 on 5 drafts, plus one owner reject on tone; a cooler Writer for one month before judging the model"
+        }
+      ]
+    },
+    "reviewMarkdown": "# HR review 2026-10\n\nQA dropped from the review; its provider moved to OpenAI while its model stays gemini-3.8-flash; the Writer's QA rejection rate is quoted as 0.6.\n"
+  },
+  "usage": {
+    "inputTokens": 4200,
+    "outputTokens": 900
+  }
+}

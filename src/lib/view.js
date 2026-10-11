@@ -175,6 +175,19 @@ export function buildView(input) {
     .map((entry) => reportEntry(entry))
     .sort((a, b) => b.week.localeCompare(a.week));
 
+  // HR's monthly reviews and roster proposals (FEAT-204), newest month first. A proposal's status is derived from the
+  // owner's decisions log (hr/decisions.jsonl, admin-owned): the latest decision for its month wins; none → 'proposed'.
+  const hrInput = input.hr || {};
+  const decisions = latestBy(hrInput.decisions || [], "month");
+  const hrReviews = (hrInput.reviews || []).slice().sort((a, b) => b.month.localeCompare(a.month));
+  const hrProposals = (hrInput.proposals || [])
+    .map((p) => {
+      const d = decisions.get(p.month) || null;
+      return { ...p, decisionRecord: d, status: d ? (d.decision === "apply" ? "applied" : "dismissed") : "proposed" };
+    })
+    .sort((a, b) => b.month.localeCompare(a.month));
+  const hr = { reviews: hrReviews, latestReview: hrReviews[0] || null, proposals: hrProposals, decisions: hrInput.decisions || [] };
+
   return {
     now: nowDate,
     nowIso: nowIst(nowDate),
@@ -208,6 +221,7 @@ export function buildView(input) {
     metrics: (input.metrics || []).filter((m) => !m.dryRun),
     reports,
     latestReport: reports[0] || null,
+    hr,
   };
 }
 

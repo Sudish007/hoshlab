@@ -111,6 +111,16 @@ test("views, dialogs, tabs and the card template exist as static markup; tabs wr
   assert.ok(html.includes("Instagram's own media insights"), "the limits list names the insights source");
   assert.ok(html.includes('<figcaption class="meta">scroll →</figcaption>'), "the facts table is the one captioned scroller (M12)");
   assert.ok(html.includes('role="grid"'));
+  // FEAT-204: the HR proposals panel lives in the Roster view as static markup (list + empty state + error line)
+  const roster = section("view-roster");
+  assert.ok(roster.includes('<div class="panel" id="proposals" aria-labelledby="proposals-heading">'));
+  assert.ok(roster.includes('<ol id="proposal-list" class="proposals" aria-label="HR proposals" aria-busy="false"></ol>'));
+  assert.ok(roster.includes('<p class="empty" id="proposals-empty" hidden>No HR proposals yet — HR reviews the roster on the 1st of each month once a month of runs exists.</p>'));
+  assert.ok(roster.includes("The proposal files themselves are never edited here."), "N14 stated to the owner");
+  assert.ok(roster.includes("company/state/hr/decisions.jsonl"));
+  assert.ok(html.includes("apply or dismiss HR's monthly roster proposals"), "the lock screen's capability list names it");
+  assert.ok(!/HR[^<]*not built yet/.test(html), "the admin no longer calls HR unbuilt");
+  assert.match(css, /\.proposals \{[^}]*list-style: none/, "proposal list styling present, flat");
 });
 
 test("admin-config JSON carries what admin.js reads, from the fixture config", () => {

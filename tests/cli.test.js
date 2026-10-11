@@ -51,15 +51,8 @@ test("registry: every designed command is listed; unbuilt ones print 'not built 
   assert.equal(typeof COMMANDS["refresh-tokens"].load, "function", "refresh-tokens is built (FEAT-202)");
   assert.equal(typeof COMMANDS.retention.load, "function", "retention is built (FEAT-202)");
   assert.equal(typeof COMMANDS.analyst.load, "function", "analyst is built (FEAT-203)");
-  const expected = { hr: "FEAT-204 / phase 2" };
-  for (const [name, planned] of Object.entries(expected)) {
-    const out = sink();
-    const err = sink();
-    const code = await main([name, "--dry-run"], { stdout: out, stderr: err, processEnv: {} });
-    assert.equal(code, EXIT.usage, name);
-    assert.equal(err.text(), `${name}: not built yet (planned in ${planned})`);
-    assert.equal(out.lines.length, 0);
-  }
+  assert.equal(typeof COMMANDS.hr.load, "function", "hr is built (FEAT-204)");
+  assert.ok(Object.values(COMMANDS).every((c) => typeof c.load === "function"), "every designed command is built: nothing prints 'not built yet' any more");
   const unknown = sink();
   assert.equal(await main(["frobnicate"], { stdout: sink(), stderr: unknown, processEnv: {} }), EXIT.usage);
   assert.match(unknown.text(), /^frobnicate: unknown command/);
@@ -69,10 +62,11 @@ test("registry: every designed command is listed; unbuilt ones print 'not built 
   const help = sink();
   assert.equal(await main(["help"], { stdout: help, stderr: sink(), processEnv: {} }), EXIT.ok);
   assert.equal(help.text(), usage());
-  assert.ok(usage().includes("hr") && usage().includes("not built yet (planned in FEAT-204 / phase 2)"));
+  assert.ok(!usage().includes("not built yet"), "no command reads 'not built yet' (hr was the last, FEAT-204)");
   assert.ok(!usage().includes("planned in FEAT-202"), "refresh-tokens and retention no longer read 'not built yet'");
   assert.ok(!usage().includes("planned in FEAT-203"), "analyst no longer reads 'not built yet' (FEAT-203)");
   assert.ok(usage().includes("daily --agents analyst"), "the analyst command names its daily equivalent");
+  assert.ok(usage().includes("daily --agents hr, forced") && usage().includes("hr/proposals/<month>.json"), "the hr command names its daily equivalent and its output (FEAT-204)");
 });
 
 test("check-models without keys: one 'not configured yet (secret <NAME> missing)' line per enabled provider, exit 1, no network, no key material", async () => {

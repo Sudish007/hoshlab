@@ -9,6 +9,8 @@
 // `rel` is relative to company/ ('state/approvals.jsonl'); the repo path is company/<rel>.
 import { APPROVAL_SPEC, CONFIG_SPEC, EDIT_SPEC, FEEDBACK_SPEC, HR_DECISION_SPEC, OVERRIDE_SPEC, ROSTER_SPEC, validate } from "./schema.js";
 
+// state/hr/decisions.jsonl is the one admin-owned file under state/hr/ (review N14, plan D13): the owner's Apply /
+// Dismiss log. hr/proposals/*.json and hr/*-review.md are the engine's and are never written from the browser.
 export const ADMIN_OWNED = ["config.json", "roster.json", "brands/*", "charters/*", "state/approvals.jsonl", "state/edits/*", "state/overrides.jsonl", "state/feedback.jsonl", "state/hr/decisions.jsonl"];
 export const COMPANY_PREFIX = "company/";
 

@@ -64,7 +64,7 @@ export function adminPage({ config: company, roster, year }) {
 
   const handleLinks = pages.map((p) => `<a class="btn btn-quiet" href="#/brand/${escapeHtml(p.handle)}" data-brand-link="${escapeHtml(p.handle)}">@${escapeHtml(p.handle)}</a>`).join("");
   const agentLinks = agents.map((a) => `<a class="btn btn-quiet" href="#/charter/${escapeHtml(a)}" data-charter-link="${escapeHtml(a)}">${escapeHtml(a)}</a>`).join("");
-  const jsonPaths = ["config.json", "roster.json", "state/status.json", "state/calendar.json", "state/approvals.jsonl", "state/overrides.jsonl", "state/feedback.jsonl", "state/published.jsonl", "state/ideas.jsonl", ...pages.map((p) => p.brand.replace(/^company\//, ""))];
+  const jsonPaths = ["config.json", "roster.json", "state/status.json", "state/calendar.json", "state/approvals.jsonl", "state/overrides.jsonl", "state/feedback.jsonl", "state/published.jsonl", "state/ideas.jsonl", "state/hr/decisions.jsonl", ...pages.map((p) => p.brand.replace(/^company\//, ""))];
 
   const body = `<section class="hero" id="lock" aria-labelledby="lock-heading">
   <div>
@@ -128,7 +128,7 @@ export function adminPage({ config: company, roster, year }) {
       <li>Approve, edit, move or reject drafts in the queue (one commit each).</li>
       <li>Switch a page between Approve first and Autopilot — confirmed by typing the handle.</li>
       <li>Run the engine or the publisher now (a workflow dispatch on <span class="mono">${escapeHtml(branch)}</span>).</li>
-      <li>Edit brand charters, agent charters and the roster with the engine's own validation.</li>
+      <li>Edit brand charters, agent charters and the roster with the engine's own validation; apply or dismiss HR's monthly roster proposals.</li>
       <li>Reached by its URL only; nothing on the public site links here.</li>
     </ul>
   </div>
@@ -229,6 +229,14 @@ export function adminPage({ config: company, roster, year }) {
     <textarea id="roster-text" rows="28" spellcheck="false" aria-describedby="roster-errors"></textarea>
     <ul id="roster-errors" class="errors" aria-live="polite"></ul>
     <div class="q-actions"><button type="button" class="btn btn-primary" id="roster-save" disabled>Save roster</button><span class="meta" id="roster-state"></span></div>
+    <!-- HR proposals (FEAT-204, review N14 / plan D13): read from company/state/hr/proposals/, status from hr/decisions.jsonl; the admin never edits a proposal file -->
+    <div class="panel" id="proposals" aria-labelledby="proposals-heading">
+      <h3 id="proposals-heading">HR proposals</h3>
+      <p class="meta">HR reviews every agent on the 1st of the month and writes a proposal into <span class="mono">company/state/hr/proposals/</span> once a month of runs exists. <strong>Apply</strong> writes the proposed values into <span class="mono">roster.json</span> (checked against the same invariants as the editor above) and appends the decision to <span class="mono">company/state/hr/decisions.jsonl</span>; <strong>Dismiss</strong> appends the decision only. The proposal files themselves are never edited here.</p>
+      <ol id="proposal-list" class="proposals" aria-label="HR proposals" aria-busy="false"></ol>
+      <p class="empty" id="proposals-empty" hidden>No HR proposals yet — HR reviews the roster on the 1st of each month once a month of runs exists.</p>
+      <p class="form-error" id="proposals-error" role="alert" hidden></p>
+    </div>
   </section>
 
   <section id="view-charter" class="view" hidden aria-labelledby="charter-heading">

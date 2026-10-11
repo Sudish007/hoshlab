@@ -14,9 +14,14 @@ export class OwnershipError extends Error {
   }
 }
 
-// Paths relative to company/. Globs: a trailing '/*' matches anything below that folder.
+// Paths relative to company/. Globs: a trailing '/*' matches anything below that folder. ADMIN_OWNED wins where both
+// tables match: state/hr/decisions.jsonl (the owner's Apply/Dismiss log, review N14 / plan D13) is the admin's, while
+// the rest of state/hr/ — hr/<month>-review.md and hr/proposals/<month>.json — is the engine's (HR writes a proposal once;
+// the admin never edits it, it records its decision beside it).
 export const ADMIN_OWNED = ["config.json", "roster.json", "brands/*", "charters/*", "state/approvals.jsonl", "state/edits/*", "state/overrides.jsonl", "state/feedback.jsonl", "state/hr/decisions.jsonl"];
 export const ENGINE_OWNED = ["state/status.json", "state/ideas.jsonl", "state/calendar.json", "state/drafts/*", "state/published.jsonl", "state/runs/*", "state/usage/*", "state/metrics/*", "state/memos/*", "state/reports/*", "state/hr/*", "state/tokens.json"];
+// What "state/hr/*" covers for the engine (documentation + tests/state.test.js N14 row): proposals and reviews.
+export const HR_ENGINE_FILES = ["state/hr/proposals/*", "state/hr/*-review.md"];
 
 export const LOG_KINDS = ["runs", "usage", "metrics"];
 

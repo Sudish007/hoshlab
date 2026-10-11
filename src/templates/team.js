@@ -4,7 +4,7 @@
 import { layout } from "./layout.js";
 import { escapeHtml } from "../lib/xml.js";
 import { providerLabel } from "../lib/labels.js";
-import { formatIst } from "../lib/dates.js";
+import { formatIst, monthName } from "../lib/dates.js";
 import { chip, sectionHead, numberWord } from "./partials.js";
 import { lastRunOf } from "../lib/view.js";
 
@@ -20,9 +20,9 @@ const ROLE = {
   },
   hr: {
     monogram: "HR",
-    what: "Reviews every agent against its charter once a month: QA rejection rate, rework loops, cost per approved post. Proposes roster edits as a draft the owner approves.",
-    output: "company/state/hr/YYYY-MM-review.md + roster proposal",
-    phase2: "Monthly review: not built yet (phase 2)",
+    what: "Reviews every agent against its charter once a month from the engine's own numbers: calls, failed calls, cost, QA rejection rate, rework loops, cost per approved post. Proposes roster edits the owner applies or dismisses; it never edits the roster itself.",
+    output: "company/state/hr/YYYY-MM-review.md + hr/proposals/YYYY-MM.json",
+    phase2: "Monthly review: runs on the 1st (phase 2 built); first review after one month of runs",
   },
   strategist: {
     monogram: "ST",
@@ -73,6 +73,18 @@ function scheduleWord(agent, config) {
   }
 }
 
+// The latest HR review on file (view.hr, FEAT-204): its month, how many changes it proposed and what the owner decided
+// (from hr/decisions.jsonl — the admin's log; "awaiting the owner" while no decision exists). Nothing when no review exists.
+function hrReviewLine(view) {
+  const latest = view.hr && view.hr.latestReview;
+  if (!latest) return "";
+  const proposal = (view.hr.proposals || []).find((p) => p.month === latest.month) || null;
+  const changes = proposal ? proposal.changes.length : (latest.review.rosterProposal.changes || []).length;
+  const status = proposal ? proposal.status : "proposed";
+  const decided = status === "proposed" ? "awaiting the owner" : `${status} by the owner`;
+  return `<li>Latest review: ${escapeHtml(monthName(latest.month))} · ${changes} change${changes === 1 ? "" : "s"} proposed · ${escapeHtml(decided)}</li>`;
+}
+
 function acceptsTemperature(agent, config) {
   const provider = agent.provider && config.providers[agent.provider];
   const price = provider && provider.models && provider.models[agent.model];
@@ -93,13 +105,14 @@ export function agentCard(view, agent) {
   const last = lastRunOf(view.runs, agent.name);
   foot.push(`<span>${last ? `last ran ${escapeHtml(formatIst(last.run.endedAt || last.run.startedAt))}${last.row.ok ? "" : " (failed)"}` : "not run yet"}</span>`);
   const never = agent.never.map((n) => escapeHtml(n)).join("; ");
+  const extra = agent.name === "hr" ? hrReviewLine(view) : "";
   return `<article class="card agent" data-agent="${escapeHtml(agent.name)}">
         <div class="monogram" aria-hidden="true">${escapeHtml(role.monogram)}</div>
         <div class="body">
           <p class="ai-label">AI agent · ${escapeHtml(agent.group)}</p>
           <h3>${escapeHtml(agent.title || agent.name)}</h3>
           <p class="meta">${escapeHtml(role.what)}</p>
-          <ul><li>Runs: ${escapeHtml(scheduleWord(agent, config))}</li><li>Output: <span class="mono">${escapeHtml(role.output)}</span></li>${role.phase2 ? `<li>${escapeHtml(role.phase2)}</li>` : ""}</ul>
+          <ul><li>Runs: ${escapeHtml(scheduleWord(agent, config))}</li><li>Output: <span class="mono">${escapeHtml(role.output)}</span></li>${role.phase2 ? `<li>${escapeHtml(role.phase2)}</li>` : ""}${extra}</ul>
           <p class="nots"><strong>Never:</strong> ${never}.</p>
         </div>
         <div class="foot">${foot.join("")}</div>
@@ -125,13 +138,13 @@ export function teamPage(view) {
     { when: config.schedule.publisherLabel, who: agents.filter((a) => a.schedule === "hourly").map((a) => a.title || a.name).join(" · "), what: "posts what is due and approved" },
     { when: "Mondays", who: agents.filter((a) => a.schedule === "weekly-monday").map((a) => a.title || a.name).join(" · "), what: "weekly memo" },
     { when: "Sundays", who: agents.filter((a) => a.schedule === "weekly-sunday").map((a) => a.title || a.name).join(" · "), what: "insights at 48 h and 7 d + the weekly report" },
-    { when: "1st of the month", who: agents.filter((a) => a.schedule === "monthly-1st").map((a) => a.title || a.name).join(" · "), what: "review + roster proposal · not built yet (phase 2)" },
+    { when: "1st of the month", who: agents.filter((a) => a.schedule === "monthly-1st").map((a) => a.title || a.name).join(" · "), what: "review of the past month + roster proposal" },
   ].filter((r) => r.who);
   const body = `<section class="hero">
     <div>
       <p class="eyebrow">Team · ${escapeHtml(numberWord(agents.length))} AI agents</p>
       <h1>${escapeHtml(cap(numberWord(agents.length)))} roles, one roster file.</h1>
-      <p class="lede">${escapeHtml(cap(numberWord(llm.length)))} of the ${escapeHtml(numberWord(agents.length))} roles run on a language model; ${escapeHtml(detSentence)}. Every role has a list of things it is never allowed to do. HR proposes changes to the roster once a month; the owner approves them like any other draft.</p>
+      <p class="lede">${escapeHtml(cap(numberWord(llm.length)))} of the ${escapeHtml(numberWord(agents.length))} roles run on a language model; ${escapeHtml(detSentence)}. Every role has a list of things it is never allowed to do. HR proposes changes to the roster once a month, from the engine's own numbers; the owner applies or dismisses each proposal, and the decision is logged.</p>
       <div class="trust-row" aria-label="Roster facts">
         <div><span class="k">${agents.length} AI agents · 1 human owner</span><span class="s">the owner approves drafts, modes and roster changes</span></div>
         <div><span class="k">${providers.length} model providers</span><span class="s">${escapeHtml(providers.map(providerLabel).join(", "))}, assigned per role</span></div>

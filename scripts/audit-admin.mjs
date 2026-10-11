@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import config from "../site.config.js";
 import { MODE_CONSEQUENCES, WORKFLOWS } from "../src/templates/admin.js";
-import { DRAFT_SPEC, validate } from "../engine/lib/schema.js";
+import { DRAFT_SPEC, HR_DECISION_SPEC, ROSTER_SPEC, validate } from "../engine/lib/schema.js";
 import { collectPaintRects, emptyRegion } from "./lib/empty-region.js";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
@@ -417,7 +417,7 @@ function viewReadyEval(name) {
     case "brand":
       return $("brand-text").value !== "" && n("#brand-facts tbody tr") > 0;
     case "roster":
-      return $("roster-text").value !== "";
+      return $("roster-text").value !== "" && $("proposal-list").getAttribute("aria-busy") === "false" && (n("#proposal-list > li") > 0 || !$("proposals-empty").hidden);
     case "charter":
       return $("charter-text").value !== "" && !/loading/.test($("charter-state").textContent);
     case "activity":
@@ -1164,6 +1164,87 @@ async function editors() {
   await closeCtx(ctx, page, "editors");
 }
 
+// HR proposals in the Roster view (FEAT-204; P2-06; review N14 / plan D13): the fixture's 2026-09 proposal renders with status
+// `proposed` and its one change as 'agent · field: from → to — why'; Apply PUTs roster.json (writer temperature 0.7, valid
+// against ROSTER_SPEC + the fixture config, message 'roster: apply hr proposal 2026-09') and then ONE line into
+// hr/decisions.jsonl (created: no sha; decision apply, by owner, IST stamp) — and never hr/proposals/2026-09.json; the card
+// turns `applied` and the roster editor reloads the applied roster. In a fresh context Dismiss PUTs hr/decisions.jsonl only.
+async function proposals() {
+  console.log("proposals: render, apply (roster + decisions, never the proposal file), dismiss (decisions only)");
+  const fixtureProposal = JSON.parse(readFix("state", "hr", "proposals", "2026-09.json"));
+  const PROPOSAL_PATH = "company/state/hr/proposals/2026-09.json";
+  const DECISIONS_PATH = "company/state/hr/decisions.jsonl";
+  const propState = (page) => page.evaluate(() => ({
+    items: [...document.querySelectorAll("#proposal-list > li")].map((li) => ({
+      month: li.dataset.month,
+      status: li.dataset.status,
+      chips: [...li.querySelectorAll(".q-head .chip")].map((c) => c.textContent),
+      changes: [...li.querySelectorAll(".changes li")].map((c) => c.textContent),
+      buttons: [...li.querySelectorAll("button")].map((b) => `${b.textContent}${b.disabled ? " (disabled)" : ""}`),
+      links: [...li.querySelectorAll("a")].map((a) => a.getAttribute("href")),
+      state: li.querySelector('[data-slot="state"]').textContent,
+    })),
+    emptyHidden: document.getElementById("proposals-empty").hidden,
+    error: document.getElementById("proposals-error").textContent,
+    busy: document.getElementById("proposal-list").getAttribute("aria-busy"),
+  }));
+  const { ctx, page, fake } = await newCtx({ width: 1440, height: 900, token: TOKEN_OK });
+  await open(page, "#/roster");
+  await waitView(page, "roster");
+  const p0 = await propState(page);
+  const expectedChange = `writer · temperature: 0.8 → 0.7 — ${fixtureProposal.changes[0].why}`;
+  record("proposal renders (2026-09 proposed, one change, Apply + Dismiss)", "roster", 1440, p0.items.length === 1 && p0.items[0].month === "2026-09" && p0.items[0].status === "proposed" && p0.items[0].chips.includes("proposed") && p0.items[0].chips.includes("8 agents reviewed") && p0.items[0].chips.includes("1 change") && p0.items[0].changes.length === 1 && p0.items[0].changes[0] === expectedChange && p0.items[0].buttons.join() === "Apply,Dismiss" && p0.items[0].links.includes("#/json/state/hr/2026-09-review.md") && p0.emptyHidden && p0.error === "" && p0.busy === "false" && !ctx.meta.requests.some((r) => r.method === "PUT"), p0);
+  const rosterSha = fake.files.get("company/roster.json").sha;
+  const proposalSha = fake.files.get(PROPOSAL_PATH).sha;
+  await page.click('#proposal-list li[data-month="2026-09"] button:has-text("Apply")');
+  const rosterPut = await waitPut(fake, "company/roster.json", 0);
+  const decisionPut = await waitPut(fake, DECISIONS_PATH, 0);
+  await page.waitForFunction(() => {
+    const li = document.querySelector('#proposal-list li[data-month="2026-09"]');
+    return li && li.dataset.status === "applied" && document.getElementById("proposal-list").getAttribute("aria-busy") === "false";
+  }, null, { timeout: 8000 });
+  const p1 = await propState(page);
+  const newRoster = rosterPut ? JSON.parse(rosterPut.decoded) : null;
+  const writer = newRoster && newRoster.agents.find((a) => a.name === "writer");
+  const rosterValid = newRoster ? validate(newRoster, ROSTER_SPEC, FIX.config) : { ok: false, errors: ["no roster PUT"] };
+  const dec = decisionPut ? lastLine(decisionPut.decoded) : null;
+  const decValid = dec ? validate(dec.last, HR_DECISION_SPEC) : { ok: false, errors: ["no decisions PUT"] };
+  const proposalPuts = fake.puts.filter((p) => p.path.startsWith("company/state/hr/proposals/"));
+  const order = fake.puts.map((p) => p.path);
+  record("apply PUTs roster.json (writer 0.8 → 0.7, ROSTER_SPEC-valid) then hr/decisions.jsonl (apply, by owner); never the proposal file", "roster", 1440,
+    rosterPut && rosterPut.status === 200 && rosterPut.sha === rosterSha && rosterPut.message === "roster: apply hr proposal 2026-09" && writer && writer.temperature === 0.7 && newRoster.agents.length === 8 && rosterValid.ok && newRoster.agents.filter((a) => a.name !== "writer").every((a, i) => JSON.stringify(a) === JSON.stringify(JSON.parse(FIX.roster).agents.filter((x) => x.name !== "writer")[i])) &&
+      decisionPut && decisionPut.status === 201 && decisionPut.sha === null && decisionPut.message === "hr: apply proposal 2026-09" && dec.count === 1 && decValid.ok && dec.last.month === "2026-09" && dec.last.proposal === "hr/proposals/2026-09.json" && dec.last.decision === "apply" && dec.last.by === "owner" && IST_ISO.test(dec.last.at) && JSON.stringify(dec.last.applied) === JSON.stringify(["roster.json"]) &&
+      proposalPuts.length === 0 && fake.files.get(PROPOSAL_PATH).sha === proposalSha && JSON.stringify(order) === JSON.stringify(["company/roster.json", DECISIONS_PATH]) &&
+      p1.items.length === 1 && p1.items[0].status === "applied" && p1.items[0].chips.includes("applied") && p1.items[0].buttons.length === 0 && p1.error === "",
+    { rosterPut: rosterPut && { status: rosterPut.status, message: rosterPut.message, shaIsOld: rosterPut.sha === rosterSha, writerTemperature: writer && writer.temperature, valid: rosterValid.errors }, decisionPut: decisionPut && { status: decisionPut.status, sha: decisionPut.sha, message: decisionPut.message, line: dec && dec.last, valid: decValid.errors }, proposalPuts: proposalPuts.length, order, after: p1.items[0] });
+  const editorRoster = JSON.parse(await page.inputValue("#roster-text"));
+  const rosterState = await page.evaluate(() => ({ state: document.getElementById("roster-state").textContent, valid: document.getElementById("roster-errors").classList.contains("valid"), saveDisabled: document.getElementById("roster-save").disabled }));
+  record("roster editor reloaded the applied roster", "roster", 1440, editorRoster.agents.find((a) => a.name === "writer").temperature === 0.7 && rosterState.valid && rosterState.saveDisabled && /^\d+ B · sha [0-9a-f]{7}$/.test(rosterState.state), { writerTemperature: editorRoster.agents.find((a) => a.name === "writer").temperature, ...rosterState });
+  const activity = await page.evaluate(() => [...document.querySelectorAll("#activity-list li")].map((li) => li.textContent));
+  record("apply logged in the session log", "roster", 1440, activity.some((l) => /^\d\d:\d\d:\d\dhr: applied proposal 2026-09 → roster\.json \([0-9a-f]{7}\)$/.test(l)), activity.slice(0, 4));
+  await closeCtx(ctx, page, "proposals-apply");
+
+  // Dismiss, in a fresh fake repository: the decisions log is the only file written.
+  const d = await newCtx({ width: 390, height: 844, token: TOKEN_OK });
+  await open(d.page, "#/roster");
+  await waitView(d.page, "roster");
+  const q0 = await propState(d.page);
+  await d.page.click('#proposal-list li[data-month="2026-09"] button:has-text("Dismiss")');
+  const dismissPut = await waitPut(d.fake, DECISIONS_PATH, 0);
+  await d.page.waitForFunction(() => {
+    const li = document.querySelector('#proposal-list li[data-month="2026-09"]');
+    return li && li.dataset.status === "dismissed" && document.getElementById("proposal-list").getAttribute("aria-busy") === "false";
+  }, null, { timeout: 8000 });
+  const q1 = await propState(d.page);
+  const dd = dismissPut ? lastLine(dismissPut.decoded) : null;
+  record("dismiss PUTs hr/decisions.jsonl only (no roster, no proposal file)", "roster", 390,
+    q0.items[0].status === "proposed" && dismissPut && dismissPut.status === 201 && dismissPut.message === "hr: dismiss proposal 2026-09" && dd.count === 1 && validate(dd.last, HR_DECISION_SPEC).ok && dd.last.decision === "dismiss" && dd.last.month === "2026-09" && dd.last.by === "owner" && !("applied" in dd.last) && d.fake.puts.length === 1 && JSON.parse(d.fake.files.get("company/roster.json").content.toString("utf8")).agents.find((a) => a.name === "writer").temperature === 0.8 && d.fake.files.get(PROPOSAL_PATH).sha === proposalSha && q1.items[0].status === "dismissed" && q1.items[0].buttons.length === 0,
+    { puts: d.fake.puts.map((p) => ({ path: p.path, status: p.status, message: p.message })), line: dd && dd.last, after: q1.items[0] });
+  const r = await d.page.evaluate(layoutEval, LAYOUT_PARAMS);
+  layoutRows("roster-proposals", 390, r);
+  await closeCtx(d.ctx, d.page, "proposals-dismiss");
+}
+
 // Layout matrix of the unlocked admin: every view at 390 and 1440 (overflow, M12 inner scrollers, 12 px floor,
 // N11 controls, gradient/shadow scan, [style] count); the tabs wrap into rows at 390; queue screenshots.
 async function layout() {
@@ -1204,7 +1285,7 @@ if (adminStatus !== 200) {
 }
 console.log(`Auditing ${ADMIN} (${process.env.AUDIT_URL ? "AUDIT_URL" : DIST}) -> ${OUT}\nGitHub + raw host mocked from ${relative(ROOT, FIXTURE)}; the real GitHub path is UNTESTED here`);
 browser = await chromium.launch({ headless: true });
-const STEPS = { lock, queue, editMove, calendar, modes, runNow, editors, layout };
+const STEPS = { lock, queue, editMove, calendar, modes, runNow, editors, proposals, layout };
 const only = process.argv.slice(2);
 try {
   for (const [name, fn] of Object.entries(STEPS)) {

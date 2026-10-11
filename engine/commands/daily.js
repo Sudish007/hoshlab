@@ -6,7 +6,8 @@
 //   2. budget: used = Σ usage/<month>.jsonl; used ≥ monthlyUsd with hardStop → flag budget_exhausted and
 //      every model-backed step (CEO, Strategist, Writer, QA) is recorded 'skipped: budget_exhausted' — no
 //      drafts are created (M5.4); used ≥ warnAtPct → budget_warn.
-//   3. CEO when Monday IST or this ISO week's memo is missing;  4. HR → skipped: phase2 (D18);
+//   3. CEO when Monday IST or this ISO week's memo is missing;  4. HR on the 1st IST (reviews the previous month → hr/<month>-review.md
+//      + hr/proposals/<month>.json; catches up a missing proposal once the month has data; `hr` command forces it — FEAT-204);
 //   5. Strategist per page;  6. Writer for slots within leadDays without a live draft + drafts in rework;
 //   7. Designer for `written` drafts (skipped: media_branch_missing when .media/.git is absent, M16); a
 //      refused draft goes to `rework` like a failed QA check (R1-02);
@@ -50,7 +51,7 @@ import { queueCounts, triggerFrom } from "./publish.js";
 
 export const WORKFLOW = "engine-daily";
 export const AGENT_ORDER = ["ceo", "hr", "strategist", "writer", "designer", "qa", "analyst"];
-export const LLM_AGENTS = ["ceo", "strategist", "writer", "qa", "analyst"];
+export const LLM_AGENTS = ["ceo", "hr", "strategist", "writer", "qa", "analyst"];
 export const SKIP_BUDGET = "skipped: budget_exhausted";
 export const FLAG_BUDGET_EXHAUSTED = "budget_exhausted";
 export const FLAG_BUDGET_WARN = "budget_warn";
@@ -157,6 +158,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   const id = runId || makeRunId(workflow, startedAt);
   const t0 = Date.now();
   const dryRun = runFlags.dryRun === true;
+  const forced = runFlags.force === true; // the hr command: review the previous month even when it is not the 1st
   const selected = parseAgents(runFlags.agents);
   const pageFilter = typeof runFlags.page === "string" && runFlags.page ? runFlags.page : null;
   const wants = (agent) => !selected || selected.has(agent);
@@ -274,11 +276,30 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     settle("ceo");
   }
 
-  // 4. HR — Phase 2 (D18)
+  // 4. HR — the 1st of the month IST reviews the previous month (design §3.1 step 3, P2-06, FEAT-204); a missing proposal
+  //    for that month is caught up once it has data; `node engine/index.js hr` forces it (flags.force). Company-wide, so a
+  //    --page filter skips it unless --agents names it. Skips: not_due | already_decided | no_data (hr.dueStatus).
   if (!wants("hr")) skip("hr", "skipped: not selected (--agents)", "not_selected");
+  else if (pageFilter && !(selected && selected.has("hr"))) skip("hr", "skipped: --page filter (company-wide agent)", "page_filter");
   else {
-    const r = hr.run({ config, roster, state, now: startedAt });
-    skip("hr", `skipped: ${r.skipped} — ${r.note}`, r.skipped);
+    const due = hr.dueStatus({ state, now: startedAt, forced });
+    if (!due.run) skip("hr", `skipped: ${due.skipped} — ${due.note}`, due.skipped);
+    else if (exhausted) skip("hr", SKIP_BUDGET, "budget_exhausted");
+    else {
+      await timed("hr", async () => {
+        try {
+          const r = await hr.runHr({ config, roster, router, state, now: startedAt, runId: id, log });
+          changedFiles.push(r.reviewRel, r.proposalRel);
+          note("hr", `${r.note}${due.note ? ` (${due.note})` : ""}`);
+        } catch (err) {
+          if (err instanceof BudgetExhaustedError) return budgetHit("hr");
+          if (!isRouterError(err)) throw err;
+          fail("hr", `${err.name}: ${err.message}`);
+          providersDown(err);
+        }
+      });
+      settle("hr");
+    }
   }
 
   // 5. Strategist per page
@@ -630,7 +651,7 @@ export async function run({ root, companyDir, processEnv = process.env, fetchImp
   }
   let result;
   try {
-    result = await runDaily({ companyDir: dir, mediaRoot, now, processEnv, fetchImpl, flags: { agents: flags.agents, page: typeof flags.page === "string" ? flags.page : null, dryRun }, stdout });
+    result = await runDaily({ companyDir: dir, mediaRoot, now, processEnv, fetchImpl, flags: { agents: flags.agents, page: typeof flags.page === "string" ? flags.page : null, dryRun, force: flags.force === true }, stdout });
   } catch (err) {
     stderr(scrub(`daily: ${err && err.message ? err.message : String(err)}`));
     return 1;

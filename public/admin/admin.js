@@ -10,6 +10,7 @@ import { createClient, GitHubError, scrub } from "./lib/github.js";
 import { createStore } from "./lib/store.js";
 import { classifyRun, describeLatest } from "./lib/run-status.js";
 import { createAdminState } from "./lib/state.js";
+import { applyProposal, describeChange, dismissProposal, latestDecisions, proposalStatus } from "./lib/proposals.js";
 import { ROSTER_SPEC, TERMINAL_DRAFT_STATUSES, validate } from "./lib/schema.js";
 import { runChecks, fullCaption, codePoints } from "./lib/checks.js";
 import { parseBrand, validateBrand } from "./lib/brand.js";
@@ -1011,6 +1012,7 @@ function renderRoster() {
   const state = $("roster-state");
   save.disabled = true;
   state.textContent = "loading…";
+  renderProposals();
   S.client
     .getFile("company/roster.json")
     .then((file) => {
@@ -1048,6 +1050,94 @@ function renderRoster() {
       };
     })
     .catch((err) => (state.textContent = fail(err, "roster.json")));
+}
+
+/* ---------- HR proposals (FEAT-204; review N14 / plan D13) ---------- */
+// company/state/hr/proposals/*.json (engine-owned, read only) + hr/decisions.jsonl (admin-owned) → one card per proposal,
+// newest month first, status derived from the latest decision for its month. Apply / Dismiss go through lib/proposals.js:
+// Apply PUTs roster.json (+ charters for charterAppend changes) and appends the decision; Dismiss appends the decision only.
+async function loadProposals() {
+  const dir = await S.client.listDir(`${STATE}/hr/proposals`);
+  const files = dir.filter((x) => x.type === "file" && /^\d{4}-\d{2}\.json$/.test(x.name)).sort((a, b) => b.name.localeCompare(a.name));
+  const proposals = [];
+  await pool(files, 4, async (x) => {
+    const { value } = await getJson(`${STATE}/hr/proposals/${x.name}`);
+    proposals.push(value);
+  });
+  proposals.sort((a, b) => String(b.month).localeCompare(String(a.month)));
+  const decisions = parseJsonl((await getText(`${STATE}/hr/decisions.jsonl`, { optional: true })).text);
+  return { proposals, decisions: latestDecisions(decisions) };
+}
+async function renderProposals() {
+  const list = $("proposal-list");
+  const err = $("proposals-error");
+  setError(err, "");
+  list.setAttribute("aria-busy", "true");
+  let data;
+  try {
+    data = await loadProposals();
+  } catch (e) {
+    list.setAttribute("aria-busy", "false");
+    return setError(err, fail(e, "hr proposals"));
+  }
+  clear(list);
+  for (const proposal of data.proposals) list.append(proposalCard(proposal, data.decisions));
+  show($("proposals-empty"), data.proposals.length === 0);
+  list.setAttribute("aria-busy", "false");
+}
+function proposalCard(proposal, decisions) {
+  const status = proposalStatus(proposal, decisions);
+  const decision = decisions.get(proposal.month);
+  const changes = proposal.changes || [];
+  const li = el("li", { class: "proposal", "data-month": proposal.month, "data-status": status });
+  const head = el("div", { class: "q-head" }, [chip(`${monthLabel(proposal.month)} (${proposal.month})`, "", { class: "chip chip-plain mono" }), chip(status, status === "proposed" ? "accent" : status === "applied" ? "ok" : ""), chip(`${(proposal.review || []).length} agents reviewed`), chip(`${changes.length} change${changes.length === 1 ? "" : "s"}`)]);
+  const meta = el("p", { class: "meta" }, [txt(`written ${fmtIst(proposal.at)} · `), el("a", { href: `#/json/state/${proposal.reviewPath}`, text: proposal.reviewPath }), txt(" · "), el("a", { href: `#/json/state/hr/proposals/${encodeURIComponent(proposal.month)}.json`, text: "proposal JSON" })]);
+  if (decision) meta.append(txt(` · ${status} ${fmtIst(decision.at)} by ${decision.by}${decision.applied && decision.applied.length ? ` (${decision.applied.join(", ")})` : ""}`));
+  const ul = el("ul", { class: "changes", "aria-label": `Changes proposed for ${proposal.month}` });
+  for (const c of changes) ul.append(el("li", {}, [hi(describeChange(c))]));
+  if (!changes.length) ul.append(el("li", { class: "meta", text: "No roster change proposed (every verdict is keep)." }));
+  const actions = el("div", { class: "q-actions" });
+  const stateLine = el("p", { class: "meta m-0", "data-slot": "state" });
+  if (status === "proposed") {
+    const apply = el("button", { type: "button", class: "btn btn-primary", text: "Apply" });
+    const dismiss = el("button", { type: "button", class: "btn", text: "Dismiss" });
+    apply.addEventListener("click", () => decideProposal(proposal, "apply", [apply, dismiss], stateLine));
+    dismiss.addEventListener("click", () => decideProposal(proposal, "dismiss", [apply, dismiss], stateLine));
+    actions.append(apply, dismiss);
+  }
+  li.append(head, meta, ul, actions, stateLine);
+  return li;
+}
+async function decideProposal(proposal, decision, buttons, stateLine) {
+  if (S.busy) return;
+  S.busy = true;
+  for (const b of buttons) b.disabled = true;
+  stateLine.textContent = decision === "apply" ? "applying…" : "dismissing…";
+  try {
+    const at = nowIst();
+    if (decision === "dismiss") {
+      const r = await dismissProposal(S.adminState, { proposal, at });
+      log(`hr: dismissed proposal ${proposal.month} (${r.result.commitSha.slice(0, 7)})`);
+    } else {
+      const roster = JSON.parse((await S.client.getFile("company/roster.json")).text);
+      const charters = {};
+      for (const c of proposal.changes || []) {
+        if (c.field !== "charterAppend" || charters[c.agent] !== undefined) continue;
+        const agent = roster.agents.find((a) => a.name === c.agent);
+        const path = (agent && agent.charter) || cfg.charters[c.agent] || `company/charters/${c.agent}.md`;
+        charters[c.agent] = (await S.client.getFile(path)).text;
+        S.files.delete(path);
+      }
+      const r = await applyProposal(S.adminState, { proposal, roster, config: S.data.config, charters, validateCharter: validateCharterText, at });
+      log(`hr: applied proposal ${proposal.month} → ${r.applied.join(", ") || "no file changed"} (${r.results["state/hr/decisions.jsonl"].commitSha.slice(0, 7)})`);
+    }
+    renderRoster(); // the editor shows the applied roster; the card shows its new status
+  } catch (err) {
+    for (const b of buttons) b.disabled = false;
+    stateLine.textContent = fail(err, `${decision} hr proposal ${proposal.month}`);
+  } finally {
+    S.busy = false;
+  }
 }
 function renderCharter(agent) {
   const name = cfg.agents.includes(agent) ? agent : cfg.agents[0];

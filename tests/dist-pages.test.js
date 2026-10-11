@@ -72,7 +72,14 @@ test("N4: Team says 'no language model' exactly twice (Designer, Publisher) and 
   assert.ok(!team.includes("dated source"));
   assert.ok(team.includes("Six of the eight roles run on a language model; the Designer and Publisher are deterministic code. Every role has a list of things it is never allowed to do."));
   assert.ok(team.includes("Every factual claim must map to a fact id in brand.md."));
-  assert.ok(team.includes("Monthly review: not built yet (phase 2)"));
+  // FEAT-204: HR is built; the card says so, prints the fixture's latest review month and the proposal's real state
+  assert.ok(!team.includes("Monthly review: not built yet"), "the HR card no longer calls the review unbuilt");
+  assert.ok(team.includes("Monthly review: runs on the 1st (phase 2 built); first review after one month of runs"));
+  const hrCard = team.match(/<article class="card agent" data-agent="hr">[\s\S]*?<\/article>/)[0];
+  assert.ok(hrCard.includes("<li>Latest review: September 2026 · 1 change proposed · awaiting the owner</li>"), "from state/hr/2026-09-review.md + proposals/2026-09.json; no decisions.jsonl in the fixture → awaiting the owner");
+  assert.ok(hrCard.includes("hr/proposals/YYYY-MM.json"));
+  assert.ok(team.includes("review of the past month + roster proposal") && !team.includes("roster proposal · not built yet"), "the rhythm strip row is truthful");
+  assert.ok(team.includes("the owner applies or dismisses each proposal, and the decision is logged"));
   assert.ok(!team.includes("Weekly insights: not built yet"), "the Analyst is built (FEAT-203): its card no longer says not built yet");
   assert.ok(team.includes("insights at 48 h and 7 d + the weekly report"));
 });
@@ -290,6 +297,13 @@ test("Reports page lists the fixture report (the empty sentence is gone, P2-05);
   assert.ok(about.includes("Drafts are public."));
   assert.ok(about.includes("Actions cron may start 10–30 min late"));
   assert.ok(about.includes("not built yet"));
+  // FEAT-204: HR is built — About names the owner's Apply step and the qa/publisher guard, and no longer lists HR as unbuilt
+  assert.ok(about.includes("Roster changes wait for the owner."));
+  assert.ok(about.includes("the proposal can never remove QA or the Publisher"));
+  assert.ok(about.includes("<strong>Not built yet.</strong> The CEO memo answering the Analyst's report is phase 2."), "the unbuilt list is down to the CEO memo loop (reels on)");
+  for (const old of ["HR's monthly review and roster proposals, and the CEO memo", "the monthly HR review is phase 2", "the monthly HR review are phase 2", "reels and the monthly HR review"]) assert.ok(!about.includes(old), `HR is no longer called phase 2 / unbuilt: ${old}`);
+  assert.ok(about.includes("Every number in HR's monthly review is one the engine computed from its own logs."));
+  assert.ok(!about.includes("until the refresh job exists (phase 2)"), "the token refresh job is built (FEAT-202); About says so");
 });
 
 // N22: the build itself is the gate — a token in a visible field fails `npm run build` with a named error.
