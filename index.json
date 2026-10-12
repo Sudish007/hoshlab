@@ -2,31 +2,58 @@
   "sample-job_rez": {
     "sample": true,
     "files": [
-      "slide-1-e1a87d65.jpg",
-      "slide-2-ce00b3e9.jpg",
-      "slide-3-b5a42713.jpg",
-      "slide-4-9c675c27.jpg"
+      "image-1-1aae9319.jpg"
     ],
     "page": "job_rez",
-    "format": "carousel",
-    "at": "2026-10-11T15:33:45+05:30"
+    "format": "image",
+    "at": "2026-10-12T12:00:14+05:30"
+  },
+  "sample-job_rez-reel": {
+    "sample": true,
+    "files": [
+      "reel-495079ce.mp4",
+      "poster-9c263480.jpg"
+    ],
+    "page": "job_rez",
+    "format": "reel",
+    "at": "2026-10-12T12:01:04+05:30"
   },
   "sample-kaatdo": {
     "sample": true,
     "files": [
-      "image-1-711972b4.jpg"
+      "image-1-62a6177a.jpg"
     ],
     "page": "kaatdo",
     "format": "image",
-    "at": "2026-10-11T15:33:41+05:30"
+    "at": "2026-10-12T11:59:24+05:30"
+  },
+  "sample-kaatdo-reel": {
+    "sample": true,
+    "files": [
+      "reel-9d3e6799.mp4",
+      "poster-891d16f1.jpg"
+    ],
+    "page": "kaatdo",
+    "format": "reel",
+    "at": "2026-10-12T12:00:14+05:30"
   },
   "sample-rishtapatra": {
     "sample": true,
     "files": [
-      "image-1-fc09aa36.jpg"
+      "image-1-319e7316.jpg"
     ],
     "page": "rishtapatra",
     "format": "image",
-    "at": "2026-10-11T15:33:36+05:30"
+    "at": "2026-10-12T11:58:32+05:30"
+  },
+  "sample-rishtapatra-reel": {
+    "sample": true,
+    "files": [
+      "reel-b25a7c2f.mp4",
+      "poster-82c78882.jpg"
+    ],
+    "page": "rishtapatra",
+    "format": "reel",
+    "at": "2026-10-12T11:59:23+05:30"
   }
 }
