@@ -4,7 +4,8 @@
 # dry run on a temp copy (P1-22). No secrets are used: MOCK_LLM=1 answers every model call from
 # tests/fixtures/llm and IG_DRY_RUN=1 publishes nothing. audit-out/ (results JSON + viewport PNGs) is
 # uploaded as the run's artifact even when a step fails. REQUIRE_FFMPEG=1 (Phase 2, FEAT-201): the reel render test
-# must RUN here — ubuntu-latest ships ffmpeg/ffprobe — and a missing ffprobe fails the suite instead of skipping it.
+# must RUN here — ffmpeg/ffprobe are installed with apt (the ubuntu-24.04 image stopped shipping them) — and a
+# missing ffprobe fails the suite instead of skipping it.
 # Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
 name: CI
 
@@ -33,6 +34,10 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build:fonts
+      - name: Install ffmpeg (the ubuntu-24.04 runner image no longer ships it)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends ffmpeg
       - name: ffmpeg and ffprobe on the runner (the reel render test encodes and probes with them)
         run: |
           ffmpeg -version | head -n 1
