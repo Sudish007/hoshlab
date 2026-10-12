@@ -361,7 +361,7 @@ if ($changedFiles.Count -gt 0) {
     Write-Host ('  git diff ' + $files)
     Write-Host ('  git add ' + $files + '; git commit -m "config: instagram ids"; git push')
     if ($statusChanged) {
-        Write-Host 'setup-secrets: the publisher in Actions re-probes a paused page every hour with the stored secret, so committing status.json is optional; if the pull brings a newer status.json, drop your local change (git checkout -- company/state/status.json) and let the next publisher run clear the pause.'
+        Write-Host 'setup-secrets: the publisher in Actions re-probes a paused page every hour with the stored secret, so committing status.json is optional. If git pull --ff-only refuses because company/state/status.json changed upstream, run git checkout -- company/state/status.json and pull again; the publisher clears the pause itself on its next hourly run.'
     }
 }
 else {

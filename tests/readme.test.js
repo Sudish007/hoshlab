@@ -109,6 +109,15 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("resets the token state in your local `company/state/status.json`", "the local reset names status.json");
   has("needs `git pull --ff-only` before `git add company/config.json company/state/status.json; git commit; git push`", "pull before committing both files");
   assert.ok(!readme.includes("a successful `GET /me` resets the page's token state so the next publisher run retries"), "the old sentence that implied the local reset reaches production is gone");
+  // R2-02: with the local status.json modified, `git pull --ff-only` REFUSES (it never 'brings' a newer file) — step 5 and
+  // the Limits bullet name that case and the recovery command, in the same words as scripts/setup-secrets.ps1
+  const refusal = "If `git pull --ff-only` refuses because `company/state/status.json` changed upstream, run `git checkout -- company/state/status.json` and pull again; the publisher clears the pause itself on its next hourly run.";
+  has(refusal, "R2-02: the pull-refusal case with the recovery command");
+  const step5 = readme.slice(readme.indexOf("5. **Secrets.**"), readme.indexOf("6. **Pages source.**"));
+  assert.ok(step5.includes(refusal), "R2-02: the sentence is in owner to-do step 5");
+  const limits = readme.slice(readme.indexOf("## Limits"), readme.indexOf("## ", readme.indexOf("## Limits") + 1));
+  assert.ok(limits.includes(refusal), "R2-02: the sentence is in the Limits 'Tokens expire' bullet too");
+  assert.ok(!readme.includes("if the pull brings a newer status.json") && !readme.includes("brings a newer"), "R2-02: the misworded 'brings a newer status.json' claim appears nowhere");
   // R1-04: the admin's per-draft load and the quarterly archival until the phase-2 index exists
   has("**The admin reads every draft folder on each load.**");
   has("Archive or prune terminal drafts (`published`, `rejected`, `blocked`, `failed`, `expired`) under `company/state/drafts/` quarterly until the phase-2 live-draft index exists");

@@ -1,7 +1,8 @@
 # Hoshlab — the hourly publisher run (design.md §3.2; review M1, N16, N17; plan D1).
 # `node engine/index.js publish` posts at most one queued, due and approved (or Autopilot) draft per page,
-# commits the state as hoshlab-bot and writes `changed` to $GITHUB_OUTPUT — true only when published.jsonl
-# or a draft changed, so the deploy job (pages.yml via workflow_call) runs only then. No Chromium and no
+# commits the state as hoshlab-bot and writes `changed` to $GITHUB_OUTPUT — true only when published.jsonl,
+# a draft or the public token status (tokenState / flags, R2-01) changed, so the deploy job (pages.yml via
+# workflow_call) runs only then; an idle hour deploys nothing. No Chromium and no
 # media checkout: the publisher preflights the media URLs over HTTP and never renders. Shares the
 # `hoshlab-state` concurrency group with engine-daily.yml.
 # Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
