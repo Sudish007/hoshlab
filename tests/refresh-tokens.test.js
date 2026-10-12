@@ -10,7 +10,7 @@ import { COMPANY_DIR, FETCH_ATTEMPTS, tmpDir, walk } from "./helpers.js";
 import { EXIT, main } from "../engine/index.js";
 import { createState } from "../engine/lib/state.js";
 import { RUN_SPEC, STATUS_SPEC, TOKENS_SPEC, validate } from "../engine/lib/schema.js";
-import { EXPIRING_DAYS, EXPIRY_UNKNOWN, OUTCOMES, PAT_NAME, REFRESH_WHEN_DAYS_LEFT, WORKFLOW, daysLeft, isExpiring, needsRefresh, runRefreshTokens, storeSecret, wholeDaysLeft } from "../engine/commands/refresh-tokens.js";
+import { EXPIRING_DAYS, EXPIRY_UNKNOWN, OUTCOMES, PAT_NAME, REFRESH_WHEN_DAYS_LEFT, WORKFLOW, daysLeft, isExpiring, needsRefresh, run, runRefreshTokens, storeSecret, wholeDaysLeft } from "../engine/commands/refresh-tokens.js";
 
 const NOW = "2026-10-19T07:30:00+05:30"; // a Monday 02:00 UTC
 const RUN_ID = "token-refresh-20261019-0730-aa11bb";
@@ -412,12 +412,73 @@ test("--dry-run: no call, no gh, nothing written (no tokens.json, status untouch
   }
 });
 
+test("R2-06: IG_DRY_RUN=1 alone makes the CLI a dry run exactly like --dry-run (as publish/daily/analyst/hr): temp copy, zero refresh calls, zero gh calls, company dir byte-identical, 'would refresh' lines, the dry-run closing line; the normal path (no IG_DRY_RUN) is unchanged", async () => {
+  const fx = copyFixture({ tokenStates: ok() });
+  const before = fx.text();
+  try {
+    // 1. run() with a real-shaped token per page AND the PAT in the environment — the case that used to refresh and store for real
+    const fetchImpl = fakeFetch();
+    const gh = fakeGh();
+    const out = sink();
+    const err = sink();
+    const code = await run({ root: fx.dir, companyDir: fx.dir, processEnv: { ...ENV, IG_DRY_RUN: "1" }, fetchImpl, ghRun: gh, stdout: out, stderr: err, flags: {} });
+    assert.equal(code, 0, err.text() || out.text());
+    assert.equal(fetchImpl.requests.length, 0, "no /me, no /refresh_access_token");
+    assert.equal(gh.calls.length, 0, "gh secret set is never spawned");
+    assert.equal(fx.text(), before, "the repo's company dir is byte-identical (no tokens.json, no status change, no run record)");
+    assert.equal(fx.tokens(), null);
+    assert.match(out.lines[0], /^refresh-tokens: IG_DRY_RUN=1 works on a temp copy .*hoshlab-refresh-tokens-dry-run-.*company \(the repo's company dir is untouched; no refresh call, no gh secret set\)$/);
+    for (const h of ["rishtapatra", "kaatdo", "job_rez"]) assert.ok(out.lines.some((l) => l === `[refresh-tokens] ${h}: would refresh (${EXPIRY_UNKNOWN}) — dry run, no call made`), `${h}: ${out.text()}`);
+    assert.match(out.lines.at(-2), /^\[publisher\] ok .*\(dry run, nothing written\)$/);
+    assert.equal(out.lines.at(-1), "refresh-tokens: dry run complete — no call made, nothing written");
+    assert.equal(err.lines.length, 0);
+    const everything = out.text() + "\n" + fx.text();
+    for (const v of SECRET_VALUES) assert.ok(!everything.includes(v), "a secret value leaked");
+    assert.ok(!everything.includes("DRYRUN-"), "the dry-run client's fake token is never produced (it must never reach gh secret set)");
+
+    // 2. the same through main() (engine/index.js), with --commit and CI=true too: a dry run never reaches the git step
+    const fetch2 = fakeFetch();
+    const out2 = sink();
+    assert.equal(await main(["refresh-tokens", "--commit"], { stdout: out2, stderr: sink(), processEnv: { ...ENV, IG_DRY_RUN: "1", CI: "true" }, fetchImpl: fetch2, companyDir: fx.dir }), EXIT.ok);
+    assert.equal(fetch2.requests.length, 0);
+    assert.equal(fx.text(), before);
+    assert.match(out2.lines[0], /^refresh-tokens: IG_DRY_RUN=1 works on a temp copy /);
+    assert.equal(out2.lines.at(-1), "refresh-tokens: dry run complete — no call made, nothing written");
+    // --now is accepted with IG_DRY_RUN=1 alone, like daily/publish
+    const out3 = sink();
+    assert.equal(await main(["refresh-tokens", "--now", NOW], { stdout: out3, stderr: sink(), processEnv: { ...TOKENS, IG_DRY_RUN: "1" }, fetchImpl: fakeFetch(), companyDir: fx.dir }), EXIT.ok);
+    assert.equal(out3.lines.at(-1), "refresh-tokens: dry run complete — no call made, nothing written");
+    assert.equal(fx.text(), before);
+    // --dry-run itself now takes the temp copy too, and names its trigger
+    const out4 = sink();
+    assert.equal(await main(["refresh-tokens", "--dry-run"], { stdout: out4, stderr: sink(), processEnv: { ...ENV }, fetchImpl: fakeFetch(), companyDir: fx.dir }), EXIT.ok);
+    assert.match(out4.lines[0], /^refresh-tokens: --dry-run works on a temp copy /);
+    assert.equal(fx.text(), before);
+
+    // 3. the normal path is unchanged: without IG_DRY_RUN the same environment refreshes all three and stores them (fake gh), files written, not committed
+    const fetch3 = fakeFetch();
+    const gh3 = fakeGh();
+    const out5 = sink();
+    assert.equal(await run({ root: fx.dir, companyDir: fx.dir, processEnv: { ...ENV }, fetchImpl: fetch3, ghRun: gh3, stdout: out5, stderr: sink(), flags: {} }), 0);
+    assert.equal(fetch3.requests.filter((q) => q.url.endsWith("/refresh_access_token")).length, 3);
+    assert.deepEqual(gh3.calls.map((c) => c.args[2]), ["IG_TOKEN_RISHTAPATRA", "IG_TOKEN_KAATDO", "IG_TOKEN_JOB_REZ"]);
+    assert.notEqual(fx.text(), before, "the real run wrote tokens.json, status.json and the run record");
+    assert.equal(fx.tokens().pages.kaatdo.state, "ok");
+    assert.match(out5.lines.at(-1), /^refresh-tokens: 3 files changed under .*, not committed \(pass --commit\)$/);
+    assert.ok(!out5.text().includes("works on a temp copy"), "a real run names no temp copy");
+    for (const v of SECRET_VALUES) assert.ok(!out5.text().includes(v), "a secret value leaked");
+  } finally {
+    fx.cleanup();
+  }
+  assert.equal(FETCH_ATTEMPTS.length, 0);
+});
+
 test("CLI: refresh-tokens is registered (no longer 'not built yet'); --now without --dry-run exits 2; --dry-run --now exits 0 and writes nothing; a real run without --commit writes the three files and says 'not committed'", async () => {
   const fx = copyFixture({ tokenStates: ok() });
   try {
     const err = sink();
     assert.equal(await main(["refresh-tokens", "--now", NOW], { stdout: sink(), stderr: err, processEnv: {}, companyDir: fx.dir }), EXIT.usage);
-    assert.match(err.text(), /--now <iso> is accepted only with --dry-run/);
+    assert.match(err.text(), /--now <iso> is accepted only with --dry-run or IG_DRY_RUN=1/);
     const out = sink();
     assert.equal(await main(["refresh-tokens", "--dry-run", "--now", NOW], { stdout: out, stderr: sink(), processEnv: { ...TOKENS }, companyDir: fx.dir }), EXIT.ok);
     assert.equal(out.lines.at(-1), "refresh-tokens: dry run complete — no call made, nothing written");

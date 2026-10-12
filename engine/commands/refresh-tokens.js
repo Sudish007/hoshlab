@@ -1,6 +1,7 @@
 // refresh-tokens — the weekly Instagram token job (design.md §3.4, §4.12 flags, §11 row "Token refresh";
-// P2-09; FEAT-202). Runs from .github/workflows/token-refresh.yml (Mondays 02:00 UTC = 07:30 IST):
+// P2-09; FEAT-202). Runs from .github/workflows/token-refresh.yml (config.schedule.tokenRefreshCron, Mondays 02:13 UTC = 07:43 IST):
 //   node engine/index.js refresh-tokens [--dry-run] [--commit] [--page <handle>] [--now <iso>, dry-run only]
+//   IG_DRY_RUN=1 in the environment is a dry run too (R2-06): temp copy, no refresh call, no gh, nothing committed.
 //
 //   For every page whose secret (process.env[page.tokenSecret]) is present and well-formed:
 //     1. tokens.json entry ({ username, expiresAt|null, refreshedAt, state } per handle) — none yet means the
@@ -20,7 +21,8 @@
 //   makes no network call and writes nothing; it prints what would happen. `changed` (→ $GITHUB_OUTPUT) is true
 //   when an expiry, a token state or a flag changed, so the deploy job rebuilds the Home banner only then.
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { CompanyError, loadCompany } from "../../src/lib/company.js";
 import { monthUsedUsd } from "../lib/budget.js";
@@ -32,6 +34,7 @@ import { RUN_SPEC, STATUS_SPEC, SchemaError, TOKENS_SPEC } from "../lib/schema.j
 import { createState } from "../lib/state.js";
 import { nowIst, parseIso } from "../lib/time.js";
 import { IgError, createClient } from "../ig/client.js";
+import { isDryRun } from "../ig/dry-run.js";
 import { AGENT } from "../agents/publisher.js";
 import { seedStatus, triggerFrom } from "./publish.js";
 
@@ -287,12 +290,17 @@ export async function runRefreshTokens({ companyDir, now, processEnv = process.e
 }
 
 // CLI entry: ctx from engine/index.js → exit code (0 ok, 1 failed, 2 usage).
-export async function run({ root, companyDir, processEnv = process.env, fetchImpl = globalThis.fetch, stdout = console.log, stderr = console.error, flags = {} } = {}) {
-  const dryRun = flags["dry-run"] === true;
+// A dry run — --dry-run or IG_DRY_RUN=1 alone (review R2-06, as publish/daily/analyst/hr treat the variable) — works on
+// a temp copy of the company dir, makes no refresh call, spawns no `gh`, logs what it WOULD refresh and commits nothing;
+// the dry-run Instagram client is never used here, because its fake token must never reach `gh secret set`.
+// `ghRun` is the process spawner (tests inject a recorder); engine/index.js passes none, so the real `gh` is used.
+export async function run({ root, companyDir, processEnv = process.env, fetchImpl = globalThis.fetch, stdout = console.log, stderr = console.error, flags = {}, ghRun = spawnGh } = {}) {
+  const dryRunFlag = flags["dry-run"] === true;
+  const dryRun = isDryRun(processEnv, flags);
   let now;
   if (flags.now !== undefined) {
     if (!dryRun) {
-      stderr("refresh-tokens: --now <iso> is accepted only with --dry-run");
+      stderr("refresh-tokens: --now <iso> is accepted only with --dry-run or IG_DRY_RUN=1");
       return 2;
     }
     try {
@@ -307,9 +315,15 @@ export async function run({ root, companyDir, processEnv = process.env, fetchImp
     return 1;
   }
   const page = typeof flags.page === "string" ? flags.page : null;
+  let dir = companyDir;
+  if (dryRun) {
+    dir = join(mkdtempSync(join(tmpdir(), "hoshlab-refresh-tokens-dry-run-")), "company");
+    cpSync(companyDir, dir, { recursive: true });
+    stdout(`refresh-tokens: ${dryRunFlag ? "--dry-run" : "IG_DRY_RUN=1"} works on a temp copy ${dir} (the repo's company dir is untouched; no refresh call, no gh secret set)`);
+  }
   let result;
   try {
-    result = await runRefreshTokens({ companyDir, now, processEnv, fetchImpl, dryRun, page, stdout });
+    result = await runRefreshTokens({ companyDir: dir, now, processEnv, fetchImpl, dryRun, page, ghRun, stdout });
   } catch (err) {
     stderr(scrub(`refresh-tokens: ${err && err.message ? err.message : String(err)}`));
     return 1;
