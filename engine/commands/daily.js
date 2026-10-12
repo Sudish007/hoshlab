@@ -562,6 +562,9 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     const finalDrafts = drafts();
     const relinked = relinkCalendar(readCalendar(), finalDrafts);
     if (relinked) changedFiles.push(state.writeJson("state/calendar.json", relinked, CALENDAR_SPEC));
+    // the engine-owned draft index the admin reads instead of listing state/drafts/ (R2-05); untouched when nothing moved
+    const indexRel = state.writeDraftIndex(startedAt);
+    if (indexRel) changedFiles.push(indexRel);
 
     used = monthUsedUsd(state, startedAt);
     exhausted = config.budget.hardStop === true && used >= limit;

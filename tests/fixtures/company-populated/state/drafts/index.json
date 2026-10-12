@@ -1,0 +1,60 @@
+{
+  "updatedAt": "2026-10-12T09:04:40+05:30",
+  "drafts": [
+    {
+      "id": "jr-2026-10-15-templates",
+      "page": "job_rez",
+      "status": "blocked",
+      "format": "carousel",
+      "slotId": "job_rez-2026-10-15-1230",
+      "slotAt": "2026-10-15T12:30:00+05:30",
+      "revision": 3,
+      "updatedAt": "2026-10-12T09:04:10+05:30",
+      "qa": true
+    },
+    {
+      "id": "kd-2026-10-06-reconnect-every-trading-morning",
+      "page": "kaatdo",
+      "status": "published",
+      "format": "image",
+      "slotId": "kaatdo-2026-10-06-0815",
+      "slotAt": "2026-10-06T08:15:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-06T08:31:12+05:30",
+      "qa": true
+    },
+    {
+      "id": "kd-2026-10-13-six-rules",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "image",
+      "slotId": "kaatdo-2026-10-13-0815",
+      "slotAt": "2026-10-13T08:15:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-10T05:40:03+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-10-09-your-biodata-on-your-device",
+      "page": "rishtapatra",
+      "status": "published",
+      "format": "image",
+      "slotId": "rishtapatra-2026-10-09-1930",
+      "slotAt": "2026-10-09T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-09T19:31:05+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-10-14-kundali-free",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "image",
+      "slotId": "rishtapatra-2026-10-14-1930",
+      "slotAt": "2026-10-14T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-11T05:41:20+05:30",
+      "qa": true
+    }
+  ]
+}

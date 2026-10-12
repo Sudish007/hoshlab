@@ -118,10 +118,24 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   const limits = readme.slice(readme.indexOf("## Limits"), readme.indexOf("## ", readme.indexOf("## Limits") + 1));
   assert.ok(limits.includes(refusal), "R2-02: the sentence is in the Limits 'Tokens expire' bullet too");
   assert.ok(!readme.includes("if the pull brings a newer status.json") && !readme.includes("brings a newer"), "R2-02: the misworded 'brings a newer status.json' claim appears nowhere");
-  // R1-04: the admin's per-draft load and the quarterly archival until the phase-2 index exists
-  has("**The admin reads every draft folder on each load.**");
-  has("Archive or prune terminal drafts (`published`, `rejected`, `blocked`, `failed`, `expired`) under `company/state/drafts/` quarterly until the phase-2 live-draft index exists");
-  has("live-draft index", "the Phase 2 list names the index");
+  // R1-04 → R2-05: the engine-owned draft index is built (the admin fetches live drafts only, terminal ones on demand, the
+  // folder listing only while no index exists); the quarterly archival is still honestly unbuilt, with the growth numbers
+  has("**The admin reads the draft index, not every draft folder.**");
+  has("`company/state/drafts/index.json`");
+  has("then `draft.json` and `qa.json` only for the live drafts");
+  has("loads blocked, failed, expired and rejected drafts when you open **Blocked, failed, expired**");
+  has("published drafts are never fetched");
+  has("the admin lists the folder and reads every draft, as it did before", "the no-index fallback is stated");
+  has("Nothing archives terminal drafts yet (**not built yet**: the quarterly move of `published`, `rejected`, `blocked`, `failed` and `expired` drafts older than 90 days under `company/state/archive/drafts/` by the `retention` command)");
+  const slotsPerWeek = config.pages.reduce((n, p) => n + p.cadence.slots.length, 0);
+  has(`at ${slotsPerWeek} slots a week the folder grows by about ${slotsPerWeek} drafts a week — roughly ${Math.round((slotsPerWeek * 52) / 10) * 10} folders after a year`, "the growth numbers are computed from the cadence");
+  has(`reached after roughly ${Math.round((1000 / slotsPerWeek / 52) * 12)} months`, "the 1,000-entry listing cap in months, from the cadence");
+  has("GitHub's Contents API lists at most 1,000 entries per directory");
+  has(`the drafts written for the next ${config.defaults.leadDays} days (\`leadDays\`)`);
+  assert.ok(!readme.includes("**The admin reads every draft folder on each load.**"), "the phase-1 sentence is gone");
+  assert.ok(!readme.includes("until the phase-2 live-draft index exists"), "the index is no longer 'not built yet'");
+  has("Also built: the engine-owned draft index `company/state/drafts/index.json`", "the Phase 2 list moves the index to built");
+  has("Still **not built yet**: the quarterly archival of terminal drafts by the `retention` command", "and keeps the archival honestly unbuilt");
   has("GitHub disables scheduled workflows after 60 days without repository activity");
   has("disables scheduled workflows after 60 days");
   has("## Media retention and compaction");

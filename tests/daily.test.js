@@ -173,6 +173,20 @@ test("Monday run on the fixture (MOCK_LLM): CEO memo, Strategist per page, Write
     assert.ok(r.run.changed.includes("company/state/status.json"));
     assert.ok(r.run.changed.includes("company/state/runs/2026-10.jsonl"));
     for (const id of created) assert.ok(r.run.changed.includes(`company/state/drafts/${id}/qa.json`));
+    // R2-05: the engine-owned draft index is rewritten with the run's clock and lists every folder as it stands — the
+    // drafts created today (rework after the mock QA) as live entries beside the fixture's
+    assert.ok(r.run.changed.includes("company/state/drafts/index.json"), "the index changed (new drafts)");
+    const index = fx.state.readDraftIndex();
+    assert.equal(index.updatedAt, MONDAY, "stamped with the run's clock");
+    assert.deepEqual(index.drafts, fx.state.draftIndexEntries(), "entries mirror the folders");
+    assert.deepEqual(index.drafts.map((e) => e.id), fx.drafts(), "one entry per folder, sorted like listDrafts");
+    for (const id of created) {
+      const e = index.drafts.find((x) => x.id === id);
+      assert.equal(e.status, "rework");
+      assert.equal(e.qa, true, "qa.json exists after the mock QA");
+    }
+    const live = index.drafts.filter((e) => !["published", "failed", "rejected", "expired", "blocked"].includes(e.status)).map((e) => e.id).sort();
+    assert.deepEqual(live, [...created, KD, RP].sort(), "live = the new rework drafts + the two queued fixture drafts; published and blocked are terminal");
     // the calendar names the drafts written today (slot status derived from the draft)
     for (const id of created) {
       const slot = calendar.slots.find((s) => s.draftId === id);

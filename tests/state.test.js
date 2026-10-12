@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { tmpDir } from "./helpers.js";
-import { ADMIN_OWNED, ENGINE_OWNED, HR_ENGINE_FILES, OwnershipError, createState, isAdminOwned, isEngineOwned, latestByKey, normalizeRel, parseJsonl, specFor } from "../engine/lib/state.js";
-import { APPROVAL_SPEC, DRAFT_SPEC, HR_DECISION_SPEC, HR_PROPOSAL_SPEC, SchemaError, STATUS_SPEC, USAGE_SPEC } from "../engine/lib/schema.js";
+import { ADMIN_OWNED, DRAFT_INDEX_REL, ENGINE_OWNED, HR_ENGINE_FILES, OwnershipError, createState, isAdminOwned, isEngineOwned, latestByKey, normalizeRel, parseJsonl, specFor } from "../engine/lib/state.js";
+import { APPROVAL_SPEC, DRAFT_INDEX_SPEC, DRAFT_SPEC, HR_DECISION_SPEC, HR_PROPOSAL_SPEC, SchemaError, STATUS_SPEC, USAGE_SPEC, validate } from "../engine/lib/schema.js";
 
 const RUN_ID = "engine-daily-20261031-2350-a1b2c3";
 const usageRecord = (at) => ({ at, runId: RUN_ID, agent: "writer", page: "rishtapatra", provider: "mock", model: "mock", inputTokens: 10, outputTokens: 5, costUsd: 0, ms: 12, ok: true, error: null, mock: true });
@@ -195,6 +195,75 @@ test("drafts: listDrafts / writeDraft / readDraft / readQa with DRAFT_SPEC valid
     assert.equal(state.readQa("rp-2026-10-14-kundali-free"), null);
     assert.ok(state.exists("state/drafts/rp-2026-10-14-kundali-free/draft.json"));
     assert.throws(() => state.writeJson("state/drafts/rp-2026-10-14-kundali-free/draft.json", { ...draft, revision: 0 }, DRAFT_SPEC), SchemaError);
+  } finally {
+    cleanup();
+  }
+});
+
+// Phase 1 review R1-04 → Phase 2 review R2-05 (plan FEAT-202): the engine-owned draft index the admin reads instead of
+// listing state/drafts/ and fetching two files per draft.
+test("R2-05: state/drafts/index.json is engine-owned and spec'd (draftIndex); writeDraftIndex mirrors the folder from disk — written when missing or stale, null when nothing moved, `qa` says whether qa.json exists; listDrafts ignores the file; validateTree accepts it", () => {
+  assert.equal(DRAFT_INDEX_REL, "state/drafts/index.json");
+  assert.equal(isEngineOwned(DRAFT_INDEX_REL), true);
+  assert.equal(isAdminOwned(DRAFT_INDEX_REL), false);
+  assert.deepEqual(specFor(DRAFT_INDEX_REL), { kind: "draftIndex", spec: DRAFT_INDEX_SPEC });
+  const { dir, cleanup } = fresh();
+  try {
+    const state = createState({ companyDir: dir, now: "2026-10-12T05:31:00+05:30" });
+    assert.equal(state.readDraftIndex(), null, "no index until a run writes one");
+    assert.deepEqual(state.draftIndexEntries(), []);
+    const base = {
+      page: "rishtapatra",
+      ideaId: "rp-i0031",
+      format: "image",
+      language: "hi",
+      revision: 1,
+      reworkCount: 0,
+      mock: true,
+      createdAt: "2026-10-12T05:35:00+05:30",
+      updatedAt: "2026-10-12T05:35:00+05:30",
+      by: "writer",
+      runId: RUN_ID,
+      caption: "कुंडली — free, on your device.",
+      hashtags: ["#RishtaPatra"],
+      altText: "Card",
+      artwork: { headline: "Free Janam Kundali", subline: "Computed on your device", facts: ["North Indian method"], footer: "rishtapatra.com" },
+      factsUsed: [{ factId: "rp-f07", quote: "North Indian method" }],
+      media: [],
+      publishAttempts: [],
+    };
+    const a = { ...base, id: "rp-2026-10-14-kundali-free", slotId: "rishtapatra-2026-10-14-1930", slotAt: "2026-10-14T19:30:00+05:30", status: "written" };
+    const b = { ...base, id: "rp-2026-10-09-biodata", slotId: "rishtapatra-2026-10-09-1930", slotAt: "2026-10-09T19:30:00+05:30", status: "published", updatedAt: "2026-10-09T19:31:05+05:30" };
+    state.writeDraft(a);
+    state.writeDraft(b);
+    state.writeQa({ draftId: b.id, revision: 1, at: "2026-10-09T05:40:00+05:30", passed: true, deterministic: { passed: true, checks: ["caption_length", "hashtags", "disclaimer", "forbidden", "numbers_sourced", "alt_text", "language", "media_spec", "links", "emoji", "duplicate", "brand_lint"].map((id) => ({ id, ok: true })) }, reasons: [] });
+    // first write: the file appears, sorted by id, with the clock given
+    assert.equal(state.writeDraftIndex("2026-10-12T05:40:00+05:30"), DRAFT_INDEX_REL);
+    const index = state.readDraftIndex();
+    assert.equal(index.updatedAt, "2026-10-12T05:40:00+05:30");
+    assert.deepEqual(index.drafts, [
+      { id: b.id, page: "rishtapatra", status: "published", format: "image", slotId: b.slotId, slotAt: b.slotAt, revision: 1, updatedAt: b.updatedAt, qa: true },
+      { id: a.id, page: "rishtapatra", status: "written", format: "image", slotId: a.slotId, slotAt: a.slotAt, revision: 1, updatedAt: a.updatedAt, qa: false },
+    ]);
+    assert.deepEqual(validate(index, DRAFT_INDEX_SPEC), { ok: true, errors: [] });
+    assert.deepEqual(state.listDrafts(), [b.id, a.id], "index.json is not a draft folder");
+    // nothing moved → nothing written (an idle hourly run leaves the drafts tree byte-identical)
+    assert.equal(state.writeDraftIndex("2026-10-12T06:40:00+05:30"), null);
+    assert.equal(state.readDraftIndex().updatedAt, "2026-10-12T05:40:00+05:30");
+    // a status change → rewritten with the new clock; a hand-broken file → rewritten too
+    state.writeDraft({ ...a, status: "rendered", updatedAt: "2026-10-12T06:45:00+05:30" });
+    assert.equal(state.writeDraftIndex("2026-10-12T06:46:00+05:30"), DRAFT_INDEX_REL);
+    assert.equal(state.readDraftIndex().updatedAt, "2026-10-12T06:46:00+05:30");
+    assert.equal(state.readDraftIndex().drafts.find((e) => e.id === a.id).status, "rendered");
+    writeFileSync(join(dir, "state", "drafts", "index.json"), "{ not json", "utf8");
+    assert.equal(state.writeDraftIndex("2026-10-12T06:47:00+05:30"), DRAFT_INDEX_REL);
+    assert.deepEqual(validate(state.readDraftIndex(), DRAFT_INDEX_SPEC), { ok: true, errors: [] });
+    // the tree validates with the index in it; an index that fails its spec is named
+    assert.deepEqual(state.validateTree().errors, []);
+    assert.ok(state.validateTree().files.some((f) => f.rel === DRAFT_INDEX_REL && f.kind === "draftIndex" && f.ok));
+    writeFileSync(join(dir, "state", "drafts", "index.json"), JSON.stringify({ updatedAt: "2026-10-12T06:47:00+05:30", drafts: [{ id: a.id }] }), "utf8");
+    assert.ok(state.validateTree().errors.some((e) => e.startsWith(`${DRAFT_INDEX_REL}: `)));
+    assert.throws(() => state.readDraftIndex(), SchemaError);
   } finally {
     cleanup();
   }

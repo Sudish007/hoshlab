@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import config from "../site.config.js";
 import { MODE_CONSEQUENCES, WORKFLOWS } from "../src/templates/admin.js";
-import { DRAFT_SPEC, HR_DECISION_SPEC, ROSTER_SPEC, validate } from "../engine/lib/schema.js";
+import { DRAFT_SPEC, HR_DECISION_SPEC, ROSTER_SPEC, TERMINAL_DRAFT_STATUSES, validate } from "../engine/lib/schema.js";
 import { collectPaintRects, emptyRegion } from "./lib/empty-region.js";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
@@ -168,7 +168,34 @@ function makeFakeRepo({ overlayDrafts = [] } = {}) {
     const content = Buffer.from(JSON.stringify(draft, null, 2) + "\n", "utf8");
     files.set(`company/state/drafts/${draft.id}/draft.json`, { content, sha: blobSha(content) });
   }
+  // R2-05: the engine-owned draft index lists every folder — an overlaid draft gets its entry (qa: false, no qa.json),
+  // exactly as the engine would have written it after the run that produced the draft.
+  const indexPath = "company/state/drafts/index.json";
+  if (overlayDrafts.length && files.has(indexPath)) {
+    const index = JSON.parse(files.get(indexPath).content.toString("utf8"));
+    for (const d of overlayDrafts) index.drafts.push({ id: d.id, page: d.page, status: d.status, format: d.format, slotId: d.slotId, slotAt: d.slotAt, revision: d.revision, updatedAt: d.updatedAt, qa: false });
+    index.drafts.sort((a, b) => a.id.localeCompare(b.id));
+    const content = Buffer.from(JSON.stringify(index, null, 2) + "\n", "utf8");
+    files.set(indexPath, { content, sha: blobSha(content) });
+  }
   return { files, puts: [], dispatches: [], runs: [], commits: [], conflictOnce: new Set(), nextRunId: 1000, apiCalls: 0, rawCalls: 0, rawServed: 0 };
+}
+
+// R2-05: the Contents GETs under company/state/drafts/ a context made so far, by kind.
+function draftRequests(ctx) {
+  const out = { index: 0, listing: 0, perDraft: {} };
+  for (const r of ctx.meta.requests) {
+    if (r.method !== "GET") continue;
+    const m = new URL(r.url).pathname.match(/\/contents\/company\/state\/drafts(?:\/([^/]+))?(?:\/(draft|qa)\.json)?$/);
+    if (!m) continue;
+    if (m[1] === "index.json") out.index++;
+    else if (!m[1]) out.listing++;
+    else {
+      out.perDraft[m[1]] = out.perDraft[m[1]] || { draft: 0, qa: 0 };
+      if (m[2]) out.perDraft[m[1]][m[2]]++;
+    }
+  }
+  return out;
 }
 
 // R1-02: the draft the engine writes when the Designer refuses a render at the rework cap (engine/agents/designer.js):
@@ -783,9 +810,21 @@ async function queue() {
   record("queue brand colour via data-page (M2)", "queue", 1440, q.cards.every((c) => c.handle && c.handle.text === `@${c.page}` && c.handle.dataPage === c.page && c.handle.color === hexToRgb(brandColor(c.page)) && c.handle.borderColor === hexToRgb(brandColor(c.page)) && !c.handle.styleAttr), q.cards.map((c) => ({ id: c.id, handle: c.handle, expected: hexToRgb(brandColor(c.page)) })));
   record("queue links (full size, raw draft)", "queue", 1440, q.cards.every((c) => c.links.length === 2 && c.links[0].text === "Open full size" && c.links[0].rel === "noopener" && c.links[0].target === "_blank" && c.links[0].href.startsWith(RAW + "/") && c.links[1].text === "Raw draft" && c.links[1].href === `#/json/state/drafts/${c.id}/draft.json`), q.cards.map((c) => c.links));
   record("deploy line (pages.yml latest run)", "queue", 1440, /^Last Pages deploy: succeeded · \d+ min ago run$/.test(q.deploy) && q.deployLink === `https://github.com/${OWNER}/${REPO}/actions/runs/1`, { deploy: q.deploy, link: q.deployLink });
+  // R2-05 (R1-04): the load reads the engine-owned index once and then draft.json + qa.json for the LIVE drafts only — no
+  // folder listing, nothing for the blocked, published or render-blocked drafts; the Blocked count still comes from the index.
+  const indexDoc = JSON.parse(fake.files.get("company/state/drafts/index.json").content.toString("utf8"));
+  const live = indexDoc.drafts.filter((e) => !TERMINAL_DRAFT_STATUSES.includes(e.status)).map((e) => e.id).sort();
+  const terminal = indexDoc.drafts.filter((e) => TERMINAL_DRAFT_STATUSES.includes(e.status)).map((e) => e.id).sort();
+  const loadReqs = draftRequests(ctx);
+  const fetched = Object.keys(loadReqs.perDraft).sort();
+  record("draft index on load (R2-05): one GET for index.json, two per live draft, none for terminal drafts, no folder listing", "queue", 1440, loadReqs.index === 1 && loadReqs.listing === 0 && fetched.join() === live.join() && live.every((id) => loadReqs.perDraft[id].draft === 1 && loadReqs.perDraft[id].qa === 1) && terminal.length === 4 && terminal.every((id) => !loadReqs.perDraft[id]) && q.summary.endsWith("· 2 blocked, failed, expired or rejected"), { index: loadReqs.index, listing: loadReqs.listing, live, terminal, fetched: loadReqs.perDraft });
 
   await go(page, "blocked");
   const b = await page.evaluate(cardsEval, "blocked");
+  const blockedReqs = draftRequests(ctx);
+  const onDemand = indexDoc.drafts.filter((e) => TERMINAL_DRAFT_STATUSES.includes(e.status) && e.status !== "published");
+  const published = indexDoc.drafts.filter((e) => e.status === "published").map((e) => e.id);
+  record("draft index, Blocked view (R2-05): blocked/failed/expired/rejected drafts fetched on demand (qa.json only when the index says it exists), published ones never", "blocked", 1440, onDemand.length === 2 && onDemand.every((e) => blockedReqs.perDraft[e.id] && blockedReqs.perDraft[e.id].draft === 1 && blockedReqs.perDraft[e.id].qa === (e.qa ? 1 : 0)) && published.length === 2 && published.every((id) => !blockedReqs.perDraft[id]) && blockedReqs.listing === 0 && blockedReqs.index === 1, { onDemand: onDemand.map((e) => ({ id: e.id, qa: e.qa, requests: blockedReqs.perDraft[e.id] })), published, listing: blockedReqs.listing });
   const jr = b.cards[0];
   record("blocked list (fixture)", "blocked", 1440, b.cards.length === 2 && jr.id === JR && jr.head.includes("blocked") && jr.buttons.length === 0 && jr.links.length === 2 && jr.head.some((h) => /^slot: .*18:30 IST · moved$/.test(h)) && jr.head.includes("rev 3") && jr.reasons && jr.reasons.startsWith("Reasons: ") && jr.head.includes("carousel · 4 slides · 354 KB"), { cards: b.cards.map((c) => ({ id: c.id, head: c.head, buttons: c.buttons, reasons: c.reasons })) });
   // R1-02: the render-blocked draft (Designer refusal at the rework cap) is listed with its render reason, no artwork
@@ -835,6 +874,27 @@ async function queue() {
   const kdBlocked = blockedAfter.cards.find((c) => c.id === KD);
   record("reject PUTs (approvals + feedback)", "queue", 1440, rejectOk && afterReject.cards.length === 1 && afterReject.cards[0].id === RP && afterReject.count === "1" && blockedAfter.cards.length === 3 && kdBlocked && kdBlocked.head.includes("rejected by owner") && kdBlocked.reasons === `Reasons: Owner: ${REASON}`, { approvals: rejPut && { status: rejPut.status, message: rejPut.message, last: rj.last }, feedback: fbPut && { status: fbPut.status, message: fbPut.message, last: fb.last }, queueAfter: afterReject.cards.map((c) => c.id), blockedAfter: blockedAfter.cards.map((c) => ({ id: c.id, head: c.head })) });
   await closeCtx(ctx, page, "queue");
+}
+
+// R2-05 fallback: a repository whose engine has not written state/drafts/index.json yet (the live `main` right after the
+// Phase 2 merge, until the first daily/publisher run) — the admin lists the folder and reads every draft as before, and
+// the queue, its summary and the Blocked view come out identical.
+async function legacyLoad() {
+  console.log("legacyLoad: no drafts/index.json yet → folder listing, every draft fetched, same queue and blocked list");
+  const fake = makeFakeRepo({ overlayDrafts: [renderBlockedDraft()] });
+  fake.files.delete("company/state/drafts/index.json");
+  const { ctx, page } = await newCtx({ width: 1440, height: 900, token: TOKEN_OK, fake });
+  await open(page, "#/");
+  await waitView(page, "queue");
+  const q = await page.evaluate(cardsEval, "queue");
+  const reqs = draftRequests(ctx);
+  const folders = [...fake.files.keys()].filter((p) => /^company\/state\/drafts\/[^/]+\/draft\.json$/.test(p)).map((p) => p.split("/")[3]).sort();
+  const fetched = Object.keys(reqs.perDraft).sort();
+  record("draft index absent (R2-05 fallback): the folder is listed once and every draft's files are fetched; the queue and its summary are unchanged", "queue", 1440, reqs.index === 1 && reqs.listing === 1 && fetched.join() === folders.join() && folders.every((id) => reqs.perDraft[id].draft === 1 && reqs.perDraft[id].qa === 1) && q.cards.length === 2 && q.cards[0].id === KD && q.cards[1].id === RP && q.summary === "2 in the queue (@rishtapatra 1 · @kaatdo 1 · @job_rez 0) · 1 awaiting your approval · 2 blocked, failed, expired or rejected" && q.dashError === null, { indexGets: reqs.index, listing: reqs.listing, folders, fetched: reqs.perDraft, summary: q.summary, dashError: q.dashError });
+  await go(page, "blocked");
+  const b = await page.evaluate(cardsEval, "blocked");
+  record("draft index absent (R2-05 fallback): the Blocked view lists the same two drafts without a further request", "blocked", 1440, b.cards.length === 2 && b.cards[0].id === JR && b.cards[1].id === RENDER_BLOCKED && JSON.stringify(draftRequests(ctx)) === JSON.stringify(reqs), { cards: b.cards.map((c) => c.id), requestsAfter: draftRequests(ctx) });
+  await closeCtx(ctx, page, "legacyLoad");
 }
 
 // Edit caption (in-browser checks.js gating, edits/<id>.json with baseRevision) and Move slot (past rejected,
@@ -1286,7 +1346,7 @@ if (adminStatus !== 200) {
 }
 console.log(`Auditing ${ADMIN} (${process.env.AUDIT_URL ? "AUDIT_URL" : DIST}) -> ${OUT}\nGitHub + raw host mocked from ${relative(ROOT, FIXTURE)}; the real GitHub path is UNTESTED here`);
 browser = await chromium.launch({ headless: true });
-const STEPS = { lock, queue, editMove, calendar, modes, runNow, editors, proposals, layout };
+const STEPS = { lock, queue, legacyLoad, editMove, calendar, modes, runNow, editors, proposals, layout };
 const only = process.argv.slice(2);
 try {
   for (const [name, fn] of Object.entries(STEPS)) {

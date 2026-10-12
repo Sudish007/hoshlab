@@ -370,6 +370,9 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
     publisher: { decisions, staleEdits, expired, rejected, pages },
   };
   if (dryRun) run.dryRun = true;
+  // the engine-owned draft index the admin reads instead of listing state/drafts/ (R2-05); untouched on an idle hour
+  const indexRel = state.writeDraftIndex(startedAt);
+  if (indexRel) changedFiles.push(indexRel);
   const unique = (arr) => [...new Set(arr)];
   run.changed = unique([...changedFiles, "state/status.json", state.monthLogPath("runs", startedAt)]).map((rel) => `company/${rel}`);
   status.updatedAt = nowIst(endedAt);

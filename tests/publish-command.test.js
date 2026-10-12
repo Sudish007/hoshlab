@@ -187,7 +187,13 @@ test("dry-run client: the approved kd draft publishes (dry- id, DRYRUN permalink
     assert.deepEqual(pub.pages, { rishtapatra: { outcome: "idle" }, kaatdo: { outcome: "published", draftId: KD, quotaUsage: 0, quotaTotal: 50 }, job_rez: { outcome: "idle" } });
     assert.equal(r.run.agents[0].name, "publisher");
     assert.equal(r.run.agents[0].note, "1 published, 1 waiting, 0 failed, 0 expired");
-    assert.deepEqual(r.run.changed, ["company/state/published.jsonl", `company/state/drafts/${KD}/draft.json`, "company/state/status.json", "company/state/runs/2026-10.jsonl"]);
+    assert.deepEqual(r.run.changed, ["company/state/published.jsonl", `company/state/drafts/${KD}/draft.json`, "company/state/drafts/index.json", "company/state/status.json", "company/state/runs/2026-10.jsonl"]);
+    // R2-05: the engine-owned draft index follows the status change (kd queued → published), stamped with this run's clock
+    const index = fx.state.readDraftIndex();
+    assert.equal(index.updatedAt, NOW);
+    assert.deepEqual(index.drafts, fx.state.draftIndexEntries());
+    assert.equal(index.drafts.find((e) => e.id === KD).status, "published");
+    assert.deepEqual(index.drafts.filter((e) => e.status === "queued").map((e) => e.id), [RP], "rp is the only live draft left");
 
     const status = fx.status();
     assert.deepEqual(validate(status, STATUS_SPEC), { ok: true, errors: [] });
@@ -227,6 +233,7 @@ test("dry-run client: the approved kd draft publishes (dry- id, DRYRUN permalink
     assert.equal(fx.runs().length, BASE_RUNS + 2);
     assert.equal(out2.lines.filter((l) => l.startsWith(LINE_PREFIX)).length, 0);
     assert.deepEqual(r2.run.changed, ["company/state/status.json", "company/state/runs/2026-10.jsonl"]);
+    assert.equal(fx.state.readDraftIndex().updatedAt, NOW, "R2-05: an idle hour leaves the index (and the drafts tree) untouched");
   } finally {
     fx.cleanup();
   }
