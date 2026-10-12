@@ -6,11 +6,26 @@
 (function () {
   "use strict";
   const DEVANAGARI = /[\u0900-\u097F\uA8E0-\uA8FF]/;
+  // The owner's design preference (window.__PREFER__, injected by the renderer from feedback tagged
+  // design / variant / palette — engine/lib/feedback.js, FEAT-205 / plan D23): { variant, palette } or null.
+  const PREFER = window.__PREFER__ && typeof window.__PREFER__ === "object" ? window.__PREFER__ : {};
 
   // Headline tiers (design §5 Designer row): A ≤ 36 chars → 104 u, B ≤ 60 → 84 u, C longer → 68 u.
-  function pickVariant(text) {
+  function measuredVariant(text) {
     const n = Array.from(String(text || "")).length;
     return n <= 36 ? "A" : n <= 60 ? "B" : "C";
+  }
+
+  // The tier a template sets: the owner's preferred tier when one is given — the overflow guard then decides
+  // whether the copy fits and the Designer falls back to the measured tier when it does not — else the measured one.
+  function pickVariant(text) {
+    const want = PREFER.variant;
+    return want === "A" || want === "B" || want === "C" ? want : measuredVariant(text);
+  }
+
+  // 'dark' | 'light' | null — read by the templates that offer both palettes for a role.
+  function preferredPalette() {
+    return PREFER.palette === "dark" || PREFER.palette === "light" ? PREFER.palette : null;
   }
 
   // Splits text into runs by script: whitespace sticks to the run before it. [{ mode: 'hi'|'lat', text }]
@@ -222,7 +237,9 @@
     return runs;
   }
 
-  // window.layout() → { variant, overflow, overflows[], runs[], minTextU, minContrast, canvas }
+  // window.layout() → { variant, palette, paletteKind, prefer, overflow, overflows[], runs[], minTextU, minContrast, canvas }
+  // paletteKind is the template's own 'dark' | 'light' label for the palette it painted (data-palette-kind on
+  // #canvas), so the renderer can tell whether a preferred palette was followed without parsing palette names.
   function layout() {
     const canvas = document.getElementById("canvas");
     const overflows = overflowing(canvas);
@@ -231,6 +248,8 @@
     return {
       variant: headline ? headline.getAttribute("data-variant") : null,
       palette: canvas.getAttribute("data-palette") || null,
+      paletteKind: canvas.getAttribute("data-palette-kind") || null,
+      prefer: { variant: PREFER.variant || null, palette: PREFER.palette || null },
       overflow: overflows.length > 0,
       overflows: overflows,
       runs: runs,
@@ -240,6 +259,6 @@
     };
   }
 
-  window.HOSHLAB = { pickVariant, splitRuns, setText, applyTokens, fillList, fillDots, siteHost, parseColor, luminance, contrastRatio, backgroundOf, layout };
+  window.HOSHLAB = { pickVariant, measuredVariant, preferredPalette, splitRuns, setText, applyTokens, fillList, fillDots, siteHost, parseColor, luminance, contrastRatio, backgroundOf, layout };
   window.layout = layout;
 })();

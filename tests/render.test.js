@@ -181,6 +181,48 @@ test("render smoke: carousel templates of RishtaPatra and KaatDo (writer fixture
   }
 });
 
+// FEAT-205 (plan D23): the owner's preference reaches the templates as window.__PREFER__ — the tier is set instead
+// of the measured one, the KaatDo carousel body slides follow a `dark` palette preference, other palettes report
+// themselves so `applied` tells the Designer what happened; no preference → byte-identical to the renders above.
+test("render smoke: prefer { variant: 'B' } renders the KaatDo image on tier B (applied.variant true); prefer { palette: 'dark' } keeps the KaatDo body slides on the console palette; RishtaPatra offers no dark image palette (applied.palette false); without prefer the result is unchanged", { skip: SKIP }, async () => {
+  const dirB = join(out, "kd-prefer-b");
+  const b = await renderDraft({ draft: KD, brand: brands.kaatdo, outDir: dirB, browser, prefer: { variant: "B", palette: null } });
+  assert.equal(b.media[0].variant, "B", "the measured tier is A (headline ≤ 36 chars); the preferred tier wins");
+  assert.equal(b.media[0].paletteKind, "dark");
+  assert.deepEqual(b.prefer, { variant: "B", palette: null });
+  assert.deepEqual(b.applied, { variant: true, palette: null });
+  assertJpegFile(dirB, b.media[0]);
+  const plain = await renderDraft({ draft: KD, brand: brands.kaatdo, outDir: join(out, "kd-plain"), browser });
+  assert.equal(plain.media[0].variant, "A");
+  assert.equal(plain.prefer, null);
+  assert.equal(plain.applied, null);
+  assert.notEqual(plain.media[0].sha256, b.media[0].sha256, "a different tier is a different image");
+  assert.equal(plain.media[0].paletteKind, "dark");
+  const again = await renderDraft({ draft: KD, brand: brands.kaatdo, outDir: join(out, "kd-plain-2"), browser, prefer: { variant: null, palette: null } });
+  assert.equal(again.media[0].sha256, plain.media[0].sha256, "an empty preference renders exactly the plain image");
+
+  const kdc = sampleDraft({ root: ROOT, page: "kaatdo", format: "carousel" });
+  const dark = await renderDraft({ draft: kdc, brand: brands.kaatdo, outDir: join(out, "kd-carousel-dark"), browser, prefer: { variant: null, palette: "dark" } });
+  assert.deepEqual([...new Set(dark.media.map((m) => m.palette))], ["dark console palette"], "every slide stays on the console palette");
+  assert.deepEqual([...new Set(dark.media.map((m) => m.paletteKind))], ["dark"]);
+  assert.deepEqual(dark.applied, { variant: null, palette: true });
+  for (const m of dark.media) assertJpegFile(join(out, "kd-carousel-dark"), m);
+  const light = await renderDraft({ draft: kdc, brand: brands.kaatdo, outDir: join(out, "kd-carousel-light"), browser, prefer: { variant: null, palette: "light" } });
+  assert.equal(light.media[1].palette, "light palette", "light is the body slides' default; the preference is simply followed");
+  assert.equal(light.media[0].palette, "dark console palette", "cover and recap have one palette");
+  assert.deepEqual(light.applied, { variant: null, palette: true });
+  assert.notEqual(dark.media[1].sha256, light.media[1].sha256);
+
+  const rp = await renderDraft({ draft: RP, brand: brands.rishtapatra, outDir: join(out, "rp-prefer-dark"), browser, prefer: { variant: null, palette: "dark" } });
+  assert.equal(rp.media[0].palette, "cream and maroon", "the RishtaPatra image has one palette");
+  assert.equal(rp.media[0].paletteKind, "light");
+  assert.deepEqual(rp.applied, { variant: null, palette: false }, "not offered → the Designer records 'brand palette kept'");
+  const rpc = sampleDraft({ root: ROOT, page: "rishtapatra", format: "carousel" });
+  const rpDark = await renderDraft({ draft: rpc, brand: brands.rishtapatra, outDir: join(out, "rp-carousel-dark"), browser, prefer: { variant: null, palette: "dark" } });
+  assert.deepEqual(rpDark.media.map((m) => m.paletteKind), ["dark", ...rpc.slides.slice(1).map(() => "light")], "the maroon cover is the brand's dark palette; the body stays cream");
+  assert.equal(rpDark.applied.palette, true);
+});
+
 test("render smoke: Devanagari inside a Latin-only element (JobRez has no Devanagari family) is refused with missingGlyphs.length > 0 (M8); nothing is written", { skip: SKIP }, async () => {
   const draft = { ...JR, format: "image", artwork: { headline: "Free कुंडली for every role", subline: "One master resume.", facts: ["Branch it per role."], footer: "jobrez.com" } };
   delete draft.slides;

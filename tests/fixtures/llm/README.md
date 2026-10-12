@@ -62,7 +62,14 @@ so the call ends in `AgentOutputError` after exactly two attempts.
   the engine ignores them and fills the slots from the ideas by format instead (ideas are still appended
   with engine ids). `strategist.bad.json` lacks `assignments` (shape error).
 - **ceo** — company-wide (no page). `ceo.ok.json` splits the budget 35 / 30 / 35; `ceo.bad.json`
-  splits 50 / 40 / 30 = 120 %, which the engine's semantic check rejects (shape-valid).
+  splits 50 / 40 / 30 = 120 %, which the engine's semantic check rejects (shape-valid). Since FEAT-205
+  (P2-07) the output carries `answers: [{ forCeo, answer }]`: `ceo.ok.json` answers, verbatim, the two
+  `forCeo` items of the fixture report `tests/fixtures/company-populated/state/reports/2026-W41.md`
+  (= `analyst.ok.json`), so it is pinned to that report as well as to week 2026-W42; `ceo.bad2.json` is
+  shape-valid with a 100 % split but answers only the first item → "no answer to the Analyst's item 2" →
+  one repair call → `AgentOutputError`. Under `MOCK_LLM=1` the answers rule is waived when the company has
+  no report (like the week rule); a real provider must answer exactly the report's items, or nothing when
+  there is no report.
 - **hr** — see "HR (FEAT-204)" below; in Phase 1 `hr.ok.json` was a shape fixture only.
 
 ## Analyst (FEAT-203)

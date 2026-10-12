@@ -1,6 +1,7 @@
 // Team (mock/team.html → roster.json). Eight cards, each with the visible 'AI agent · <group>' eyebrow
 // (OF-6); provider names through providerLabel (N5); the two deterministic roles say so in words (N4);
-// phase-2 work is labelled 'not built yet'. "Last run" lines come from the run log, never invented.
+// the CEO / Strategist / Writer / Designer cards name the owner-feedback inputs they really get (FEAT-205).
+// "Last run" lines come from the run log, never invented.
 import { layout } from "./layout.js";
 import { escapeHtml } from "../lib/xml.js";
 import { providerLabel } from "../lib/labels.js";
@@ -15,7 +16,7 @@ const GROUP_TITLE = { leadership: "Leadership", studio: "Studio", operations: "O
 const ROLE = {
   ceo: {
     monogram: "CEO",
-    what: "Writes the weekly memo: priorities per page, what to push, what to pause, the budget split. Reads the owner's feedback first; answering the Analyst's report in the memo is not built yet (phase 2).",
+    what: "Writes the weekly memo: priorities per page, what to push, what to pause, the budget split. Reads the owner's feedback of the last 30 days first, then the latest Analyst report — every item the Analyst files for the CEO gets an answer in the memo, or the memo is refused — and the latest HR review with the owner's decision on it.",
     output: "company/state/memos/YYYY-Www.md",
   },
   hr: {
@@ -26,17 +27,17 @@ const ROLE = {
   },
   strategist: {
     monogram: "ST",
-    what: "Turns the memo into ideas and slots: fills the backlog per page, assigns formats (image, carousel), places them on the calendar with a reason.",
+    what: "Turns the memo into ideas and slots: fills the backlog per page, assigns formats (image, carousel, reel), places them on the calendar with a reason. The owner's last ten feedback entries for the page and the latest report's observations are in its prompt.",
     output: "ideas.jsonl, calendar.json",
   },
   writer: {
     monogram: "WR",
-    what: "Caption, alt text, hashtags and carousel slide copy in the page's voice. Every factual claim must map to a fact id in brand.md.",
+    what: "Caption, alt text, hashtags and carousel slide copy in the page's voice. Every factual claim must map to a fact id in brand.md. The owner's last ten feedback entries for the page — reject reasons first — and the latest report's observations are in its prompt.",
     output: "drafts/<id>/draft.json",
   },
   designer: {
     monogram: "DS",
-    what: "Renders the artwork from the draft with the page's real tokens: 1080×1350 JPEG and carousel slides. Checks pixel size, bytes, glyph coverage, text floor and contrast before handing over.",
+    what: "Renders the artwork from the draft with the page's real tokens: 1080×1350 JPEG and carousel slides. Checks pixel size, bytes, glyph coverage, text floor and contrast before handing over. An owner note tagged design, variant or palette that names a headline tier or a palette steers its choice; nothing else is read into a note.",
     output: "media/<id>/*.jpg",
   },
   qa: {

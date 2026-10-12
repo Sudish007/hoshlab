@@ -90,19 +90,20 @@ body { width: 1080px; }
 .post-kd .facts li { border: 1px solid var(--c-edge); background: var(--c-panel); padding: calc(var(--u) * 18) calc(var(--u) * 22); color: var(--c-txt); }
 .post-kd .foot { margin-top: auto; padding-top: calc(var(--u) * 28); border-top: 1px solid var(--c-edge); font-family: var(--font-mono); font-size: calc(var(--u) * 30); letter-spacing: 0.2em; color: var(--c-dim); }
 .post-kd .foot [lang="hi"] { letter-spacing: 0; }
-/* carousel: cover + recap dark console, body slides on the light palette */
+/* carousel: cover + recap dark console; body slides on the light palette (class `light`, set by the template unless
+   the owner's feedback tagged palette prefers dark — FEAT-205), otherwise they keep the console palette below */
 .post-kd.slide-cover .swipe { margin-top: auto; font-family: var(--font-mono); font-size: calc(var(--u) * 32); letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-green); }
 .post-kd .body { font-family: var(--font-mono); font-size: calc(var(--u) * 40); line-height: 1.45; color: var(--c-dim); margin-top: calc(var(--u) * 36); }
-.post-kd.slide-body { background: var(--c-light-bg); color: var(--c-light-txt); }
-.post-kd.slide-body .brand-row .word { color: var(--c-light-txt); }
+.post-kd.light { background: var(--c-light-bg); color: var(--c-light-txt); }
+.post-kd.light .brand-row .word { color: var(--c-light-txt); }
 /* light-green #0b8f4d is 3.9:1 on light-bg — below the 4.5:1 text rule at 50 u — so the wordmark stays in light-txt here */
-.post-kd.slide-body .brand-row .word b { color: var(--c-light-txt); }
-.post-kd.slide-body .brand-row .slash, .post-kd.slide-body .brand-row .word-hi { color: var(--c-light-dim); }
-.post-kd.slide-body .headline { color: var(--c-light-txt); }
-.post-kd.slide-body .headline [lang="hi"] { color: var(--c-light-red); }
-.post-kd.slide-body .body { color: var(--c-light-dim); }
-.post-kd.slide-body .dots i { background: var(--c-light-dim); }
-.post-kd.slide-body .dots i.on { background: var(--c-light-green); }
+.post-kd.light .brand-row .word b { color: var(--c-light-txt); }
+.post-kd.light .brand-row .slash, .post-kd.light .brand-row .word-hi { color: var(--c-light-dim); }
+.post-kd.light .headline { color: var(--c-light-txt); }
+.post-kd.light .headline [lang="hi"] { color: var(--c-light-red); }
+.post-kd.light .body { color: var(--c-light-dim); }
+.post-kd.light .dots i { background: var(--c-light-dim); }
+.post-kd.light .dots i.on { background: var(--c-light-green); }
 .post-kd .dots i { background: var(--c-edge); }
 .post-kd .dots i.on { background: var(--c-green); }
 

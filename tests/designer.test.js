@@ -10,7 +10,8 @@ import { DRAFT_SPEC, validate } from "../engine/lib/schema.js";
 import { mediaPaths, pagesUrl, rawUrl, readIndex, updateIndex } from "../engine/lib/media.js";
 import { RenderError, RenderUnavailableError } from "../engine/render/render.js";
 import { CaptureError } from "../engine/render/capture.js";
-import { runDesigner, designNote, isDeferral, mediaRows, renderReason, RENDER_REASON_PREFIX, SKIP_MEDIA_BRANCH_MISSING, FLAG_RENDER_FAILED } from "../engine/agents/designer.js";
+import { runDesigner, designNote, isDeferral, mediaRows, preferFor, preferenceNote, renderReason, RENDER_REASON_PREFIX, SKIP_MEDIA_BRANCH_MISSING, FLAG_RENDER_FAILED, PREFERENCE_FORMATS } from "../engine/agents/designer.js";
+import { designPreferences } from "../engine/lib/feedback.js";
 
 const company = loadCompany({ companyDir: join(ROOT, "company"), warn: () => {} });
 const { brands, config } = company;
@@ -19,23 +20,29 @@ const written = (id) => ({ ...fixture(id), status: "written", media: [] });
 const NOW = "2026-10-12T05:40:00+05:30";
 const SHA = "7cfbae6d41f17cb1b34897046134304f36529e6e223ea96756052d2a70958af1";
 
-// A renderer double: `plan` maps draft id → media entries | Error to throw.
-function fakeRenderer(plan) {
+// A renderer double: `plan` maps draft id → media entries | Error to throw. Like the real renderer it sets the
+// preferred tier when `prefer.variant` is given (FEAT-205) and reports `applied`; `preferPlan[id]` is an Error thrown
+// only for the preferred render (the fallback without `prefer` then succeeds) or a palette kind the fake "offers".
+function fakeRenderer(plan, preferPlan = {}) {
   const calls = [];
   return {
     calls,
-    async renderDraft(draft, brand, { outDir, relDir }) {
-      calls.push({ id: draft.id, handle: brand.frontMatter.handle, outDir, relDir });
+    async renderDraft(draft, brand, { outDir, relDir, prefer = null }) {
+      calls.push({ id: draft.id, handle: brand.frontMatter.handle, outDir, relDir, prefer });
       const p = plan[draft.id];
       if (p instanceof Error) throw p;
+      const pp = preferPlan[draft.id];
+      if (prefer && pp instanceof Error) throw pp;
       const n = draft.format === "carousel" ? draft.slides.length : 1;
+      const variant = prefer && prefer.variant ? prefer.variant : "A";
       const media = Array.from({ length: n }, (_, i) => {
         const file = `${draft.format === "carousel" ? "slide" : "image"}-${i + 1}-${SHA.slice(0, 8)}.jpg`;
         mkdirSync(outDir, { recursive: true });
         writeFileSync(join(outDir, file), Buffer.from([0xff, 0xd8]));
-        return { kind: "image", file, path: `${relDir}${file}`, bytes: 9432, width: 1080, height: 1350, sha256: SHA, variant: "A", palette: i === 0 ? "cover palette" : "body palette", minTextU: 30, minContrast: 4.6 };
+        return { kind: "image", file, path: `${relDir}${file}`, bytes: 9432, width: 1080, height: 1350, sha256: SHA, variant, palette: i === 0 ? "cover palette" : "body palette", paletteKind: typeof pp === "string" ? pp : "dark", minTextU: 30, minContrast: 4.6 };
       });
-      return { media, variant: "A", palette: media[0].palette };
+      const applied = prefer ? { variant: prefer.variant ? media.every((m) => m.variant === prefer.variant) : null, palette: prefer.palette ? media.some((m) => m.paletteKind === prefer.palette) : null } : null;
+      return { media, variant: media[0].variant, palette: media[0].palette, prefer, applied };
     },
     async close() {
       calls.push({ closed: true });
@@ -374,4 +381,133 @@ test("runDesigner validates its inputs and never writes admin-owned files", asyn
   } finally {
     h.cleanup();
   }
+});
+
+// FEAT-205 (plan D23): owner feedback tagged design / variant / palette steers the variant and palette deterministically —
+// no model call — through the renderer's `prefer`, and every outcome lands in designNote.
+const FEEDBACK = [
+  { at: "2026-10-10T19:40:00+05:30", by: "owner", kind: "note", page: "kaatdo", text: "Prefer variant B for @kaatdo: more air above the fact rows.", tags: ["design", "variant"] },
+  { at: "2026-10-11T09:00:00+05:30", by: "owner", kind: "note", page: "job_rez", text: "Variant A and the dark palette for JobRez.", tags: ["design"] },
+  { at: "2026-10-11T21:05:00+05:30", by: "owner", kind: "note", page: "rishtapatra", text: "Keep RishtaPatra Hindi-first.", tags: ["language"] },
+];
+
+test("D23: a tagged 'variant B' note for @kaatdo reaches the renderer as prefer { variant: 'B' }, the tier is applied and designNote records it; untagged pages render as before; the preferences are read from state/feedback.jsonl when not injected", async () => {
+  const kd = written("kd-2026-10-13-six-rules");
+  const rp = written("rp-2026-10-14-kundali-free");
+  const h = harness([kd, rp]);
+  try {
+    writeFileSync(join(h.mediaRoot, ".git"), "gitdir: x\n");
+    const r = fakeRenderer({});
+    const res = await runDesigner({ drafts: [kd, rp], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r, now: NOW, runId: "engine-daily-20261012-0540-abcdef", feedback: FEEDBACK });
+    assert.deepEqual([res.ok, res.rendered, res.refused, res.preferred, res.fellBack], [true, 2, 0, 1, 0]);
+    assert.equal(res.note, "2 rendered, 0 refused, 1 with owner design preference");
+    assert.deepEqual(r.calls.filter((c) => c.id).map((c) => [c.id, c.prefer]), [
+      [kd.id, { variant: "B", palette: null }],
+      [rp.id, null],
+    ]);
+    const kdOut = h.state.readDraft(kd.id);
+    assert.equal(kdOut.status, "rendered");
+    assert.equal(kdOut.designNote, "variant B · cover palette · variant B preferred by owner feedback 2026-10-10");
+    assert.deepEqual(validate(kdOut, DRAFT_SPEC), { ok: true, errors: [] });
+    assert.equal(h.state.readDraft(rp.id).designNote, "variant A · cover palette", "no tagged feedback for @rishtapatra → the measured tier, the Phase 1 note");
+    assert.deepEqual(res.results.map((x) => [x.id, x.prefer, x.fallback]), [
+      [kd.id, { variant: "B", palette: null }, null],
+      [rp.id, null, null],
+    ]);
+    assert.equal(existsSync(join(h.companyDir, "state", "feedback.jsonl")), false, "the Designer never writes the admin-owned feedback file");
+
+    // not injected → read from the state's feedback.jsonl (seeded with plain fs, as the admin would write it)
+    writeFileSync(join(h.companyDir, "state", "feedback.jsonl"), FEEDBACK.map((f) => JSON.stringify(f)).join("\n") + "\n", "utf8");
+    h.state.writeDraft({ ...kd, status: "written" });
+    const r2 = fakeRenderer({});
+    await runDesigner({ drafts: [h.state.readDraft(kd.id)], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r2, now: NOW });
+    assert.deepEqual(r2.calls[0].prefer, { variant: "B", palette: null });
+    assert.equal(h.state.readDraft(kd.id).designNote, "variant B · cover palette · variant B preferred by owner feedback 2026-10-10");
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("D23: when the preferred tier overflows, the Designer renders once more without the preference (the measured tier) and designNote says so; a palette the template does not offer is recorded as such; reels take no preference", async () => {
+  const jr = written("jr-2026-10-15-templates"); // carousel, 4 slides; feedback asks for variant A + dark palette
+  const h = harness([jr, REEL]);
+  try {
+    writeFileSync(join(h.mediaRoot, ".git"), "gitdir: x\n");
+    const overflow = new RenderError("overflow", "h2.headline 1180 > 936 px wide: “Nine templates, three of them free”", { overflows: [] });
+    const r = fakeRenderer({}, { [jr.id]: overflow });
+    const reelRenderer = {
+      async renderDraft(draft, brand, opts) {
+        r.calls.push({ id: draft.id, prefer: opts.prefer === undefined ? "absent" : opts.prefer });
+        mkdirSync(opts.outDir, { recursive: true });
+        const out = reelResult(opts.relDir);
+        for (const m of out.media) writeFileSync(join(opts.outDir, m.file), Buffer.from([0]));
+        return out;
+      },
+    };
+    const both = { calls: r.calls, renderDraft: (d, b, o) => (d.format === "reel" ? reelRenderer.renderDraft(d, b, o) : r.renderDraft(d, b, o)), close: r.close };
+    const res = await runDesigner({ drafts: [jr, REEL], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: both, now: NOW, feedback: FEEDBACK });
+    assert.deepEqual([res.ok, res.rendered, res.refused, res.preferred, res.fellBack], [true, 2, 0, 1, 1]);
+    assert.equal(res.note, "2 rendered, 0 refused, 1 with owner design preference (1 fell back to the measured tier)");
+    // two renders for the carousel: the preferred one (overflow) then the plain one; the reel gets no preference at all
+    assert.deepEqual(r.calls.filter((c) => c.id).map((c) => [c.id, c.prefer]), [
+      [jr.id, { variant: "A", palette: "dark" }],
+      [jr.id, null],
+      [REEL.id, "absent"],
+    ]);
+    const out = h.state.readDraft(jr.id);
+    assert.equal(out.status, "rendered");
+    assert.equal(out.media.length, 4);
+    assert.equal(out.designNote, "4 slides · variant A · cover palette · variant A preferred by owner feedback 2026-10-11 and dark palette preferred by owner feedback 2026-10-11 — did not fit (overflow), measured tier and brand palette kept");
+    assert.equal(out.renderError, undefined, "a fallback that renders is not a refusal");
+    assert.equal(out.reworkCount, jr.reworkCount || 0);
+    assert.deepEqual(validate(out, DRAFT_SPEC), { ok: true, errors: [] });
+    assert.deepEqual(res.results.find((x) => x.id === jr.id).fallback, "overflow");
+    assert.equal(h.state.readDraft(REEL.id).designNote, "reel kinetic · 4 scenes · 16 s · 480 frames · dark console palette", "reel note unchanged");
+    assert.deepEqual(validate(h.state.readDraft(REEL.id), DRAFT_SPEC), { ok: true, errors: [] });
+
+    // the same preference on a template that offers the dark palette (the fake reports paletteKind 'dark'): applied
+    h.state.writeDraft({ ...jr, status: "written" });
+    const r3 = fakeRenderer({}, { [jr.id]: "dark" });
+    await runDesigner({ drafts: [h.state.readDraft(jr.id)], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r3, now: NOW, feedback: FEEDBACK });
+    assert.equal(h.state.readDraft(jr.id).designNote, "4 slides · variant A · cover palette · variant A preferred by owner feedback 2026-10-11 · dark palette preferred by owner feedback 2026-10-11");
+    // …and on one that does not (paletteKind 'light' everywhere): recorded as not offered, brand palette kept
+    h.state.writeDraft({ ...jr, status: "written" });
+    const r4 = fakeRenderer({}, { [jr.id]: "light" });
+    await runDesigner({ drafts: [h.state.readDraft(jr.id)], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r4, now: NOW, feedback: FEEDBACK });
+    assert.equal(h.state.readDraft(jr.id).designNote, "4 slides · variant A · cover palette · variant A preferred by owner feedback 2026-10-11 · dark palette preferred by owner feedback 2026-10-11 — not offered by this template, brand palette kept");
+
+    // a preference whose fallback ALSO fails is a refusal like any other (the copy itself does not fit)
+    h.state.writeDraft({ ...jr, status: "written" });
+    const r5 = fakeRenderer({ [jr.id]: overflow }, {});
+    const res5 = await runDesigner({ drafts: [h.state.readDraft(jr.id)], brands, config, state: h.state, mediaRoot: h.mediaRoot, renderer: r5, now: NOW, feedback: FEEDBACK });
+    assert.deepEqual([res5.rendered, res5.refused, res5.toRework, res5.preferred], [0, 1, 1, 0]);
+    assert.equal(h.state.readDraft(jr.id).status, "rework");
+    assert.deepEqual(r5.calls.filter((c) => c.id).map((c) => c.prefer), [{ variant: "A", palette: "dark" }, null], "the preferred render and the plain fallback both failed → the fallback's error is the refusal");
+    assert.deepEqual(h.state.readDraft(jr.id).qaReasons, [`render: overflow — ${overflow.detail}`]);
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("preferFor / preferenceNote / designNote: image and carousel only, nothing without a tagged preference, the three note shapes", () => {
+  const prefs = designPreferences({ feedback: FEEDBACK, page: "job_rez" });
+  assert.deepEqual([prefs.preferVariant, prefs.preferPalette], ["A", "dark"]);
+  assert.deepEqual(PREFERENCE_FORMATS, ["image", "carousel"]);
+  assert.deepEqual(preferFor({ format: "image" }, prefs), { variant: "A", palette: "dark" });
+  assert.deepEqual(preferFor({ format: "carousel" }, prefs), { variant: "A", palette: "dark" });
+  assert.equal(preferFor({ format: "reel" }, prefs), null);
+  assert.equal(preferFor({ format: "image" }, designPreferences({ feedback: FEEDBACK, page: "rishtapatra" })), null);
+  assert.equal(preferFor({ format: "image" }, null), null);
+  const kd = designPreferences({ feedback: FEEDBACK, page: "kaatdo" });
+  const applied = { media: [{ variant: "B", palette: "dark console palette", paletteKind: "dark" }], variant: "B", applied: { variant: true, palette: null } };
+  assert.equal(preferenceNote(kd, applied), "variant B preferred by owner feedback 2026-10-10");
+  assert.equal(designNote(applied, { format: "image" }, { prefs: kd }), "variant B · dark console palette · variant B preferred by owner feedback 2026-10-10");
+  assert.equal(designNote(applied, { format: "image" }), "variant B · dark console palette", "no prefs → the Phase 1 note");
+  assert.equal(designNote(applied, { format: "image" }, { prefs: designPreferences({ feedback: FEEDBACK, page: "rishtapatra" }) }), "variant B · dark console palette");
+  // a renderer that reports no `applied` is judged by the media variants it returned
+  assert.equal(preferenceNote(kd, { media: [{ variant: "B" }], variant: "B" }), "variant B preferred by owner feedback 2026-10-10");
+  assert.equal(preferenceNote(kd, { media: [{ variant: "A" }], variant: "A" }), "variant B preferred by owner feedback 2026-10-10 — not applied by this template, measured tier kept");
+  assert.equal(preferenceNote(kd, { media: [{ variant: "A" }] }, new RenderError("overflow", "x")), "variant B preferred by owner feedback 2026-10-10 — did not fit (overflow), measured tier kept");
+  assert.equal(preferenceNote(prefs, { media: [{ variant: "C" }] }, new RenderError("overflow", "x")), "variant A preferred by owner feedback 2026-10-11 and dark palette preferred by owner feedback 2026-10-11 — did not fit (overflow), measured tier and brand palette kept");
+  assert.equal(preferenceNote(null, applied), "");
 });
