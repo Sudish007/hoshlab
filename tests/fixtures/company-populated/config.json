@@ -37,6 +37,8 @@
   "providers": {
     "anthropic": {
       "enabled": true,
+      "tier": "paid",
+      "minIntervalMs": 0,
       "secret": "ANTHROPIC_API_KEY",
       "endpoint": "https://api.anthropic.com/v1/messages",
       "apiVersion": "2023-06-01",
@@ -54,6 +56,11 @@
     },
     "gemini": {
       "enabled": true,
+      "tier": "free",
+      "tierSource": "https://ai.google.dev/gemini-api/docs/pricing",
+      "tierVerifiedAt": "2026-10-12",
+      "tierNote": "Free input and output tokens; no card required in Google AI Studio. On the free tier, Content used to improve our products.",
+      "minIntervalMs": 7000,
       "secret": "GEMINI_API_KEY",
       "endpoint": "https://generativelanguage.googleapis.com/v1beta",
       "models": {
@@ -65,11 +72,15 @@
         }
       },
       "priceSource": "https://ai.google.dev/gemini-api/docs/pricing",
-      "pricesVerifiedAt": "2026-10-10",
-      "priceNote": "Gemini 3.8 Flash, standard paid tier. The pricing page lists $0.75 / $3.75 per MTok through 2026-12-31 and $1.50 / $7.50 from 2027-01-01 (output price includes thinking tokens); output token limit 65,536 from the model page (includes thought tokens; thinkingLevel low is the lowest level this model accepts, default medium — ai.google.dev/gemini-api/docs/generate-content/thinking). Re-run check-models in January 2027."
+      "pricesVerifiedAt": "2026-10-12",
+      "modelSource": "https://ai.google.dev/gemini-api/docs/models",
+      "modelsVerifiedAt": "2026-10-12",
+      "priceNote": "Gemini 3.8 Flash is the current stable Flash model and has free input/output tokens on the free tier. Paid-equivalent rates are $0.75 / $3.75 per MTok through 2026-12-31 and $1.50 / $7.50 from 2027-01-01; output includes thinking tokens. The model page lists a 65,536 output-token limit; thinkingLevel low is its lowest accepted level. Re-run check-models in January 2027."
     },
     "openai": {
       "enabled": true,
+      "tier": "paid",
+      "minIntervalMs": 0,
       "secret": "OPENAI_API_KEY",
       "endpoint": "https://api.openai.com/v1/chat/completions",
       "models": {

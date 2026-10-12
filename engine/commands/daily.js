@@ -33,7 +33,7 @@ import { cpSync, existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { CompanyError, loadCompany } from "../../src/lib/company.js";
-import { monthUsedUsd } from "../lib/budget.js";
+import { monthHasFreeTierUsage, monthPaidEquivalentUsd, monthUsedUsd } from "../lib/budget.js";
 import { readEnv } from "../lib/env.js";
 import { commitAndPush, PushConflictError, repoRootFor, shouldCommit, writeGithubOutput } from "../lib/git.js";
 import { runId as makeRunId } from "../lib/ids.js";
@@ -210,6 +210,14 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   const flags = new Set();
   const addFlag = (f) => flags.add(f);
   const mediaCommits = [];
+  // One line per model-backed agent with the chain the roster resolves to (provider/model, tier, fallbacks), so a run
+  // log shows where every call would go — under MOCK_LLM=1 the mock adapter answers instead and the line says so.
+  for (const a of roster.agents) {
+    if (a.kind !== "llm" || a.enabled === false) continue;
+    const [primary, ...fallbacks] = router.resolve(a.name).chain;
+    const fb = fallbacks.length ? ` · fallback ${fallbacks.map((c) => c.provider).join(", ")}` : "";
+    log(`[router] ${a.name}: provider ${primary.provider} (${primary.tier} tier) model ${primary.model}${fb}${router.isMock ? " · MOCK_LLM=1: the mock adapter answers, no provider is called" : ""}`);
+  }
 
   // 2. budget (M5.4): the month's spend decides whether any model-backed step runs at all
   const limit = config.budget.monthlyUsd;
@@ -219,7 +227,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   if (limit > 0 && (used / limit) * 100 >= config.budget.warnAtPct) addFlag(FLAG_BUDGET_WARN);
 
   // per-agent records (RUN_AGENT_SPEC), in the design's order
-  const records = new Map(AGENT_ORDER.map((name) => [name, { name, ok: true, ms: 0, calls: 0, costUsd: 0, notes: [], skipped: null }]));
+  const records = new Map(AGENT_ORDER.map((name) => [name, { name, ok: true, ms: 0, calls: 0, costUsd: 0, paidEquivalentUsd: 0, notes: [], skipped: null }]));
   const rec = (name) => records.get(name);
   const note = (name, text) => rec(name).notes.push(text);
   const skip = (name, reason, skipped) => {
@@ -258,6 +266,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     const r = rec(name);
     r.calls = t.calls;
     r.costUsd = Math.round(t.costUsd * 1e6) / 1e6;
+    r.paidEquivalentUsd = Math.round(t.paidEquivalentUsd * 1e6) / 1e6;
   };
   const drafts = () => state.listDrafts().map((did) => state.readDraft(did));
   const ideasById = () => latestByKey(state.readJsonl("state/ideas.jsonl"), "id");
@@ -567,6 +576,8 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     if (indexRel) changedFiles.push(indexRel);
 
     used = monthUsedUsd(state, startedAt);
+    const hasFreeTierUsage = monthHasFreeTierUsage(state, startedAt);
+    const paidEquivalent = monthPaidEquivalentUsd(state, startedAt);
     exhausted = config.budget.hardStop === true && used >= limit;
     if (exhausted) addFlag(FLAG_BUDGET_EXHAUSTED);
     const warn = limit > 0 && (used / limit) * 100 >= config.budget.warnAtPct;
@@ -587,6 +598,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     const agents = AGENT_ORDER.map((name) => {
       const r = rec(name);
       const out = { name, ok: r.ok, ms: r.ms, calls: r.calls, costUsd: r.costUsd };
+      if (router.totalsFor(name).freeTierCalls > 0) out.paidEquivalentUsd = r.paidEquivalentUsd;
       if (r.notes.length) out.note = r.notes.join(" | ");
       if (r.skipped) out.skipped = r.skipped;
       return out;
@@ -607,6 +619,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
       errors,
       budgetUsedUsd: used,
     };
+    if (hasFreeTierUsage) run.budgetPaidEquivalentUsd = paidEquivalent;
     if (dryRun) run.dryRun = true;
     const unique = (arr) => [...new Set(arr)];
     run.changed = unique([...changedFiles, "state/status.json", state.monthLogPath("runs", startedAt)]).map((rel) => `company/${rel}`);
@@ -616,6 +629,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     status.queue = counts.queue;
     status.blocked = counts.blocked;
     status.budget = { month: istMonthKey(startedAt), usedUsd: used, limitUsd: limit, exhausted, warn };
+    if (hasFreeTierUsage) status.budget.paidEquivalentUsd = paidEquivalent;
     status.flags = finalFlags;
     changedFiles.push(state.writeJson("state/status.json", status, STATUS_SPEC));
     changedFiles.push(state.appendLog("runs", run, RUN_SPEC, startedAt));

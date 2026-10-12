@@ -188,12 +188,11 @@ test("roster invariants: eight agents, qa/publisher deterministic-or-llm as desi
   assert.equal(agents.publisher.kind, "deterministic");
   assert.equal(agents.qa.kind, "llm");
   assert.equal(agents.qa.temperature, 0.0);
-  assert.equal(agents.ceo.provider, "anthropic");
-  assert.equal(agents.writer.provider, "anthropic");
-  assert.equal(agents.hr.provider, "gemini");
-  assert.equal(agents.qa.provider, "gemini");
-  assert.equal(agents.strategist.provider, "openai");
-  assert.equal(agents.analyst.provider, "openai");
+  for (const name of ["ceo", "hr", "strategist", "writer", "qa", "analyst"]) {
+    assert.equal(agents[name].provider, "gemini", name);
+    assert.equal(agents[name].model, "gemini-3.8-flash", name);
+    assert.deepEqual(agents[name].fallback, ["anthropic", "openai"], name);
+  }
   for (const a of real.roster.agents) {
     assert.ok(Array.isArray(a.never) && a.never.length > 0, `${a.name} never[]`);
     if (a.kind === "llm") {
@@ -229,6 +228,14 @@ test("config.json: real model ids with priceSource + pricesVerifiedAt per provid
       assert.ok(m.inputPerMTok > 0 && m.outputPerMTok > 0 && m.maxOutputTokens > 0, `${name}/${id} prices`);
     }
   }
+  assert.equal(real.config.providers.gemini.tier, "free");
+  assert.equal(real.config.providers.gemini.minIntervalMs, 7000);
+  assert.equal(real.config.providers.gemini.modelSource, "https://ai.google.dev/gemini-api/docs/models");
+  assert.equal(real.config.providers.gemini.modelsVerifiedAt, "2026-10-12");
+  assert.equal(real.config.providers.anthropic.tier, "paid");
+  assert.equal(real.config.providers.openai.tier, "paid");
+  assert.equal(real.config.providers.anthropic.minIntervalMs, 0);
+  assert.equal(real.config.providers.openai.minIntervalMs, 0);
   assert.ok("claude-sonnet-5-5" in real.config.providers.anthropic.models);
   assert.ok("gemini-3.8-flash" in real.config.providers.gemini.models);
   assert.ok("gpt-6-luna" in real.config.providers.openai.models);

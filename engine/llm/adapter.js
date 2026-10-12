@@ -23,7 +23,9 @@
 //
 // Failures are LlmError instances: `retryable` follows classify() — network errors, 408, 429 and
 // 5xx may be retried / failed over by the router; 400, 401, 403 and 404 fall back immediately.
-// The message is scrubbed with the api key, so it may be logged and stored in usage.jsonl.
+// A 429 carries `retryAfterMs` when the server said how long to wait (the Retry-After header in seconds or as
+// an HTTP date, or Gemini's error.details[] RetryInfo.retryDelay such as "22s"); null otherwise. The router
+// honours it (polish-gemini). The message is scrubbed with the api key, so it may be logged and stored in usage.jsonl.
 import { scrub } from "../lib/log.js";
 
 export const DEFAULT_TIMEOUT_MS = 120000;
@@ -31,8 +33,8 @@ export const RETRYABLE_STATUSES = [408, 429];
 export const NON_RETRYABLE_STATUSES = [400, 401, 403, 404];
 
 export class LlmError extends Error {
-  // new LlmError({ provider, status, message, retryable?, secrets?, kind?, id? })
-  constructor({ provider, status = 0, message, retryable, secrets = [], kind, id = null }) {
+  // new LlmError({ provider, status, message, retryable?, secrets?, kind?, id?, retryAfterMs? })
+  constructor({ provider, status = 0, message, retryable, secrets = [], kind, id = null, retryAfterMs = null }) {
     super(scrub(message, secrets));
     this.name = "LlmError";
     this.provider = provider;
@@ -40,7 +42,29 @@ export class LlmError extends Error {
     this.kind = kind || (status === 0 ? "network" : "http");
     this.retryable = typeof retryable === "boolean" ? retryable : classify(status, this.kind === "network" ? this : null);
     this.id = id;
+    this.retryAfterMs = Number.isFinite(retryAfterMs) && retryAfterMs >= 0 ? Math.round(retryAfterMs) : null;
   }
+}
+
+// retryAfterMs({ headers, json, nowMs }) → the server's wait in ms, or null when it gave none.
+//   Retry-After: '22'              → 22000        (delay-seconds, RFC 9110 §10.2.3)
+//   Retry-After: <HTTP-date>       → date − now   (0 when the date has passed)
+//   Gemini: json.error.details[].retryDelay '22s' | '22.5s' | '0.5s' (google.rpc.RetryInfo) → 22000 | 22500 | 500
+// The header wins when both exist; a value that does not parse counts as absent.
+export function retryAfterMs({ headers, json, nowMs = Date.now() } = {}) {
+  const header = headers && typeof headers.get === "function" ? headers.get("retry-after") : null;
+  if (typeof header === "string" && header.trim() !== "") {
+    const s = header.trim();
+    if (/^\d+$/.test(s)) return Number(s) * 1000;
+    const at = Date.parse(s);
+    if (!Number.isNaN(at)) return Math.max(0, at - nowMs);
+  }
+  const details = json && json.error && Array.isArray(json.error.details) ? json.error.details : [];
+  for (const d of details) {
+    const delay = d && typeof d.retryDelay === "string" ? /^(\d+(?:\.\d+)?)s$/.exec(d.retryDelay.trim()) : null;
+    if (delay) return Math.round(Number(delay[1]) * 1000);
+  }
+  return null;
 }
 
 // classify(status, err) → true when the failure may be retried on the same provider:
@@ -145,7 +169,7 @@ export async function requestJson({ fetchImpl, url, init, timeoutMs = DEFAULT_TI
   }
   const ms = Date.now() - started;
   if (!res.ok) {
-    throw new LlmError({ provider, status: res.status, message: `${provider}: HTTP ${res.status} ${errorMessageFrom(json, text, res)}`, secrets, id: (json && json.id) || null });
+    throw new LlmError({ provider, status: res.status, message: `${provider}: HTTP ${res.status} ${errorMessageFrom(json, text, res)}`, secrets, id: (json && json.id) || null, retryAfterMs: retryAfterMs({ headers: res.headers, json }) });
   }
   if (json === null) {
     throw new LlmError({ provider, status: res.status, retryable: true, kind: "http", message: `${provider}: HTTP ${res.status} with a non-JSON body`, secrets });

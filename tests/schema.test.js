@@ -266,6 +266,16 @@ test("CONFIG_SPEC enforces the §12 rules: unique handles, ig.version, igUserId 
   const price = sampleConfig();
   delete price.providers.gemini.pricesVerifiedAt;
   assert.match(validate(price, CONFIG_SPEC).errors.join("\n"), /\$\.providers\.gemini\.pricesVerifiedAt: required/);
+
+  const tiers = sampleConfig();
+  tiers.providers.gemini.tier = "free";
+  tiers.providers.gemini.minIntervalMs = 7000;
+  assert.deepEqual(validate(tiers, CONFIG_SPEC), { ok: true, errors: [] });
+  tiers.providers.gemini.tier = "trial";
+  tiers.providers.gemini.minIntervalMs = -1;
+  const tierErrors = validate(tiers, CONFIG_SPEC).errors.join("\n");
+  assert.match(tierErrors, /\$\.providers\.gemini\.tier/);
+  assert.match(tierErrors, /\$\.providers\.gemini\.minIntervalMs/);
 });
 
 // --- ROSTER_SPEC (§4.2) ------------------------------------------------------------------
@@ -436,6 +446,8 @@ test("STATUS_SPEC: lastRuns ≤ 20 (M9), flag grammar, USAGE_SPEC mock flag, RUN
 
   const usage = { at: "2026-10-12T05:31:00+05:30", runId: run.id, agent: "writer", page: "rishtapatra", provider: "anthropic", model: "model-x", inputTokens: 5120, outputTokens: 880, costUsd: 0.0286, ms: 4210, ok: true, error: null, mock: false };
   ok(usage, USAGE_SPEC);
+  ok({ ...usage, provider: "gemini", costUsd: 0, paidEquivalentUsd: 0.0286 }, USAGE_SPEC);
+  bad({ ...usage, paidEquivalentUsd: -1 }, USAGE_SPEC, /\$\.paidEquivalentUsd/);
   const { mock, ...noMock } = usage;
   bad(noMock, USAGE_SPEC, /\$\.mock: required/);
   ok({ ...usage, ok: false, error: "429 rate limited", mock: true, costUsd: 0 }, USAGE_SPEC);

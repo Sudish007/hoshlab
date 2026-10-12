@@ -501,14 +501,27 @@ const MODEL_PRICE_SPEC = {
   "acceptsTemperature?": "bool",
   "reasoning?": `enum[${REASONING_LEVELS.join("|")}]`,
 };
+// tier: what the provider bills this project — 'paid' (default when absent) or 'free' (polish-gemini): a free-tier
+// usage line records costUsd 0 (billed) plus paidEquivalentUsd (the price table's figure), the budget gate sums
+// billed cost only. tierSource/tierVerifiedAt/tierNote follow the priceSource convention. minIntervalMs: the
+// router's floor between two consecutive calls to this provider in one process (free tiers allow few requests a
+// minute); 0 or absent = no pacing.
+export const PROVIDER_TIERS = ["free", "paid"];
 const PROVIDER_SPEC = {
   enabled: "bool",
+  "tier?": `enum[${PROVIDER_TIERS.join("|")}]`,
+  "tierSource?": "url",
+  "tierVerifiedAt?": "date",
+  "tierNote?": "str<=500",
+  "minIntervalMs?": "int[0..600000]",
   secret: SECRET_NAME,
   endpoint: "url",
   "apiVersion?": "str",
   models: { "*": MODEL_PRICE_SPEC },
   priceSource: "str",
   pricesVerifiedAt: "date",
+  "modelSource?": "url",
+  "modelsVerifiedAt?": "date",
   // Free text copied from the official page beside the price (scheduled changes, tiers); never parsed.
   "priceNote?": "str<=500",
 };
@@ -813,7 +826,9 @@ export const METRIC_SPEC = {
   "dryRun?": "bool",
 };
 
-// §4.13 usage/YYYY-MM.jsonl
+// §4.13 usage/YYYY-MM.jsonl. costUsd is what the provider bills; a line from a free-tier provider (config
+// providers.<p>.tier 'free') carries costUsd 0 AND paidEquivalentUsd, the same tokens at the price table's paid
+// rates, so the paid figure is never lost (polish-gemini). Lines without paidEquivalentUsd are paid-tier lines.
 export const USAGE_SPEC = {
   at: "iso-datetime",
   runId: "id",
@@ -824,6 +839,7 @@ export const USAGE_SPEC = {
   inputTokens: "int[0..100000000]",
   outputTokens: "int[0..100000000]",
   costUsd: "num[0..100000]",
+  "paidEquivalentUsd?": "num[0..100000]",
   ms: "int[0..86400000]",
   ok: "bool",
   "error?": "str",
@@ -831,7 +847,7 @@ export const USAGE_SPEC = {
 };
 
 // §4.14 runs/YYYY-MM.jsonl
-export const RUN_AGENT_SPEC = { name: AGENT, ok: "bool", ms: "int[0..86400000]", calls: "int[0..10000]", costUsd: "num[0..100000]", "note?": "str", "skipped?": "str" };
+export const RUN_AGENT_SPEC = { name: AGENT, ok: "bool", ms: "int[0..86400000]", calls: "int[0..10000]", costUsd: "num[0..100000]", "paidEquivalentUsd?": "num[0..100000]", "note?": "str", "skipped?": "str" };
 // Publisher detail on a publisher-hourly run record (design §3.2, FEAT-107): one decision per queued draft
 // (reason from publisher.decide() or the attempt stage), the owner edits ignored for a stale baseRevision,
 // the drafts stamped expired (M5.1) and one outcome line per page.
@@ -853,7 +869,10 @@ export const RUN_SPEC = {
   agents: [RUN_AGENT_SPEC],
   changed: ["str"],
   errors: ["str"],
+  // budgetUsedUsd: the month's billed spend after this run; budgetPaidEquivalentUsd: the same month at paid rates
+  // (billed lines as billed, free-tier lines at their paidEquivalentUsd) — absent on records written before it existed.
   budgetUsedUsd: "num[0..100000]",
+  "budgetPaidEquivalentUsd?": "num[0..100000]",
   "dryRun?": "bool",
   "publisher?": PUBLISH_RUN_SPEC,
   "tokens?": { "*": TOKEN_RUN_PAGE_SPEC },
@@ -868,7 +887,7 @@ export const STATUS_SPEC = {
   lastRuns: [RUN_SPEC, { max: 20 }],
   queue: { "*": "int[0..10000]" },
   blocked: { "*": "int[0..10000]" },
-  budget: { month: MONTH_KEY, usedUsd: "num[0..100000]", limitUsd: "num[1..1000]", exhausted: "bool", "warn?": "bool" },
+  budget: { month: MONTH_KEY, usedUsd: "num[0..100000]", "paidEquivalentUsd?": "num[0..100000]", limitUsd: "num[1..1000]", exhausted: "bool", "warn?": "bool" },
   pages: {
     "*": {
       mode: MODE,

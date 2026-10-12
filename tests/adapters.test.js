@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { FETCH_ATTEMPTS, fetchIsGuarded, tmpDir } from "./helpers.js";
-import { LlmError, classify, extractJsonBlock, parseJson, requestJson, withTimeout, DEFAULT_TIMEOUT_MS } from "../engine/llm/adapter.js";
+import { LlmError, classify, extractJsonBlock, parseJson, requestJson, retryAfterMs, withTimeout, DEFAULT_TIMEOUT_MS } from "../engine/llm/adapter.js";
 import * as anthropic from "../engine/llm/anthropic.js";
 import * as gemini from "../engine/llm/gemini.js";
 import * as openai from "../engine/llm/openai.js";
@@ -179,10 +179,18 @@ test("non-2xx → LlmError with the design's retryable classification; the api k
     }
   }
   // Gemini-style error envelope ({ error: { code, message, status } }) and a plain-text body
-  const g = fakeFetch([{ status: 429, body: { error: { code: 429, message: "Resource exhausted", status: "RESOURCE_EXHAUSTED" } } }]);
-  await assert.rejects(gemini.complete({ ...common, fetchImpl: g, model: "gemini-3.8-flash", endpoint: "https://generativelanguage.googleapis.com/v1beta" }), /gemini: HTTP 429 RESOURCE_EXHAUSTED: Resource exhausted/);
+  const g = fakeFetch([{ status: 429, headers: { "retry-after": "17" }, body: { error: { code: 429, message: "Resource exhausted", status: "RESOURCE_EXHAUSTED" } } }]);
+  await assert.rejects(gemini.complete({ ...common, fetchImpl: g, model: "gemini-3.8-flash", endpoint: "https://generativelanguage.googleapis.com/v1beta" }), (e) => e instanceof LlmError && /gemini: HTTP 429 RESOURCE_EXHAUSTED: Resource exhausted/.test(e.message) && e.retryAfterMs === 17000);
   const t = fakeFetch([{ status: 502, body: "<html>Bad gateway</html>" }]);
   await assert.rejects(openai.complete({ ...common, fetchImpl: t, model: "gpt-6-luna", endpoint: "https://api.openai.com/v1/chat/completions" }), (e) => e instanceof LlmError && e.status === 502 && e.retryable === true && /Bad gateway/.test(e.message));
+});
+
+test("retryAfterMs parses Retry-After seconds/date first, then Gemini google.rpc.RetryInfo retryDelay", () => {
+  assert.equal(retryAfterMs({ headers: new Headers({ "retry-after": "12" }) }), 12000);
+  assert.equal(retryAfterMs({ headers: new Headers({ "retry-after": "Wed, 21 Oct 2026 07:28:00 GMT" }), nowMs: Date.parse("Wed, 21 Oct 2026 07:27:30 GMT") }), 30000);
+  assert.equal(retryAfterMs({ json: { error: { details: [{ "@type": "type.googleapis.com/google.rpc.RetryInfo", retryDelay: "22.5s" }] } } }), 22500);
+  assert.equal(retryAfterMs({ headers: new Headers({ "retry-after": "bad" }), json: { error: { details: [{ retryDelay: "0.5s" }] } } }), 500);
+  assert.equal(retryAfterMs({}), null);
 });
 
 test("network failure and timeout → LlmError status 0, kind network, retryable", async () => {

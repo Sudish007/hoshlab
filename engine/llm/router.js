@@ -1,19 +1,28 @@
-// LLM router (design.md §5 envelope, §7 routing and budget; review M5.4/M7/M9; plan D7/D9/D10).
+// LLM router (design.md §5 envelope, §7 routing and budget; review M5.4/M7/M9; plan D7/D9/D10; polish-gemini).
 //
-//   const router = createRouter({ config, roster, state, env, fetchImpl, sleep, now, runId, charters });
+//   const router = createRouter({ config, roster, state, env, fetchImpl, sleep, now, nowMs, runId, charters });
 //   const result = await router.complete('writer', { task, spec: OUTPUT_SPEC, context: { brand, page, memoExcerpt, feedbackDigest, extra }, validate });
-//   // result: { json, text, usage, costUsd, provider, model, ms, mock, calls, repaired, raw, estimate }
+//   // result: { json, text, usage, costUsd, paidEquivalentUsd, provider, model, ms, mock, calls, repaired, raw, estimate }
 //   // validate(json) → errors[] is an optional semantic check (fact ids offered, sums ≤ 100 …) that
 //   // runs after assertShape(spec) and feeds the same single repair call.
 //   router.flags      Set of status flags raised during this run (budget_warn, budget_exhausted, provider_down:<name>)
-//   router.totals     Map agent → { calls, ok, failed, costUsd, ms, inputTokens, outputTokens }
+//   router.totals     Map agent → { calls, ok, failed, costUsd, paidEquivalentUsd, ms, inputTokens, outputTokens }
 //
 // Per call: resolve provider/model/temperature/fallback from the roster → budget gate before EVERY
-// attempt (BudgetExhaustedError, no call) → try the provider then each fallback: retryable failures
-// retry twice on the same provider with backoff 2 s then 8 s; 400/401/403/404 fall back immediately
-// (401 also flags provider_down:<name>); a provider whose secret is absent or which is not enabled is
-// skipped without a call. Every attempt, success or failure, is one usage line. The JSON is validated
-// with assertShape(spec); on failure exactly one repair call is made, then AgentOutputError.
+// attempt (BudgetExhaustedError, no call) → try the provider then each fallback. Failures on one provider:
+//   HTTP 429 (rate limit) is retried up to MAX_RATE_LIMIT_RETRIES times on the same provider, waiting the server's
+//   Retry-After / Gemini retryDelay hint or the exponential RATE_LIMIT_BACKOFF_MS step, whichever is longer, never
+//   more than RATE_LIMIT_CAP_MS — a free tier allows few requests a minute, so the wait is worth more than a fallover;
+//   other retryable failures (network, 408, 5xx) retry twice on the same provider with backoff 2 s then 8 s;
+//   400/401/403/404 fall back immediately (401 also flags provider_down:<name>).
+// Only then does the next provider get its turn; when none answers the call ends with AllProvidersFailedError.
+// A provider whose secret is absent or which is not enabled is skipped without a call. Pacing: with
+// config.providers.<p>.minIntervalMs the router waits so that two consecutive calls to that provider (any agent,
+// this process) are at least that far apart, measured from the end of the previous call.
+// Every attempt, success or failure, is one usage line: costUsd is what the provider bills — 0 on a free-tier
+// provider (config tier 'free'), whose lines also carry paidEquivalentUsd (the price table's figure) so nothing
+// is lost; the budget gate sums billed cost only, and a free-tier call adds 0 to its projection.
+// The JSON is validated with assertShape(spec); on failure exactly one repair call is made, then AgentOutputError.
 // MOCK_LLM=1 routes every agent to mock.js (usage lines mock:true, costUsd 0) — and nothing else does.
 import { SchemaError, assertShape } from "../lib/schema.js";
 import { readEnv } from "../lib/env.js";
@@ -29,9 +38,27 @@ import * as openai from "./openai.js";
 import * as mock from "./mock.js";
 
 export const ADAPTERS = { anthropic, gemini, openai };
+// Network / 408 / 5xx: two retries on the same provider, then the next provider.
 export const BACKOFF_MS = [2000, 8000];
 export const MAX_ATTEMPTS_PER_PROVIDER = BACKOFF_MS.length + 1;
+// HTTP 429: three retries on the same provider; wait max(server hint, step), capped (polish-gemini).
+export const RATE_LIMIT_BACKOFF_MS = [10000, 20000, 40000];
+export const MAX_RATE_LIMIT_RETRIES = RATE_LIMIT_BACKOFF_MS.length;
+export const RATE_LIMIT_CAP_MS = 60000;
 export const REPAIR_SENTENCE = (errors) => `Your previous output failed validation: ${errors.join("; ")}. Return only the corrected JSON.`;
+
+// rateLimitDelayMs(hintMs, retry) → how long to wait before 429 retry number `retry` (0-based): the server's
+// Retry-After / retryDelay when it is longer than the exponential step, never more than RATE_LIMIT_CAP_MS.
+export function rateLimitDelayMs(hintMs, retry) {
+  const step = RATE_LIMIT_BACKOFF_MS[Math.min(retry, RATE_LIMIT_BACKOFF_MS.length - 1)];
+  const hint = Number.isFinite(hintMs) && hintMs > 0 ? hintMs : 0;
+  return Math.min(RATE_LIMIT_CAP_MS, Math.max(step, hint));
+}
+
+// providerTier(providerConfig) → 'free' | 'paid' ('paid' when the config says nothing).
+export function providerTier(providerConfig) {
+  return providerConfig && providerConfig.tier === "free" ? "free" : "paid";
+}
 
 export class BudgetExhaustedError extends Error {
   constructor(agent, gate) {
@@ -75,7 +102,7 @@ function firstModel(providerConfig) {
 
 function candidate(config, providerName, model) {
   const p = config.providers[providerName];
-  if (!p) return { provider: providerName, enabled: false, model, price: null };
+  if (!p) return { provider: providerName, enabled: false, model, price: null, tier: "paid", minIntervalMs: 0 };
   const id = model || firstModel(p);
   const price = id && p.models ? p.models[id] || null : null;
   return {
@@ -83,6 +110,8 @@ function candidate(config, providerName, model) {
     enabled: p.enabled === true,
     model: id,
     price,
+    tier: providerTier(p),
+    minIntervalMs: Number.isFinite(p.minIntervalMs) && p.minIntervalMs > 0 ? p.minIntervalMs : 0,
     secret: p.secret,
     endpoint: p.endpoint,
     apiVersion: p.apiVersion,
@@ -94,7 +123,7 @@ function candidate(config, providerName, model) {
 // resolveAgent(roster, config, name) → { agent, chain: [candidate…], temperature, maxOutputTokens }
 // chain = the agent's provider (its roster model) followed by each fallback provider (that provider's
 // first configured model). Roster fallbacks name providers only (ROSTER_SPEC), so the model is the
-// provider's own table entry.
+// provider's own table entry. Each candidate carries the provider's tier ('free' | 'paid') and minIntervalMs.
 export function resolveAgent(roster, config, name) {
   const agent = (roster.agents || []).find((a) => a.name === name);
   if (!agent) throw new TypeError(`router: unknown agent ${name}`);
@@ -142,7 +171,10 @@ function clockOf(now) {
 }
 
 const defaultSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const round6 = (n) => Math.round(n * 1e6) / 1e6;
 
+// `now` is the business clock (IST month of the usage line, the envelope's today); `nowMs` is the elapsed-time
+// clock the pacing floor uses (a daily run pins `now` to its start, so pacing cannot read it). Tests inject both.
 export function createRouter({
   config,
   roster,
@@ -151,6 +183,7 @@ export function createRouter({
   fetchImpl = globalThis.fetch,
   sleep = defaultSleep,
   now = () => new Date(),
+  nowMs = () => Date.now(),
   runId,
   charters = {},
   processEnv = process.env,
@@ -169,9 +202,11 @@ export function createRouter({
   const mockEnabled = mockAdapter.isMockEnabled(processEnv);
   const secrets = () => (typeof environment.secrets === "function" ? environment.secrets() : []);
   const clean = (text) => scrub(text, secrets());
+  // provider → nowMs() when its last call (success or failure) came back; the pacing floor counts from here
+  const lastCallEndMs = new Map();
 
   function totalsFor(agent) {
-    if (!totals.has(agent)) totals.set(agent, { calls: 0, ok: 0, failed: 0, costUsd: 0, ms: 0, inputTokens: 0, outputTokens: 0 });
+    if (!totals.has(agent)) totals.set(agent, { calls: 0, ok: 0, failed: 0, costUsd: 0, paidEquivalentUsd: 0, freeTierCalls: 0, ms: 0, inputTokens: 0, outputTokens: 0 });
     return totals.get(agent);
   }
 
@@ -200,10 +235,12 @@ export function createRouter({
   }
 
   // Budget gate — before EVERY attempt. Throws BudgetExhaustedError (flag budget_exhausted) when
-  // hardStop is on and the month is at/over the limit; flags budget_warn from warnAtPct.
-  function gate(agentName, price, tokensEstimate, maxOutputTokens) {
+  // hardStop is on and the month is at/over the limit; flags budget_warn from warnAtPct. The estimate is
+  // the call's worst case at the provider's billed rate: 0 on a free tier (nothing is billed), the price
+  // table's figure otherwise — a spent month still stops a free-tier call (used ≥ limit).
+  function gate(agentName, c, tokensEstimate, maxOutputTokens) {
     const used = monthUsedUsd(state, clock());
-    const estimate = price ? estimateCostUsd(price, tokensEstimate, maxOutputTokens) : 0;
+    const estimate = c.price && c.tier !== "free" ? estimateCostUsd(c.price, tokensEstimate, maxOutputTokens) : 0;
     const result = canSpend(config, used, estimate);
     if (result.warn) flags.add("budget_warn");
     if (!result.ok) {
@@ -213,11 +250,28 @@ export function createRouter({
     return result;
   }
 
+  // Pacing floor (config providers.<p>.minIntervalMs): wait until the previous call to this provider ended at
+  // least that long ago. Returns the ms waited (0 when no wait was needed or no floor is set).
+  async function pace(c) {
+    if (!(c.minIntervalMs > 0)) return 0;
+    const last = lastCallEndMs.get(c.provider);
+    if (last === undefined) return 0;
+    const wait = last + c.minIntervalMs - nowMs();
+    if (wait <= 0) return 0;
+    await sleep(wait);
+    return wait;
+  }
+
+  // One usage line + the agent's totals. Returns { costUsd, paidEquivalentUsd } of the attempt: on a free-tier
+  // provider the bill is 0 and the price table's figure goes to paidEquivalentUsd (0 for a failed attempt, which
+  // carries no tokens); on a paid tier both are the same figure; mock answers cost nothing either way.
   function record(agentName, page, c, res, { ok, error, ms, mock: isMock }) {
     const inputTokens = res && res.usage ? res.usage.inputTokens : 0;
     const outputTokens = res && res.usage ? res.usage.outputTokens : 0;
     // Failed attempts carry no token counts (no response body to bill); mock answers cost nothing.
-    const cost = ok && !isMock && c.price ? costUsd(c.price, inputTokens, outputTokens) : 0;
+    const atPaidRates = ok && !isMock && c.price ? costUsd(c.price, inputTokens, outputTokens) : 0;
+    const free = !isMock && c.tier === "free";
+    const cost = free ? 0 : atPaidRates;
     const { record: line } = logAttempt(state, {
       runId: id,
       agent: agentName,
@@ -227,6 +281,7 @@ export function createRouter({
       inputTokens,
       outputTokens,
       costUsd: cost,
+      paidEquivalentUsd: free ? atPaidRates : undefined,
       ms,
       ok,
       error,
@@ -235,20 +290,28 @@ export function createRouter({
     const t = totalsFor(agentName);
     t.calls += 1;
     t[ok ? "ok" : "failed"] += 1;
-    t.costUsd = Math.round((t.costUsd + cost) * 1e6) / 1e6;
+    t.costUsd = round6(t.costUsd + cost);
+    t.paidEquivalentUsd = round6(t.paidEquivalentUsd + (isMock ? 0 : atPaidRates));
+    if (free) t.freeTierCalls += 1;
     t.ms += line.ms;
     t.inputTokens += line.inputTokens;
     t.outputTokens += line.outputTokens;
-    return cost;
+    return { costUsd: cost, paidEquivalentUsd: isMock ? 0 : atPaidRates };
   }
 
-  // One provider, up to MAX_ATTEMPTS_PER_PROVIDER attempts. Returns { res, costUsd, attempts } or
-  // null after pushing the final reason onto `failures`.
+  // One provider: a 429 is retried up to MAX_RATE_LIMIT_RETRIES times (server hint / RATE_LIMIT_BACKOFF_MS, capped),
+  // any other retryable failure up to BACKOFF_MS.length times; 400/401/403/404 end the provider at once.
+  // Returns { res, costUsd, paidEquivalentUsd, attempts, budget } or null after pushing the final reason onto `failures`.
   async function attemptProvider(agentName, c, { system, user, spec, tokensEstimate, maxOutputTokens, temperature, page }, failures, counter) {
     const isMock = c.provider === "mock";
-    for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_PROVIDER; attempt++) {
-      const budget = gate(agentName, c.price, tokensEstimate, maxOutputTokens);
+    let attempts = 0;
+    let retries = 0;
+    let rateLimitRetries = 0;
+    for (;;) {
+      const budget = gate(agentName, c, tokensEstimate, maxOutputTokens);
+      if (!isMock) await pace(c);
       counter.calls += 1;
+      attempts += 1;
       const started = Date.now();
       let res;
       try {
@@ -271,23 +334,31 @@ export function createRouter({
             });
       } catch (err) {
         const ms = Date.now() - started;
+        if (!isMock) lastCallEndMs.set(c.provider, nowMs());
         if (!(err instanceof LlmError)) {
           record(agentName, page, c, null, { ok: false, error: clean(`${err.name}: ${err.message}`), ms, mock: isMock });
           throw err; // programming errors and missing mock fixtures surface unchanged
         }
         record(agentName, page, c, null, { ok: false, error: clean(err.message), ms, mock: isMock });
         if (err.status === 401) flags.add(`provider_down:${c.provider}`);
-        if (err.retryable && attempt < MAX_ATTEMPTS_PER_PROVIDER - 1) {
-          await sleep(BACKOFF_MS[attempt]);
+        if (err.status === 429) {
+          if (rateLimitRetries < MAX_RATE_LIMIT_RETRIES) {
+            await sleep(rateLimitDelayMs(err.retryAfterMs, rateLimitRetries));
+            rateLimitRetries += 1;
+            continue;
+          }
+        } else if (err.retryable && retries < BACKOFF_MS.length) {
+          await sleep(BACKOFF_MS[retries]);
+          retries += 1;
           continue;
         }
-        failures.push({ provider: c.provider, model: c.model, status: err.status, retryable: err.retryable, reason: err.message, attempts: attempt + 1 });
+        failures.push({ provider: c.provider, model: c.model, status: err.status, retryable: err.retryable, reason: err.message, attempts });
         return null;
       }
+      if (!isMock) lastCallEndMs.set(c.provider, nowMs());
       const cost = record(agentName, page, c, res, { ok: true, ms: res.ms, mock: isMock });
-      return { res, costUsd: cost, attempts: attempt + 1, budget };
+      return { res, costUsd: cost.costUsd, paidEquivalentUsd: cost.paidEquivalentUsd, attempts, budget };
     }
-    return null;
   }
 
   // complete(agentName, { task, spec, context, validate }) → result (see header). `validate(json)`
@@ -300,7 +371,7 @@ export function createRouter({
     const counter = { calls: 0 };
     const failures = [];
 
-    const chain = mockEnabled ? [{ provider: "mock", model: "mock", price: resolved.chain[0].price, enabled: true, acceptsTemperature: true }] : resolved.chain;
+    const chain = mockEnabled ? [{ provider: "mock", model: "mock", price: resolved.chain[0].price, enabled: true, acceptsTemperature: true, tier: "paid", minIntervalMs: 0 }] : resolved.chain;
     let outcome = null;
     let used = null;
     for (const c of chain) {
@@ -326,6 +397,7 @@ export function createRouter({
 
     let { res } = outcome;
     let cost = outcome.costUsd;
+    let paidEquivalent = outcome.paidEquivalentUsd;
     let json = res.json !== undefined && res.json !== null ? res.json : parseJson(res.text);
     let errors = validateOutput(json, spec, validate);
     let repaired = false;
@@ -336,7 +408,8 @@ export function createRouter({
       if (!repair) throw new AllProvidersFailedError(agentName, failures);
       const repairJson = repair.res.json !== undefined && repair.res.json !== null ? repair.res.json : parseJson(repair.res.text);
       const repairErrors = validateOutput(repairJson, spec, validate);
-      cost = Math.round((cost + repair.costUsd) * 1e6) / 1e6;
+      cost = round6(cost + repair.costUsd);
+      paidEquivalent = round6(paidEquivalent + repair.paidEquivalentUsd);
       if (repairErrors.length) {
         throw new AgentOutputError({ agent: agentName, provider: used.provider, model: used.model, errors, repairErrors, text: repair.res.text, calls: counter.calls });
       }
@@ -349,6 +422,7 @@ export function createRouter({
       text: res.text,
       usage: res.usage,
       costUsd: cost,
+      paidEquivalentUsd: paidEquivalent,
       provider: res.provider,
       model: res.model,
       ms: res.ms,

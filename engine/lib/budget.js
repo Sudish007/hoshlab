@@ -24,10 +24,37 @@ export function estimateCostUsd(price, inputTokensGuess, maxOutputTokens) {
   return costUsd(price, inputTokensGuess, maxOutputTokens);
 }
 
-// Σ costUsd of the usage partition for the IST month of `date` (default: the state clock).
+// Σ costUsd (what the providers bill) of the usage partition for the IST month of `date` (default: the state
+// clock). Free-tier lines carry costUsd 0, so they never move the budget gate (polish-gemini).
 export function monthUsedUsd(state, date = state.now()) {
   const rows = state.readJsonl(state.monthLogPath("usage", date));
-  return round6(rows.reduce((sum, r) => sum + (r && Number.isFinite(r.costUsd) ? r.costUsd : 0), 0));
+  return round6(rows.reduce((sum, r) => sum + billedUsd(r), 0));
+}
+
+// What one usage line bills: its costUsd (0 on a free-tier line).
+export function billedUsd(row) {
+  return row && Number.isFinite(row.costUsd) ? row.costUsd : 0;
+}
+
+// What one usage line would cost at paid rates: paidEquivalentUsd on a free-tier line, costUsd otherwise.
+export function paidEquivalentUsd(row) {
+  if (!row) return 0;
+  if (Number.isFinite(row.paidEquivalentUsd)) return row.paidEquivalentUsd;
+  return billedUsd(row);
+}
+
+// True when the month contains at least one line written under a free tier. Presence of paidEquivalentUsd — even
+// when both amounts are zero — is the durable marker; provider config can change later without rewriting history.
+export function monthHasFreeTierUsage(state, date = state.now()) {
+  const rows = state.readJsonl(state.monthLogPath("usage", date));
+  return rows.some((r) => r && Number.isFinite(r.paidEquivalentUsd));
+}
+
+// Σ paidEquivalentUsd(row) of the same partition: the month at paid rates, for the "≈ USD x at paid rates" labels.
+// Equals monthUsedUsd while no free-tier line exists.
+export function monthPaidEquivalentUsd(state, date = state.now()) {
+  const rows = state.readJsonl(state.monthLogPath("usage", date));
+  return round6(rows.reduce((sum, r) => sum + paidEquivalentUsd(r), 0));
 }
 
 // canSpend(config, used, estimate) → { ok, reason, warn, used, estimate, projected, pct, limit }
