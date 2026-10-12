@@ -8,6 +8,10 @@
 # `node engine/index.js retention --commit` then deletes reel MP4s published more than 90 days ago from the media
 # branch (posters stay). Shares the `hoshlab-state` concurrency group with engine-daily.yml and publisher-hourly.yml;
 # the deploy job rebuilds the site only when a token state, an expiry, a flag or the media branch changed.
+# R2-04: a refresh that ends in refresh_failed / store_failed exits 1 AFTER committing tokens.json + status.json (the
+# token_expiring / token_invalid flag) — the red run is the owner's signal and stays — so the retention step and the
+# deploy job carry `!cancelled()` conditions: retention still runs that week and the committed flag reaches the Home
+# page and the admin banner the same morning instead of waiting for the next engine-daily deploy.
 # Token refresh: Mondays 07:30 IST (cron 0 2 * * 1) · the tokens are refreshed when under 20 days remain
 # Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
 name: Hoshlab token refresh (weekly)
@@ -83,6 +87,8 @@ jobs:
           node engine/index.js "${args[@]}"
       - id: retention
         name: Media retention (reel MP4s published more than 90 days ago)
+        # R2-04: runs even when the refresh step failed (its state is committed; only a cancelled run skips this)
+        if: ${{ !cancelled() }}
         env:
           CI: "true"
           INPUT_DRY_RUN: ${{ inputs.dry_run }}
@@ -92,10 +98,11 @@ jobs:
           echo "node engine/index.js ${args[*]}"
           node engine/index.js "${args[@]}"
 
-  # N17: identical to engine-daily.yml's deploy job — the caller holds the `pages` group.
+  # N17: identical to engine-daily.yml's deploy job — the caller holds the `pages` group — except for the R2-04
+  # `!cancelled()` guard: a failed refresh step still committed its status change, and that change must deploy.
   deploy:
     needs: refresh
-    if: needs.refresh.outputs.changed == 'true'
+    if: ${{ !cancelled() && needs.refresh.outputs.changed == 'true' }}
     permissions:
       contents: read
       pages: write

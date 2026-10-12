@@ -19,7 +19,8 @@ function assertDeployJob(text, stateJob, file) {
   const deploy = text.slice(text.indexOf("\n  deploy:"));
   assert.ok(deploy.length > 10, `${file}: has a deploy job`);
   assert.match(deploy, new RegExp(`needs: ${stateJob}\\b`), `${file}: deploy needs ${stateJob}`);
-  assert.match(deploy, new RegExp(`if: needs\\.${stateJob}\\.outputs\\.changed == 'true'`), `${file}: deploy only when the engine reported changed=true`);
+  // token-refresh.yml wraps the condition in `!cancelled() && …` (R2-04: a failed refresh step has still committed its status change)
+  assert.match(deploy, new RegExp(`if: (?:\\$\\{\\{ !cancelled\\(\\) && )?needs\\.${stateJob}\\.outputs\\.changed == 'true'`), `${file}: deploy only when the engine reported changed=true`);
   assert.match(deploy, /uses: \.\/\.github\/workflows\/pages\.yml/, `${file}: deploy calls pages.yml (workflow_call)`);
   assert.match(deploy, /permissions:\s*\n\s+contents: read\s*\n\s+pages: write\s*\n\s+id-token: write/, `${file}: caller grants pages.yml its permissions`);
   assert.match(deploy, /concurrency:\s*\n\s+group: pages\s*\n\s+cancel-in-progress: false/, `${file}: caller-side concurrency pages (N17)`);
@@ -158,7 +159,7 @@ test("token-refresh.yml (design §3.4, FEAT-202, P2-09/P2-10): cron 0 2 * * 1 + 
   assert.match(text, /^\s+CI: "true"$/m, "CI=true makes the engine commit + push itself");
   assert.match(text, /^\s+- id: refresh\s*\n\s+name: .+\n\s+env:/m, "the refresh step carries id refresh");
   assert.match(text, /args=\(refresh-tokens --commit\)/, "refresh-tokens --commit");
-  assert.match(text, /^\s+- id: retention\s*\n\s+name: .+\n\s+env:/m, "the retention step carries id retention");
+  assert.match(text, /^\s+- id: retention\s*\n\s+name: .+\n(?:\s+#.*\n)?\s+if: \$\{\{ !cancelled\(\) \}\}\n\s+env:/m, "the retention step carries id retention and the R2-04 condition");
   assert.match(text, /args=\(retention --commit\)/, "retention --commit after the refresh");
   assert.ok(text.indexOf("args=(refresh-tokens --commit)") < text.indexOf("args=(retention --commit)"), "refresh first, retention second");
   assert.equal((text.match(/args\+=\(--dry-run\)/g) || []).length, 2, "dry_run → --dry-run on both steps");
@@ -168,7 +169,19 @@ test("token-refresh.yml (design §3.4, FEAT-202, P2-09/P2-10): cron 0 2 * * 1 + 
   assert.ok(!/MEDIA_DIR|BUILD_NOW|PUBLIC_DIR/.test(text), "never sets the test-only knobs in CI");
   assert.match(text, /^# Token refresh: Mondays 07:30 IST \(cron 0 2 \* \* 1\)/m, "the weekly cadence is stated in the comment, beside the shared cadence line");
   assertDeployJob(text, "refresh", "token-refresh.yml");
+
+  // R2-04: refresh-tokens exits 1 on refresh_failed / store_failed AFTER committing tokens.json + status.json (token_expiring /
+  // token_invalid) and writing changed=true — the retention step and the deploy job must not be skipped by that red step.
+  const retentionStep = text.slice(text.indexOf("- id: retention"), text.indexOf("args=(retention --commit)"));
+  assert.match(retentionStep, /^\s+if: \$\{\{ !cancelled\(\) \}\}$/m, "the retention step runs unless the run was cancelled (a failed refresh step does not skip it)");
+  const refreshStep = text.slice(text.indexOf("- id: refresh"), text.indexOf("- id: retention"));
+  assert.ok(!/^\s+if:/m.test(refreshStep), "the refresh step itself has no condition");
+  const deploy = text.slice(text.indexOf("\n  deploy:"));
+  assert.match(deploy, /^\s+if: \$\{\{ !cancelled\(\) && needs\.refresh\.outputs\.changed == 'true' \}\}$/m, "deploy when the refresh job reported changed=true, even if its refresh step failed (!cancelled() drops the implicit success())");
+  assert.match(text, /^# R2-04: /m, "the header comment explains the failure path");
+
   const engine = read("engine-daily.yml");
-  const deployOf = (t) => t.slice(t.indexOf("\n  deploy:")).replace(/needs: \w+|needs\.\w+\./g, "").replace(/^\s*#.*$/gm, "").trim();
-  assert.equal(deployOf(text), deployOf(engine), "the deploy job is identical to engine-daily's apart from the job it needs");
+  // apart from the job it needs and the R2-04 `!cancelled() &&` guard, the deploy job is byte-identical to engine-daily's
+  const deployOf = (t) => t.slice(t.indexOf("\n  deploy:")).replace(/needs: \w+|needs\.\w+\./g, "").replace(/if: \$\{\{ !cancelled\(\) && (.*?) \}\}/, "if: $1").replace(/^\s*#.*$/gm, "").trim();
+  assert.equal(deployOf(text), deployOf(engine), "the deploy job is identical to engine-daily's apart from the job it needs and the !cancelled() guard");
 });
