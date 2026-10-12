@@ -4,7 +4,7 @@
 // "Last run" lines come from the run log, never invented.
 import { layout } from "./layout.js";
 import { escapeHtml } from "../lib/xml.js";
-import { providerLabel } from "../lib/labels.js";
+import { providerLabel, providerTierLabel, spendLabel } from "../lib/labels.js";
 import { formatIst, monthName } from "../lib/dates.js";
 import { chip, sectionHead, numberWord } from "./partials.js";
 import { lastRunOf } from "../lib/view.js";
@@ -98,6 +98,13 @@ export function agentCard(view, agent) {
   const foot = [];
   if (agent.kind === "llm") {
     foot.push(chip(`${providerLabel(agent.provider)} · ${agent.model}`));
+    const provider = config.providers[agent.provider] || {};
+    const tier = provider.tier || "paid";
+    const spend = (view.usage && view.usage.byAgent && view.usage.byAgent[agent.name]) || { billedUsd: 0, paidEquivalentUsd: 0, hasFreeTierUsage: false };
+    const money = spend.hasFreeTierUsage
+      ? spendLabel(spend)
+      : `${providerTierLabel(tier)} · ${spendLabel({ billedUsd: spend.billedUsd })}`;
+    foot.push(chip(`${money} this month`, tier === "free" ? "ok" : ""));
     if (agent.temperature !== undefined && acceptsTemperature(agent, config)) foot.push(chip(`temperature ${agent.temperature}`));
     if (agent.fallback && agent.fallback.length) foot.push(chip(`fallback: ${agent.fallback.map(providerLabel).join(", ")}`));
   } else {
@@ -148,7 +155,7 @@ export function teamPage(view) {
       <p class="lede">${escapeHtml(cap(numberWord(llm.length)))} of the ${escapeHtml(numberWord(agents.length))} roles run on a language model; ${escapeHtml(detSentence)}. Every role has a list of things it is never allowed to do. HR proposes changes to the roster once a month, from the engine's own numbers; the owner applies or dismisses each proposal, and the decision is logged.</p>
       <div class="trust-row" aria-label="Roster facts">
         <div><span class="k">${agents.length} AI agents · 1 human owner</span><span class="s">the owner approves drafts, modes and roster changes</span></div>
-        <div><span class="k">${providers.length} model providers</span><span class="s">${escapeHtml(providers.map(providerLabel).join(", "))}, assigned per role</span></div>
+        <div><span class="k">${providers.length} model provider${providers.length === 1 ? "" : "s"}</span><span class="s">${escapeHtml(providers.map(providerLabel).join(", "))}, assigned per role</span></div>
         <div><span class="k">Every role has a "never" list</span><span class="s">QA and the Publisher cannot be removed; nothing publishes without a QA pass</span></div>
       </div>
     </div>

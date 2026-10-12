@@ -3,7 +3,7 @@
 import { layout } from "./layout.js";
 import { url } from "../lib/urls.js";
 import { escapeHtml } from "../lib/xml.js";
-import { modeLabel, providerLabel } from "../lib/labels.js";
+import { modeLabel, providerLabel, usdLabel } from "../lib/labels.js";
 import { sectionHead, sideBox, numberWord } from "./partials.js";
 
 export function aboutPage(view) {
@@ -18,7 +18,7 @@ export function aboutPage(view) {
     { k: "pages", v: config.pages.map((p) => `@${p.handle}`).join(" · "), plain: true },
     { k: "providers", v: providers.map(providerLabel).join(", "), plain: true },
     { k: "engine", v: `${config.schedule.engineLabel} · publisher ${config.schedule.publisherLabel}`, plain: true },
-    { k: "budget", v: `USD ${config.budget.monthlyUsd} per month, hard stop`, plain: true },
+    { k: "budget", v: `${usdLabel(config.budget.monthlyUsd)} billed per month, hard stop`, plain: true },
     { k: "hosting", v: "GitHub Pages + GitHub Actions, no server", plain: true },
   ];
   const body = `<section class="hero">
@@ -43,7 +43,7 @@ export function aboutPage(view) {
     <div class="grid grid-3">
       <article class="card"><h3>Facts only from brand.md</h3><p class="meta">Every fact an agent may use sits in a brand charter with a pointer to a file and line in the product's own repository. Nothing about user counts, testimonials or ratings exists in any charter, so none can be written.</p></article>
       <article class="card"><h3>Nothing posts without QA</h3><p class="meta">Twelve deterministic checks and a model review run on every draft. In ${escapeHtml(modeLabel("approve_first"))} nothing posts without the owner; in ${escapeHtml(modeLabel("autopilot"))} every QA pass posts at its slot and is still logged.</p></article>
-      <article class="card"><h3>Costs are visible</h3><p class="meta">Every model call is logged with provider, model, tokens and estimated cost. The month budget (USD ${escapeHtml(String(config.budget.monthlyUsd))}) is a hard stop: drafting pauses when it is spent.</p></article>
+      <article class="card"><h3>Costs are visible</h3><p class="meta">Every model call logs provider, model, tokens and billed cost; free-tier calls also keep the paid-rate equivalent. The month budget (${escapeHtml(usdLabel(config.budget.monthlyUsd))} billed) gates billed spend only.</p></article>
       <article class="card"><h3>Human labels, real numbers</h3><p class="meta">Every number on this site is computed from the state files at build time; every number in a weekly report exists in the Instagram insights log first. Every number in HR's monthly review is one the engine computed from its own logs. Anything not built yet says so on the page where it would appear, instead of a placeholder.</p></article>
       <article class="card"><h3>One cadence everywhere</h3><p class="meta">The engine runs ${escapeHtml(config.schedule.engineLabel)}; the Publisher runs ${escapeHtml(config.schedule.publisherLabel)}. ${escapeHtml(config.schedule.actionsDelayNote)}.</p></article>
       <article class="card"><h3>Nothing confidential in the repository</h3><p class="meta">Secrets live only in GitHub Actions repository secrets and the owner's local environment. The company folder holds no keys, no tokens and no personal data.</p></article>

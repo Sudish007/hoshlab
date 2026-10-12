@@ -56,7 +56,7 @@ test("OF-5: no config token or cron expression in public HTML; the status strip 
   assert.ok(strip.includes(`<span class="s">publisher ${fixtureConfig.schedule.publisherLabel}</span>`), "the Engine cell's sub-line names the publisher cadence");
   assert.ok(strip.includes(`<div class="note">${fixtureConfig.schedule.actionsDelayNote}</div>`), "the honest delay note is the strip's footer line (spanning the cells, OF-4 at 1920)");
   assert.ok(strip.includes("Daily 05:53 IST") && strip.includes("Hourly at :47 IST"), "the off-peak labels (2026-10-12)");
-  assert.ok(strip.includes("USD 0.05 of 25"), "month budget computed from the usage file (0.053618 → 0.05)");
+  assert.ok(strip.includes("USD 0.05 billed of USD 25.00 budget"), "month billed budget computed from the unchanged historical usage file (0.053618 → 0.05)");
   assert.ok(strip.includes("1 draft"), "awaiting approval counts the unapproved queued draft only");
 });
 
@@ -98,14 +98,21 @@ test("N4: Team says 'no language model' exactly twice (Designer, Publisher) and 
   assert.ok(!/not built yet/.test(team.replace(/<ul class="run-lines">[\s\S]*?<\/ul>/g, "")), "nothing on the Team page is labelled unbuilt any more (run-log lines excepted)");
 });
 
-test("N5: provider names are human labels, never config tokens", () => {
+test("N5: all six LLM cards use human-labelled Gemini/free-tier chips and the same paid fallback order", () => {
   const team = page("team/index.html");
   assert.doesNotMatch(team, /provider: (anthropic|gemini|openai)/);
-  for (const t of ["Anthropic · claude-sonnet-5-5", "Google Gemini · gemini-3.8-flash", "OpenAI · gpt-6-luna"]) assert.ok(team.includes(t), t);
-  assert.ok(!/<span class="chip chip-plain">temperature[^<]*<\/span><span class="chip chip-plain">fallback: OpenAI, Google Gemini/.test(team), "no temperature chip for claude-sonnet-5-5 (acceptsTemperature false)");
-  const ceo = team.match(/<article class="card agent" data-agent="ceo">[\s\S]*?<\/article>/)[0];
-  assert.ok(!ceo.includes("temperature"), "CEO card: model ignores temperature, so no chip");
-  const hr = team.match(/<article class="card agent" data-agent="hr">[\s\S]*?<\/article>/)[0];
+  const cards = [...team.matchAll(/<article class="card agent" data-agent="([^"]+)">[\s\S]*?<\/article>/g)].map((m) => ({ name: m[1], html: m[0] }));
+  const llmCards = cards.filter((c) => !["designer", "publisher"].includes(c.name));
+  assert.equal(llmCards.length, 6);
+  for (const card of llmCards) {
+    assert.ok(card.html.includes("Google Gemini · gemini-3.8-flash"), card.name);
+    assert.ok(card.html.includes("fallback: Anthropic, OpenAI"), card.name);
+    assert.ok(card.html.includes("free tier · USD"), `${card.name}: free-tier billed-spend chip`);
+    assert.ok(!card.html.includes("Anthropic · claude-sonnet-5-5") && !card.html.includes("OpenAI · gpt-6-luna"), `${card.name}: no paid provider as primary`);
+  }
+  const ceo = cards.find((c) => c.name === "ceo").html;
+  assert.ok(ceo.includes("temperature 0.4"), "Gemini accepts the CEO's roster temperature");
+  const hr = cards.find((c) => c.name === "hr").html;
   assert.ok(hr.includes("temperature 0.3"), "HR card prints its temperature");
 });
 
@@ -257,7 +264,7 @@ test("Home: hero copy, honesty section without the mock adapter sentence, second
   assert.ok(home.includes("<h1>Eight AI agents run the Instagram pages for three real products.</h1>"));
   assert.ok(home.includes(`<a class="btn" href="${BASE}published/">See published posts</a>`));
   assert.ok(!home.includes("Open the approval queue"), "OF-1: the old hero CTA is gone");
-  assert.ok(home.includes("drafting pauses when the budget is spent"));
+  assert.ok(home.includes("free-tier calls also keep their paid-rate equivalent"));
   assert.ok(!home.includes("mock adapter"));
   assert.equal((home.match(/<article class="card page-card" data-page="/g) || []).length, 3);
   for (const t of ["2 published", "mock entries", "ideas/2026-10/"]) assert.ok(!home.includes(t), `no mock copy: ${t}`);

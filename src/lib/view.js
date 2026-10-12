@@ -139,10 +139,22 @@ export function buildView(input) {
   const hasRuns = Boolean((status.lastRun && status.lastRun.id) || (status.lastRuns && status.lastRuns.length) || runs.length);
 
   const usageRows = (input.usage || []).filter((u) => monthKeyOf(u.at) === monthKey);
+  const freeTierRow = (u) => Number.isFinite(u && u.paidEquivalentUsd);
+  const billed = (rows) => Math.round(rows.reduce((s, u) => s + (Number.isFinite(u && u.costUsd) ? u.costUsd : 0), 0) * 1e6) / 1e6;
+  const paidEquivalent = (rows) => Math.round(rows.reduce((s, u) => s + (freeTierRow(u) ? u.paidEquivalentUsd : Number.isFinite(u && u.costUsd) ? u.costUsd : 0), 0) * 1e6) / 1e6;
+  const byAgent = {};
+  for (const agent of (input.roster && input.roster.agents) || []) {
+    const rows = usageRows.filter((u) => u.agent === agent.name);
+    byAgent[agent.name] = { billedUsd: billed(rows), paidEquivalentUsd: paidEquivalent(rows), hasFreeTierUsage: rows.some(freeTierRow) };
+  }
   const usage = {
     month: monthKey,
     rows: usageRows.length,
-    usedUsd: Math.round(usageRows.reduce((s, u) => s + (u.costUsd || 0), 0) * 1e6) / 1e6,
+    lines: usageRows,
+    usedUsd: billed(usageRows),
+    paidEquivalentUsd: paidEquivalent(usageRows),
+    hasFreeTierUsage: usageRows.some(freeTierRow),
+    byAgent,
     calls: usageRows.length,
     providers: [...new Set(usageRows.filter((u) => u.provider !== "mock").map((u) => u.provider))].sort(),
     limitUsd: config.budget.monthlyUsd,

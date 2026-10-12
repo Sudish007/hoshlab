@@ -38,6 +38,8 @@ test("the fixture view: labels, awaiting, month totals, usage sum", () => {
   assert.deepEqual(v.awaiting.map((d) => d.id), ["rp-2026-10-14-kundali-free"]);
   assert.ok(!v.entries.some((e) => e.draftId === "jr-2026-10-15-templates"), "blocked draft omitted (M6/M5)");
   assert.equal(v.usage.usedUsd, 0.053618);
+  assert.equal(v.usage.paidEquivalentUsd, 0.053618);
+  assert.equal(v.usage.hasFreeTierUsage, false, "recorded pre-change history is not rewritten as free-tier usage");
   assert.equal(v.usage.calls, 6);
   assert.deepEqual(v.usage.providers, ["anthropic", "gemini", "openai"]);
   // planned = the fixture calendar's open slots this month + the cadence after its horizon (26 Oct 05:33 → 31 Oct):
@@ -47,6 +49,18 @@ test("the fixture view: labels, awaiting, month totals, usage sum", () => {
   assert.equal(v.hasRuns, true);
   assert.equal(v.posts.length, 2);
   assert.equal(v.horizonEnd, "2026-10-26T05:33:00+05:30");
+});
+
+test("a free-tier usage line keeps billed and paid-equivalent month/agent totals separately", () => {
+  const base = input();
+  const free = { at: "2026-10-12T10:00:00+05:30", runId: "engine-daily-20261012-1000-fedcba", agent: "writer", page: "rishtapatra", provider: "gemini", model: "gemini-3.8-flash", inputTokens: 100000, outputTokens: 12000, costUsd: 0, paidEquivalentUsd: 0.12, ms: 7000, ok: true, mock: false };
+  const v = buildView({ ...base, usage: [...base.usage, free] });
+  assert.equal(v.usage.usedUsd, 0.053618, "billed total is unchanged");
+  assert.equal(v.usage.paidEquivalentUsd, 0.173618);
+  assert.equal(v.usage.hasFreeTierUsage, true);
+  assert.equal(v.usage.byAgent.writer.billedUsd, 0.0418);
+  assert.equal(v.usage.byAgent.writer.paidEquivalentUsd, 0.1618);
+  assert.equal(v.usage.byAgent.writer.hasFreeTierUsage, true);
 });
 
 test("dry-run publish records are excluded from posts, feed data and calendar entries", () => {
