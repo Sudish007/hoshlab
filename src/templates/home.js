@@ -23,7 +23,7 @@ export function statusStrip(view) {
         ? { k: "Mode", v: modeLabel(distinct[0]), s: `all ${config.pages.length} pages · ${distinct[0] === "approve_first" ? "the owner reviews each draft" : "QA passes post on schedule"}` }
         : { k: "Mode", v: "Mixed", s: modes.map((m) => `@${m.handle} ${modeLabel(m.mode)}`).join(" · ") },
     );
-    cells.push({ k: "Engine", v: config.schedule.engineLabel, s: `publisher ${config.schedule.publisherLabel} · ${config.schedule.actionsDelayNote}` });
+    cells.push({ k: "Engine", v: config.schedule.engineLabel, s: `publisher ${config.schedule.publisherLabel}` });
     const n = view.awaiting.length;
     const perPage = config.pages.map((p) => ({ handle: p.handle, n: view.awaiting.filter((d) => d.page === p.handle).length })).filter((x) => x.n > 0);
     cells.push(n === 0 ? { k: "Awaiting approval", v: "—", s: "nothing waiting for the owner" } : { k: "Awaiting approval", v: `${n} draft${n === 1 ? "" : "s"}`, s: perPage.map((x) => `@${x.handle} ${x.n}`).join(" · ") });
@@ -34,8 +34,11 @@ export function statusStrip(view) {
         : { k: "Month budget", v: `USD ${u.usedUsd.toFixed(2)} of ${u.limitUsd}`, s: `${monthName(u.month)} · ${u.calls} call${u.calls === 1 ? "" : "s"} logged · ${u.providers.length} provider${u.providers.length === 1 ? "" : "s"}` },
     );
   }
+  // The schedule note (config.schedule.actionsDelayNote) is the strip's footer line, spanning the four cells: in a
+  // 170 px cell its sentence ran to seven lines and left a > 160 px void beside the hero copy at 1920 (OF-4).
   return `<div class="status-strip" aria-label="Company status">
         ${cells.map((c) => `<div><span class="k">${escapeHtml(c.k)}</span><span class="v">${escapeHtml(c.v)}</span><span class="s">${escapeHtml(c.s)}</span></div>`).join("\n        ")}
+        <div class="note">${escapeHtml(config.schedule.actionsDelayNote)}</div>
       </div>`;
 }
 

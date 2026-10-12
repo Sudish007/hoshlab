@@ -239,6 +239,8 @@ strong { font-weight: 650; }
 .status-strip .s { font-size: var(--fs-sm); color: var(--ink-2); }
 @media (min-width: 40em) { .status-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } .status-strip > div:nth-child(2) { border-top: 0; } .status-strip > div:nth-child(odd) { border-right: 1px solid var(--rule); } }
 @media (min-width: 64em) { .status-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); } .status-strip > div { border-top: 0 !important; border-right: 1px solid var(--rule) !important; } .status-strip > div:last-child { border-right: 0 !important; } }
+/* The strip's footer line (the schedule note): spans every cell on every width, ruled off from the cells above. */
+.status-strip > .note { grid-column: 1 / -1; display: block; padding: 0.6rem 1rem; font-size: var(--fs-sm); color: var(--ink-2); border-top: 1px solid var(--rule) !important; border-right: 0 !important; }
 
 /* ---------- Page cards (the three Instagram pages) ---------- */
 .page-card { border-top: 4px solid var(--brand, var(--ink)); }

@@ -75,6 +75,37 @@ function plural(n, word) {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
 
+// IST is UTC+05:30 all year (no DST): fixed-offset arithmetic, no host time zone involved.
+const IST_OFFSET_MINUTES = 330;
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const pad2 = (n) => String(n).padStart(2, "0");
+
+// cronLabel(cron) → the one human label for a GitHub Actions cron (UTC), in IST (design OF-7/D1, review M1):
+//   'M * * * *'  → 'Hourly at :MM IST'          ('17 * * * *' → 'Hourly at :47 IST')
+//   'M H * * *'  → 'Daily HH:MM IST'            ('23 0 * * *' → 'Daily 05:53 IST')
+//   'M H * * D'  → '<Day>s HH:MM IST'           ('13 2 * * 1' → 'Mondays 07:43 IST'; the day shifts when the IST time crosses midnight)
+// company/config.json carries each cron beside its label; src/lib/company.js refuses a label that is not this
+// derivation of its cron, so no page, README line or workflow comment can print a time the cron does not fire at.
+// Any other shape (ranges, lists, steps, a fixed day of month) throws: no such cron exists here.
+export function cronLabel(cron) {
+  const fields = String(cron).trim().split(/\s+/);
+  if (fields.length !== 5) throw new TypeError(`labels: cron needs 5 fields, got ${JSON.stringify(cron)}`);
+  const [minute, hour, dom, month, dow] = fields;
+  if (!/^\d{1,2}$/.test(minute) || Number(minute) > 59) throw new TypeError(`labels: cron minute must be a fixed 0–59, got ${JSON.stringify(cron)}`);
+  if (dom !== "*" || month !== "*") throw new TypeError(`labels: cron day-of-month and month must be *, got ${JSON.stringify(cron)}`);
+  if (hour === "*") {
+    if (dow !== "*") throw new TypeError(`labels: an hourly cron cannot name a weekday, got ${JSON.stringify(cron)}`);
+    return `Hourly at :${pad2((Number(minute) + IST_OFFSET_MINUTES) % 60)} IST`;
+  }
+  if (!/^\d{1,2}$/.test(hour) || Number(hour) > 23) throw new TypeError(`labels: cron hour must be * or a fixed 0–23, got ${JSON.stringify(cron)}`);
+  const total = Number(hour) * 60 + Number(minute) + IST_OFFSET_MINUTES;
+  const time = `${pad2(Math.floor(total / 60) % 24)}:${pad2(total % 60)}`;
+  if (dow === "*") return `Daily ${time} IST`;
+  if (!/^[0-7]$/.test(dow)) throw new TypeError(`labels: cron weekday must be * or a single 0–7, got ${JSON.stringify(cron)}`);
+  const day = DAY_NAMES[(Number(dow) + Math.floor(total / 1440)) % 7];
+  return `${day}s ${time} IST`;
+}
+
 // cadenceLine(page, features) → '3 posts / week · 1 carousel' (+ ' · 1 reel' only when features.reels and a
 // reel slot exists — review N2). Reel slots are not counted while reels are off: the Strategist creates none.
 export function cadenceLine(page, features = { reels: false }) {

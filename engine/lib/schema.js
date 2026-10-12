@@ -518,7 +518,8 @@ export const CONFIG_SPEC = {
   company: { name: "str", nameDevanagari: "str", owner: "str", ownerGithub: "str", timezone: "enum[Asia/Kolkata]" },
   site: { url: "url", basePath: "pattern:^/(?:[\\w.-]+/)*$" },
   repo: { owner: "str", name: "str", branch: "str", mediaBranch: "str" },
-  schedule: { engineCron: CRON, engineLabel: "str", publisherCron: CRON, publisherLabel: "str", actionsDelayNote: "str" },
+  // Three crons (UTC) with their IST labels; src/lib/company.js checks each label against src/lib/labels.js cronLabel(cron).
+  schedule: { engineCron: CRON, engineLabel: "str", publisherCron: CRON, publisherLabel: "str", tokenRefreshCron: CRON, tokenRefreshLabel: "str", actionsDelayNote: "str" },
   budget: { monthlyUsd: "num[1..1000]", warnAtPct: "int[1..100]", hardStop: "bool" },
   features: { reels: "bool" },
   providers: { anthropic: PROVIDER_SPEC, gemini: PROVIDER_SPEC, openai: PROVIDER_SPEC },

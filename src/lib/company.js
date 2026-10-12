@@ -8,10 +8,36 @@ import { CONFIG_SPEC, ROSTER_SPEC, validate } from "../../engine/lib/schema.js";
 import { parseBrand, validateBrand, usableFacts, factNumbers, BrandError } from "../../engine/lib/brand.js";
 import { createState } from "../../engine/lib/state.js";
 import { istDate } from "../../engine/lib/time.js";
+import { cronLabel } from "./labels.js";
 
 export const CHARTER_HEADINGS = ["## Identity", "## Method", "## Output"];
 export const CHARTER_MAX_CHARS = 12000;
 export const SOURCE_STALE_DAYS = 90;
+// config.schedule: each cron (UTC) beside the IST label the site, the README and the workflow comments print.
+export const SCHEDULE_PAIRS = [
+  ["engineCron", "engineLabel"],
+  ["publisherCron", "publisherLabel"],
+  ["tokenRefreshCron", "tokenRefreshLabel"],
+];
+
+// The cadence labels are derived from their crons (src/lib/labels.js cronLabel): a label that is not the derivation of
+// its cron is a load error, so the public pages, the README and the workflow comments can never name a time the cron
+// does not fire at. → errors[] in the schema's "$.path: message" form.
+export function scheduleErrors(schedule) {
+  const errors = [];
+  if (!schedule || typeof schedule !== "object") return errors;
+  for (const [cronKey, labelKey] of SCHEDULE_PAIRS) {
+    let derived;
+    try {
+      derived = cronLabel(schedule[cronKey]);
+    } catch (e) {
+      errors.push(`$.schedule.${cronKey}: ${e.message}`);
+      continue;
+    }
+    if (schedule[labelKey] !== derived) errors.push(`$.schedule.${labelKey}: ${JSON.stringify(schedule[labelKey])} is not the label of cron ${schedule[cronKey]} (${derived})`);
+  }
+  return errors;
+}
 
 export class CompanyError extends Error {
   constructor(errors, companyDir) {
@@ -86,6 +112,7 @@ export function loadCompany({ companyDir = process.env.COMPANY_DIR || "company",
   if (config) {
     const r = validate(config, CONFIG_SPEC);
     errors.push(...r.errors.map((e) => `config.json ${e}`));
+    if (r.ok) errors.push(...scheduleErrors(config.schedule).map((e) => `config.json ${e}`));
   }
 
   const roster = readJsonFile(join(dir, "roster.json"), errors, "roster.json");

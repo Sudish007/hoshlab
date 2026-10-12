@@ -5,6 +5,8 @@ import { join } from "node:path";
 import { ROOT, COMPANY_DIR } from "./helpers.js";
 import { CONFIG_SPEC, validate } from "../engine/lib/schema.js";
 import { cronMinuteToIst, cronTimeToIst } from "../engine/lib/time.js";
+import { cronLabel } from "../src/lib/labels.js";
+import { SCHEDULE_PAIRS, scheduleErrors } from "../src/lib/company.js";
 
 const real = JSON.parse(readFileSync(join(ROOT, "company", "config.json"), "utf8"));
 const fixture = JSON.parse(readFileSync(join(COMPANY_DIR, "config.json"), "utf8"));
@@ -17,16 +19,23 @@ for (const [label, config] of Object.entries(configs)) {
     assert.equal(r.ok, true);
   });
 
-  test(`${label}: M1 — the publisher cron minute converted to IST appears in publisherLabel; engine label matches engineCron`, () => {
+  test(`${label}: M1 — every schedule label is cronLabel(cron) in IST (off-peak crons since 2026-10-12: :23, :17, :13 UTC — never :00)`, () => {
     const minute = cronMinuteToIst(config.schedule.publisherCron);
-    assert.equal(minute, 30);
+    assert.equal(minute, 47);
     assert.ok(config.schedule.publisherLabel.includes(`:${String(minute).padStart(2, "0")}`), `${config.schedule.publisherLabel} contains :${minute}`);
-    assert.equal(config.schedule.publisherLabel, "Hourly at :30 IST");
-    assert.equal(config.schedule.publisherCron, "0 * * * *");
-    assert.equal(config.schedule.engineCron, "0 0 * * *");
+    assert.equal(config.schedule.publisherCron, "17 * * * *");
+    assert.equal(config.schedule.publisherLabel, "Hourly at :47 IST");
+    assert.equal(config.schedule.engineCron, "23 0 * * *");
     assert.ok(config.schedule.engineLabel.includes(cronTimeToIst(config.schedule.engineCron)), `${config.schedule.engineLabel} contains ${cronTimeToIst(config.schedule.engineCron)}`);
-    assert.equal(config.schedule.engineLabel, "Daily 05:30 IST");
-    assert.equal(config.schedule.actionsDelayNote, "Actions cron may start 10–30 min late");
+    assert.equal(config.schedule.engineLabel, "Daily 05:53 IST");
+    assert.equal(config.schedule.tokenRefreshCron, "13 2 * * 1");
+    assert.equal(config.schedule.tokenRefreshLabel, "Mondays 07:43 IST");
+    assert.equal(config.schedule.actionsDelayNote, "GitHub may delay or skip scheduled runs; a due slot posts at the next run that fires");
+    for (const [cronKey, labelKey] of SCHEDULE_PAIRS) {
+      assert.equal(cronLabel(config.schedule[cronKey]), config.schedule[labelKey], `${labelKey} = cronLabel(${cronKey})`);
+      assert.notEqual(config.schedule[cronKey].split(" ")[0], "0", `${cronKey} sits off the top of the hour`);
+    }
+    assert.deepEqual(scheduleErrors(config.schedule), []);
   });
 
   test(`${label}: N3 features.reels present and true (Phase 2, plan D22); defaults.reel 15–30 s with 3–6 scenes per style; D9/M15 defaults; ig.version pinned with its source (D5)`, () => {

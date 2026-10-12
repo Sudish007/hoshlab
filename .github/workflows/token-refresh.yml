@@ -12,13 +12,14 @@
 # token_expiring / token_invalid flag) — the red run is the owner's signal and stays — so the retention step and the
 # deploy job carry `!cancelled()` conditions: retention still runs that week and the committed flag reaches the Home
 # page and the admin banner the same morning instead of waiting for the next engine-daily deploy.
-# Token refresh: Mondays 07:30 IST (cron 0 2 * * 1) · the tokens are refreshed when under 20 days remain
-# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+# Token refresh: Mondays 07:43 IST (cron 13 2 * * 1) · the tokens are refreshed when under 20 days remain
+# (off the top of the hour like the other two crons, since 2026-10-12: GitHub delays and under load drops scheduled runs, and its load peaks at :00)
+# Engine: Daily 05:53 IST (cron 23 0 * * *) · Publisher: Hourly at :47 IST (cron 17 * * * *) · GitHub may delay or skip scheduled runs; a due slot posts at the next run that fires
 name: Hoshlab token refresh (weekly)
 
 on:
   schedule:
-    - cron: "0 2 * * 1"
+    - cron: "13 2 * * 1"
   workflow_dispatch:
     inputs:
       dry_run:

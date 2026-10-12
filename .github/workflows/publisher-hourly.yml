@@ -5,12 +5,15 @@
 # workflow_call) runs only then; an idle hour deploys nothing. No Chromium and no
 # media checkout: the publisher preflights the media URLs over HTTP and never renders. Shares the
 # `hoshlab-state` concurrency group with engine-daily.yml.
-# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+# The cron sits off the top of the hour on purpose: GitHub documents that scheduled runs are delayed and, under high load,
+# dropped, and that load peaks at the start of every hour — on the top-of-hour cron only 3 of ~20 hourly ticks fired between
+# 2026-10-11 10:00 UTC and 2026-10-12 06:52 UTC. Moved to :17 UTC on 2026-10-12; that reduces the risk, it does not remove it.
+# Engine: Daily 05:53 IST (cron 23 0 * * *) · Publisher: Hourly at :47 IST (cron 17 * * * *) · GitHub may delay or skip scheduled runs; a due slot posts at the next run that fires
 name: Hoshlab publisher (hourly)
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:

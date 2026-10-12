@@ -12,6 +12,10 @@ const FILES = ["pages.yml", "ci.yml", "engine-daily.yml", "publisher-hourly.yml"
 const SECRETS = ["ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY", "IG_TOKEN_RISHTAPATRA", "IG_TOKEN_KAATDO", "IG_TOKEN_JOB_REZ"];
 const config = JSON.parse(readFileSync(join(ROOT, "company", "config.json"), "utf8"));
 const read = (f) => readFileSync(join(DIR, f), "utf8");
+// The one cadence comment line every workflow carries (OF-7, P1-17), built from config.schedule — the crons moved off
+// the top of the hour on 2026-10-12 (engine 23 0, publisher 17 *, token refresh 13 2 UTC) after GitHub dropped most ticks.
+const { engineCron, engineLabel, publisherCron, publisherLabel, tokenRefreshCron, tokenRefreshLabel, actionsDelayNote } = config.schedule;
+const CADENCE_LINE = `# Engine: ${engineLabel} (cron ${engineCron}) · Publisher: ${publisherLabel} (cron ${publisherCron}) · ${actionsDelayNote}`;
 
 // The deploy job the two state workflows share (N17): needs the state job, runs only when it reported
 // changed=true, grants pages.yml what it needs, holds the `pages` group on the caller side.
@@ -53,7 +57,7 @@ test("every workflow exists, is workflow_dispatch-able, carries the cadence comm
     const text = read(f);
     assert.match(text, /^on:\s*\n(?:.*\n)*?\s+workflow_dispatch:/m, `${f}: has workflow_dispatch`);
     assert.match(text, /^concurrency:\s*\n\s+group: /m, `${f}: declares a concurrency group`);
-    assert.match(text, /^# Engine: Daily 05:30 IST \(cron 0 0 \* \* \*\) · Publisher: Hourly at :30 IST \(cron 0 \* \* \* \*\) · Actions cron may start 10–30 min late$/m, `${f}: cadence comment line verbatim (OF-7, P1-17)`);
+    assert.ok(text.split(/\r?\n/).includes(CADENCE_LINE), `${f}: cadence comment line verbatim (OF-7, P1-17): ${CADENCE_LINE}`);
     assert.match(text, /actions\/checkout@v7/, `${f}: checkout@v7`);
     assert.match(text, /actions\/setup-node@v7\s*\n\s+with:\s*\n\s+node-version: 24\s*\n\s+cache: npm/, `${f}: setup-node@v7 node 24 with npm cache`);
     assert.ok(!/\$\{\{\s*secrets\.GITHUB_TOKEN/.test(text), `${f}: never passes GITHUB_TOKEN explicitly (actions/checkout persists it)`);
@@ -101,10 +105,11 @@ test("ci.yml (M10, P2-01): Chromium with deps, fonts, ffmpeg/ffprobe versions lo
   assert.ok(!/secrets\./.test(text), "CI uses no secrets");
 });
 
-test("engine-daily.yml (design §3.1): cron 0 0 * * * = Daily 05:30 IST; inputs agents/page/dry_run/mock_llm; media checkout guarded (M16); Chromium + fonts; six secrets; bot; MOCK_LLM from the input; deploy via pages.yml (N17)", () => {
+test("engine-daily.yml (design §3.1): cron 23 0 * * * = Daily 05:53 IST (off-peak since 2026-10-12); inputs agents/page/dry_run/mock_llm; media checkout guarded (M16); Chromium + fonts; six secrets; bot; MOCK_LLM from the input; deploy via pages.yml (N17)", () => {
   const text = read("engine-daily.yml");
   assert.match(text, /^name: Hoshlab engine \(daily\)$/m, "the name the README's owner to-do and the admin point at");
-  assert.equal(config.schedule.engineCron, "0 0 * * *");
+  assert.equal(config.schedule.engineCron, "23 0 * * *");
+  assert.equal(engineLabel, "Daily 05:53 IST");
   assertStateJob(text, "engine-daily.yml", { cron: config.schedule.engineCron, jobId: "engine", stepId: "engine" });
   for (const input of ["agents", "page"]) assert.match(text, new RegExp(`${input}:\\s*\\n\\s+description: .+\\n\\s+type: string\\s*\\n\\s+default: ""`), `input ${input} (string, default empty)`);
   assert.match(text, /agents:\s*\n\s+description: "[^"\n]*\banalyst\b[^"\n]*Run analyst/, "the agents input names analyst and the admin's Run analyst button (FEAT-203)");
@@ -128,10 +133,12 @@ test("engine-daily.yml (design §3.1): cron 0 0 * * * = Daily 05:30 IST; inputs 
   assert.match(text, /ffmpeg -version \| head -n 1/, "the runner's ffmpeg is logged before rendering reels");
 });
 
-test("publisher-hourly.yml (design §3.2, M1): cron 0 * * * * = Hourly at :30 IST; same concurrency, secrets, bot and deploy job; no Chromium, no media checkout", () => {
+test("publisher-hourly.yml (design §3.2, M1): cron 17 * * * * = Hourly at :47 IST (off-peak since 2026-10-12); same concurrency, secrets, bot and deploy job; no Chromium, no media checkout", () => {
   const text = read("publisher-hourly.yml");
   assert.match(text, /^name: Hoshlab publisher \(hourly\)$/m);
-  assert.equal(config.schedule.publisherCron, "0 * * * *");
+  assert.equal(config.schedule.publisherCron, "17 * * * *");
+  assert.equal(publisherLabel, "Hourly at :47 IST");
+  assert.match(text, /^# .*3 of ~20 hourly ticks fired between\n# 2026-10-11 10:00 UTC and 2026-10-12 06:52 UTC\. Moved to :17 UTC on 2026-10-12; that reduces the risk, it does not remove it\.$/m, "the header records why the cron left the top of the hour, with the observed numbers");
   assertStateJob(text, "publisher-hourly.yml", { cron: config.schedule.publisherCron, jobId: "publisher", stepId: "publish" });
   assert.match(text, /args=\(publish --commit\)/, "publish --commit");
   assert.ok(!/playwright install|build:fonts|ref: media/.test(text), "the publisher renders nothing");
@@ -140,10 +147,12 @@ test("publisher-hourly.yml (design §3.2, M1): cron 0 * * * * = Hourly at :30 IS
   assert.equal(deployOf(text), deployOf(engine), "the deploy job is identical to engine-daily's apart from the job it needs");
 });
 
-test("token-refresh.yml (design §3.4, FEAT-202, P2-09/P2-10): cron 0 2 * * 1 + dispatch (dry_run); contents write; concurrency hoshlab-state; checkout main + media (guarded, M16); Node 24; npm ci; bot; IG tokens + GH_TOKEN/HOSHLAB_SECRETS_PAT from secrets; refresh-tokens --commit then retention --commit; deploy when either changed", () => {
+test("token-refresh.yml (design §3.4, FEAT-202, P2-09/P2-10): cron 13 2 * * 1 (config.schedule.tokenRefreshCron, Mondays 07:43 IST) + dispatch (dry_run); contents write; concurrency hoshlab-state; checkout main + media (guarded, M16); Node 24; npm ci; bot; IG tokens + GH_TOKEN/HOSHLAB_SECRETS_PAT from secrets; refresh-tokens --commit then retention --commit; deploy when either changed", () => {
   const text = read("token-refresh.yml");
   assert.match(text, /^name: Hoshlab token refresh \(weekly\)$/m);
-  assert.match(text, /^on:\s*\n\s+schedule:\s*\n\s+- cron: "0 2 \* \* 1"\s*\n\s+workflow_dispatch:/m, "cron 0 2 * * 1 (Mondays 02:00 UTC = 07:30 IST) + dispatch");
+  assert.equal(tokenRefreshCron, "13 2 * * 1");
+  assert.equal(tokenRefreshLabel, "Mondays 07:43 IST");
+  assert.match(text, new RegExp(`^on:\\s*\\n\\s+schedule:\\s*\\n\\s+- cron: "${tokenRefreshCron.replace(/\*/g, "\\*")}"\\s*\\n\\s+workflow_dispatch:`, "m"), `cron ${tokenRefreshCron} (Mondays 02:13 UTC = 07:43 IST) + dispatch`);
   assert.match(text, /dry_run:\s*\n\s+description: .+\n\s+type: boolean\s*\n\s+default: false/, "input dry_run (boolean)");
   assert.match(text, /^permissions:\s*\n\s+contents: write\s*\n\s*\n/m, "permissions: contents write only (the PAT, not GITHUB_TOKEN, writes secrets)");
   assert.match(text, /^concurrency:\s*\n\s+group: hoshlab-state\s*\n\s+cancel-in-progress: false/m, "concurrency hoshlab-state, never cancelled");
@@ -167,7 +176,7 @@ test("token-refresh.yml (design §3.4, FEAT-202, P2-09/P2-10): cron 0 2 * * 1 + 
   assert.match(text, /^\s+changed: \$\{\{ steps\.refresh\.outputs\.changed == 'true' \|\| steps\.retention\.outputs\.changed == 'true' \}\}$/m, "job output changed when either step changed something (both steps run, so == 'true' on each — 'false' || 'true' would be 'false')");
   assert.ok(!/playwright install|build:fonts/.test(text), "no Chromium, no fonts: nothing is rendered");
   assert.ok(!/MEDIA_DIR|BUILD_NOW|PUBLIC_DIR/.test(text), "never sets the test-only knobs in CI");
-  assert.match(text, /^# Token refresh: Mondays 07:30 IST \(cron 0 2 \* \* 1\)/m, "the weekly cadence is stated in the comment, beside the shared cadence line");
+  assert.ok(text.includes(`# Token refresh: ${tokenRefreshLabel} (cron ${tokenRefreshCron})`), "the weekly cadence is stated in the comment, beside the shared cadence line");
   assertDeployJob(text, "refresh", "token-refresh.yml");
 
   // R2-04: refresh-tokens exits 1 on refresh_failed / store_failed AFTER committing tokens.json + status.json (token_expiring /

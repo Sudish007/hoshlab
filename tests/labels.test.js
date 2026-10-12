@@ -4,7 +4,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT } from "./helpers.js";
-import { modeLabel, providerLabel, tokenStateLabel, slotLabel, cadenceLine, flagSentence, tokenDaysLeft, isApproved, windowLabel, metricLabel, TERMINAL, SLOT_WORDS } from "../src/lib/labels.js";
+import { modeLabel, providerLabel, tokenStateLabel, slotLabel, cadenceLine, flagSentence, tokenDaysLeft, isApproved, windowLabel, metricLabel, cronLabel, TERMINAL, SLOT_WORDS } from "../src/lib/labels.js";
+import { SCHEDULE_PAIRS, scheduleErrors } from "../src/lib/company.js";
 import { DRAFT_STATUSES, METRIC_SPEC, METRIC_WINDOWS, SLOT_STATUSES, TOKEN_STATES } from "../engine/lib/schema.js";
 
 const config = JSON.parse(readFileSync(join(ROOT, "company", "config.json"), "utf8"));
@@ -38,6 +39,31 @@ test("modeLabel / providerLabel / tokenStateLabel map every token and throw on u
   assert.equal(metricLabel("saved"), "saves");
   for (const m of Object.keys(METRIC_SPEC.metrics)) assert.ok(metricLabel(m), m);
   assert.throws(() => metricLabel("impressions"), /unknown insights metric/);
+});
+
+test("cronLabel (OF-7/D1, M1): hourly, daily and weekly GitHub crons (UTC) → the one IST label; the config's labels are its derivations; other shapes throw", () => {
+  // the off-peak cadence live since 2026-10-12
+  assert.equal(cronLabel("17 * * * *"), "Hourly at :47 IST");
+  assert.equal(cronLabel("23 0 * * *"), "Daily 05:53 IST");
+  assert.equal(cronLabel("13 2 * * 1"), "Mondays 07:43 IST");
+  // the top-of-hour cadence it replaced, and the shapes around it
+  assert.equal(cronLabel("0 * * * *"), "Hourly at :30 IST");
+  assert.equal(cronLabel("30 * * * *"), "Hourly at :00 IST");
+  assert.equal(cronLabel("0 0 * * *"), "Daily 05:30 IST");
+  assert.equal(cronLabel("0 2 * * 1"), "Mondays 07:30 IST");
+  assert.equal(cronLabel("30 18 * * *"), "Daily 00:00 IST", "wraps past midnight");
+  assert.equal(cronLabel("45 19 * * 0"), "Mondays 01:15 IST", "19:45 UTC Sunday is 01:15 IST Monday — the weekday shifts with the date");
+  assert.equal(cronLabel("45 19 * * 7"), "Mondays 01:15 IST", "7 is Sunday too");
+  assert.equal(cronLabel("0 12 * * 6"), "Saturdays 17:30 IST");
+  assert.equal(cronLabel(" 17  *  * * * "), "Hourly at :47 IST", "whitespace tolerated");
+  for (const [cronKey, labelKey] of SCHEDULE_PAIRS) assert.equal(cronLabel(config.schedule[cronKey]), config.schedule[labelKey], `${labelKey}`);
+  assert.deepEqual(scheduleErrors(config.schedule), []);
+  // a label that drifts from its cron, or an unparseable cron, is a company load error (src/lib/company.js)
+  assert.deepEqual(scheduleErrors({ ...config.schedule, publisherLabel: "Hourly at :30 IST" }), ['$.schedule.publisherLabel: "Hourly at :30 IST" is not the label of cron 17 * * * * (Hourly at :47 IST)']);
+  assert.match(scheduleErrors({ ...config.schedule, engineCron: "*/5 * * * *" })[0], /^\$\.schedule\.engineCron: labels: cron minute must be a fixed 0–59/);
+  for (const bad of ["* * * * *", "*/15 * * * *", "0,30 * * * *", "0 0 1 * *", "0 0 * 1 *", "0 0 * * 1-5", "0 0 * * mon", "60 * * * *", "0 24 * * *", "0 * * * 1", "0 0 * *", "0 0 * * * *", "", null, 17]) {
+    assert.throws(() => cronLabel(bad), TypeError, JSON.stringify(bad));
+  }
 });
 
 // M6 truth table: every (draft status × approval × mode) cell, written out — not derived from the code.

@@ -3,12 +3,14 @@
 # hoshlab-bot, pushes the media branch first and then main (rebase-retry), and writes `changed` to
 # $GITHUB_OUTPUT; the deploy job then calls pages.yml so the site shows the new state in the same run.
 # Shares the `hoshlab-state` concurrency group with publisher-hourly.yml: the two never write state at once.
-# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+# The cron sits off the top of the hour on purpose: GitHub documents that scheduled runs are delayed and, under high load,
+# dropped, and that load peaks at the start of every hour — the 00:00 UTC cron fired 3 h late on 2026-10-12. Moved 2026-10-12.
+# Engine: Daily 05:53 IST (cron 23 0 * * *) · Publisher: Hourly at :47 IST (cron 17 * * * *) · GitHub may delay or skip scheduled runs; a due slot posts at the next run that fires
 name: Hoshlab engine (daily)
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "23 0 * * *"
   workflow_dispatch:
     inputs:
       agents:

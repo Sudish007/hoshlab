@@ -61,8 +61,8 @@ const EMPTY_REGION_WIDTHS = [1920, 2560]; // OF-4 runs on monitors only
 const NAV_UNDERLINE = "rgb(23, 23, 26) 0px -2px 0px 0px inset"; // the one allowed box-shadow (design §14)
 const AI_LABELS = 8; // OF-6
 // OF-5 tokens on document.body.innerText — the same rule as src/build.js PUBLIC_SURFACE_RULES: 'cron' is a
-// violation only when a schedule expression follows it, because the mandated delay note "Actions cron may
-// start 10–30 min late" (P1-16/P1-17) names the word; 'autopilot' is the lower-case TOKEN, 'Autopilot' the label.
+// violation only when a schedule expression follows it (P1-16/P1-17); the word alone is prose (the delay note
+// config.schedule.actionsDelayNote says "scheduled runs"); 'autopilot' is the lower-case TOKEN, 'Autopilot' the label.
 const TOKEN_RULES = [
   { name: "approve_first", re: /\bapprove_first\b/ },
   { name: "autopilot (config token)", re: /\bautopilot\b/ },

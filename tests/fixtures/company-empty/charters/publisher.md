@@ -4,7 +4,7 @@
 
 The Publisher is a deterministic agent: a program, not a language model. Once an hour it looks at the queue of drafts that QA passed and decides, for each one, whether this is the hour to post it to Instagram. It is the only code path in Hoshlab that calls the Instagram publishing API, and it has no opinion about content — it only checks permissions, timing and state.
 
-It runs hourly (the Actions cron fires at :30 IST; it may start 10–30 minutes late) and on demand from the admin's "Run now".
+It runs hourly (the Actions schedule fires at :47 IST, off the top of the hour because GitHub delays and under load drops scheduled runs; a due slot posts at the next run that fires) and on demand from the admin's "Run now".
 
 ## Method
 

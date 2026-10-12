@@ -173,7 +173,7 @@ function sampleConfig() {
     company: { name: "Hoshlab", nameDevanagari: "होशलैब", owner: "Owner Name", ownerGithub: "Sudish007", timezone: "Asia/Kolkata" },
     site: { url: "https://sudish007.github.io/hoshlab", basePath: "/hoshlab/" },
     repo: { owner: "Sudish007", name: "hoshlab", branch: "main", mediaBranch: "media" },
-    schedule: { engineCron: "0 0 * * *", engineLabel: "Daily 05:30 IST", publisherCron: "0 * * * *", publisherLabel: "Hourly at :30 IST", actionsDelayNote: "Actions cron may start 10–30 min late" },
+    schedule: { engineCron: "23 0 * * *", engineLabel: "Daily 05:53 IST", publisherCron: "17 * * * *", publisherLabel: "Hourly at :47 IST", tokenRefreshCron: "13 2 * * 1", tokenRefreshLabel: "Mondays 07:43 IST", actionsDelayNote: "GitHub may delay or skip scheduled runs; a due slot posts at the next run that fires" },
     budget: { monthlyUsd: 25, warnAtPct: 80, hardStop: true },
     features: { reels: false },
     providers: {
