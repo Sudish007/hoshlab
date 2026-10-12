@@ -108,11 +108,17 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("shown in Google AI Studio");
   has("On HTTP 429 it honours `Retry-After`, or Gemini's `retryDelay` when present");
   has("after at most 3 retries it tries Anthropic then OpenAI");
-  has("**5–9 model calls per day**");
+  has("**5–9 model calls per steady-state day**");
+  has("**13–17 model calls before rework or retries**");
   const callsByDay = Object.fromEntries(["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map((day) => [day, config.pages.reduce((n, p) => n + p.cadence.slots.filter((s) => s.dow === day).length, 0)]));
   assert.deepEqual(callsByDay, { sun: 1, mon: 2, tue: 2, wed: 2, thu: 2, fri: 2, sat: 2 });
   assert.equal(3 + 2 * Math.min(...Object.values(callsByDay)), 5, "three Strategists + Writer/QA for Sunday's one slot");
-  assert.equal(3 + 2 * Math.max(...Object.values(callsByDay)) + 1 + 1, 9, "two-slot day + CEO + monthly HR maximum");
+  assert.equal(3 + 2 * Math.max(...Object.values(callsByDay)) + 1 + 1, 9, "two-slot steady day + CEO + monthly HR maximum");
+  const ordered = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map((day) => callsByDay[day]);
+  const leadWindowDrafts = ordered.map((_, i) => ordered[i] + ordered[(i + 1) % 7] + ordered[(i + 2) % 7]);
+  assert.deepEqual([Math.min(...leadWindowDrafts), Math.max(...leadWindowDrafts)], [5, 6]);
+  assert.equal(3 + 2 * Math.min(...leadWindowDrafts), 13, "catch-up lower bound before due weekly/monthly agents");
+  assert.equal(3 + 2 * Math.max(...leadWindowDrafts) + 2, 17, "catch-up upper bound with two due weekly/monthly agents");
   has("public", "drafts are public");
   has("Drafts are public");
   // polish-cron (2026-10-12): the drift bullet states GitHub's documented behaviour, the observed first-day numbers and the move
