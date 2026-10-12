@@ -140,6 +140,30 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("## Phase 2 — not built yet");
   for (const s of ["not built yet", "not configured yet", "untested"]) has(`**${s}**`, "honesty label");
   has("`—` / `No runs yet`", "the launch-day empty state");
+  // R2-01: IG_DRY_RUN=1 alone is a dry run for daily/analyst/hr too (temp copy, no commit), and a real Analyst run ignores dryRun records
+  has("makes `publish`, `daily`, `analyst` and `hr` work on a temp copy of `company/` and commit nothing", "R2-01: the env var alone implies the temp copy for every state-writing command");
+  has("a real Analyst run ignores any `dryRun: true` record it finds", "R2-01: stray dry-run metrics neither block nor feed a real run");
+  assert.ok(!readme.includes("`--dry-run` works on a temp copy for `daily` too"), "R2-01: the sentence that implied daily differs from publish is gone");
+  // R2-02: the status paragraph describes the live state (Pages, media branch and the scheduled workflows are live since the
+  // Phase 1 merge); the honest labels stay only where they are true
+  const status = readme.slice(readme.indexOf("**Status of this repository at the time of writing:**"), readme.indexOf("## Owner to-do"));
+  assert.ok(status.length > 100, "the status paragraph exists before the owner to-do");
+  assert.ok(!status.includes("GitHub Pages is **not configured yet**"), "R2-02: Pages is live");
+  assert.ok(!status.includes("the `media` branch is **not configured yet**"), "R2-02: the media branch exists");
+  assert.ok(!status.includes("have never run") && !status.includes("has never run"), "R2-02: engine-daily and publisher-hourly run on schedule");
+  assert.ok(status.includes("https://sudish007.github.io/hoshlab/"), "R2-02: names the live site");
+  assert.ok(status.includes("`media` branch exists") && status.includes("`sample: true`"), "R2-02: the media branch carries fixture samples only");
+  assert.ok(status.includes("`engine-daily.yml` and `publisher-hourly.yml` run on their schedules"), "R2-02: the two state workflows are live");
+  assert.ok(status.includes("every page still `not_configured`"), "R2-02: no token yet, so nothing was attempted");
+  assert.ok(/Still \*\*not configured yet\*\*: the provider keys and the Instagram tokens/.test(status), "R2-02: keys and tokens keep the label");
+  assert.ok(/Still \*\*untested\*\*: `token-refresh\.yml` \(zero runs/.test(status), "R2-02: token-refresh.yml keeps the label");
+  assert.ok(status.includes("the real Instagram publishing path, until the throwaway post"), "R2-02: the publishing path keeps the label");
+  assert.ok(!readme.includes("not needed in phase 1"), "R2-02: the phase-1 ffmpeg sentence is gone");
+  has("`ffmpeg`/`ffprobe` are needed to render reels locally (see Reels)", "R2-02: the Local development note matches the Reels section");
+  // R2-03: Instagram's acceptance of a silent reel is an unverified assumption until the first reel publish
+  assert.ok(!readme.includes("Instagram accepts silent reels"), "R2-03: no Meta behaviour asserted as fact");
+  const reels = readme.slice(readme.indexOf("## Reels"), readme.indexOf("## Limits"));
+  assert.ok(reels.includes("- **Silent reels.** No audio track is produced or uploaded (`-an`); Instagram's acceptance of a silent reel is **untested until the first reel publish**."), "R2-03: the silent-reel bullet is labelled untested");
   // FEAT-203 (P2-04/P2-05): the Analyst step, its number rule, the insights metric names with their source and date, the
   // on-demand command and the honest first-report sentence
   has("8. **Sunday 05:30 IST — Analyst**");
