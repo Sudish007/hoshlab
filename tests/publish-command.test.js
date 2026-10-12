@@ -403,6 +403,90 @@ test("R1-01: a page stored 'invalid' (flag token_invalid:<h>) with its secret an
   assert.equal(FETCH_ATTEMPTS.length, 0);
 });
 
+test("R2-01: a status-only change deploys — a page stored 'invalid' with NOTHING queued is resumed by the probe → changed true (statusChanged) although no draft and no published.jsonl line changed; a 190 on the probe (state as loaded) → changed false; the next idle hour (tokenState ok, no flag) → changed false; a secret stored for the first time (not_configured → unknown) → changed true", async () => {
+  const fx = copyFixture({ configure: true });
+  try {
+    // 1. the fixture's approved kd draft publishes normally, so kaatdo has nothing queued from here on
+    const first = fakeClient();
+    const r0 = await runPublish({ companyDir: fx.dir, now: NOW, processEnv: ENV_KD, clientFactory: () => first, stdout: () => {} });
+    assert.equal(fx.draft(KD).status, "published");
+    assert.equal(fx.status().pages.kaatdo.tokenState, "ok");
+    assert.equal(r0.changed, true);
+    // 2. the token dies later (status.json seeded the way tokenDied() writes it); the owner replaces the secret
+    const seed = (tokenState, flags) => {
+      const s = fx.status();
+      s.pages.kaatdo.tokenState = tokenState;
+      s.flags = flags;
+      writeFileSync(join(fx.dir, "state", "status.json"), JSON.stringify(s, null, 2) + "\n", "utf8");
+    };
+    seed("invalid", ["token_invalid:kaatdo"]);
+    const draftsBefore = treeHash(join(fx.dir, "state", "drafts"));
+    const publishedBefore = fx.published().length;
+    // 2a. the probe answers 190: tokenState and flags are exactly as loaded → nothing to deploy
+    const still = fakeClient({ publishingLimit: new IgError({ code: 190, message: `Invalid OAuth 2.0 Access Token ${TOKEN}`, stage: "quota", status: 400, type: "IGApiException", secrets: [TOKEN] }) });
+    const out1 = sink();
+    const r1 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T21:00:00+05:30", processEnv: ENV_KD, clientFactory: () => still, stdout: out1 });
+    assert.deepEqual(still.calls.map((c) => c[0]), ["publishingLimit"]);
+    assert.ok(out1.lines.some((l) => l === "[publisher] kaatdo: token probe failed with code 190 — page stays paused (run setup-secrets with a new token)"), out1.text());
+    assert.deepEqual(r1.run.publisher.pages.kaatdo, { outcome: "idle" }, "no candidate → the page outcome stays idle; the probe line above carries the pause");
+    assert.ok(!out1.text().includes(TOKEN));
+    assert.equal(fx.status().pages.kaatdo.tokenState, "invalid");
+    assert.deepEqual(fx.status().flags, ["token_invalid:kaatdo"]);
+    assert.equal(r1.statusChanged, false);
+    assert.equal(r1.changed, false, "190 on the probe: state unchanged → no deploy");
+    // 2b. the replaced secret works: the probe answers, the page resumes with nothing queued — the only change is
+    //     status.json (tokenState invalid → ok, flag dropped), which Home prints, so the run must deploy
+    const good = fakeClient();
+    const out = sink();
+    const r2 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T22:00:00+05:30", processEnv: ENV_KD, clientFactory: () => good, stdout: out });
+    assert.deepEqual(good.calls.map((c) => c[0]), ["publishingLimit"], "the probe only — nothing to publish");
+    assert.ok(out.lines.some((l) => l === "[publisher] kaatdo: the token is accepted again (content_publishing_limit answered) — page resumed"), out.text());
+    assert.deepEqual(r2.run.publisher.pages.kaatdo, { outcome: "idle" });
+    assert.equal(fx.status().pages.kaatdo.tokenState, "ok");
+    assert.deepEqual(fx.status().flags, []);
+    assert.equal(treeHash(join(fx.dir, "state", "drafts")), draftsBefore, "no draft changed");
+    assert.equal(fx.published().length, publishedBefore, "published.jsonl unchanged");
+    assert.deepEqual(r2.run.changed, ["company/state/status.json", "company/state/runs/2026-10.jsonl"], "status.json and the run record are the only writes");
+    assert.equal(r2.statusChanged, true);
+    assert.equal(r2.changed, true, "R2-01: the cleared token_invalid flag reaches the public site this hour, not with the next engine-daily deploy");
+    assert.deepEqual(validate(fx.status(), STATUS_SPEC), { ok: true, errors: [] });
+    // 3. the next idle hour: tokenState already ok, no flag, nothing queued → no call, no deploy
+    const idle = fakeClient();
+    const r3 = await runPublish({ companyDir: fx.dir, now: "2026-10-14T23:00:00+05:30", processEnv: ENV_KD, clientFactory: () => idle, stdout: () => {} });
+    assert.deepEqual(idle.calls, []);
+    assert.deepEqual(r3.run.publisher.pages.kaatdo, { outcome: "idle" });
+    assert.equal(r3.statusChanged, false);
+    assert.equal(r3.changed, false, "idle runs still deploy nothing");
+  } finally {
+    fx.cleanup();
+  }
+
+  // 4. the owner stores a secret for a page whose ids are set: not_configured → unknown ('token untested' on Home)
+  //    happens before any call, so with nothing due it is a status-only change too → deploy; the hour after → false
+  const fresh = copyFixture({ configure: true });
+  try {
+    const early = "2026-10-12T12:00:00+05:30"; // before the kd slot (Tue 13 Oct 08:15): queued, approved, not due
+    assert.equal(fresh.status().pages.kaatdo.tokenState, "not_configured");
+    const c1 = fakeClient();
+    const r1 = await runPublish({ companyDir: fresh.dir, now: early, processEnv: ENV_KD, clientFactory: () => c1, stdout: () => {} });
+    assert.deepEqual(c1.calls, [], "not due → decide() stops before any call");
+    assert.deepEqual(r1.run.publisher.decisions.filter((d) => d.page === "kaatdo"), [{ draftId: KD, page: "kaatdo", publish: false, reason: "not_due" }]);
+    assert.equal(fresh.status().pages.kaatdo.tokenState, "unknown");
+    assert.equal(fresh.draft(KD).status, "queued");
+    assert.equal(r1.statusChanged, true);
+    assert.equal(r1.changed, true);
+    const c2 = fakeClient();
+    const r2 = await runPublish({ companyDir: fresh.dir, now: "2026-10-12T13:00:00+05:30", processEnv: ENV_KD, clientFactory: () => c2, stdout: () => {} });
+    assert.deepEqual(c2.calls, []);
+    assert.equal(fresh.status().pages.kaatdo.tokenState, "unknown");
+    assert.equal(r2.statusChanged, false);
+    assert.equal(r2.changed, false);
+  } finally {
+    fresh.cleanup();
+  }
+  assert.equal(FETCH_ATTEMPTS.length, 0);
+});
+
 test("R1-06: a live draft whose latest approval is a reject is stamped status 'rejected' by the publisher (updatedAt = run clock), leaves status.json.queue, is listed in the run's publisher.rejected and the note; blocked counts and the other drafts are unchanged; a second run changes nothing", async () => {
   const fx = copyFixture();
   try {

@@ -96,6 +96,11 @@ test("setup-secrets.ps1 (P1-20, M15, design §16): hidden prompts, Enter keeps, 
   assert.ok(!/if \(\$configChanged\) \{[^}]*\$statusChanged/s.test(summary), "$statusChanged is not evaluated inside the $configChanged branch");
   assert.match(summary, /Write-Host '  git pull --ff-only'/, "pull before committing (the bot rewrites status.json hourly)");
   assert.match(summary, /re-probes a paused page every hour/, "says the publisher clears the pause by itself, so the status.json commit is optional");
+  // R2-02: with the local status.json modified, `git pull --ff-only` refuses ('Your local changes … would be overwritten')
+  // and changes nothing — the summary names that case and the recovery command instead of claiming the pull 'brings' a file
+  assert.match(summary, /If git pull --ff-only refuses because company\/state\/status\.json changed upstream, run git checkout -- company\/state\/status\.json and pull again; the publisher clears the pause itself on its next hourly run\./, "R2-02: the refusal case with the recovery command, inside the $statusChanged branch");
+  assert.match(summary, /if \(\$statusChanged\) \{\s*\n\s*Write-Host '[^\n]*refuses because company\/state\/status\.json changed upstream/, "R2-02: printed only when status.json changed");
+  assert.ok(!/brings a newer status\.json/.test(text), "R2-02: the misworded 'if the pull brings a newer status.json' sentence is gone");
   assert.match(summary, /company\/config\.json and company\/state\/status\.json unchanged; nothing to commit/, "the unchanged line names both files");
   assert.ok(!/git (add|commit|push)[^"']*$/m.test(text.replace(/Write-Host.*$/gm, "")), "the script itself never commits");
   assert.ok(!/ConvertFrom-SecureString -AsPlainText/.test(text), "PowerShell 7 only");

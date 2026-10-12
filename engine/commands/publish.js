@@ -13,7 +13,10 @@
 //      run record appended to runs/<IST month>.jsonl with the publisher block (decisions, staleEdits,
 //      expired, rejected, pages).
 //   Returns { ok, changed, changedFiles, summary, run } — `changed` is true only when published.jsonl or a
-//   draft changed (that is what triggers the Pages deploy; git commit/push wiring is FEAT-108).
+//   draft changed, or when the public token status changed (a page's tokenState or status.flags differ from
+//   what was loaded — R2-01: the probe above resuming a page with nothing queued must deploy too, otherwise
+//   Home keeps "Token for @x is invalid" until the next engine-daily deploy). That is what triggers the Pages
+//   deploy (git commit/push wiring is FEAT-108); an idle run still reports changed: false.
 //
 // Tokens: process.env[page.tokenSecret] is read into a variable and handed to createClient only; a missing
 // or malformed token makes the page 'page_not_configured'. IG_DRY_RUN=1 or --dry-run selects the dry-run
@@ -138,6 +141,12 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
   const changedFiles = [];
   const errors = [];
   const flags = [...(status.flags || [])];
+  // R2-01: what Home prints about tokens, as loaded — pages[h].tokenState per configured page and the flags.
+  // `flags` and status.pages[h] are mutated in place below, so the same snapshot taken in step 4 tells
+  // whether a status-only change (probe resumed a page, token first configured, flag raised or dropped)
+  // happened without any draft or published.jsonl change.
+  const statusSnapshot = () => JSON.stringify({ flags: [...flags].sort(), tokens: config.pages.map((p) => [p.handle, status.pages[p.handle] ? status.pages[p.handle].tokenState : null]) });
+  const statusBefore = statusSnapshot();
 
   // effective slot time (owner moves) + owner edits (by baseRevision)
   const staleEdits = [];
@@ -343,6 +352,7 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
   status.queue = counts.queue;
   status.blocked = counts.blocked;
   status.flags = flags;
+  const statusChanged = statusSnapshot() !== statusBefore;
   const ms = Date.now() - t0;
   const endedAt = new Date(startedAt.getTime() + ms);
   const note = `${publishedCount} published, ${waiting} waiting, ${failedCount} failed, ${expired.length} expired${rejected.length ? `, ${rejected.length} rejected` : ""}${staleEdits.length ? `, ${staleEdits.length} stale edit${staleEdits.length === 1 ? "" : "s"}` : ""}`;
@@ -369,12 +379,13 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
   changedFiles.push(state.appendLog("runs", run, RUN_SPEC, startedAt));
   const summary = stepLine(AGENT, run.ok, ms, 0, 0, note);
   log(summary);
-  return { ok: run.ok, changed: publishedChanged || draftsChanged, changedFiles: unique(changedFiles), summary, run, decisions, staleEdits, expired, rejected, pages, status, errors, config };
+  return { ok: run.ok, changed: publishedChanged || draftsChanged || statusChanged, statusChanged, changedFiles: unique(changedFiles), summary, run, decisions, staleEdits, expired, rejected, pages, status, errors, config };
 }
 
 // CLI entry: ctx from engine/index.js → exit code (0 ok, 1 failed, 2 usage).
 // Commit + push (design §3.2 step 5) happen only with CI=true or --commit; `changed` reaches
-// $GITHUB_OUTPUT so the deploy job runs only when published.jsonl or a draft changed.
+// $GITHUB_OUTPUT so the deploy job runs only when published.jsonl, a draft or the public token status
+// (tokenState / flags, R2-01) changed.
 // A dry run — --dry-run or IG_DRY_RUN=1 (R1-03) — always works on a temp copy: the dry-run client writes
 // dry- ids and status 'published' into drafts, which must never land in the repo's queue.
 export async function run({ root, companyDir, processEnv = process.env, fetchImpl = globalThis.fetch, stdout = console.log, stderr = console.error, flags = {} } = {}) {
