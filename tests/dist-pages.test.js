@@ -82,6 +82,18 @@ test("N4: Team says 'no language model' exactly twice (Designer, Publisher) and 
   assert.ok(team.includes("the owner applies or dismisses each proposal, and the decision is logged"));
   assert.ok(!team.includes("Weekly insights: not built yet"), "the Analyst is built (FEAT-203): its card no longer says not built yet");
   assert.ok(team.includes("insights at 48 h and 7 d + the weekly report"));
+  // FEAT-205: the CEO answers the Analyst; the Writer, Strategist and Designer cards name the feedback inputs they really get
+  assert.ok(!team.includes("answering the Analyst's report in the memo is not built yet"), "the CEO card no longer calls the memo loop unbuilt");
+  const ceoCard = team.match(/<article class="card agent" data-agent="ceo">[\s\S]*?<\/article>/)[0];
+  assert.ok(ceoCard.includes("every item the Analyst files for the CEO gets an answer in the memo, or the memo is refused"), ceoCard);
+  assert.ok(ceoCard.includes("the latest HR review with the owner's decision on it"));
+  const writerCard = team.match(/<article class="card agent" data-agent="writer">[\s\S]*?<\/article>/)[0];
+  assert.ok(writerCard.includes("The owner's last ten feedback entries for the page — reject reasons first — and the latest report's observations are in its prompt."), writerCard);
+  const strategistCard = team.match(/<article class="card agent" data-agent="strategist">[\s\S]*?<\/article>/)[0];
+  assert.ok(strategistCard.includes("The owner's last ten feedback entries for the page and the latest report's observations are in its prompt."), strategistCard);
+  const designerCard = team.match(/<article class="card agent" data-agent="designer">[\s\S]*?<\/article>/)[0];
+  assert.ok(designerCard.includes("An owner note tagged design, variant or palette that names a headline tier or a palette steers its choice; nothing else is read into a note."), designerCard);
+  assert.ok(!/not built yet/.test(team.replace(/<ul class="run-lines">[\s\S]*?<\/ul>/g, "")), "nothing on the Team page is labelled unbuilt any more (run-log lines excepted)");
 });
 
 test("N5: provider names are human labels, never config tokens", () => {
@@ -296,11 +308,17 @@ test("Reports page lists the fixture report (the empty sentence is gone, P2-05);
   const about = page("about/index.html");
   assert.ok(about.includes("Drafts are public."));
   assert.ok(about.includes("Actions cron may start 10–30 min late"));
-  assert.ok(about.includes("not built yet"));
+  assert.ok(about.includes("not built yet"), "the honesty card still names the label");
   // FEAT-204: HR is built — About names the owner's Apply step and the qa/publisher guard, and no longer lists HR as unbuilt
   assert.ok(about.includes("Roster changes wait for the owner."));
   assert.ok(about.includes("the proposal can never remove QA or the Publisher"));
-  assert.ok(about.includes("<strong>Not built yet.</strong> The CEO memo answering the Analyst's report is phase 2."), "the unbuilt list is down to the CEO memo loop (reels on)");
+  // FEAT-205: the CEO memo loop is built — the unbuilt bullet is gone, the feedback-loop limit sentence is there
+  assert.ok(!about.includes("<strong>Not built yet.</strong>"), "no 'Not built yet' limit bullet remains (the CEO memo loop was the last item)");
+  assert.ok(!about.includes("the CEO memo answering the Analyst's report is phase 2"), "the CEO memo loop is no longer called phase 2");
+  assert.ok(about.includes("<strong>Owner feedback is used, not inferred.</strong> A reject reason or a note from the owner reaches the Writer's and the Strategist's prompts for that page"), "the About page's feedback sentence");
+  assert.ok(about.includes("which also answers every item the Analyst files for the CEO"));
+  assert.ok(about.includes("Only a note tagged design, variant or palette that names a headline tier or a palette steers the Designer; nothing else is read into a note."));
+  assert.ok(about.includes("Anything not built yet says so on the page where it would appear, instead of a placeholder."));
   for (const old of ["HR's monthly review and roster proposals, and the CEO memo", "the monthly HR review is phase 2", "the monthly HR review are phase 2", "reels and the monthly HR review"]) assert.ok(!about.includes(old), `HR is no longer called phase 2 / unbuilt: ${old}`);
   assert.ok(about.includes("Every number in HR's monthly review is one the engine computed from its own logs."));
   assert.ok(!about.includes("until the refresh job exists (phase 2)"), "the token refresh job is built (FEAT-202); About says so");

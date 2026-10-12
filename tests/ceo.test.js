@@ -11,7 +11,9 @@ import { readEnv } from "../engine/lib/env.js";
 import { memoPath } from "../engine/lib/ids.js";
 import { FEEDBACK_SPEC, PUBLISHED_SPEC, USAGE_SPEC, assertShape, validate } from "../engine/lib/schema.js";
 import { AgentOutputError, createRouter } from "../engine/llm/router.js";
-import { AGENT, DEFAULT_HANDLES, MAX_BUDGET_SPLIT_PCT, OUTPUT_SPEC, buildTask, feedbackSince, memoExcerptFor, outputSpec, parseMemo, prioritiesFor, publishedSince, readMemo, renderMemo, runCeo, shouldRun, usageSummary, validateCeoOutput } from "../engine/agents/ceo.js";
+import { latestReport } from "../engine/agents/analyst.js";
+import { latestDecisions, latestReview, readDecisions } from "../engine/agents/hr.js";
+import { AGENT, ANSWERS_HEADING, DEFAULT_HANDLES, MAX_BUDGET_SPLIT_PCT, NO_HR_REVIEW_NOTE, NO_REPORT_NOTE, OUTPUT_SPEC, answersSection, buildTask, feedbackSince, hrReviewInput, memoExcerptFor, outputSpec, parseMemo, prioritiesFor, proposalStatus, publishedSince, readMemo, renderMemo, reportInput, runCeo, shouldRun, usageSummary, validateCeoOutput } from "../engine/agents/ceo.js";
 
 const company = loadCompany({ companyDir: COMPANY_DIR, warn: () => {} });
 const { config, roster, brands, charters } = company;
@@ -20,6 +22,10 @@ const TUESDAY = "2026-10-13T05:31:00+05:30";
 const RUN_ID = "engine-daily-20261012-0531-abc123";
 const SECRET_NAMES = Object.values(config.providers).map((p) => p.secret);
 const llm = (name) => JSON.parse(readFileSync(join(ROOT, "tests", "fixtures", "llm", `${name}.json`), "utf8"));
+// The populated fixture's latest Analyst report (2026-W41) and HR review (2026-09) — the CEO's phase-2 inputs (P2-07).
+const fixtureState = createState({ companyDir: COMPANY_DIR, now: MONDAY });
+const FIXTURE_REPORT = latestReport(fixtureState);
+const FIXTURE_REVIEW = latestReview(fixtureState);
 
 function harness(now = MONDAY, processEnv = { MOCK_LLM: "1" }) {
   const dir = tmpDir("hoshlab-ceo-");
@@ -28,12 +34,14 @@ function harness(now = MONDAY, processEnv = { MOCK_LLM: "1" }) {
   return { dir, state, router, cleanup: () => rmSync(dir, { recursive: true, force: true }) };
 }
 
-// A router stand-in that answers from a fixture and records the call.
+// A router stand-in that answers from a fixture and records the call (isMock, like the real router under MOCK_LLM=1:
+// the fixture answers are pinned to one week and one report, so those two rules are waived for it — never for a provider).
 function fakeRouter(fixtureName) {
   const calls = [];
   return {
     calls,
     runId: RUN_ID,
+    isMock: true,
     async complete(agent, args) {
       calls.push({ agent, args });
       const fx = llm(fixtureName);
@@ -73,7 +81,7 @@ test("runCeo under MOCK_LLM=1 writes memos/2026-W42.md = memoMarkdown + a fenced
     assert.equal(res.mock, true);
     assert.equal(res.calls, 1);
     assert.equal(res.costUsd, 0);
-    assert.match(res.note, /^6 priorities, 0 paused, 1 owner questions → memos\/2026-W42\.md$/);
+    assert.match(res.note, /^6 priorities, 0 paused, no Analyst report to answer, 1 owner questions → memos\/2026-W42\.md$/);
     assert.ok(h.state.exists("state/memos/2026-W42.md"));
     const text = h.state.readText("state/memos/2026-W42.md");
     assert.ok(text.startsWith("# Memo 2026-W42\n"), "memoMarkdown first");
@@ -87,6 +95,9 @@ test("runCeo under MOCK_LLM=1 writes memos/2026-W42.md = memoMarkdown + a fenced
     assert.deepEqual(memo, llm("ceo.ok").output, "the block is the whole validated output");
     assertShape(memo, OUTPUT_SPEC);
     assert.equal(renderMemo(memo), text);
+    // the mock's answers are rendered even without a report (the answers rule is waived under MOCK_LLM, like the week)
+    assert.ok(text.includes(`\n\n${ANSWERS_HEADING}\n\n1. `), "answers section rendered from answers[] before the JSON block");
+    assert.ok(text.indexOf(ANSWERS_HEADING) < text.indexOf("```json"));
     assert.deepEqual(readMemo(h.state, TUESDAY), { rel: "state/memos/2026-W42.md", markdown: text, memo });
     assert.equal(readMemo(h.state, "2026-10-19T05:31:00+05:30"), null, "next week has no memo yet");
     assert.equal(shouldRun(TUESDAY, h.state), false);
@@ -190,15 +201,113 @@ test("task JSON: brand summaries carry usable facts only (no rp-f12), cadence, p
     assert.ok(rp.pricing.some((p) => p.sku === "shubh-pass"));
     assert.equal(rp.disclaimers.length, 1);
     assert.equal(task.lastReport, null);
-    assert.deepEqual(task.notes, ["No Analyst report yet (the Analyst starts in phase 2); plan on cadence and feedback alone."]);
+    assert.equal(task.hrReview, null);
+    assert.deepEqual(task.notes, [NO_REPORT_NOTE, NO_HR_REVIEW_NOTE]);
+    assert.ok(!task.notes.join(" ").includes("phase 2"), "the Analyst is built: the note explains when a report appears, not a phase");
     assert.deepEqual(task.feedback.map((f) => f.text), ["Too salesy; keep to the six layout rules."]);
     assert.deepEqual(task.published.map((p) => p.draftId), ["kd-2026-10-06-six-rules"]);
     assert.deepEqual(task.usage, usage);
     assert.deepEqual(task.flags, ["budget_warn"]);
-    assert.deepEqual(buildTask({ config, brands, now: MONDAY, lastReport: { week: "2026-W41" } }).notes, []);
+    const withReport = buildTask({ config, brands, now: MONDAY, lastReport: { week: "2026-W41", forCeo: ["a", "b"] }, hrReview: FIXTURE_REVIEW });
+    assert.deepEqual(withReport.notes, ["Answer every one of the 2 items in lastReport.forCeo in `answers`, quoting each item verbatim as its forCeo; the engine renders them under \"Answers to the Analyst\" — do not repeat them in memoMarkdown."]);
   } finally {
     h.cleanup();
   }
+});
+
+// FEAT-205 (P2-07): the CEO consumes the latest Analyst report, 30 days of feedback and the latest HR review, and the
+// memo answers every forCeo item — the fixture report has two; ceo.ok answers both, ceo.bad2 only the first.
+test("P2-07: with the fixture report + HR review the task carries both (forCeo items, verdicts, proposal status) and the memo's answers[] references every forCeo item; the file renders an 'Answers to the Analyst (report 2026-W41)' section", async () => {
+  assert.ok(FIXTURE_REPORT && FIXTURE_REPORT.week === "2026-W41", "the populated fixture has the W41 report");
+  assert.ok(FIXTURE_REVIEW && FIXTURE_REVIEW.month === "2026-09", "the populated fixture has the September HR review");
+  const decision = latestDecisions(readDecisions(fixtureState)).get(FIXTURE_REVIEW.month) || null;
+  assert.equal(decision, null, "no decisions.jsonl in the fixture → awaiting the owner");
+  const h = harness();
+  try {
+    const router = fakeRouter("ceo.ok");
+    const res = await runCeo({ config, brands, router, state: h.state, now: MONDAY, runId: RUN_ID, lastReport: FIXTURE_REPORT, hrReview: FIXTURE_REVIEW, hrDecision: decision });
+    const task = router.calls[0].args.task;
+    // the report as the model sees it: the JSON block without its Markdown
+    assert.deepEqual(task.lastReport, reportInput(FIXTURE_REPORT));
+    assert.equal(task.lastReport.week, "2026-W41");
+    assert.equal(task.lastReport.path, "reports/2026-W41.md");
+    assert.equal(task.lastReport.generatedAt, "2026-10-11T21:03:30+05:30");
+    assert.deepEqual(task.lastReport.forCeo, FIXTURE_REPORT.report.forCeo);
+    assert.equal(task.lastReport.forCeo.length, 2);
+    assert.deepEqual(task.lastReport.perPage.map((p) => p.page), ["rishtapatra", "kaatdo", "job_rez"]);
+    assert.equal(task.lastReport.reportMarkdown, undefined, "the Markdown stays out of the task (the JSON carries every number)");
+    // the HR review with the proposal's status derived from the (absent) decisions log
+    assert.deepEqual(task.hrReview, hrReviewInput(FIXTURE_REVIEW, null));
+    assert.equal(task.hrReview.month, "2026-09");
+    assert.equal(task.hrReview.proposalStatus, "proposed");
+    assert.equal(task.hrReview.decidedAt, null);
+    assert.equal(task.hrReview.review.length, 8);
+    assert.deepEqual(task.hrReview.changes, [{ agent: "writer", field: "temperature", from: "0.8", to: "0.7", why: task.hrReview.changes[0].why }]);
+    assert.ok(task.hrReview.reviewMarkdown.length > 0);
+    assert.deepEqual(task.notes, ['Answer every one of the 2 items in lastReport.forCeo in `answers`, quoting each item verbatim as its forCeo; the engine renders them under "Answers to the Analyst" — do not repeat them in memoMarkdown.']);
+    assert.equal(task.feedback.length, 0, "the temp state has no feedback.jsonl");
+    // the validate hook enforces the answers rule against the report's items
+    const ok = llm("ceo.ok").output;
+    assert.deepEqual(router.calls[0].args.validate(ok), []);
+    assert.deepEqual(router.calls[0].args.validate(llm("ceo.bad2").output), ['$.answers: no answer to the Analyst\'s item 2 (quote it verbatim in forCeo): "@job_rez has published nothing yet; the first JobRez post is the one to watch next week."']);
+    // the memo references each forCeo item
+    assert.deepEqual(res.memo.answers.map((a) => a.forCeo), FIXTURE_REPORT.report.forCeo);
+    assert.match(res.note, /^6 priorities, 0 paused, 2 answers to the Analyst \(2026-W41\), 1 owner questions → memos\/2026-W42\.md$/);
+    const text = h.state.readText("state/memos/2026-W42.md");
+    assert.ok(text.includes(`\n\n${ANSWERS_HEADING} (report 2026-W41)\n\n1. ${FIXTURE_REPORT.report.forCeo[0]}\n   Answer: ${ok.answers[0].answer}\n2. ${FIXTURE_REPORT.report.forCeo[1]}\n   Answer: ${ok.answers[1].answer}\n\n\`\`\`json\n`), text);
+    assert.equal(renderMemo(ok, { reportWeek: "2026-W41" }), text);
+    assert.deepEqual(parseMemo(text).answers, ok.answers, "the JSON block carries the answers");
+    assert.equal(answersSection([], "2026-W41"), "");
+    assert.equal(answersSection([{ forCeo: "a  b", answer: " c\nd " }]), `${ANSWERS_HEADING}\n\n1. a b\n   Answer: c d`);
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("P2-07: ceo.bad2 (one forCeo item unanswered) fails the answers rule → exactly one repair call → AgentOutputError, nothing written; without a report a real provider may not answer anything, the mock is not held to it", async () => {
+  const h = harness(MONDAY, { MOCK_LLM: "1", MOCK_LLM_CASE_CEO: "bad2" });
+  try {
+    await assert.rejects(runCeo({ config, brands, router: h.router, state: h.state, now: MONDAY, lastReport: FIXTURE_REPORT }), (e) => {
+      assert.ok(e instanceof AgentOutputError, e.message);
+      assert.equal(e.calls, 2, "first answer + one repair");
+      assert.ok(e.errors.some((x) => /no answer to the Analyst's item 2/.test(x)), e.errors.join("; "));
+      assert.ok(e.repairErrors.some((x) => /no answer to the Analyst's item 2/.test(x)));
+      return true;
+    });
+    assert.equal(h.state.exists("state/memos/2026-W42.md"), false);
+    assert.equal(h.state.readJsonl(h.state.monthLogPath("usage")).length, 2);
+  } finally {
+    h.cleanup();
+  }
+  // the rule itself
+  const pages = config.pages.map((p) => ({ handle: p.handle, factIds: new Set(brands[p.handle].usableFacts().map((f) => f.id)) }));
+  const ok = llm("ceo.ok").output;
+  const items = FIXTURE_REPORT.report.forCeo;
+  assert.deepEqual(validateCeoOutput(ok, { week: "2026-W42", pages, forCeo: items }), []);
+  assert.deepEqual(validateCeoOutput(ok, { week: "2026-W42", pages, forCeo: null }), [], "null = not checked (mock without a report)");
+  assert.deepEqual(validateCeoOutput(ok, { week: "2026-W42", pages, forCeo: [] }), [
+    `$.answers[0].forCeo: there is no Analyst report to answer: ${JSON.stringify(ok.answers[0].forCeo)}`,
+    `$.answers[1].forCeo: there is no Analyst report to answer: ${JSON.stringify(ok.answers[1].forCeo)}`,
+  ]);
+  assert.deepEqual(validateCeoOutput({ ...ok, answers: [] }, { week: "2026-W42", pages, forCeo: [] }), [], "no report, no answers");
+  const spaced = { ...ok, answers: ok.answers.map((a) => ({ ...a, forCeo: `  ${a.forCeo.replace(/ /g, "  ")} ` })) };
+  assert.deepEqual(validateCeoOutput(spaced, { week: "2026-W42", pages, forCeo: items }), [], "whitespace differences do not count");
+  const invented = { ...ok, answers: [...ok.answers, { forCeo: "Post more reels.", answer: "No." }] };
+  assert.deepEqual(validateCeoOutput(invented, { week: "2026-W42", pages, forCeo: items }), ['$.answers[2].forCeo: not an item of the Analyst report: "Post more reels."']);
+  const empty = { ...ok, answers: ok.answers.map((a, i) => (i === 0 ? { ...a, answer: "  " } : a)) };
+  assert.deepEqual(validateCeoOutput(empty, { week: "2026-W42", pages, forCeo: items }), ["$.answers[0].answer: empty"]);
+  // input shaping helpers
+  assert.equal(reportInput(null), null);
+  assert.deepEqual(reportInput({ week: "2026-W41", forCeo: ["x"] }), { week: "2026-W41", path: null, generatedAt: null, perPage: [], experiments: [], forCeo: ["x"] });
+  assert.equal(hrReviewInput(null), null);
+  assert.equal(proposalStatus(null), "proposed");
+  assert.equal(proposalStatus({ decision: "apply", at: "2026-10-02T09:00:00+05:30" }), "applied");
+  assert.equal(proposalStatus({ decision: "dismiss" }), "dismissed");
+  const applied = hrReviewInput(FIXTURE_REVIEW, { month: "2026-09", proposal: "hr/proposals/2026-09.json", decision: "apply", at: "2026-10-02T09:00:00+05:30", by: "owner" });
+  assert.equal(applied.proposalStatus, "applied");
+  assert.equal(applied.decidedAt, "2026-10-02T09:00:00+05:30");
+  assert.ok(OUTPUT_SPEC.answers, "the spec carries answers");
+  assert.deepEqual(OUTPUT_SPEC.answers, [{ forCeo: "str", answer: "str" }]);
 });
 
 test("parseMemo / prioritiesFor / memoExcerptFor: last json block wins, ranks sorted per page, empty excerpt for a page without priorities", () => {

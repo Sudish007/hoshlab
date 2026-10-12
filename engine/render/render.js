@@ -194,6 +194,7 @@ async function renderOne(browser, { templateFile, payload, guard }) {
       window.__BRAND__ = p.brand;
       window.__TOKENS__ = p.tokens;
       window.__SLIDE__ = p.slide;
+      window.__PREFER__ = p.prefer || null;
     }, payload);
     await page.goto(pathToFileURL(templateFile).href, { waitUntil: "load" });
     const fonts = await page.evaluate(() => document.fonts.ready.then(() => ({ status: document.fonts.status, failed: Array.from(document.fonts).filter((f) => f.status === "error").map((f) => `${f.family} ${f.weight}`) })));
@@ -207,14 +208,29 @@ async function renderOne(browser, { templateFile, payload, guard }) {
   }
 }
 
-// renderDraft({ draft, brand, outDir, relDir?, templateDir?, templatesRoot?, fontsDir?, coverageTable?, chromium?, browser? })
-//   → { media: [{ kind, file, path, bytes, width, height, sha256, variant, palette, minTextU, minContrast }], variant, palette }
+// The owner's design preference (engine/lib/feedback.js designPreferences, FEAT-205 / plan D23) as the templates
+// read it in window.__PREFER__: { variant: 'A'|'B'|'C'|null, palette: 'dark'|'light'|null }, or null when empty.
+export function normalizePrefer(prefer) {
+  if (!prefer || typeof prefer !== "object") return null;
+  const variant = ["A", "B", "C"].includes(prefer.variant) ? prefer.variant : null;
+  const palette = ["dark", "light"].includes(prefer.palette) ? prefer.palette : null;
+  return variant || palette ? { variant, palette } : null;
+}
+
+// renderDraft({ draft, brand, outDir, relDir?, prefer?, templateDir?, templatesRoot?, fontsDir?, coverageTable?, chromium?, browser? })
+//   → { media: [{ kind, file, path, bytes, width, height, sha256, variant, palette, paletteKind, minTextU, minContrast }],
+//       variant, palette, prefer, applied: { variant: bool|null, palette: bool|null } | null }
 // Files are written to outDir as image-<n>-<sha8>.jpg (image) / slide-<n>-<sha8>.jpg (carousel); `path` is
 // relDir + file (default 'media/<draftId>/<file>'). An injected `browser` is reused and left open.
-export async function renderDraft({ draft, brand, outDir, relDir, templateDir, templatesRoot = TEMPLATES_DIR, fontsDir = FONTS_DIR, coverageTable, chromium, browser, capture, ffmpegPath, ffprobePath } = {}) {
+// `prefer` (FEAT-205): the templates set the preferred headline tier instead of the measured one — the overflow
+// guard then decides whether the copy fits — and a template that offers both palettes follows the preferred one
+// (today: KaatDo carousel body slides, light unless `dark` is preferred); `applied` reports what happened:
+// variant = every file carries the preferred tier, palette = at least one file is on the preferred palette kind.
+export async function renderDraft({ draft, brand, outDir, relDir, prefer = null, templateDir, templatesRoot = TEMPLATES_DIR, fontsDir = FONTS_DIR, coverageTable, chromium, browser, capture, ffmpegPath, ffprobePath } = {}) {
   if (!draft || !brand || !outDir) throw new TypeError("render: draft, brand and outDir are required");
   const format = draft.format;
   if (format === REEL_FORMAT) return renderReelDraft({ draft, brand, outDir, relDir, templateDir, templatesRoot, fontsDir, coverageTable, chromium, browser, capture, ffmpegPath, ffprobePath });
+  const want = normalizePrefer(prefer);
   const file = FORMATS[format];
   if (!file) throw new RenderError("media_spec", `${format}: unknown format (image | carousel | reel)`);
   await ensureFonts(fontsDir);
@@ -233,19 +249,25 @@ export async function renderDraft({ draft, brand, outDir, relDir, templateDir, t
   const media = [];
   try {
     for (let i = 0; i < slides; i++) {
-      const payload = { draft, brand: info, tokens: { vars: tokens.vars }, slide: i };
+      const payload = { draft, brand: info, tokens: { vars: tokens.vars }, slide: i, prefer: want };
       const { layout, buf } = await renderOne(b, { templateFile, payload, guard: (l) => applyGuards(l, { devanagariFamilies: tokens.devanagariFamilies, table }) });
       const dims = checkJpeg(buf);
       const sha256 = createHash("sha256").update(buf).digest("hex");
       const name = `${format === "carousel" ? "slide" : "image"}-${i + 1}-${sha256.slice(0, 8)}.jpg`;
       mkdirSync(outDir, { recursive: true });
       writeFileSync(join(outDir, name), buf);
-      media.push({ kind: "image", file: name, path: `${rel}${name}`, bytes: buf.length, width: dims.width, height: dims.height, sha256, variant: layout.variant, palette: layout.palette || null, minTextU: layout.minTextU, minContrast: layout.minContrast });
+      media.push({ kind: "image", file: name, path: `${rel}${name}`, bytes: buf.length, width: dims.width, height: dims.height, sha256, variant: layout.variant, palette: layout.palette || null, paletteKind: layout.paletteKind || null, minTextU: layout.minTextU, minContrast: layout.minContrast });
     }
   } finally {
     if (own) await b.close().catch(() => {});
   }
-  return { media, variant: media[0] ? media[0].variant : null, palette: media[0] ? media[0].palette : null };
+  const applied = want
+    ? {
+        variant: want.variant ? media.every((m) => m.variant === want.variant) : null,
+        palette: want.palette ? media.some((m) => m.paletteKind === want.palette) : null,
+      }
+    : null;
+  return { media, variant: media[0] ? media[0].variant : null, palette: media[0] ? media[0].palette : null, prefer: want, applied };
 }
 
 // Reel draft (FEAT-201): capture style → capture.js records the product's own pages first (one frame per scene),
@@ -272,20 +294,20 @@ async function renderReelDraft({ draft, brand, outDir, relDir, templateDir, temp
 }
 
 // createRenderer({ chromium?, templatesRoot?, fontsDir?, coverageTable?, capture?, ffmpegPath?, ffprobePath? })
-//   → { renderDraft(draft, brand, { outDir, relDir }), close() }
+//   → { renderDraft(draft, brand, { outDir, relDir, prefer }), close() }
 // One Chromium for many drafts (the Designer renders every `written` draft of a run); launch is lazy, so a
 // machine without Chromium only fails when a draft actually needs rendering (RenderUnavailableError).
 export function createRenderer({ chromium, templatesRoot = TEMPLATES_DIR, fontsDir = FONTS_DIR, coverageTable, capture, ffmpegPath, ffprobePath } = {}) {
   let browser = null;
   let table = coverageTable || null;
   return {
-    async renderDraft(draft, brand, { outDir, relDir } = {}) {
+    async renderDraft(draft, brand, { outDir, relDir, prefer = null } = {}) {
       if (!table) {
         await ensureFonts(fontsDir);
         table = loadCoverage(join(fontsDir, "coverage.json"));
       }
       if (!browser) browser = await launch(chromium);
-      return renderDraft({ draft, brand, outDir, relDir, templatesRoot, fontsDir, coverageTable: table, browser, capture, ffmpegPath, ffprobePath });
+      return renderDraft({ draft, brand, outDir, relDir, prefer, templatesRoot, fontsDir, coverageTable: table, browser, capture, ffmpegPath, ffprobePath });
     },
     async close() {
       if (browser) await browser.close().catch(() => {});

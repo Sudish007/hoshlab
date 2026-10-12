@@ -3,7 +3,8 @@
 //          + '## House rules (generated)'  the seven common rules, phrased for the page's brand
 //          + '## Context (generated)'      today IST, page, Voice, usable facts (disputed excluded),
 //                                          pricing, disclaimers, forbidden, allowed domains,
-//                                          memo excerpt, feedback digest (when non-empty), extra
+//                                          memo excerpt, '### Owner feedback and observations' (the
+//                                          engine/lib/feedback.js digest, only when non-empty), extra
 //          + '## Output (generated)'       JSON-only instruction
 //   user   = JSON.stringify(task)
 // The charter is owner-editable and never contains the house rules (FEAT-102); they are generated here.
@@ -13,6 +14,8 @@ import { dowIst, istDate, parseIso } from "../lib/time.js";
 export const HOUSE_RULES_HEADING = "## House rules (generated)";
 export const CONTEXT_HEADING = "## Context (generated)";
 export const OUTPUT_HEADING = "## Output (generated)";
+// The digest engine/lib/feedback.js builds (FEAT-205, P2-08) sits under this sub-heading of the context block.
+export const FEEDBACK_DIGEST_HEADING = "### Owner feedback and observations";
 export const JOBREZ_HANDLE = "job_rez";
 
 const LANGUAGE_NAMES = { hi: "Hindi (Devanagari script)", en: "English" };
@@ -150,7 +153,7 @@ export function contextBlock({ brand, page, todayIst, memoExcerpt = "", feedback
     out.push("", "### Brand", "No single brand for this task; brand summaries, if any, are inside the task JSON.");
   }
   if (memoExcerpt && String(memoExcerpt).trim()) out.push("", "### CEO memo (excerpt)", String(memoExcerpt).trim());
-  if (feedbackDigest && String(feedbackDigest).trim()) out.push("", "### Owner feedback digest", String(feedbackDigest).trim());
+  if (feedbackDigest && String(feedbackDigest).trim()) out.push("", FEEDBACK_DIGEST_HEADING, String(feedbackDigest).trim());
   if (extra !== undefined && extra !== null && extra !== "") out.push("", "### Extra", typeof extra === "string" ? extra : JSON.stringify(extra, null, 2));
   return out.join("\n");
 }

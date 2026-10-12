@@ -7,8 +7,10 @@
 </head>
 <body>
 <!-- KaatDo carousel (design §10, brand ## Formats): cover + recap on the dark console palette, body slides on
-     the light palette (light-bg / light-txt / light-dim). window.__SLIDE__ is the 0-based slide index. -->
-<div id="canvas" class="post post-kd" data-palette="dark console palette">
+     the light palette (light-bg / light-txt / light-dim) — the brand's alternative for body slides — unless the
+     owner's feedback tagged palette prefers `dark` (window.__PREFER__, FEAT-205 / plan D23), when every slide stays
+     on the console palette. window.__SLIDE__ is the 0-based slide index. -->
+<div id="canvas" class="post post-kd" data-palette="dark console palette" data-palette-kind="dark">
   <div class="brand-row">
     <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
       <path d="M8 42 L19 30 L27 36 L36 24" fill="none" stroke="#3dff8c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -38,7 +40,11 @@
   var role = i === 0 ? "cover" : i === slides.length - 1 ? "recap" : "body";
   var canvas = document.getElementById("canvas");
   canvas.classList.add("slide-" + role);
-  if (role === "body") canvas.setAttribute("data-palette", "light palette");
+  if (role === "body" && H.preferredPalette() !== "dark") {
+    canvas.classList.add("light");
+    canvas.setAttribute("data-palette", "light palette");
+    canvas.setAttribute("data-palette-kind", "light");
+  }
   H.applyTokens(canvas, window.__TOKENS__);
   var up = String(brand.name || "").toUpperCase();
   var cut = up.lastIndexOf("DO");

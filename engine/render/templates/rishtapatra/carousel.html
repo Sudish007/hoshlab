@@ -8,7 +8,7 @@
 <body>
 <!-- RishtaPatra carousel (design §10): slide 1 = cover (maroon, cream display type, "Swipe" affordance),
      slides 2..n-1 = heading + body on cream, slide n = recap + footer. window.__SLIDE__ is the 0-based index. -->
-<div id="canvas" class="post post-rp" data-palette="cream and maroon">
+<div id="canvas" class="post post-rp" data-palette="cream and maroon" data-palette-kind="light">
   <div class="brand-row">
     <svg viewBox="0 0 104 110" aria-hidden="true" focusable="false">
       <defs><clipPath id="rp-clip"><path d="M12 0H74L100 26V108Q100 120 88 120H12Q0 120 0 108V12Q0 0 12 0Z"/></clipPath></defs>
@@ -42,7 +42,7 @@
   var role = i === 0 ? "cover" : i === slides.length - 1 ? "recap" : "body";
   var canvas = document.getElementById("canvas");
   canvas.classList.add("slide-" + role);
-  if (role === "cover") canvas.setAttribute("data-palette", "maroon and cream");
+  if (role === "cover") { canvas.setAttribute("data-palette", "maroon and cream"); canvas.setAttribute("data-palette-kind", "dark"); }
   H.applyTokens(canvas, window.__TOKENS__);
   document.getElementById("word").textContent = brand.name || "";
   var wordHi = document.getElementById("word-hi");

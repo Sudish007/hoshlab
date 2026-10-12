@@ -301,7 +301,7 @@ test("buildTask carries the roster, the stats, the month's feedback and ONLY the
   assert.deepEqual(task.roster.map((a) => a.name), NAMES);
   assert.equal(task.roster.find((a) => a.name === "designer").provider, null);
   assert.deepEqual(task.stats, stats);
-  assert.equal(task.feedback.length, 2, "both fixture feedback lines are from October");
+  assert.equal(task.feedback.length, 4, "all four fixture feedback lines are from October (two rejects, two notes — FEAT-205)");
   assert.deepEqual(Object.keys(task.providers), ["anthropic", "gemini", "openai"]);
   assert.ok("claude-sonnet-5-5" in task.providers.anthropic.models);
   assert.equal(task.providers.anthropic.models["claude-sonnet-5-5"].acceptsTemperature, false);
@@ -354,7 +354,7 @@ test("hr.ok.json on 1 November → hr/2026-10-review.md (Markdown + JSON block w
     assert.deepEqual(parsed.review, okFixture.output, "the block is the model output");
     assert.deepEqual(parsed.engine.stats, r.stats);
     assert.deepEqual(parsed.engine.stats, computeAgentStats({ month: "2026-10", agents: NAMES, ...readMonthData(fx.state, "2026-10"), usageMonth: readMonthData(fx.state, "2026-10").usage }), "the provenance holds the stats the evidence was checked against");
-    assert.deepEqual(parsed.engine.data, { usageRows: 6, runs: 3, draftsWritten: 5, published: 2, feedback: 2 });
+    assert.deepEqual(parsed.engine.data, { usageRows: 6, runs: 3, draftsWritten: 5, published: 2, feedback: 4 });
     assert.equal(parsed.engine.mock, true);
     assert.equal(renderReview(okFixture.output, parsed.engine), markdown);
     assert.equal(parsed.body, okFixture.output.reviewMarkdown.trimEnd());

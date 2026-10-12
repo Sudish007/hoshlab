@@ -8,7 +8,7 @@
 <body>
 <!-- JobRez carousel (design §10, brand ## Formats): cover on ink with cream display type and the gradient tile,
      body slides on canvas with ink headings, recap slide with footer. window.__SLIDE__ is the 0-based slide index. -->
-<div id="canvas" class="post post-jr" data-palette="violet on cream">
+<div id="canvas" class="post post-jr" data-palette="violet on cream" data-palette-kind="light">
   <div class="brand-row">
     <span class="tile" data-bg="#9247f2" aria-hidden="true">
       <svg viewBox="0 0 32 32" focusable="false">
@@ -40,7 +40,7 @@
   var role = i === 0 ? "cover" : i === slides.length - 1 ? "recap" : "body";
   var canvas = document.getElementById("canvas");
   canvas.classList.add("slide-" + role);
-  if (role === "cover") canvas.setAttribute("data-palette", "cream on ink");
+  if (role === "cover") { canvas.setAttribute("data-palette", "cream on ink"); canvas.setAttribute("data-palette-kind", "dark"); }
   H.applyTokens(canvas, window.__TOKENS__);
   var name = String(brand.name || "");
   var m = /^([A-Z][a-z]+)([A-Z].*)$/.exec(name);

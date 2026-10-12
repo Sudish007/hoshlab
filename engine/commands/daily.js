@@ -6,11 +6,15 @@
 //   2. budget: used = Σ usage/<month>.jsonl; used ≥ monthlyUsd with hardStop → flag budget_exhausted and
 //      every model-backed step (CEO, Strategist, Writer, QA) is recorded 'skipped: budget_exhausted' — no
 //      drafts are created (M5.4); used ≥ warnAtPct → budget_warn.
-//   3. CEO when Monday IST or this ISO week's memo is missing;  4. HR on the 1st IST (reviews the previous month → hr/<month>-review.md
-//      + hr/proposals/<month>.json; catches up a missing proposal once the month has data; `hr` command forces it — FEAT-204);
-//   5. Strategist per page;  6. Writer for slots within leadDays without a live draft + drafts in rework;
+//   3. CEO when Monday IST or this ISO week's memo is missing (with the latest Analyst report, whose forCeo items it must
+//      answer, and the latest HR review + proposal status — FEAT-205);  4. HR on the 1st IST (reviews the previous month →
+//      hr/<month>-review.md + hr/proposals/<month>.json; catches up a missing proposal once the month has data; `hr` command
+//      forces it — FEAT-204);
+//   5. Strategist per page;  6. Writer for slots within leadDays without a live draft + drafts in rework — both with the
+//      owner-feedback digest for the page in their context block (engine/lib/feedback.js, P2-08);
 //   7. Designer for `written` drafts (skipped: media_branch_missing when .media/.git is absent, M16); a
-//      refused draft goes to `rework` like a failed QA check (R1-02);
+//      refused draft goes to `rework` like a failed QA check (R1-02); feedback tagged design/variant/palette steers
+//      the variant and palette deterministically (plan D23);
 //   8. QA for `rendered` drafts;  9. one inline rework loop (Writer → Designer → QA) for the drafts QA
 //      or the Designer sent to rework in this run;  9b. Analyst (FEAT-203, design §3.1 step 8) on Sundays IST or
 //      when --agents names it: Instagram insights for the posts live ≥ 48 h / ≥ 7 d and not measured yet →
@@ -40,9 +44,10 @@ import { MockFixtureError } from "../llm/mock.js";
 import { createRenderer } from "../render/render.js";
 import { createClient } from "../ig/client.js";
 import { DRY_USER_ID, createDryRunClient, isDryRun } from "../ig/dry-run.js";
+import { buildDigest } from "../lib/feedback.js";
 import { readMemo, runCeo, shouldRun as ceoShouldRun } from "../agents/ceo.js";
 import * as hr from "../agents/hr.js";
-import { collectMetrics, readMetrics, runAnalyst, shouldRun as analystShouldRun } from "../agents/analyst.js";
+import { collectMetrics, latestReport, readMetrics, runAnalyst, shouldRun as analystShouldRun } from "../agents/analyst.js";
 import { TERMINAL_SLOT_DRAFT_STATUSES, runStrategist, slotStatusFor } from "../agents/strategist.js";
 import { runWriter } from "../agents/writer.js";
 import { SKIP_MEDIA_BRANCH_MISSING, runDesigner } from "../agents/designer.js";
@@ -254,8 +259,15 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   const drafts = () => state.listDrafts().map((did) => state.readDraft(did));
   const ideasById = () => latestByKey(state.readJsonl("state/ideas.jsonl"), "id");
   const readCalendar = () => (state.exists("state/calendar.json") ? state.readJson("state/calendar.json", CALENDAR_SPEC) : null);
+  // Owner feedback (admin-owned, read once per run) and the latest Analyst report feed the CEO, the Strategist's
+  // and the Writer's context blocks (engine/lib/feedback.js digest, P2-08) and the Designer's preferences (D23).
+  const feedbackRows = state.readJsonl("state/feedback.jsonl");
+  const reportAtStart = latestReport(state);
+  const digestFor = (handle) => buildDigest({ feedback: feedbackRows, page: handle, lastReport: reportAtStart ? reportAtStart.report : null, now: startedAt });
 
-  // 3. CEO — Monday IST or this week's memo missing; company-wide, so a --page filter skips it
+  // 3. CEO — Monday IST or this week's memo missing; company-wide, so a --page filter skips it. Inputs beyond the
+  //    state it reads itself (P2-07): the latest Analyst report (every forCeo item must be answered) and the latest
+  //    HR review with its proposal's status from hr/decisions.jsonl.
   if (!wants("ceo")) skip("ceo", "skipped: not selected (--agents)", "not_selected");
   else if (pageFilter && !(selected && selected.has("ceo"))) skip("ceo", "skipped: --page filter (company-wide agent)", "page_filter");
   else if (!ceoShouldRun(startedAt, state)) skip("ceo", `skipped: not Monday and ${readMemo(state, startedAt).rel} exists`, "not_due");
@@ -263,7 +275,9 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   else {
     await timed("ceo", async () => {
       try {
-        const r = await runCeo({ config, brands, router, state, now: startedAt, runId: id, flags: [...status.flags, ...flags] });
+        const hrReview = hr.latestReview(state);
+        const hrDecision = hrReview ? hr.latestDecisions(hr.readDecisions(state)).get(hrReview.month) || null : null;
+        const r = await runCeo({ config, brands, router, state, now: startedAt, runId: id, lastReport: reportAtStart, hrReview, hrDecision, flags: [...status.flags, ...flags] });
         changedFiles.push(r.rel);
         note("ceo", r.note);
       } catch (err) {
@@ -313,7 +327,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
       if (stop) break;
       await timed("strategist", async () => {
         try {
-          const r = await runStrategist({ page, brand: brands[page.handle], memo, state, router, config, now: startedAt, runId: id });
+          const r = await runStrategist({ page, brand: brands[page.handle], memo, state, router, config, now: startedAt, runId: id, feedbackDigest: digestFor(page.handle) });
           changedFiles.push(r.calendarRel, "state/ideas.jsonl");
           note("strategist", `${page.handle}: ${r.note}`);
         } catch (err) {
@@ -363,7 +377,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
       }
       await timed("writer", async () => {
         try {
-          const r = await runWriter({ slot, idea, brand, page, config, state, router, draft: existing, recentCaptions: recentCaptionsFor(all, page.handle, existing ? existing.id : null), now: startedAt, runId: id });
+          const r = await runWriter({ slot, idea, brand, page, config, state, router, draft: existing, recentCaptions: recentCaptionsFor(all, page.handle, existing ? existing.id : null), now: startedAt, runId: id, feedbackDigest: digestFor(page.handle) });
           if (r.ok) {
             changedFiles.push(`state/drafts/${r.draft.id}/draft.json`);
             if (r.created) written++;
@@ -420,7 +434,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
       return null;
     }
     const queue = drafts().filter((x) => x.status === "written" && pages.some((p) => p.handle === x.page) && (!only || only.has(x.id)));
-    const r = await timed("designer", () => runDesigner({ drafts: queue, brands, config, state, mediaRoot: media, renderer: theRenderer(), now: startedAt, runId: id, log }));
+    const r = await timed("designer", () => runDesigner({ drafts: queue, brands, config, state, mediaRoot: media, renderer: theRenderer(), now: startedAt, runId: id, log, feedback: feedbackRows }));
     changedFiles.push(...r.changed);
     for (const f of r.flags) addFlag(f);
     for (const x of r.results) {

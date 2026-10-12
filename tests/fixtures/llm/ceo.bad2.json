@@ -1,0 +1,21 @@
+{
+  "agent": "ceo",
+  "case": "bad2",
+  "note": "FEAT-205 (P2-07): shape-valid and the split sums to 100, but `answers` covers only the FIRST of the two forCeo items of the fixture report state/reports/2026-W41.md → the engine's answers rule fails ('no answer to the Analyst's item 2') → one repair call (same fixture) → AgentOutputError; nothing is written.",
+  "output": {
+    "week": "2026-W42",
+    "priorities": [
+      { "page": "rishtapatra", "rank": 1, "theme": "lead with the free product", "why": "Janam Kundali is free and runs on the device.", "factIds": ["rp-f04", "rp-f07"] },
+      { "page": "kaatdo", "rank": 1, "theme": "risk first", "why": "The rule list and the breach sequence are fully sourced.", "factIds": ["kd-f04", "kd-f05"] },
+      { "page": "job_rez", "rank": 1, "theme": "templates and free export", "why": "Nine templates, three free.", "factIds": ["jr-f10", "jr-f09"] }
+    ],
+    "pause": [],
+    "budgetSplitPct": { "rishtapatra": 35, "kaatdo": 30, "job_rez": 35 },
+    "ownerQuestions": [],
+    "answers": [
+      { "forCeo": "Keep leading @rishtapatra with the local-first promise: it reached 655 accounts and was saved 23 times in 48 hours.", "answer": "Kept as rank 1." }
+    ],
+    "memoMarkdown": "# Memo 2026-W42\n\nAnswers only the first of the Analyst's two items, on purpose."
+  },
+  "usage": { "inputTokens": 8400, "outputTokens": 500 }
+}

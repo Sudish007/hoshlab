@@ -12,6 +12,7 @@
     "pause": [],
     "budgetSplitPct": { "rishtapatra": 50, "kaatdo": 40, "job_rez": 30 },
     "ownerQuestions": [],
+    "answers": [],
     "memoMarkdown": "# Memo 2026-W42\n\nOver-allocated on purpose: 50 / 40 / 30."
   },
   "usage": { "inputTokens": 7200, "outputTokens": 400 }

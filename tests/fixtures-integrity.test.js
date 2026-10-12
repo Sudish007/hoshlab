@@ -13,7 +13,7 @@ import { round6 } from "../engine/lib/budget.js";
 import { jpegSize } from "../engine/lib/checks.js";
 import { MAX_MEDIA_BYTES } from "../engine/lib/checks.js";
 import { pagesUrl, rawUrl } from "../engine/lib/media.js";
-import { parseMemo, outputSpec, validateCeoOutput } from "../engine/agents/ceo.js";
+import { parseMemo, outputSpec, renderMemo, validateCeoOutput } from "../engine/agents/ceo.js";
 import { OUTPUT_SPEC as ANALYST_OUTPUT_SPEC, aggregate, allowedNumbers, numberTokens, parseReport, renderReport, validateAnalystOutput } from "../engine/agents/analyst.js";
 import { OUTPUT_SPEC as HR_OUTPUT_SPEC, computeAgentStats, listProposals, listReviews, parseReview, readMonthData, renderReview, validateHrOutput } from "../engine/agents/hr.js";
 import { HR_PROPOSAL_SPEC, METRIC_SPEC, assertShape } from "../engine/lib/schema.js";
@@ -117,11 +117,18 @@ test("status.json: budget.usedUsd equals the sum of usage/2026-10.jsonl costUsd 
   }
   assert.equal(status.pages.job_rez.lastPublishedAt, null);
   const feedback = state.readJsonl("state/feedback.jsonl");
-  assert.equal(feedback.length, 2);
+  assert.equal(feedback.length, 4, "two rejects (kaatdo, job_rez), a design note (kaatdo) and a language note (rishtapatra) — FEAT-205");
   assert.ok(feedback.some((f) => f.kind === "reject" && f.tags.includes("tone")));
   assert.ok(feedback.some((f) => f.kind === "note"));
-  const reject = feedback.find((f) => f.kind === "reject");
-  assert.ok(state.readJsonl("state/approvals.jsonl").some((a) => a.decision === "reject" && a.draftId === reject.draftId && a.reason === reject.text), "the reject has its approvals record");
+  const rejects = feedback.filter((f) => f.kind === "reject");
+  assert.deepEqual(rejects.map((f) => f.page), ["kaatdo", "job_rez"]);
+  for (const reject of rejects) assert.ok(state.readJsonl("state/approvals.jsonl").some((a) => a.decision === "reject" && a.draftId === reject.draftId && a.reason === reject.text && a.at === reject.at), `${reject.draftId}: the reject has its approvals record`);
+  assert.ok(rejects.some((f) => f.page === "job_rez" && f.text === "Too salesy; keep to the six layout rules."), "the P2-08 phrase (design §4.11) is a job_rez rejection reason");
+  const design = feedback.filter((f) => f.tags.some((t) => ["design", "variant", "palette"].includes(t)));
+  assert.deepEqual(design.map((f) => [f.page, f.kind, f.tags]), [["kaatdo", "note", ["design", "variant"]]], "exactly one design-tagged entry, for @kaatdo");
+  assert.match(design[0].text, /variant B/);
+  assert.deepEqual([...feedback].sort((a, b) => a.at.localeCompare(b.at)), feedback, "feedback.jsonl is in time order");
+  assert.ok(feedback.every((f) => Date.parse(f.at) < Date.parse("2026-10-12T05:31:00+05:30")), "every entry predates the Monday run the fixture's W42 memo came from");
   assert.equal(state.readJsonl("state/overrides.jsonl").length, 1);
 });
 
@@ -135,11 +142,21 @@ test("every fixture state file validates against its spec; memos carry a CEO JSO
   assert.deepEqual(memos, ["state/memos/2026-W41.md", "state/memos/2026-W42.md"]);
   const handles = config.pages.map((p) => p.handle);
   const pages = config.pages.map((p) => ({ handle: p.handle, factIds: new Set(usableFacts(brands[p.handle]).map((f) => f.id)) }));
+  // FEAT-205 (P2-07): the W41 memo predates any report (answers []), the W42 memo (Monday 12 Oct 05:31) answers both
+  // forCeo items of the W41 report written the Sunday before, and each file is exactly what renderMemo writes.
+  const reportItems = parseReport(state.readText("state/reports/2026-W41.md")).report.forCeo;
   for (const rel of memos) {
-    const json = parseMemo(state.readText(rel));
+    const text = state.readText(rel);
+    const json = parseMemo(text);
     assert.ok(json, `${rel}: JSON block`);
     assertShape(json, outputSpec(handles));
-    assert.deepEqual(validateCeoOutput(json, { week: rel.match(/(\d{4}-W\d{2})/)[1], pages }), []);
+    const week = rel.match(/(\d{4}-W\d{2})/)[1];
+    const forCeo = week === "2026-W42" ? reportItems : [];
+    assert.deepEqual(validateCeoOutput(json, { week, pages, forCeo }), []);
+    assert.equal(json.answers.length, forCeo.length);
+    assert.equal(renderMemo(json, { reportWeek: forCeo.length ? "2026-W41" : null }), text, `${rel} is exactly what renderMemo writes`);
+    if (forCeo.length) assert.ok(text.includes("## Answers to the Analyst (report 2026-W41)"));
+    else assert.ok(!text.includes("## Answers to the Analyst"));
   }
   // the calendar links every live draft to its slot with the draft's status
   const calendar = state.readJson("state/calendar.json");

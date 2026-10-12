@@ -545,7 +545,7 @@ test("prompt envelope: charter + seven house rules + context (today IST, page, v
   assert.ok(env.system.includes("- `(?<!never\\s)\\bguaranteed\\b`"));
   assert.ok(env.system.includes("### Allowed link domains\n- kaatdo.com"));
   assert.ok(env.system.includes("### CEO memo (excerpt)\nLead with the kill switch."));
-  assert.ok(env.system.includes("### Owner feedback digest\nOwner rejected rp-x: tone too salesy."));
+  assert.ok(env.system.includes("### Owner feedback and observations\nOwner rejected rp-x: tone too salesy."));
   assert.ok(env.system.includes('"slotAt": "2026-10-13T08:15:00+05:30"'));
   assert.ok(env.system.includes("Return a single JSON object and nothing else"));
 
@@ -556,7 +556,7 @@ test("prompt envelope: charter + seven house rules + context (today IST, page, v
   assert.ok(!rp.system.includes("| rp-f12 |"));
   assert.ok(rp.system.includes('- when the caption contains any of "kundali" | "कुंडली" | "horoscope" | "guna milan" → include one of: "indicative"; and one of: "consult your pandit" | "अपने पंडित से सलाह लें"'));
   assert.ok(rp.system.includes("- Today (IST): 2026-10-12\n"));
-  assert.ok(!rp.system.includes("### Owner feedback digest"), "digest omitted when empty");
+  assert.ok(!rp.system.includes("### Owner feedback and observations"), "digest omitted when empty");
   assert.ok(!rp.system.includes("### CEO memo"), "memo omitted when empty");
 
   // company-wide task (CEO) without a brand
