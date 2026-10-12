@@ -4,7 +4,7 @@
 import { layout } from "./layout.js";
 import { url } from "../lib/urls.js";
 import { escapeHtml } from "../lib/xml.js";
-import { modeLabel, flagSentence, cadenceLine, tokenDaysLeft } from "../lib/labels.js";
+import { modeLabel, flagSentence, cadenceLine, tokenDaysLeft, spendLabel, usdLabel } from "../lib/labels.js";
 import { formatIstDay, formatIstTime, formatIst, monthName } from "../lib/dates.js";
 import { hi, chip, timeTag, sectionHead, hostOf, excerpt, numberWord, hasDevanagari, languagesLabel } from "./partials.js";
 
@@ -31,7 +31,11 @@ export function statusStrip(view) {
     cells.push(
       u.rows === 0
         ? { k: "Month budget", v: "—", s: `No runs yet in ${monthName(u.month)}` }
-        : { k: "Month budget", v: `USD ${u.usedUsd.toFixed(2)} of ${u.limitUsd}`, s: `${monthName(u.month)} · ${u.calls} call${u.calls === 1 ? "" : "s"} logged · ${u.providers.length} provider${u.providers.length === 1 ? "" : "s"}` },
+        : {
+            k: "Month budget",
+            v: `${usdLabel(u.usedUsd)} billed of ${usdLabel(u.limitUsd)} budget`,
+            s: `${u.hasFreeTierUsage ? `${spendLabel({ billedUsd: u.usedUsd, paidEquivalentUsd: u.paidEquivalentUsd, hasFreeTierUsage: true })} · ` : ""}${monthName(u.month)} · ${u.calls} call${u.calls === 1 ? "" : "s"} logged · ${u.providers.length} provider${u.providers.length === 1 ? "" : "s"}`,
+          },
     );
   }
   // The schedule note (config.schedule.actionsDelayNote) is the strip's footer line, spanning the four cells: in a
@@ -158,7 +162,7 @@ export function homePage(view) {
       <div class="trust-row" aria-label="How this company stays honest">
         <div><span class="k">Facts only from the product repos</span><span class="s">every claim in a post points at a source line</span></div>
         <div><span class="k">Nothing posts silently</span><span class="s">each publish is a logged file with its permalink</span></div>
-        <div><span class="k">Costs are visible</span><span class="s">every model call is logged; the month budget is a hard stop</span></div>
+        <div><span class="k">Costs are visible</span><span class="s">every model call logs billed USD and, on a free tier, its paid-rate equivalent</span></div>
       </div>
     </div>
     <div class="hero-side">
@@ -194,7 +198,7 @@ export function homePage(view) {
     <div class="grid grid-3">
       <article class="card"><h3>Facts only from brand.md</h3><p class="meta">Each page has a charter of verified facts taken from its own repository. Agents may not invent user counts, testimonials, ratings or metrics. QA rejects any number without a source line.</p></article>
       <article class="card"><h3>Nothing posts silently</h3><p class="meta">Every publish writes to <span class="mono">company/state/published.jsonl</span> and appears on the Published page with the Instagram permalink. Autopilot still logs; it only skips the wait.</p></article>
-      <article class="card"><h3>Costs are visible</h3><p class="meta">Every model call is logged with provider, model, tokens and estimated cost. The month budget is a hard stop: drafting pauses when the budget is spent.</p></article>
+      <article class="card"><h3>Costs are visible</h3><p class="meta">Every model call is logged with provider, model, tokens and billed cost; free-tier calls also keep their paid-rate equivalent. The month budget gates billed spend only.</p></article>
     </div>
     <p class="meta">${escapeHtml(capitalize(numberWord(llm)))} of the ${escapeHtml(numberWord(agents.length))} roles run on a language model; the Designer and Publisher are deterministic code.</p>
   </section>`;

@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT } from "./helpers.js";
-import { modeLabel, providerLabel, tokenStateLabel, slotLabel, cadenceLine, flagSentence, tokenDaysLeft, isApproved, windowLabel, metricLabel, cronLabel, TERMINAL, SLOT_WORDS } from "../src/lib/labels.js";
+import { modeLabel, providerLabel, providerTierLabel, spendLabel, usdLabel, tokenStateLabel, slotLabel, cadenceLine, flagSentence, tokenDaysLeft, isApproved, windowLabel, metricLabel, cronLabel, TERMINAL, SLOT_WORDS } from "../src/lib/labels.js";
 import { SCHEDULE_PAIRS, scheduleErrors } from "../src/lib/company.js";
 import { DRAFT_STATUSES, METRIC_SPEC, METRIC_WINDOWS, SLOT_STATUSES, TOKEN_STATES } from "../engine/lib/schema.js";
 
@@ -25,6 +25,14 @@ test("modeLabel / providerLabel / tokenStateLabel map every token and throw on u
   assert.equal(providerLabel("gemini"), "Google Gemini");
   assert.equal(providerLabel("openai"), "OpenAI");
   assert.throws(() => providerLabel("Anthropic"), /unknown provider/);
+  assert.equal(providerTierLabel("free"), "free tier");
+  assert.equal(providerTierLabel("paid"), "paid tier");
+  assert.equal(providerTierLabel(), "paid tier", "absent config tier defaults to paid");
+  assert.throws(() => providerTierLabel("trial"), /unknown provider tier/);
+  assert.equal(usdLabel(0), "USD 0.00");
+  assert.equal(usdLabel(0.006375), "USD 0.0064");
+  assert.equal(spendLabel({ billedUsd: 1.2 }), "USD 1.20 billed");
+  assert.equal(spendLabel({ billedUsd: 0, paidEquivalentUsd: 0.12, hasFreeTierUsage: true }), "free tier · USD 0.00 billed · ≈ USD 0.12 at paid rates");
   assert.equal(tokenStateLabel("ok"), "token ok");
   assert.equal(tokenStateLabel("invalid"), "token invalid");
   assert.equal(tokenStateLabel("not_configured"), "not configured yet");

@@ -14,7 +14,7 @@ import { applyProposal, describeChange, dismissProposal, latestDecisions, propos
 import { ROSTER_SPEC, TERMINAL_DRAFT_STATUSES, validate } from "./lib/schema.js";
 import { runChecks, fullCaption, codePoints } from "./lib/checks.js";
 import { parseBrand, validateBrand } from "./lib/brand.js";
-import { modeLabel, slotLabel, isApproved, tokenStateLabel, flagSentence, tokenDaysLeft } from "./lib/labels.js";
+import { modeLabel, slotLabel, isApproved, tokenStateLabel, flagSentence, tokenDaysLeft, spendLabel } from "./lib/labels.js";
 
 const cfg = JSON.parse(document.getElementById("admin-config").textContent);
 const store = createStore();
@@ -1247,10 +1247,14 @@ function renderActivity() {
   show($("runs-empty"), runs.length === 0);
   for (const run of runs) {
     const agents = el("ul", {});
-    for (const a of run.agents || []) agents.append(el("li", { class: a.skipped ? "skipped" : a.ok ? null : "failed", text: `${a.name}: ${a.note || (a.ok ? "ok" : "failed")}${a.calls ? ` · ${a.calls} call${a.calls === 1 ? "" : "s"}` : ""}` }));
+    for (const a of run.agents || []) {
+      const spend = spendLabel({ billedUsd: a.costUsd, paidEquivalentUsd: a.paidEquivalentUsd, hasFreeTierUsage: Number.isFinite(a.paidEquivalentUsd) });
+      agents.append(el("li", { class: a.skipped ? "skipped" : a.ok ? null : "failed", text: `${a.name}: ${a.note || (a.ok ? "ok" : "failed")}${a.calls ? ` · ${a.calls} call${a.calls === 1 ? "" : "s"} · ${spend}` : ""}` }));
+    }
+    const monthSpend = spendLabel({ billedUsd: run.budgetUsedUsd, paidEquivalentUsd: run.budgetPaidEquivalentUsd, hasFreeTierUsage: Number.isFinite(run.budgetPaidEquivalentUsd) });
     const head = el("div", {}, [
       el("span", { class: "actor", text: run.workflow }),
-      txt(` · ${run.ok ? "ok" : "FAILED"} · ${run.trigger} · ${run.changed.length} file${run.changed.length === 1 ? "" : "s"} changed · USD ${run.budgetUsedUsd.toFixed(2)} used after this run`),
+      txt(` · ${run.ok ? "ok" : "FAILED"} · ${run.trigger} · ${run.changed.length} file${run.changed.length === 1 ? "" : "s"} changed · ${monthSpend} after this run`),
     ]);
     const body = el("div", { class: "runline" }, [head, el("span", { class: "mono", text: run.id }), agents]);
     if (run.errors && run.errors.length) body.append(el("span", { class: "form-error", text: run.errors.join(" · ") }));

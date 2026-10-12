@@ -1,9 +1,11 @@
 // Activity: the last 50 run records from the current and previous month log files (review M9), one
 // block per run with one line per agent step from agents[].note (design §11). 'No runs yet' when empty.
 // The page names only the month files that exist (view.runMonths): never a month without a file.
+// Money is always billed spend; free-tier usage adds the recorded paid-rate equivalent (polish-gemini).
 import { layout } from "./layout.js";
 import { url } from "../lib/urls.js";
 import { escapeHtml } from "../lib/xml.js";
+import { spendLabel, usdLabel } from "../lib/labels.js";
 import { formatIst, formatIstTime, monthName } from "../lib/dates.js";
 import { chip, sectionHead, sideBox, timeTag } from "./partials.js";
 import { agentTitle } from "./home.js";
@@ -11,16 +13,49 @@ import { agentTitle } from "./home.js";
 const WORKFLOW_LABEL = { "engine-daily": "Daily engine run", "publisher-hourly": "Publisher run", "token-refresh": "Weekly token refresh" };
 const TRIGGER_LABEL = { schedule: "scheduled", dispatch: "on demand", local: "local run" };
 
+// Kept as a small exported formatting primitive for callers/tests that need the numeric part only.
 export function usd(n) {
-  const v = Number(n) || 0;
-  return v > 0 && v < 0.01 ? v.toFixed(4) : v.toFixed(2);
+  return usdLabel(n).slice(4);
+}
+
+function sum(rows, field) {
+  return Math.round(rows.reduce((total, row) => total + (Number.isFinite(row && row[field]) ? row[field] : 0), 0) * 1e6) / 1e6;
+}
+
+function paidSum(rows) {
+  return Math.round(rows.reduce((total, row) => total + (Number.isFinite(row && row.paidEquivalentUsd) ? row.paidEquivalentUsd : Number.isFinite(row && row.costUsd) ? row.costUsd : 0), 0) * 1e6) / 1e6;
+}
+
+// Spend of one agent row. Presence of paidEquivalentUsd is the durable free-tier marker; zero-token failures
+// therefore still say free tier rather than being guessed from today's provider config.
+export function agentSpend(view, run, agent) {
+  const rows = ((view.usage && view.usage.lines) || []).filter((u) => u.runId === run.id && u.agent === agent.name);
+  const hasFreeTierUsage = rows.some((u) => Number.isFinite(u.paidEquivalentUsd)) || Number.isFinite(agent.paidEquivalentUsd);
+  return {
+    billedUsd: Number.isFinite(agent.costUsd) ? agent.costUsd : sum(rows, "costUsd"),
+    paidEquivalentUsd: Number.isFinite(agent.paidEquivalentUsd) ? agent.paidEquivalentUsd : rows.length ? paidSum(rows) : Number(agent.costUsd) || 0,
+    hasFreeTierUsage,
+  };
+}
+
+// Cumulative month spend after this run. New run records carry budgetPaidEquivalentUsd; for fixture/older records,
+// current-month usage rows can reconstruct it without rewriting history.
+export function runSpend(view, run) {
+  const lines = (view.usage && view.usage.lines) || [];
+  const rows = lines.filter((u) => String(u.at) <= String(run.endedAt));
+  const hasFreeTierUsage = Number.isFinite(run.budgetPaidEquivalentUsd) || rows.some((u) => Number.isFinite(u.paidEquivalentUsd));
+  return {
+    billedUsd: Number(run.budgetUsedUsd) || 0,
+    paidEquivalentUsd: Number.isFinite(run.budgetPaidEquivalentUsd) ? run.budgetPaidEquivalentUsd : rows.length ? paidSum(rows) : Number(run.budgetUsedUsd) || 0,
+    hasFreeTierUsage,
+  };
 }
 
 export function runBlock(view, run) {
   const label = WORKFLOW_LABEL[run.workflow] || run.workflow.replace(/-/g, " ");
   const failed = (run.agents || []).filter((a) => !a.ok);
   const lines = (run.agents || []).map((a) => {
-    const cost = a.calls ? ` · ${a.calls} call${a.calls === 1 ? "" : "s"} · USD ${usd(a.costUsd)}` : "";
+    const cost = a.calls ? ` · ${a.calls} call${a.calls === 1 ? "" : "s"} · ${spendLabel(agentSpend(view, run, a))}` : "";
     const cls = [a.skipped ? "skipped" : "", a.ok ? "" : "failed"].filter(Boolean).join(" ");
     return `<li${cls ? ` class="${cls}"` : ""}><span class="actor">${escapeHtml(agentTitle(view, a.name))}</span><span>${escapeHtml(a.note || (a.skipped ? `skipped: ${a.skipped}` : "ok"))}${escapeHtml(cost)}</span></li>`;
   });
@@ -35,7 +70,7 @@ export function runBlock(view, run) {
       <ul class="run-lines">
         ${lines.concat(errors).join("\n        ")}
       </ul>
-      <p class="meta">Ended ${escapeHtml(formatIstTime(run.endedAt))} IST · ${(run.changed || []).length} file${(run.changed || []).length === 1 ? "" : "s"} changed · USD ${usd(run.budgetUsedUsd)} of the month budget used after this run</p>
+      <p class="meta">Ended ${escapeHtml(formatIstTime(run.endedAt))} IST · ${(run.changed || []).length} file${(run.changed || []).length === 1 ? "" : "s"} changed · ${escapeHtml(spendLabel(runSpend(view, run)))} of the month budget used after this run</p>
     </article>`;
 }
 
@@ -60,7 +95,7 @@ export function activityPage(view) {
   const failedSteps = runs.reduce((n, r) => n + (r.agents || []).filter((a) => !a.ok).length, 0);
   const rows = byWorkflow.concat([
     { k: "failed steps", v: runs.length ? `${failedSteps} in the last ${runs.length} run${runs.length === 1 ? "" : "s"}` : "no runs yet", plain: !runs.length },
-    { k: "budget", v: view.usage.rows ? `USD ${view.usage.usedUsd.toFixed(2)} of ${view.usage.limitUsd} in ${monthName(view.monthKey)} · ${view.usage.calls} call${view.usage.calls === 1 ? "" : "s"}` : `no model calls yet in ${monthName(view.monthKey)}`, plain: !view.usage.rows },
+    { k: "budget", v: view.usage.rows ? `${spendLabel({ billedUsd: view.usage.usedUsd, paidEquivalentUsd: view.usage.paidEquivalentUsd, hasFreeTierUsage: view.usage.hasFreeTierUsage })} of ${usdLabel(view.usage.limitUsd)} in ${monthName(view.monthKey)} · ${view.usage.calls} call${view.usage.calls === 1 ? "" : "s"}` : `no model calls yet in ${monthName(view.monthKey)}`, plain: !view.usage.rows },
   ]);
   const body = `<section class="hero">
     <div>
@@ -71,7 +106,7 @@ export function activityPage(view) {
       <div class="trust-row" aria-label="What a run record holds">
         <div><span class="k">One record per run</span><span class="s">engine (${escapeHtml(view.config.schedule.engineLabel)}) and publisher (${escapeHtml(view.config.schedule.publisherLabel)})</span></div>
         <div><span class="k">One line per agent step</span><span class="s">what it did, what it skipped, what failed</span></div>
-        <div><span class="k">Cost per step</span><span class="s">model calls and estimated USD, from the usage log</span></div>
+        <div><span class="k">Cost per step</span><span class="s">billed USD and free-tier paid-rate equivalents, from the usage log</span></div>
       </div>
     </div>
     <div class="hero-side">

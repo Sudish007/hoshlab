@@ -5,6 +5,7 @@
 
 const MODES = { approve_first: "Approve first", autopilot: "Autopilot" };
 const PROVIDERS = { anthropic: "Anthropic", gemini: "Google Gemini", openai: "OpenAI", mock: "Mock adapter" };
+const PROVIDER_TIERS = { free: "free tier", paid: "paid tier" };
 const TOKEN_STATES = { ok: "token ok", invalid: "token invalid", not_configured: "not configured yet", expiring: "token expiring", unknown: "token untested" };
 // Insights windows (design §4.10, FEAT-203): the metrics record token → the words the Reports page prints.
 const WINDOWS = { "48h": "48 hours", "7d": "7 days" };
@@ -26,6 +27,29 @@ export function modeLabel(mode) {
 
 export function providerLabel(provider) {
   return lookup(PROVIDERS, provider, "provider");
+}
+
+// Config defaults to the paid tier when `tier` is absent; call with no value for that default. The config token
+// never reaches HTML — Team and the admin use only this human label.
+export function providerTierLabel(tier = "paid") {
+  return lookup(PROVIDER_TIERS, tier, "provider tier");
+}
+
+// USD as human text. Keep four decimals for a real non-zero amount below one cent; otherwise two. The engine
+// stores six-decimal arithmetic, but this compact display is shared by every public/admin money label.
+export function usdLabel(amount) {
+  const value = Number(amount) || 0;
+  const digits = value > 0 && value < 0.01 ? 4 : 2;
+  return `USD ${value.toFixed(digits)}`;
+}
+
+// A money label for a provider/month/run. `hasFreeTierUsage` is explicit: a free-tier line can legitimately
+// have a paid equivalent that rounds to the same displayed amount. The secondary phrase is the honest pair:
+// what was billed and what the same recorded tokens would cost at the config's paid rates.
+export function spendLabel({ billedUsd = 0, paidEquivalentUsd = billedUsd, hasFreeTierUsage = false } = {}) {
+  const billed = `${usdLabel(billedUsd)} billed`;
+  if (!hasFreeTierUsage) return billed;
+  return `${providerTierLabel("free")} · ${billed} · ≈ ${usdLabel(paidEquivalentUsd)} at paid rates`;
 }
 
 export function tokenStateLabel(state) {
