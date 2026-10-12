@@ -358,6 +358,8 @@ test("gh failure after a successful refresh → store_failed: the old expiry is 
   try {
     const r = await runRefreshTokens({ companyDir: fx.dir, now: NOW, processEnv: ENV, fetchImpl, ghRun: gh, stdout: out, runId: RUN_ID, page: "kaatdo" });
     assert.equal(r.ok, false);
+    assert.equal(r.changed, true, "R2-04: the failed run still wrote its state (tokens.json, status.json, the run record) — changed=true reaches $GITHUB_OUTPUT and the workflow deploys it with !cancelled()");
+    assert.ok(r.changedFiles.includes("state/tokens.json") && r.changedFiles.includes("state/status.json"), r.changedFiles.join());
     assert.deepEqual(Object.fromEntries(Object.entries(r.pages).map(([h, p]) => [h, p.outcome])), { rishtapatra: "filtered", kaatdo: "store_failed", job_rez: "filtered" });
     assert.equal(gh.calls.length, 1);
     assert.equal(gh.calls[0].input, NEW.kaatdo);
