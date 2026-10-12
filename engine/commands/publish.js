@@ -28,7 +28,7 @@ import { cpSync, existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { CompanyError, loadCompany } from "../../src/lib/company.js";
-import { monthUsedUsd } from "../lib/budget.js";
+import { monthHasFreeTierUsage, monthPaidEquivalentUsd, monthUsedUsd } from "../lib/budget.js";
 import { readEnv } from "../lib/env.js";
 import { commitAndPush, PushConflictError, repoRootFor, shouldCommit, writeGithubOutput } from "../lib/git.js";
 import { runId as makeRunId } from "../lib/ids.js";
@@ -369,6 +369,7 @@ export async function runPublish({ companyDir, now, processEnv = process.env, fe
     budgetUsedUsd: monthUsedUsd(state, startedAt),
     publisher: { decisions, staleEdits, expired, rejected, pages },
   };
+  if (monthHasFreeTierUsage(state, startedAt)) run.budgetPaidEquivalentUsd = monthPaidEquivalentUsd(state, startedAt);
   if (dryRun) run.dryRun = true;
   // the engine-owned draft index the admin reads instead of listing state/drafts/ (R2-05); untouched on an idle hour
   const indexRel = state.writeDraftIndex(startedAt);

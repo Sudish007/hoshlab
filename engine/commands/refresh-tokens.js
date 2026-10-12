@@ -25,7 +25,7 @@ import { cpSync, existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { CompanyError, loadCompany } from "../../src/lib/company.js";
-import { monthUsedUsd } from "../lib/budget.js";
+import { monthHasFreeTierUsage, monthPaidEquivalentUsd, monthUsedUsd } from "../lib/budget.js";
 import { readEnv } from "../lib/env.js";
 import { commitAndPush, PushConflictError, repoRootFor, shouldCommit, writeGithubOutput } from "../lib/git.js";
 import { runId as makeRunId } from "../lib/ids.js";
@@ -273,6 +273,7 @@ export async function runRefreshTokens({ companyDir, now, processEnv = process.e
   const note = `tokens: ${parts.join(", ")}`;
   const changedFiles = [];
   const run = { id, workflow, trigger, startedAt: nowIst(startedAt), endedAt: nowIst(endedAt), ok: errors.length === 0, agents: [{ name: AGENT, ok: errors.length === 0, ms, calls: 0, costUsd: 0, note }], changed: [], errors, budgetUsedUsd: monthUsedUsd(state, startedAt), tokens: pages };
+  if (monthHasFreeTierUsage(state, startedAt)) run.budgetPaidEquivalentUsd = monthPaidEquivalentUsd(state, startedAt);
   if (dryRun) run.dryRun = true;
   if (!dryRun) {
     tokens.updatedAt = nowIst(endedAt);

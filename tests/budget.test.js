@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { rmSync } from "node:fs";
 import { tmpDir } from "./helpers.js";
-import { canSpend, costUsd, estimateCostUsd, monthUsedUsd, round6 } from "../engine/lib/budget.js";
+import { billedUsd, canSpend, costUsd, estimateCostUsd, monthHasFreeTierUsage, monthPaidEquivalentUsd, monthUsedUsd, paidEquivalentUsd, round6 } from "../engine/lib/budget.js";
 import { createState } from "../engine/lib/state.js";
 import { USAGE_SPEC } from "../engine/lib/schema.js";
 
@@ -52,6 +52,14 @@ test("monthUsedUsd sums only the usage partition of the given IST month (M9)", (
     state.appendLog("usage", { ...line("2026-10-09T05:32:00+05:30", 0.1), ok: false, error: "anthropic: HTTP 429 rate limited", inputTokens: 0, outputTokens: 0, costUsd: 0 }, USAGE_SPEC);
     state.appendLog("usage", line("2026-11-01T00:10:00+05:30", 100), USAGE_SPEC, new Date("2026-11-01T00:10:00+05:30"));
     assert.equal(monthUsedUsd(state), 0.75, "default date = the state clock (October)");
+    assert.equal(monthPaidEquivalentUsd(state), 0.75);
+    assert.equal(monthHasFreeTierUsage(state), false);
+    assert.equal(billedUsd({ costUsd: 0, paidEquivalentUsd: 0.12 }), 0);
+    assert.equal(paidEquivalentUsd({ costUsd: 0, paidEquivalentUsd: 0.12 }), 0.12);
+    state.appendLog("usage", { ...line("2026-10-10T05:31:00+05:30", 0), provider: "gemini", model: "gemini-3.8-flash", paidEquivalentUsd: 0.12 }, USAGE_SPEC);
+    assert.equal(monthUsedUsd(state), 0.75, "a free-tier line does not move billed month spend");
+    assert.equal(monthPaidEquivalentUsd(state), 0.87, "its paid-rate equivalent remains visible");
+    assert.equal(monthHasFreeTierUsage(state), true);
     assert.equal(monthUsedUsd(state, new Date("2026-10-31T23:59:00+05:30")), 0.75);
     assert.equal(monthUsedUsd(state, new Date("2026-11-01T00:10:00+05:30")), 100, "1 Nov 00:10 IST is still 31 Oct in UTC, yet the November file is read");
     assert.equal(monthUsedUsd(state, new Date("2026-12-05T12:00:00+05:30")), 0, "missing partition → 0");

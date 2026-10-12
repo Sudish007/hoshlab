@@ -251,13 +251,13 @@ test("validateHrOutput: every agent once, evidence = the engine's numbers, provi
   assert.deepEqual(errs({ ...ok, review: ok.review.filter((r) => r.agent !== "qa"), rosterProposal: { changes: ok.rosterProposal.changes } }), ["$.review: qa reviewed 0 times (review every agent exactly once)"]);
   assert.match(errs({ ...ok, review: [...ok.review, ok.review[0]] }).join(), /ceo reviewed 2 times/);
   // changes
-  assert.match(errs(withChange({ agent: "writer", field: "provider", from: "anthropic", to: "mistral", why: "x" }, "swap")).join("\n"), /changes\[0\]\.to: "mistral" is not an enabled provider \(anthropic, gemini, openai\)/);
+  assert.match(errs(withChange({ agent: "writer", field: "provider", from: "gemini", to: "mistral", why: "x" }, "swap")).join("\n"), /changes\[0\]\.to: "mistral" is not an enabled provider \(anthropic, gemini, openai\)/);
   const disabled = JSON.parse(JSON.stringify(config));
   disabled.providers.openai.enabled = false;
-  assert.match(errs(withChange({ agent: "writer", field: "provider", from: "anthropic", to: "openai", why: "x" }, "swap"), { ...ctx, config: disabled }).join("\n"), /"openai" is not an enabled provider \(anthropic, gemini\)/);
-  assert.match(errs(withChange({ agent: "writer", field: "model", from: "claude-sonnet-5-5", to: "gpt-6-luna", why: "x" }, "swap")).join("\n"), /changes\[0\]\.to: "gpt-6-luna" is not in providers\.anthropic\.models/);
-  assert.deepEqual(errs({ ...withChange({ agent: "writer", field: "provider", from: "anthropic", to: "openai", why: "x" }, "swap"), rosterProposal: { changes: [{ agent: "writer", field: "provider", from: "anthropic", to: "openai", why: "x" }, { agent: "writer", field: "model", from: "claude-sonnet-5-5", to: "gpt-6-luna", why: "x" }] } }), [], "provider + model together: the model is checked against the NEW provider's table");
-  assert.match(errs(withChange({ agent: "writer", field: "provider", from: "anthropic", to: "openai", why: "x" }, "swap")).join("\n"), /\$\.rosterProposal: \$\.agents\[3\]\.model: claude-sonnet-5-5 not in providers\.openai\.models/, "a provider change alone leaves the model outside the new table");
+  assert.match(errs(withChange({ agent: "writer", field: "provider", from: "gemini", to: "openai", why: "x" }, "swap"), { ...ctx, config: disabled }).join("\n"), /"openai" is not an enabled provider \(anthropic, gemini\)/);
+  assert.match(errs(withChange({ agent: "writer", field: "model", from: "gemini-3.8-flash", to: "gpt-6-luna", why: "x" }, "swap")).join("\n"), /changes\[0\]\.to: "gpt-6-luna" is not in providers\.gemini\.models/);
+  assert.deepEqual(errs({ ...withChange({ agent: "writer", field: "provider", from: "gemini", to: "openai", why: "x" }, "swap"), rosterProposal: { changes: [{ agent: "writer", field: "provider", from: "gemini", to: "openai", why: "x" }, { agent: "writer", field: "model", from: "gemini-3.8-flash", to: "gpt-6-luna", why: "x" }] } }), [], "provider + model together: the model is checked against the NEW provider's table");
+  assert.match(errs(withChange({ agent: "writer", field: "provider", from: "gemini", to: "openai", why: "x" }, "swap")).join("\n"), /\$\.rosterProposal: \$\.agents\[3\]\.model: gemini-3\.8-flash not in providers\.openai\.models/, "a provider change alone leaves the model outside the new table");
   assert.match(errs(withChange({ agent: "writer", field: "temperature", from: "0.8", to: "1.5", why: "x" })).join("\n"), /temperature must be a number between 0 and 1, got "1\.5"/);
   assert.match(errs(withChange({ agent: "writer", field: "temperature", from: "0.8", to: "warm", why: "x" })).join("\n"), /temperature must be a number between 0 and 1, got "warm"/);
   assert.match(errs(withChange({ agent: "writer", field: "temperature", from: "0.8", to: "0.8", why: "x" })).join("\n"), /0\.8 is already the writer temperature/);
@@ -272,7 +272,7 @@ test("validateHrOutput: every agent once, evidence = the engine's numbers, provi
   assert.match(errs({ ...ok, review: ok.review.map((r) => (r.agent === "writer" ? { ...r, verdict: "keep" } : r)) }).join("\n"), /writer has verdict keep but 1 change \(keep means no change\)/);
   assert.match(errs({ ...ok, rosterProposal: { changes: [] } }).join("\n"), /writer has verdict tune but no change/);
   assert.match(errs({ ...ok, review: ok.review.map((r) => (r.agent === "writer" ? { ...r, verdict: "swap" } : r)) }).join("\n"), /writer has verdict swap but no model or provider change/);
-  assert.match(errs(withChange({ agent: "writer", field: "model", from: "claude-sonnet-5-5", to: "claude-sonnet-5-5", why: "x" }, "tune")).join("\n"), /writer has verdict tune but a model or provider change \(that is a swap\)/);
+  assert.match(errs(withChange({ agent: "writer", field: "model", from: "gemini-3.8-flash", to: "gemini-3.8-flash", why: "x" }, "tune")).join("\n"), /writer has verdict tune but a model or provider change \(that is a swap\)/);
   // qa / publisher: the change fields cannot remove or disable them, and the resulting roster is re-validated
   for (const field of CHANGE_FIELDS) assert.ok(!["enabled", "kind", "name"].includes(field));
   const qaSwap = { ...ok, review: ok.review.map((r) => (r.agent === "qa" ? { ...r, verdict: "swap" } : r.agent === "writer" ? { ...r, verdict: "keep" } : r)), rosterProposal: { changes: [{ agent: "qa", field: "provider", from: "gemini", to: "openai", why: "x" }] } };
@@ -282,9 +282,9 @@ test("validateHrOutput: every agent once, evidence = the engine's numbers, provi
   const publisherOff = { ...roster, agents: roster.agents.map((a) => (a.name === "publisher" ? { ...a, enabled: false } : a)) };
   assert.match(validateHrOutput(ok, { ...ctx, roster: publisherOff }).join("\n"), /\$\.rosterProposal: \$\.agents: publisher cannot be disabled/, "a disabled publisher never validates either");
   // applyRosterChanges: pure, never adds/removes, converts the temperature, drops the new provider from fallback
-  const applied = applyRosterChanges(roster, [{ agent: "writer", field: "temperature", from: "0.8", to: "0.7" }, { agent: "writer", field: "provider", from: "anthropic", to: "gemini" }, { agent: "writer", field: "model", from: "claude-sonnet-5-5", to: "gemini-3.8-flash" }, { agent: "designer", field: "charterAppend", from: "", to: "p" }]);
+  const applied = applyRosterChanges(roster, [{ agent: "writer", field: "temperature", from: "0.8", to: "0.7" }, { agent: "writer", field: "provider", from: "gemini", to: "anthropic" }, { agent: "writer", field: "model", from: "gemini-3.8-flash", to: "claude-sonnet-5-5" }, { agent: "designer", field: "charterAppend", from: "", to: "p" }]);
   const w = applied.agents.find((a) => a.name === "writer");
-  assert.deepEqual([w.temperature, w.provider, w.model, w.fallback], [0.7, "gemini", "gemini-3.8-flash", ["openai"]]);
+  assert.deepEqual([w.temperature, w.provider, w.model, w.fallback], [0.7, "anthropic", "claude-sonnet-5-5", ["openai"]]);
   assert.equal(roster.agents.find((a) => a.name === "writer").temperature, 0.8, "the input roster is untouched");
   assert.equal(applied.agents.length, 8);
   assert.deepEqual(validate(applied, ROSTER_SPEC, config).errors, []);

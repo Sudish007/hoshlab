@@ -193,7 +193,13 @@ test("Monday run on the fixture (MOCK_LLM): CEO memo, Strategist per page, Write
       assert.ok(slot, `${id} linked to its slot`);
       assert.equal(slot.status, "rework");
     }
-    // one scrubbed stdout line per agent (log.stepLine)
+    // one routing-resolution line per LLM agent, then one scrubbed result line per daily agent
+    const routing = out.lines.filter((l) => l.startsWith("[router] "));
+    assert.equal(routing.length, 6);
+    for (const name of ["ceo", "hr", "strategist", "writer", "qa", "analyst"]) {
+      const line = routing.find((l) => l.startsWith(`[router] ${name}:`));
+      assert.ok(line && line.includes("provider gemini (free tier) model gemini-3.8-flash · fallback anthropic, openai · MOCK_LLM=1"), `${name}: ${line}`);
+    }
     for (const name of AGENT_ORDER) assert.ok(out.lines.some((l) => l.startsWith(`[${name}] `)), name);
     assert.ok(out.lines.at(-1).startsWith("[daily] ok "), out.lines.at(-1));
     // usage lines were appended for every mock call (mock:true, costUsd 0)
@@ -424,17 +430,17 @@ test("R1-05: when every provider fails with retryable 503s the agent row is ok:f
     assert.ok(usage.every((u) => u.ok === false && u.costUsd === 0 && !u.mock));
     for (const v of Object.values(KEYS)) assert.ok(!JSON.stringify([r.run, fx.status(), usage]).includes(v), "no key material in the state");
 
-    // only the primary has a secret → only the primary is attempted and flagged; the skipped fallbacks are not "down"
-    // (the Writer is given a draft in rework so it has one call to make; the writer's chain is anthropic → gemini, openai)
+    // only the Gemini primary has a secret → only it is attempted and flagged; the paid fallbacks are skipped
+    // (the Writer is given a draft in rework so it has one call to make; every LLM chain is gemini → anthropic → openai)
     fx.state.writeDraft({ ...fx.draft(RP), status: "rework", qaReasons: ["tone: too salesy"] });
     calls.length = 0;
-    const r2 = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: TUESDAY, processEnv: { ANTHROPIC_API_KEY: KEYS.ANTHROPIC_API_KEY }, fetchImpl: down, sleep: noSleep, flags: { agents: "writer", page: "rishtapatra" }, renderer: fakeRenderer(), stdout: () => {} });
+    const r2 = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: TUESDAY, processEnv: { GEMINI_API_KEY: KEYS.GEMINI_API_KEY }, fetchImpl: down, sleep: noSleep, flags: { agents: "writer", page: "rishtapatra" }, renderer: fakeRenderer(), stdout: () => {} });
     assert.equal(r2.ok, true);
     assert.equal(agent(r2, "writer").ok, false);
-    assert.equal(agent(r2, "writer").calls, 3, "3 attempts on anthropic; gemini and openai skipped (secret missing) → not attempted, not flagged");
+    assert.equal(agent(r2, "writer").calls, 3, "3 attempts on Gemini; Anthropic/OpenAI skipped (secrets missing) → not attempted, not flagged");
     assert.equal(calls.length, 3);
-    assert.deepEqual(r2.flags, ["provider_down:anthropic"]);
-    assert.deepEqual(fx.status().flags, ["provider_down:anthropic"], "the stale gemini/openai flags from the previous run are dropped");
+    assert.deepEqual(r2.flags, ["provider_down:gemini"]);
+    assert.deepEqual(fx.status().flags, ["provider_down:gemini"], "the stale Anthropic/OpenAI flags from the previous run are dropped");
     assert.equal(fx.draft(RP).status, "rework", "nothing was written for the draft");
 
     // a run with the mock adapter (every call answers) clears the provider flags — daily owns them

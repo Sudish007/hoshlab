@@ -6,8 +6,9 @@ import { toInt } from "./adapter.js";
 
 export const ERROR_MAX_CHARS = 500;
 
-// Normalises the fields into a USAGE_SPEC record (optional keys omitted when empty).
-export function usageRecord({ at, runId, agent, page, provider, model, inputTokens, outputTokens, costUsd, ms, ok, error, mock }) {
+// Normalises the fields into a USAGE_SPEC record (optional keys omitted when empty). `paidEquivalentUsd` is
+// written only when given (a free-tier line: costUsd 0 billed, this figure at the price table's paid rates).
+export function usageRecord({ at, runId, agent, page, provider, model, inputTokens, outputTokens, costUsd, paidEquivalentUsd, ms, ok, error, mock }) {
   const record = {
     at,
     runId,
@@ -21,6 +22,7 @@ export function usageRecord({ at, runId, agent, page, provider, model, inputToke
     ok: ok === true,
     mock: mock === true,
   };
+  if (Number.isFinite(paidEquivalentUsd)) record.paidEquivalentUsd = Math.round(paidEquivalentUsd * 1e6) / 1e6;
   if (typeof page === "string" && page) record.page = page;
   if (typeof error === "string" && error) record.error = error.slice(0, ERROR_MAX_CHARS);
   return record;
