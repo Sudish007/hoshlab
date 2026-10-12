@@ -211,6 +211,8 @@ export function buildView(input) {
     published,
     posts,
     runs,
+    // month keys of the run-log files that exist among the two the build reads (newest first); [] when none does
+    runMonths: Array.isArray(input.runMonths) ? input.runMonths : [],
     hasRuns,
     usage,
     thisMonth,

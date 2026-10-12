@@ -66,8 +66,8 @@ export const ADMIN_SHARED_LIBS = [
 ];
 
 // Public-surface rules (OF-1, OF-5; review N22). 'cron' is only a violation when a schedule expression
-// follows it: the mandated delay note "Actions cron may start 10–30 min late" (config.schedule.actionsDelayNote,
-// P1-16/P1-17) names the word without an expression. 'autopilot' is the lower-case TOKEN; the label is 'Autopilot'.
+// follows it (P1-16/P1-17): the word alone is prose (today no public page uses it — the delay note
+// config.schedule.actionsDelayNote says "scheduled runs"). 'autopilot' is the lower-case TOKEN; the label is 'Autopilot'.
 export const PUBLIC_SURFACE_RULES = [
   { name: "approve_first", re: /\bapprove_first\b/ },
   { name: "autopilot (config token)", re: /\bautopilot\b/ },
@@ -268,6 +268,9 @@ export function loadState(company, now) {
   const published = assertRecords(state.readJsonl("state/published.jsonl"), PUBLISHED_SPEC, "state/published.jsonl");
   const calendar = state.exists("state/calendar.json") ? state.readJson("state/calendar.json", CALENDAR_SPEC) : null;
   const runs = [...assertRecords(readLog(state, "runs", prevKey), RUN_SPEC, `state/runs/${prevKey}.jsonl`), ...assertRecords(readLog(state, "runs", monthKey), RUN_SPEC, `state/runs/${monthKey}.jsonl`)];
+  // The run-log month files that actually exist among the two the build reads, newest first — the Activity page names
+  // only these (a month without a file is never named, so "September 2026" cannot appear while no such file exists).
+  const runMonths = [monthKey, prevKey].filter((k) => state.exists(`state/runs/${k}.jsonl`));
   const usage = [...assertRecords(readLog(state, "usage", prevKey), USAGE_SPEC, `state/usage/${prevKey}.jsonl`), ...assertRecords(readLog(state, "usage", monthKey), USAGE_SPEC, `state/usage/${monthKey}.jsonl`)];
   const metrics = [...assertRecords(readLog(state, "metrics", prevKey), METRIC_SPEC, `state/metrics/${prevKey}.jsonl`), ...assertRecords(readLog(state, "metrics", monthKey), METRIC_SPEC, `state/metrics/${monthKey}.jsonl`)];
   // The Analyst's reports (FEAT-203): every file must carry the JSON block the engine wrote and the block must still
@@ -299,7 +302,7 @@ export function loadState(company, now) {
     }),
     decisions: assertRecords(state.readJsonl("state/hr/decisions.jsonl"), HR_DECISION_SPEC, "state/hr/decisions.jsonl"),
   };
-  return { status, drafts, edits, approvals, overrides, published, calendar, runs, usage, metrics, reports, hr };
+  return { status, drafts, edits, approvals, overrides, published, calendar, runs, runMonths, usage, metrics, reports, hr };
 }
 
 // --- enforcement ------------------------------------------------------------------------------------
