@@ -221,7 +221,8 @@ foreach ($page in $config.pages) {
 $entries += [pscustomobject]@{ Name = 'HOSHLAB_SECRETS_PAT'; Kind = 'pat'; Provider = ''; Page = ''; Status = ''; Length = 0; Value = '' }
 
 Write-Host ('setup-secrets: repository ' + $Repo + ', ' + $entries.Count + ' secrets, Instagram API ' + $igVersion)
-Write-Host 'setup-secrets: values are hidden while you type; press Enter to keep a secret that is already set.'
+Write-Host 'setup-secrets: GEMINI_API_KEY is the required model key; ANTHROPIC_API_KEY and OPENAI_API_KEY are optional paid fallbacks.'
+Write-Host 'setup-secrets: values are hidden while you type; press Enter to keep a secret that is already set (or skip an optional fallback).'
 
 # gh must be authenticated; the existing secret NAMES (never values) tell us what Enter keeps.
 Invoke-Native $script:GhPath @('auth', 'status') -AllowFail | Out-Null

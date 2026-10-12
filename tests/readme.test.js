@@ -51,11 +51,16 @@ test("P1-21: owner click-path to-dos in order — Meta app, professional account
   assert.equal(config.defaults.altTextMax, 100, "the throwaway-post alt text length is defaults.altTextMax (M15)");
   has("throwaway");
   has("Only after one such post per page may a page be switched to **Autopilot**", "the throwaway-post gate before Autopilot");
-  has("Gemini's list price doubles on 2027-01-01", "FEAT-102: check-models + price update in January 2027");
+  has("Gemini remains free of charge within the free tier, but its paid-equivalent list price doubles on 2027-01-01", "free-tier billing + paid-equivalent price update in January 2027");
 });
 
 test("secrets: the seven names, where they live, never a value; the PAT click path, the token-refresh behaviour and 'expiry not known yet' (FEAT-202, P2-09)", () => {
   for (const name of ["ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY", "IG_TOKEN_RISHTAPATRA", "IG_TOKEN_KAATDO", "IG_TOKEN_JOB_REZ", "HOSHLAB_SECRETS_PAT"]) has(`\`${name}\``);
+  has("`GEMINI_API_KEY` is the only required provider key");
+  has("| `GEMINI_API_KEY` | **Required model key** | all six LLM agents | Google AI Studio, free tier, no card |");
+  has("| `ANTHROPIC_API_KEY` | Optional paid fallback |");
+  has("| `OPENAI_API_KEY` | Optional paid fallback |");
+  has("Anthropic has no free API tier");
   has("Actions secrets");
   has("gitignored");
   has("names and lengths");
@@ -98,6 +103,16 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("## Cadence");
   has("A 19:30 IST slot posts in the first publisher run at or after 19:30 IST");
   has("## Limits");
+  has("Content used to improve our products");
+  has("Rate limits are applied per project, not per API key");
+  has("shown in Google AI Studio");
+  has("On HTTP 429 it honours `Retry-After`, or Gemini's `retryDelay` when present");
+  has("after at most 3 retries it tries Anthropic then OpenAI");
+  has("**5–9 model calls per day**");
+  const callsByDay = Object.fromEntries(["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map((day) => [day, config.pages.reduce((n, p) => n + p.cadence.slots.filter((s) => s.dow === day).length, 0)]));
+  assert.deepEqual(callsByDay, { sun: 1, mon: 2, tue: 2, wed: 2, thu: 2, fri: 2, sat: 2 });
+  assert.equal(3 + 2 * Math.min(...Object.values(callsByDay)), 5, "three Strategists + Writer/QA for Sunday's one slot");
+  assert.equal(3 + 2 * Math.max(...Object.values(callsByDay)) + 1 + 1, 9, "two-slot day + CEO + monthly HR maximum");
   has("public", "drafts are public");
   has("Drafts are public");
   // polish-cron (2026-10-12): the drift bullet states GitHub's documented behaviour, the observed first-day numbers and the move
@@ -180,7 +195,7 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   assert.ok(status.includes("`media` branch exists") && status.includes("`sample: true`"), "R2-02: the media branch carries fixture samples only");
   assert.ok(status.includes("`engine-daily.yml` and `publisher-hourly.yml` run on their schedules"), "R2-02: the two state workflows are live");
   assert.ok(status.includes("every page still `not_configured`"), "R2-02: no token yet, so nothing was attempted");
-  assert.ok(/Still \*\*not configured yet\*\*: the provider keys and the Instagram tokens/.test(status), "R2-02: keys and tokens keep the label");
+  assert.ok(/Still \*\*not configured yet\*\*: the required free-tier `GEMINI_API_KEY` and the Instagram tokens/.test(status), "R2-02: required Gemini key and Instagram tokens keep the label");
   assert.ok(/Still \*\*untested\*\*: `token-refresh\.yml` \(zero runs/.test(status), "R2-02: token-refresh.yml keeps the label");
   assert.ok(status.includes("the real Instagram publishing path, until the throwaway post"), "R2-02: the publishing path keeps the label");
   assert.ok(!readme.includes("not needed in phase 1"), "R2-02: the phase-1 ffmpeg sentence is gone");
