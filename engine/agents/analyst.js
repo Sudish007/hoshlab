@@ -5,7 +5,8 @@
 //      record for that window yet, GET /{igMediaId}/insights once and append one METRIC_SPEC record per due window
 //      to metrics/<IST month of the fetch>.jsonl (review M9). A metric Meta leaves out is never read as 0: the post
 //      stays unmeasured (insights_incomplete) and is retried next run. The dry-run client answers zeros labelled
-//      dryRun:true, and the record carries the same label.
+//      dryRun:true, and the record carries the same label; a real client neither counts such a record as measured
+//      nor reports on it (R2-01 — dry runs work on a temp copy, so one is only ever a stray).
 //   2. runAnalyst(): the task JSON is built from the metrics records of the last 28 days (plus the engine's own
 //      counts and sums over them), the model writes perPage / experiments / forCeo / reportMarkdown, and the
 //      engine post-validates that EVERY number token in the output exists among the metrics values or the
@@ -114,11 +115,14 @@ export function publishedWithin(published, now, days, { includeDryRun = false } 
 // One GET per post per run (both windows read from the same answer when both fall due in one run); a record is
 // written only when every metric has a value. An IgError for one post is recorded and the next post is tried; a
 // token error (code 190) stops that page for this run.
+// R2-01: a dryRun:true record (the dry-run client's zeros) never counts as a measurement for a REAL client — a stray
+// line cannot block the real fetch of that window; the dry-run client sees every record (a dry run fetches nothing twice).
 export async function collectMetrics({ published = [], existing = [], clientFor, now, runId, state, log = () => {} } = {}) {
   if (typeof clientFor !== "function" || !state) throw new TypeError("analyst: clientFor and state are required");
   const d = toDate(now);
   const at = nowIst(d);
-  const measured = new Set(existing.map((r) => measuredKey(r.draftId, r.window)));
+  const measuredReal = new Set(existing.filter((r) => r && r.dryRun !== true).map((r) => measuredKey(r.draftId, r.window)));
+  const measuredAll = new Set(existing.filter((r) => r).map((r) => measuredKey(r.draftId, r.window)));
   const records = [];
   const requested = [];
   const skipped = [];
@@ -128,7 +132,7 @@ export async function collectMetrics({ published = [], existing = [], clientFor,
   const deadPages = new Set();
   const candidates = publishedWithin(published, d, FETCH_MAX_DAYS, { includeDryRun: true });
   for (const rec of candidates) {
-    const windows = dueWindows(rec, d, measured);
+    let windows = dueWindows(rec, d, measuredReal); // the dry-run client's view (every record) is a subset of this
     if (!windows.length) {
       skipped.push({ draftId: rec.draftId, reason: "not_due" });
       continue;
@@ -146,6 +150,13 @@ export async function collectMetrics({ published = [], existing = [], clientFor,
     if (rec.dryRun === true && client.dryRun !== true) {
       skipped.push({ draftId: rec.draftId, reason: "dry_run_record" });
       continue;
+    }
+    if (client.dryRun === true) {
+      windows = dueWindows(rec, d, measuredAll);
+      if (!windows.length) {
+        skipped.push({ draftId: rec.draftId, reason: "not_due" });
+        continue;
+      }
     }
     let answer;
     try {
@@ -168,7 +179,8 @@ export async function collectMetrics({ published = [], existing = [], clientFor,
       if (runId) record.runId = runId;
       if (answer.dryRun === true || client.dryRun === true) record.dryRun = true;
       changed.add(state.appendLog("metrics", record, METRIC_SPEC, d));
-      measured.add(measuredKey(rec.draftId, window));
+      measuredAll.add(measuredKey(rec.draftId, window));
+      if (record.dryRun !== true) measuredReal.add(measuredKey(rec.draftId, window));
       records.push(record);
     }
     requested.push({ draftId: rec.draftId, igMediaId: rec.igMediaId, page: rec.page, windows });
@@ -442,17 +454,21 @@ export function buildTask({ config, now, published = [], metrics = [], aggregate
   };
 }
 
-// runAnalyst({ config, router, state, now, runId, memo, log })
+// runAnalyst({ config, router, state, now, runId, memo, log, includeDryRun })
 //   → { skipped, note } when no post of the last 28 days has metrics yet, else
 //     { week, path, rel, report, markdown, engine, modelCalled, mock, calls, costUsd, runId, at, note }
 // Router errors (BudgetExhaustedError, AgentOutputError, AllProvidersFailedError) propagate and nothing is written.
-export async function runAnalyst({ config, router, state, now, runId, memo = null, log = () => {} } = {}) {
+// includeDryRun (default false — a real run): whether dry-run published records (dry- ids) and dryRun:true metrics
+// take part in the report; daily.js passes true only when the Instagram client itself is the dry-run one (R2-01), so
+// a stray dry-run line can never feed a real report's numbers.
+export async function runAnalyst({ config, router, state, now, runId, memo = null, log = () => {}, includeDryRun = false } = {}) {
   if (!config || !router || !state) throw new TypeError("analyst: config, router and state are required");
   const d = toDate(now === undefined ? state.now() : now);
   const week = isoWeekId(d);
-  const published = publishedWithin(state.readJsonl("state/published.jsonl"), d, REPORT_DAYS, { includeDryRun: true });
+  const dry = includeDryRun === true;
+  const published = publishedWithin(state.readJsonl("state/published.jsonl"), d, REPORT_DAYS, { includeDryRun: dry });
   const ids = new Set(published.map((p) => p.draftId));
-  const metrics = readMetrics(state, d).filter((m) => ids.has(m.draftId));
+  const metrics = readMetrics(state, d).filter((m) => ids.has(m.draftId) && (dry || m.dryRun !== true));
   if (!metrics.length) {
     return { skipped: SKIP_NO_METRICS, week, note: `no insights yet for the ${published.length} post${published.length === 1 ? "" : "s"} of the last ${REPORT_DAYS} days — no report written (the first report needs a post that has been live for 48 hours)` };
   }

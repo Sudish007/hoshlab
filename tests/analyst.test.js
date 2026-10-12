@@ -6,9 +6,10 @@
 // admin's dispatch path (`--agents analyst`).
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { COMPANY_DIR, FETCH_ATTEMPTS, ROOT, tmpDir } from "./helpers.js";
+import { join, relative } from "node:path";
+import { COMPANY_DIR, FETCH_ATTEMPTS, ROOT, tmpDir, walk } from "./helpers.js";
 import { loadCompany } from "../src/lib/company.js";
 import { createState } from "../engine/lib/state.js";
 import { readEnv } from "../engine/lib/env.js";
@@ -624,5 +625,99 @@ test("engine/index.js analyst: the admin's dispatch path (= daily --agents analy
   assert.equal(await runAnalystCommand({ companyDir: COMPANY_DIR, flags: { agents: "ceo", "dry-run": true }, stdout: sink(), stderr: e3, processEnv: MOCK }), EXIT.usage);
   assert.match(e3.text(), /--agents is fixed to analyst/);
   assert.equal(fixtureReport(), readFileSync(join(COMPANY_DIR, "state", "reports", "2026-W41.md"), "utf8"), "the repo fixture is untouched");
+  assert.equal(FETCH_ATTEMPTS.length, 0);
+});
+
+function treeHash(dir) {
+  const h = createHash("sha256");
+  for (const p of walk(dir).sort()) {
+    h.update(relative(dir, p).replace(/\\/g, "/"));
+    h.update(readFileSync(p));
+  }
+  return h.digest("hex");
+}
+
+test("R2-01: `analyst` under IG_DRY_RUN=1 WITHOUT --dry-run works on a temp copy like publish — the given company dir is byte-identical, the dry-run zeros land in the copy's metrics/ and stdout names the copy; collectMetrics with a real client ignores a stray dryRun:true record (the window is fetched, a real record written) while the dry-run client still treats it as measured; runAnalyst reports dry-run metrics only when includeDryRun is set", async () => {
+  // 1. the CLI path (= engine-daily's `daily --agents analyst`): a 7d window falls due at MONDAY once kd's publish is back-dated
+  const fx = copyFixture();
+  try {
+    const rows = fx.state.readJsonl("state/published.jsonl").map((r) => (r.draftId === KD ? { ...r, publishedAt: "2026-10-01T19:31:00+05:30", slotAt: "2026-10-01T19:30:00+05:30" } : r));
+    writeFileSync(join(fx.dir, "state", "published.jsonl"), rows.map((r) => JSON.stringify(r)).join("\n") + "\n", "utf8");
+    assert.equal(fx.metrics().length, 2, "the fixture's two 48h records");
+    const before = treeHash(fx.dir);
+    const out = sink();
+    const err = sink();
+    const code = await main(["analyst", "--now", MONDAY], { stdout: out, stderr: err, processEnv: { ...MOCK, IG_DRY_RUN: "1", MEDIA_DIR: fx.mediaRoot }, companyDir: fx.dir });
+    assert.equal(code, EXIT.ok, err.text() + out.text());
+    assert.equal(treeHash(fx.dir), before, "the given company dir is byte-identical afterwards (no metrics, no run record, no status.json)");
+    assert.equal(fx.metrics().length, 2, "no dry-run record in the given dir");
+    const m = out.lines[0].match(/^daily: IG_DRY_RUN=1 works on a temp copy (.+hoshlab-daily-dry-run-.+) \(the repo's company dir is untouched\)$/);
+    assert.ok(m, out.lines[0]);
+    const copy = m[1];
+    try {
+      assert.ok(out.lines.some((l) => l === `[analyst] ${KD}: insights fetched (7d) — dry run, zeros`), out.text());
+      assert.ok(out.lines.some((l) => l.startsWith("[analyst] ") && l.includes("insights: 1 post measured (1 record), 1 not_due")), out.text());
+      assert.match(out.lines.at(-1), /^daily: dry run complete — state written under .+; nothing committed$/);
+      const copyState = createState({ companyDir: copy, now: MONDAY });
+      const copyRows = copyState.readJsonl("state/metrics/2026-10.jsonl");
+      assert.equal(copyRows.length, 3, "the dry-run record went to the copy");
+      assert.equal(copyRows[2].draftId, KD);
+      assert.equal(copyRows[2].window, "7d");
+      assert.equal(copyRows[2].dryRun, true);
+      assert.deepEqual(copyRows[2].metrics, { reach: 0, views: 0, likes: 0, comments: 0, saved: 0, shares: 0 });
+      assert.equal(copyState.readJsonl("state/runs/2026-10.jsonl").at(-1).dryRun, true, "the copy's run record is labelled a dry run");
+    } finally {
+      rmSync(join(copy, ".."), { recursive: true, force: true });
+    }
+    // the same flags with no dry-run trigger at all are refused: --now needs a dry run
+    const e2 = sink();
+    assert.equal(await main(["analyst", "--now", MONDAY], { stdout: sink(), stderr: e2, processEnv: { ...MOCK, MEDIA_DIR: fx.mediaRoot }, companyDir: fx.dir }), EXIT.usage);
+    assert.match(e2.text(), /--now <iso> is accepted only with --dry-run or IG_DRY_RUN=1/);
+    assert.equal(treeHash(fx.dir), before);
+  } finally {
+    fx.cleanup();
+  }
+
+  // 2. collectMetrics: a stray dryRun:true record for kd's 7d window (what a pre-R2-01 run would have left behind)
+  const fx2 = copyFixture();
+  try {
+    const zeros = { reach: 0, views: 0, likes: 0, comments: 0, saved: 0, shares: 0 };
+    fx2.state.appendJsonl("state/metrics/2026-10.jsonl", { draftId: KD, igMediaId: "17900000000000001", page: "kaatdo", at: "2026-10-13T05:31:00+05:30", window: "7d", metrics: zeros, source: "ig-insights", raw: { dryRun: true }, dryRun: true }, METRIC_SPEC);
+    const published = fx2.state.readJsonl("state/published.jsonl");
+    // the dry-run client sees it as measured: only rp's 7d is fetched (a dry run never fetches a window twice)
+    const dry = fakeClient({ "17900000000000001": { values: VALUES }, "17900000000000002": { values: VALUES } }, { dryRun: true });
+    const r0 = await collectMetrics({ published, existing: readMetrics(fx2.state, NEXT_SUNDAY), clientFor: () => dry, now: NEXT_SUNDAY, state: fx2.state });
+    assert.deepEqual(r0.requested.map((q) => [q.draftId, q.windows]), [[RP, ["7d"]]]);
+    assert.deepEqual(r0.skipped, [{ draftId: KD, reason: "not_due" }]);
+    assert.equal(fx2.metrics().length, 4, "2 real 48h + 2 dry-run 7d");
+    assert.ok(fx2.metrics().slice(2).every((row) => row.dryRun === true));
+    // the real client ignores both dry-run records: kd's and rp's 7d windows are fetched and written as real records
+    const real = fakeClient({ "17900000000000001": { values: { ...VALUES, reach: 555 } }, "17900000000000002": { values: { ...VALUES, reach: 777 } } });
+    const r = await collectMetrics({ published, existing: readMetrics(fx2.state, NEXT_SUNDAY), clientFor: () => real, now: NEXT_SUNDAY, runId: "engine-daily-20261018-0531-abcdef", state: fx2.state });
+    assert.deepEqual(real.calls.map((c) => c.igMediaId), ["17900000000000001", "17900000000000002"]);
+    assert.deepEqual(r.requested.map((q) => [q.draftId, q.windows]), [[KD, ["7d"]], [RP, ["7d"]]], "a dry-run record does not count as a measurement for a real client");
+    assert.deepEqual(r.skipped, []);
+    const rows = fx2.metrics();
+    assert.equal(rows.length, 6);
+    assert.deepEqual(rows.slice(4).map((m) => [m.draftId, m.window, m.dryRun, m.metrics.reach]), [[KD, "7d", undefined, 555], [RP, "7d", undefined, 777]]);
+    for (const row of rows.slice(4)) assertShape(row, METRIC_SPEC);
+    // and once real records exist, the real client is done (the dry-run lines change nothing)
+    const again = fakeClient();
+    const r2 = await collectMetrics({ published, existing: readMetrics(fx2.state, NEXT_SUNDAY), clientFor: () => again, now: NEXT_SUNDAY, state: fx2.state });
+    assert.equal(again.calls.length, 0);
+    assert.deepEqual(r2.skipped.map((s) => s.reason), ["not_due", "not_due"]);
+
+    // 3. runAnalyst: with the real records removed, only dry-run metrics remain → a real run has nothing to report on
+    writeFileSync(join(fx2.dir, "state", "metrics", "2026-10.jsonl"), rows.filter((m) => m.dryRun === true).map((m) => JSON.stringify(m)).join("\n") + "\n", "utf8");
+    assert.equal(fx2.metrics().length, 2, "dry-run records only");
+    const rReal = await runAnalyst({ config, router: router(fx2.state, MOCK, NEXT_SUNDAY), state: fx2.state, now: NEXT_SUNDAY, runId: RUN_ID });
+    assert.equal(rReal.skipped, SKIP_NO_METRICS, "a real run neither counts nor reports dryRun records");
+    assert.match(rReal.note, /^no insights yet for the 2 posts of the last 28 days/);
+    // a dry run (includeDryRun, as daily.js passes for the dry-run client) reads them — and the mock's fixture numbers then fail the number rule
+    await assert.rejects(runAnalyst({ config, router: router(fx2.state, MOCK, NEXT_SUNDAY), state: fx2.state, now: NEXT_SUNDAY, runId: RUN_ID, includeDryRun: true }), (e) => e instanceof AgentOutputError && /report number not in metrics/.test(e.message));
+    assert.equal(fx2.state.exists("state/reports/2026-W42.md"), false);
+  } finally {
+    fx2.cleanup();
+  }
   assert.equal(FETCH_ATTEMPTS.length, 0);
 });

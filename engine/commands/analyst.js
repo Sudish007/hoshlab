@@ -5,9 +5,9 @@
 // and the Sunday step of the daily run: `daily --agents analyst`. The other agents are recorded `skipped:
 // not_selected`; the Analyst fetches Instagram insights for the posts live ≥ 48 h / ≥ 7 d that are not measured yet
 // (metrics/<month>.jsonl) and writes this ISO week's report (reports/<YYYY-Www>.md) — or records `skipped:
-// no_metrics` while no post has insights yet. --dry-run runs on a temp copy with the dry-run Instagram client
-// (zeros labelled dryRun) and commits nothing; the run record, status.json (lastReport) and the git step are
-// daily.js's own. The Analyst is company-wide, so --page is not accepted here.
+// no_metrics` while no post has insights yet. --dry-run (or IG_DRY_RUN=1 alone — R2-01) runs on a temp copy with the
+// dry-run Instagram client (zeros labelled dryRun) and commits nothing; the run record, status.json (lastReport) and
+// the git step are daily.js's own. The Analyst is company-wide, so --page is not accepted here.
 import { run as runDailyCommand } from "./daily.js";
 
 export const AGENTS = "analyst";

@@ -18,14 +18,17 @@
 //   8. QA for `rendered` drafts;  9. one inline rework loop (Writer → Designer → QA) for the drafts QA
 //      or the Designer sent to rework in this run;  9b. Analyst (FEAT-203, design §3.1 step 8) on Sundays IST or
 //      when --agents names it: Instagram insights for the posts live ≥ 48 h / ≥ 7 d and not measured yet →
-//      metrics/<month>.jsonl (dry-run client under IG_DRY_RUN=1 / --dry-run: zeros labelled dryRun), then the
-//      weekly report reports/<week>.md (skipped: no_metrics while nothing is measured; status.lastReport);
+//      metrics/<month>.jsonl (dry-run client under IG_DRY_RUN=1 / --dry-run: zeros labelled dryRun; a real run
+//      neither counts nor reports a dryRun record — R2-01), then the weekly report reports/<week>.md (skipped:
+//      no_metrics while nothing is measured; status.lastReport);
 //      10. finish: status.json (queue/blocked counts, budget, pages, flags, lastRuns ≤ 20 — M9), calendar
 //      slots re-linked to the drafts written today, runs/<month>.jsonl record, one scrubbed stdout line per agent.
 //   An AllProvidersFailedError ends that agent's work (row ok:false, run still ok — design §11) and flags
 //   provider_down:<name> for every provider that was actually attempted (R1-05).
-//   --dry-run copies the company dir (and .media when present) to a temp dir, runs there and prints the
-//   path; nothing in the repo changes. Commit + push happen only with CI=true or --commit (git.js).
+//   --dry-run — or IG_DRY_RUN=1 alone (R2-01, as publish.js has done since R1-03) — copies the company dir (and
+//   .media when present) to a temp dir, runs there and prints the path; nothing in the repo changes: the Analyst's
+//   dry-run client writes zero insights labelled dryRun into metrics/, which must never land in the real company
+//   dir. Commit + push happen only with CI=true or --commit (git.js), never after a dry run.
 import { cpSync, existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
@@ -537,7 +540,8 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
       if (exhausted) return skip("analyst", SKIP_BUDGET, "budget_exhausted");
       try {
         const memoDoc = readMemo(state, startedAt);
-        const r = await runAnalyst({ config, router, state, now: startedAt, runId: id, memo: memoDoc ? memoDoc.memo : null, log });
+        // a real run reports on real posts and real insights only; a dry run may read its own dryRun records (R2-01)
+        const r = await runAnalyst({ config, router, state, now: startedAt, runId: id, memo: memoDoc ? memoDoc.memo : null, log, includeDryRun: igDry });
         if (r.skipped) return skip("analyst", `skipped: ${r.skipped} — ${r.note}`, r.skipped);
         changedFiles.push(r.rel);
         status.lastReport = { week: r.week, path: r.path, at: r.at };
@@ -625,11 +629,13 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
 
 // CLI entry: ctx from engine/index.js → exit code (0 ok, 1 failed, 2 usage).
 export async function run({ root, companyDir, processEnv = process.env, fetchImpl = globalThis.fetch, stdout = console.log, stderr = console.error, flags = {} } = {}) {
-  const dryRun = flags["dry-run"] === true;
+  const dryRunFlag = flags["dry-run"] === true;
+  // R2-01: IG_DRY_RUN=1 without --dry-run is a dry run too — temp copy, no commit — exactly as publish.js treats it.
+  const dryRun = isDryRun(processEnv, flags);
   let now;
   if (flags.now !== undefined) {
     if (!dryRun) {
-      stderr("daily: --now <iso> is accepted only with --dry-run (a real run is never back-dated)");
+      stderr("daily: --now <iso> is accepted only with --dry-run or IG_DRY_RUN=1 (a real run is never back-dated)");
       return 2;
     }
     try {
@@ -661,7 +667,7 @@ export async function run({ root, companyDir, processEnv = process.env, fetchImp
       mediaRoot = join(tmp, ".media");
       cpSync(mediaDefault, mediaRoot, { recursive: true });
     } else mediaRoot = join(tmp, ".media"); // absent → the Designer records media_branch_missing, as it would in the repo
-    stdout(`daily: --dry-run works on a temp copy ${dir} (the repo's company dir is untouched)`);
+    stdout(`daily: ${dryRunFlag ? "--dry-run" : "IG_DRY_RUN=1"} works on a temp copy ${dir} (the repo's company dir is untouched)`);
   }
   let result;
   try {
