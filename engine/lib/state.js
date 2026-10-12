@@ -3,8 +3,11 @@
 // writes UTF-8 without BOM atomically, and refuses admin-owned paths.
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, join, posix, resolve } from "node:path";
-import { APPROVAL_SPEC, CALENDAR_SPEC, CONFIG_SPEC, DRAFT_SPEC, EDIT_SPEC, FEEDBACK_SPEC, HR_DECISION_SPEC, HR_PROPOSAL_SPEC, IDEA_SPEC, METRIC_SPEC, OVERRIDE_SPEC, PUBLISHED_SPEC, QA_SPEC, ROSTER_SPEC, RUN_SPEC, STATUS_SPEC, SchemaError, TOKENS_SPEC, USAGE_SPEC, validate } from "./schema.js";
-import { istMonthKey } from "./time.js";
+import { APPROVAL_SPEC, CALENDAR_SPEC, CONFIG_SPEC, DRAFT_INDEX_SPEC, DRAFT_SPEC, EDIT_SPEC, FEEDBACK_SPEC, HR_DECISION_SPEC, HR_PROPOSAL_SPEC, IDEA_SPEC, METRIC_SPEC, OVERRIDE_SPEC, PUBLISHED_SPEC, QA_SPEC, ROSTER_SPEC, RUN_SPEC, STATUS_SPEC, SchemaError, TOKENS_SPEC, USAGE_SPEC, validate } from "./schema.js";
+import { istMonthKey, nowIst } from "./time.js";
+
+// The engine-owned draft index (R1-04 → R2-05): state/drafts/index.json, one entry per draft folder.
+export const DRAFT_INDEX_REL = "state/drafts/index.json";
 
 export class OwnershipError extends Error {
   constructor(rel) {
@@ -188,6 +191,36 @@ export function createState({ companyDir = process.env.COMPANY_DIR || "company",
     return writeJson(qaRel(qa.draftId), qa, QA_SPEC);
   }
 
+  // The index entries as the folder stands now (R2-05): one row per draft folder, sorted by id, read from the
+  // validated draft.json files — never from memory, so the index always mirrors what is on disk.
+  function draftIndexEntries() {
+    return listDrafts().map((id) => {
+      const d = readDraft(id);
+      return { id: d.id, page: d.page, status: d.status, format: d.format, slotId: d.slotId, slotAt: d.slotAt, revision: d.revision, updatedAt: d.updatedAt, qa: existsSync(abs(qaRel(id))) };
+    });
+  }
+
+  // Rewrites state/drafts/index.json when its entries differ from the file on disk (or the file is missing / unreadable)
+  // → the rel written, or null when nothing changed, so an idle run leaves the file — and the drafts tree — untouched.
+  function writeDraftIndex(date = clock()) {
+    const drafts = draftIndexEntries();
+    const path = abs(DRAFT_INDEX_REL);
+    if (existsSync(path)) {
+      let current = null;
+      try {
+        current = JSON.parse(readFileSync(path, "utf8").replace(/^\uFEFF/, ""));
+      } catch {
+        current = null;
+      }
+      if (current && validate(current, DRAFT_INDEX_SPEC).ok && JSON.stringify(current.drafts) === JSON.stringify(drafts)) return null;
+    }
+    return writeJson(DRAFT_INDEX_REL, { updatedAt: nowIst(date), drafts }, DRAFT_INDEX_SPEC);
+  }
+
+  function readDraftIndex() {
+    return existsSync(abs(DRAFT_INDEX_REL)) ? readJson(DRAFT_INDEX_REL, DRAFT_INDEX_SPEC) : null;
+  }
+
   return {
     root,
     now: clock,
@@ -208,6 +241,9 @@ export function createState({ companyDir = process.env.COMPANY_DIR || "company",
     writeDraft,
     readQa,
     writeQa,
+    draftIndexEntries,
+    writeDraftIndex,
+    readDraftIndex,
     isAdminOwned,
     isEngineOwned,
   };
@@ -250,6 +286,7 @@ export function specFor(rel) {
   if (n === "state/feedback.jsonl") return { kind: "feedback", spec: FEEDBACK_SPEC, jsonl: true };
   if (n === "state/published.jsonl") return { kind: "published", spec: PUBLISHED_SPEC, jsonl: true };
   if (n === "state/hr/decisions.jsonl") return { kind: "hrDecision", spec: HR_DECISION_SPEC, jsonl: true };
+  if (n === DRAFT_INDEX_REL) return { kind: "draftIndex", spec: DRAFT_INDEX_SPEC };
   let m;
   if ((m = n.match(/^state\/(runs|usage|metrics)\/([^/]+)$/))) {
     if (!MONTH_FILE.test(m[2])) return null;

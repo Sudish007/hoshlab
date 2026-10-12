@@ -726,6 +726,25 @@ export const QA_SPEC = {
   "runId?": "id",
 };
 
+// §4.6 drafts/index.json — the engine-owned draft index (Phase 1 review R1-04 → Phase 2 review R2-05; plan FEAT-202).
+// One entry per folder under state/drafts/ (sorted by id), rewritten by state.writeDraftIndex() at the end of every
+// daily and publisher run when the entries changed; `updatedAt` is that instant. The admin reads this one file, then
+// draft.json/qa.json for the LIVE entries only (status not in TERMINAL_DRAFT_STATUSES) and the terminal ones on
+// demand, instead of listing the folder and fetching two files per draft on every load. `qa` says whether qa.json
+// exists. Absent (a company no run has touched yet) → the admin falls back to the folder listing.
+export const DRAFT_INDEX_ENTRY_SPEC = {
+  id: "id",
+  page: "handle",
+  status: `enum[${DRAFT_STATUSES.join("|")}]`,
+  format: FORMAT,
+  slotId: "id",
+  slotAt: "iso-datetime",
+  revision: "int[1..100]",
+  updatedAt: "iso-datetime",
+  qa: "bool",
+};
+export const DRAFT_INDEX_SPEC = { updatedAt: "iso-datetime", drafts: [DRAFT_INDEX_ENTRY_SPEC] };
+
 // §4.8 admin-owned records (M5: approvals carry revision)
 export const APPROVAL_SPEC = { draftId: "id", decision: "enum[approve|reject]", revision: "int[1..100]", at: "iso-datetime", by: "str", "reason?": "str<=500" };
 SPEC_RULES.set(APPROVAL_SPEC, approvalRules);

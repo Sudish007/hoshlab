@@ -29,7 +29,9 @@ const S = {
   token: null,
   client: null,
   adminState: null,
-  data: null, // { drafts: Map<id,{draft,qa}>, approvals, latest: Map, edits: Map, overrides: Map, calendar, config, status }
+  // data.index (R2-05): Map<id, entry> of the engine-owned state/drafts/index.json — null when no run has written one
+  // yet; with it, data.drafts holds the live drafts after load and terminal ones only once a view asked for them.
+  data: null, // { drafts: Map<id,{draft,qa}>, index: Map|null, terminalLoaded, approvals, latest: Map, edits: Map, overrides: Map, calendar, config, status }
   brands: new Map(), // handle → parseBrand() of the committed file
   files: new Map(), // path → { text, sha } (editors)
   view: null,
@@ -228,12 +230,35 @@ function latestByDraft(records) {
   for (const r of [...records].sort((a, b) => String(a.at).localeCompare(String(b.at)))) if (r && r.draftId) m.set(r.draftId, r);
   return m;
 }
+// One draft folder → data.drafts: draft.json, then qa.json when the index says one exists (or we do not know).
+// In index mode a listed folder that is gone (an index older than a manual prune) is skipped instead of failing the load.
+async function loadDraft(d, id, { qa = true } = {}) {
+  const draft = (await getJson(`${STATE}/drafts/${id}/draft.json`, { optional: d.index !== null })).value;
+  if (!draft) return;
+  const qaDoc = qa ? (await getJson(`${STATE}/drafts/${id}/qa.json`, { optional: true })).value : null;
+  d.drafts.set(draft.id, { draft, qa: qaDoc });
+}
 async function loadData() {
   show($("loading"), true);
   setError($("dash-error"), "");
   const c = S.client;
-  const d = { drafts: new Map(), approvals: [], edits: new Map(), overrides: new Map(), calendar: null, config: null, status: null };
-  const dirs = await c.listDir(`${STATE}/drafts`);
+  const d = { drafts: new Map(), index: null, terminalLoaded: false, approvals: [], edits: new Map(), overrides: new Map(), calendar: null, config: null, status: null };
+  // R2-05 (Phase 1 review R1-04): the engine rewrites state/drafts/index.json at the end of every daily and publisher
+  // run — one entry per draft folder with its status. With it the admin fetches draft.json/qa.json for the LIVE drafts
+  // only (two requests per live draft: the next leadDays' worth plus whatever is queued or in rework) and loads
+  // terminal ones on demand: the Blocked view
+  // fetches blocked/failed/expired/rejected drafts, the edit dialog the page's recent captions; published drafts are
+  // never fetched (nothing in the admin shows them). Without an index (no run has written one yet) the folder is
+  // listed and every draft is fetched, as before.
+  const index = (await getJson(`${STATE}/drafts/index.json`, { optional: true })).value;
+  let draftJobs;
+  if (index && Array.isArray(index.drafts)) {
+    d.index = new Map(index.drafts.map((e) => [e.id, e]));
+    draftJobs = index.drafts.filter((e) => !isTerminal(e)).map((e) => () => loadDraft(d, e.id, { qa: e.qa !== false }));
+  } else {
+    const dirs = await c.listDir(`${STATE}/drafts`);
+    draftJobs = dirs.filter((x) => x.type === "dir").map((x) => () => loadDraft(d, x.name));
+  }
   const editFiles = await c.listDir(`${STATE}/edits`);
   const jobs = [
     async () => (d.approvals = parseJsonl((await getText(`${STATE}/approvals.jsonl`, { optional: true })).text)),
@@ -241,11 +266,7 @@ async function loadData() {
     async () => (d.calendar = (await getJson(`${STATE}/calendar.json`, { optional: true })).value),
     async () => (d.config = (await getJson("company/config.json")).value),
     async () => (d.status = (await getJson(`${STATE}/status.json`, { optional: true })).value),
-    ...dirs.filter((x) => x.type === "dir").map((x) => async () => {
-      const draft = (await getJson(`${STATE}/drafts/${x.name}/draft.json`)).value;
-      const qa = (await getJson(`${STATE}/drafts/${x.name}/qa.json`, { optional: true })).value;
-      d.drafts.set(draft.id, { draft, qa });
-    }),
+    ...draftJobs,
     ...editFiles.filter((x) => x.type === "file" && x.name.endsWith(".json")).map((x) => async () => {
       const edit = (await getJson(`${STATE}/edits/${x.name}`)).value;
       d.edits.set(edit.draftId, edit);
@@ -259,7 +280,28 @@ async function loadData() {
   const q = queueDrafts().length;
   $("queue-count").textContent = String(q);
   show($("queue-count"), true);
-  log(`loaded ${d.drafts.size} drafts, ${d.approvals.length} approvals, ${d.edits.size} edits from company/state`);
+  log(d.index ? `loaded ${d.drafts.size} live drafts of ${d.index.size} in the index (terminal drafts load on demand), ${d.approvals.length} approvals, ${d.edits.size} edits from company/state` : `loaded ${d.drafts.size} drafts (no index yet — every folder read), ${d.approvals.length} approvals, ${d.edits.size} edits from company/state`);
+}
+// Index mode: the blocked/failed/expired/rejected drafts are fetched the first time a view needs them (never the published
+// ones, which no admin view shows). A no-op without an index (everything was loaded) or once done.
+async function ensureTerminalLoaded() {
+  const d = S.data;
+  if (!d.index || d.terminalLoaded) return;
+  const wanted = [...d.index.values()].filter((e) => isTerminal(e) && e.status !== "published" && !d.drafts.has(e.id));
+  await pool(wanted, 6, (e) => loadDraft(d, e.id, { qa: e.qa !== false }));
+  d.terminalLoaded = true;
+}
+// Index mode: the page's 30 most recent drafts not loaded yet (published ones included) — their captions feed the edit
+// dialog's duplicate check, as every caption of the page did before the index existed. draft.json only; no qa.json.
+async function ensureRecentLoaded(handle) {
+  const d = S.data;
+  if (!d.index) return;
+  const wanted = [...d.index.values()]
+    .filter((e) => e.page === handle && !d.drafts.has(e.id))
+    .sort((a, b) => String(b.slotAt).localeCompare(String(a.slotAt)))
+    .slice(0, 30);
+  // a blocked/failed/expired/rejected draft loaded here keeps its qa.json, so the Blocked view's card is complete later
+  await pool(wanted, 6, (e) => loadDraft(d, e.id, { qa: e.status !== "published" && e.qa !== false }));
 }
 // status.json flags as plain sentences above every view — the same words the Home page prints (labels.js is
 // byte-copied into dist/admin/lib/). token_expiring:<page> counts the days from pages[<page>].tokenExpiresAt.
@@ -348,6 +390,12 @@ function queueDrafts() {
 }
 function blockedDrafts() {
   return [...S.data.drafts.values()].filter(({ draft }) => (isTerminal(draft) && draft.status !== "published") || (draft.status === "queued" && rejected(draft))).sort((a, b) => String(b.draft.updatedAt).localeCompare(String(a.draft.updatedAt)));
+}
+// The count the Queue summary prints: the loaded blocked drafts plus, in index mode, the terminal entries not fetched yet.
+function blockedCount() {
+  let n = blockedDrafts().length;
+  if (S.data.index) for (const e of S.data.index.values()) if (isTerminal(e) && e.status !== "published" && !S.data.drafts.has(e.id)) n++;
+  return n;
 }
 async function brandFor(handle) {
   if (S.brands.has(handle)) return S.brands.get(handle);
@@ -460,10 +508,22 @@ function renderQueue() {
   $("queue-count").textContent = String(items.length);
   const awaiting = items.filter(({ draft }) => !(S.data.latest.get(draft.id) && isApproved(draft, S.data.latest.get(draft.id))) && modeOf(draft.page) !== "autopilot").length;
   const perPage = cfg.pages.map((p) => `@${p.handle} ${items.filter(({ draft }) => draft.page === p.handle).length}`).join(" · ");
-  $("queue-summary").textContent = `${items.length} in the queue (${perPage}) · ${awaiting} awaiting your approval · ${blockedDrafts().length} blocked, failed, expired or rejected`;
+  $("queue-summary").textContent = `${items.length} in the queue (${perPage}) · ${awaiting} awaiting your approval · ${blockedCount()} blocked, failed, expired or rejected`;
 }
-function renderBlocked() {
+async function renderBlocked() {
   const list = $("blocked");
+  if (S.data.index && !S.data.terminalLoaded) {
+    show($("loading"), true);
+    try {
+      await ensureTerminalLoaded();
+    } catch (err) {
+      show($("loading"), false);
+      setError($("dash-error"), fail(err, "load blocked drafts"));
+      return;
+    }
+    show($("loading"), false);
+    if (S.view !== "blocked") return; // the owner moved on while the drafts loaded
+  }
   clear(list);
   const items = blockedDrafts();
   for (const item of items) list.append(card(item, { terminal: true }));
@@ -554,6 +614,7 @@ async function openEdit(draft) {
   let brand;
   try {
     brand = await brandFor(draft.page);
+    await ensureRecentLoaded(draft.page); // index mode: the page's recent captions for the duplicate check
   } catch (err) {
     return setError($("dash-error"), fail(err, "brand"));
   }
@@ -686,7 +747,9 @@ function renderCalendar() {
   const today = istKey(new Date());
   for (const s of (S.data.calendar && S.data.calendar.slots) || []) {
     const entry = S.data.drafts.get(s.draftId);
-    const draft = entry ? entry.draft : null;
+    // a terminal draft not fetched (index mode) is represented by its index entry: id, status, slotId and slotAt are all
+    // the label and the day placement need, so a post published this hour still reads 'published' before the next re-link
+    const draft = entry ? entry.draft : (S.data.index && s.draftId && S.data.index.get(s.draftId)) || null;
     const label = slotLabel(s, draft, S.data.latest.get(s.draftId), modeOf(s.page));
     if (!label) continue;
     const at = draft ? effectiveSlotAt(draft) : s.at;

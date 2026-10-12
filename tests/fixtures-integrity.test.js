@@ -137,7 +137,14 @@ test("every fixture state file validates against its spec; memos carry a CEO JSO
   assert.deepEqual(tree.errors, []);
   assert.ok(tree.files.length >= 25, `${tree.files.length} files`);
   const kinds = new Set(tree.files.map((f) => f.kind));
-  for (const k of ["config", "roster", "status", "calendar", "idea", "approval", "override", "feedback", "published", "run", "usage", "draft", "qa", "memo", "metric", "report", "hrReview", "hrProposal"]) assert.ok(kinds.has(k), k);
+  for (const k of ["config", "roster", "status", "calendar", "idea", "approval", "override", "feedback", "published", "run", "usage", "draft", "qa", "memo", "metric", "report", "hrReview", "hrProposal", "draftIndex"]) assert.ok(kinds.has(k), k);
+  // R2-05: the fixture's drafts/index.json is exactly what the engine computes from the draft folders, stamped with the
+  // fixture's last engine run (the admin audit reads it and fetches only the live drafts' files)
+  const index = state.readDraftIndex();
+  assert.deepEqual(index.drafts, state.draftIndexEntries(), "index entries mirror the folders byte for byte");
+  assert.equal(index.updatedAt, state.readJson("state/status.json").lastRun.at);
+  assert.deepEqual(index.drafts.filter((e) => !["published", "failed", "rejected", "expired", "blocked"].includes(e.status)).map((e) => e.id).sort(), drafts.filter((d) => d.status === "queued").map((d) => d.id).sort(), "the live entries are the two queued drafts");
+  assert.ok(index.drafts.every((e) => e.qa === true), "every fixture draft has a qa.json");
   const memos = tree.files.filter((f) => f.kind === "memo").map((f) => f.rel);
   assert.deepEqual(memos, ["state/memos/2026-W41.md", "state/memos/2026-W42.md"]);
   const handles = config.pages.map((p) => p.handle);
