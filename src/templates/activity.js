@@ -1,9 +1,10 @@
 // Activity: the last 50 run records from the current and previous month log files (review M9), one
 // block per run with one line per agent step from agents[].note (design §11). 'No runs yet' when empty.
+// The page names only the month files that exist (view.runMonths): never a month without a file.
 import { layout } from "./layout.js";
 import { url } from "../lib/urls.js";
 import { escapeHtml } from "../lib/xml.js";
-import { formatIst, formatIstTime, monthName, previousMonth } from "../lib/dates.js";
+import { formatIst, formatIstTime, monthName } from "../lib/dates.js";
 import { chip, sectionHead, sideBox, timeTag } from "./partials.js";
 import { agentTitle } from "./home.js";
 
@@ -38,8 +39,18 @@ export function runBlock(view, run) {
     </article>`;
 }
 
+// The run-log files the page was built from, as words: '(October 2026 and September 2026)' with two files,
+// '(October 2026)' with one, '' with none; 'the two most recent month files' / 'the most recent month file' / 'no month file yet'.
+export function monthFilesWords(runMonths) {
+  const months = (runMonths || []).map(monthName);
+  return {
+    list: months.length ? ` (${months.join(" and ")})` : "",
+    files: months.length > 1 ? "the two most recent month files" : months.length === 1 ? "the most recent month file" : "no month file yet",
+  };
+}
+
 export function activityPage(view) {
-  const months = [view.monthKey, previousMonth(view.monthKey)].map(monthName);
+  const monthFiles = monthFilesWords(view.runMonths);
   const runs = view.runs;
   const byWorkflow = ["engine-daily", "publisher-hourly"].map((w) => {
     const mine = runs.filter((r) => r.workflow === w);
@@ -55,7 +66,7 @@ export function activityPage(view) {
     <div>
       <p class="eyebrow">Activity · run log</p>
       <h1>Every run, line by line.</h1>
-      <p class="lede">One record per engine or publisher run from the run log (${escapeHtml(months.join(" and "))}), newest first. Each line is what an agent reported; failures stay in the log. Times are IST.</p>
+      <p class="lede">One record per engine or publisher run from the run log${escapeHtml(monthFiles.list)}, newest first. Each line is what an agent reported; failures stay in the log. Times are IST.</p>
       <div class="hero-actions"><a class="btn" href="${url("team/")}">Who does what</a><a class="btn btn-quiet" href="${url("calendar/")}">Calendar</a></div>
       <div class="trust-row" aria-label="What a run record holds">
         <div><span class="k">One record per run</span><span class="s">engine (${escapeHtml(view.config.schedule.engineLabel)}) and publisher (${escapeHtml(view.config.schedule.publisherLabel)})</span></div>
@@ -64,12 +75,12 @@ export function activityPage(view) {
       </div>
     </div>
     <div class="hero-side">
-      ${sideBox("Summary", rows, { note: "Counted over the two most recent month files of the run log." })}
+      ${sideBox("Summary", rows, { note: monthFiles.files === "no month file yet" ? "The run log has no month file yet." : `Counted over ${monthFiles.files} of the run log${monthFiles.list}.` })}
     </div>
   </section>
 
   <section class="section">
-    ${sectionHead(runs.length ? `${runs.length} run${runs.length === 1 ? "" : "s"}` : "Runs", { aside: `<span class="meta">${runs.length ? "newest first · times in IST" : "nothing logged yet"}</span>`, desc: runs.length ? `Showing the last ${runs.length} run${runs.length === 1 ? "" : "s"} across the two most recent month files.` : "The first engine run writes its record here." })}
+    ${sectionHead(runs.length ? `${runs.length} run${runs.length === 1 ? "" : "s"}` : "Runs", { aside: `<span class="meta">${runs.length ? "newest first · times in IST" : "nothing logged yet"}</span>`, desc: runs.length ? `Showing the last ${runs.length} run${runs.length === 1 ? "" : "s"} across ${monthFiles.files}${monthFiles.list}.` : "The first engine run writes its record here." })}
     ${runs.length ? runs.map((r) => runBlock(view, r)).join("\n    ") : `<p class="empty">No runs yet.</p>`}
   </section>`;
   return layout({ title: "Activity", description: `${view.config.company.name} run log: what each agent did in the last engine and publisher runs.`, path: "activity/", body, year: view.year });

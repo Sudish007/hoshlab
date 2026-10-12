@@ -2,7 +2,7 @@
 // 2026-10-12T09:30 IST): page set (P1-12), OF-1/OF-2/OF-5/OF-6, M2, M6, N2, N4, N5, N9, N10, N13, N22.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cpSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import config from "../site.config.js";
@@ -12,6 +12,7 @@ import { NAV } from "../src/templates/partials.js";
 import { ROOT, DIST, COMPANY_DIR, htmlFiles, read, tmpDir } from "./helpers.js";
 
 const BASE = config.basePath;
+const fixtureConfig = JSON.parse(readFileSync(join(COMPANY_DIR, "config.json"), "utf8"));
 const publicHtml = () => htmlFiles().filter((f) => !/[\\/]admin[\\/]/.test(f));
 const page = (rel) => read(join(DIST, ...rel.split("/")));
 const text = (html) => html.replace(/<[^>]+>/g, " ");
@@ -43,17 +44,18 @@ test("OF-5: no config token or cron expression in public HTML; the status strip 
     const html = read(file);
     assert.ok(!html.includes("approve_first"), `${file}: approve_first`);
     assert.doesNotMatch(html, /\bautopilot\b/, `${file}: autopilot token (the label is 'Autopilot')`);
-    // 'cron ' followed by a schedule expression. The literal substring 'cron ' is allowed exactly once in
-    // prose: the mandated delay note "Actions cron may start 10–30 min late" (config.schedule.actionsDelayNote).
+    // 'cron ' followed by a schedule expression is the build rule; since the delay note stopped naming the word
+    // (2026-10-12, "GitHub may delay or skip scheduled runs…") no public page says 'cron' at all.
     assert.doesNotMatch(html, /\bcron\s+`?[\d*]/i, `${file}: cron expression`);
     assert.doesNotMatch(html, /\*\s\*\s\*/, `${file}: cron expression`);
-    for (const m of html.matchAll(/\bcron\b/gi)) {
-      assert.ok(html.slice(Math.max(0, m.index - 8), m.index + 40).includes("Actions cron may start"), `${file}: 'cron' outside the delay note at ${m.index}`);
-    }
+    assert.doesNotMatch(html, /\bcron\b/i, `${file}: the word 'cron' on a public page`);
   }
   const home = page("index.html");
   const strip = home.match(/<div class="status-strip"[\s\S]*?<\/div>\s*<\/div>/)[0];
-  for (const s of ["Approve first", "Daily 05:30 IST", "Hourly at :30 IST", "Actions cron may start 10–30 min late"]) assert.ok(strip.includes(s), `status strip: ${s}`);
+  for (const s of ["Approve first", fixtureConfig.schedule.engineLabel, fixtureConfig.schedule.publisherLabel, fixtureConfig.schedule.actionsDelayNote]) assert.ok(strip.includes(s), `status strip: ${s}`);
+  assert.ok(strip.includes(`<span class="s">publisher ${fixtureConfig.schedule.publisherLabel}</span>`), "the Engine cell's sub-line names the publisher cadence");
+  assert.ok(strip.includes(`<div class="note">${fixtureConfig.schedule.actionsDelayNote}</div>`), "the honest delay note is the strip's footer line (spanning the cells, OF-4 at 1920)");
+  assert.ok(strip.includes("Daily 05:53 IST") && strip.includes("Hourly at :47 IST"), "the off-peak labels (2026-10-12)");
   assert.ok(strip.includes("USD 0.05 of 25"), "month budget computed from the usage file (0.053618 → 0.05)");
   assert.ok(strip.includes("1 draft"), "awaiting approval counts the unapproved queued draft only");
 });
@@ -290,13 +292,18 @@ test("Published: one card per published record with artwork copied from the medi
   assert.ok(page("pages/job_rez/index.html").includes(`href="${BASE}published/?page=job_rez"`));
 });
 
-test("Activity page: every run from the current + previous month files, newest first, one line per agent step with notes", () => {
+test("Activity page: every run from the current + previous month files, newest first, one line per agent step with notes; only the month files that exist are named (the fixture has 2026-10.jsonl alone)", () => {
   const html = page("activity/index.html");
   const runs = html.match(/<article class="run"[^>]*id="([^"]+)"/g).map((m) => m.match(/id="([^"]+)"/)[1]);
   assert.deepEqual(runs, ["engine-daily-20261012-0900-a7b8c9", "engine-daily-20261010-0531-c4d5e6", "publisher-hourly-20261009-1930-7a6b5c"]);
   assert.ok(html.includes("skipped: phase2 — HR monthly review: not built yet (phase 2)"));
   assert.ok(html.includes("1 published, 0 waiting, 0 failed, 0 expired"));
-  assert.ok(html.includes("October 2026 and September 2026"));
+  assert.deepEqual(readdirSync(join(COMPANY_DIR, "state", "runs")), ["2026-10.jsonl"], "the populated fixture's run log is one month file");
+  assert.ok(html.includes("One record per engine or publisher run from the run log (October 2026), newest first."), "the lede names the one existing month file");
+  assert.ok(html.includes("Counted over the most recent month file of the run log (October 2026)."), "the summary note is singular");
+  assert.ok(html.includes("Showing the last 3 runs across the most recent month file (October 2026)."));
+  assert.ok(!html.includes("September 2026"), "a month without a file is never named");
+  assert.ok(!html.includes("two most recent month files"), "no plural while one file exists");
 });
 
 test("Reports page lists the fixture report (the empty sentence is gone, P2-05); About states public drafts and the limits", () => {
@@ -307,7 +314,10 @@ test("Reports page lists the fixture report (the empty sentence is gone, P2-05);
   assert.ok(reports.includes(`href="${config.basePath}reports/2026-W41/"`));
   const about = page("about/index.html");
   assert.ok(about.includes("Drafts are public."));
-  assert.ok(about.includes("Actions cron may start 10–30 min late"));
+  assert.ok(about.includes(`<strong>Schedules drift.</strong> ${fixtureConfig.schedule.actionsDelayNote}. GitHub's own documentation says scheduled runs can be delayed and, under high load, dropped`), "the drift bullet states GitHub's documented behaviour");
+  assert.ok(about.includes("sit off the top of the hour, which reduces that risk without removing it"), "and promises no fix");
+  assert.ok(about.includes("Mondays 07:43 IST"), "names the token-refresh cadence too");
+  assert.ok(!about.includes("10–30 min") && !about.includes("top-of-hour schedules can be later"), "the understated wording is gone");
   assert.ok(about.includes("not built yet"), "the honesty card still names the label");
   // FEAT-204: HR is built — About names the owner's Apply step and the qa/publisher guard, and no longer lists HR as unbuilt
   assert.ok(about.includes("Roster changes wait for the owner."));

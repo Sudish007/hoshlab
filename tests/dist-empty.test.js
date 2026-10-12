@@ -92,6 +92,13 @@ test("Reports keeps the honest empty state (no report, no insights, nothing inve
   const activity = page("activity/index.html");
   assert.ok(activity.includes('<p class="empty">No runs yet.</p>'));
   assert.ok(!activity.includes('<article class="run'));
+  // polish-cron: with no run-log month file at all, no month is named — not October, not September
+  assert.ok(!existsSync(join(EMPTY, "state", "runs")), "the empty fixture has no run log");
+  assert.ok(activity.includes("One record per engine or publisher run from the run log, newest first."), "the lede names no month file");
+  assert.ok(activity.includes("The run log has no month file yet."), "the summary note says so");
+  assert.ok(!activity.includes("September 2026"), "the previous month is never named without its file");
+  assert.ok(!activity.includes("run log (October 2026"), "nor the current month as a run-log file");
+  assert.ok(!activity.includes("most recent month file"), "neither the singular nor the plural file sentence");
   assert.equal((page("team/index.html").match(/not run yet/g) || []).length, 8);
   const feed = page("feed.xml");
   assert.ok(!feed.includes("<entry>"));
