@@ -1,14 +1,17 @@
 // engine/render/capture.js — product screen capture for `capture` reels (plan D17, FEAT-201). The allow-list is pure
 // and always tested; the browser-backed part serves tests/fixtures/product-site through scripts/serve.mjs on a free
 // port (the brand under test allows 127.0.0.1) and asserts real 1080×1920 PNG frames, the scroll positions, the banner
-// dismissal, an HTTP 404 and an unreachable port → capture_unreachable. Chromium is required; without it the browser
-// tests skip with an explicit message unless RENDER_TESTS=1 / REQUIRE_FFMPEG=1 (CI), where that is a failure.
+// dismissal, an HTTP 404 and an unreachable port → capture_unreachable. Chromium is required; when its executable is
+// absent (pages.yml runs npm test without `playwright install`) the browser tests skip with an explicit message —
+// unless RENDER_TESTS=1 / REQUIRE_FFMPEG=1 (ci.yml), where a missing Chromium is a failure.
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:net";
 import { get } from "node:http";
 import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { chromium } from "playwright";
 import { createHash } from "node:crypto";
 import { FETCH_ATTEMPTS, ROOT } from "./helpers.js";
 import siteConfig from "../site.config.js";
@@ -94,7 +97,9 @@ test("framesForScenes spreads the captured frames over the scenes (scene i → f
 let browser = null;
 let server = null;
 let origin = null;
-let skipReason = false;
+// Decided at load time: node:test reads `{ skip }` when the test is registered, before any `before` hook runs,
+// so a Chromium check made inside the hook would come too late (pages.yml runs npm test without Chromium).
+const skipReason = MUST_RUN || existsSync(chromium.executablePath()) ? false : `capture tests skipped: Chromium not installed at ${chromium.executablePath()} — npx playwright install chromium`;
 
 function freePort(start) {
   return new Promise((resolvePort) => {
@@ -118,14 +123,9 @@ function status(url) {
 }
 
 before(async () => {
-  try {
-    const { chromium } = await import("playwright");
-    browser = await chromium.launch({ headless: true });
-  } catch (e) {
-    if (MUST_RUN) throw e;
-    skipReason = `capture tests skipped: Chromium not launchable (${String(e.message).split("\n")[0]}) — npx playwright install chromium`;
-    return;
-  }
+  if (skipReason) return;
+  browser = await chromium.launch({ headless: true }); // MUST_RUN (CI) or Chromium present: a launch failure is a real failure
+
   const port = await freePort(8181);
   server = spawn(process.execPath, [join(ROOT, "scripts", "serve.mjs")], { env: { ...process.env, PORT: String(port), DIST_DIR: FIXTURE_SITE }, stdio: "ignore" });
   origin = `http://127.0.0.1:${port}`;
