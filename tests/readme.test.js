@@ -9,6 +9,8 @@ import { CONSEQUENCES } from "../engine/commands/set-page.js";
 
 const readme = read(join(ROOT, "README.md"));
 const config = JSON.parse(readFileSync(join(ROOT, "company", "config.json"), "utf8"));
+// 'Daily 05:53 IST' → '05:53 IST': the engine time the step headings of "How a post happens" carry
+const engineTime = config.schedule.engineLabel.replace(/^Daily /, "");
 const has = (s, why = s) => assert.ok(readme.includes(s), `README lacks ${JSON.stringify(s)}${why === s ? "" : ` (${why})`}`);
 
 test("P1-21: owner click-path to-dos in order — Meta app, professional accounts, testers, long-lived tokens, setup-secrets, Pages source, media branch, first engine run, admin token, throwaway post", () => {
@@ -77,7 +79,9 @@ test("secrets: the seven names, where they live, never a value; the PAT click pa
   has("`expiresAt: null`");
   has("Without `HOSHLAB_SECRETS_PAT` nothing is refreshed");
   has("`token-refresh.yml`");
-  has("cron `0 2 * * 1`");
+  has(`cron \`${config.schedule.tokenRefreshCron}\``);
+  has(`${config.schedule.tokenRefreshLabel}, cron \`${config.schedule.tokenRefreshCron}\` UTC`, "the Token refresh paragraph names the config's label and cron");
+  assert.equal(config.schedule.tokenRefreshCron, "13 2 * * 1", "off the top of the hour since 2026-10-12");
   has("The weekly refresh has run **zero times** so far");
 });
 
@@ -96,8 +100,12 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("## Limits");
   has("public", "drafts are public");
   has("Drafts are public");
-  has("top-of-hour");
-  has("can be late by more than 30 minutes");
+  // polish-cron (2026-10-12): the drift bullet states GitHub's documented behaviour, the observed first-day numbers and the move
+  has("**Schedules drift.** GitHub may delay or skip scheduled runs; a due slot posts at the next run that fires.");
+  has("only **3 of ~20** hourly publisher ticks fired");
+  has("started at 03:01 UTC, 3 hours late");
+  has("moved off the top of the hour");
+  assert.ok(!readme.includes("Actions cron may start 10–30 min late") && !readme.includes("can be late by more than 30 minutes"), "the understated drift wording is gone");
   has("100 API posts");
   // FEAT-202 (P2-09): the refresh job exists now; the Limits bullet names it, the day-count banner and the unknown-expiry case
   has("Long-lived Instagram tokens expire after 60 days; the weekly `token-refresh.yml` run refreshes them");
@@ -158,6 +166,9 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("makes `publish`, `daily`, `analyst` and `hr` work on a temp copy of `company/` and commit nothing", "R2-01: the env var alone implies the temp copy for every state-writing command");
   has("a real Analyst run ignores any `dryRun: true` record it finds", "R2-01: stray dry-run metrics neither block nor feed a real run");
   assert.ok(!readme.includes("`--dry-run` works on a temp copy for `daily` too"), "R2-01: the sentence that implied daily differs from publish is gone");
+  // R2-06: refresh-tokens honours IG_DRY_RUN=1 like the other four — temp copy, no refresh call, no gh, nothing written — and never the fake token
+  has("`IG_DRY_RUN=1` makes `refresh-tokens` a dry run too, exactly as its `--dry-run` does: a temp copy of `company/`, no `refresh_access_token` call, no `gh secret set`", "R2-06: the IG_DRY_RUN sentence names refresh-tokens");
+  has("no fake value may ever be piped into `gh secret set`");
   // R2-02: the status paragraph describes the live state (Pages, media branch and the scheduled workflows are live since the
   // Phase 1 merge); the honest labels stay only where they are true
   const status = readme.slice(readme.indexOf("**Status of this repository at the time of writing:**"), readme.indexOf("## Owner to-do"));
@@ -180,7 +191,7 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   assert.ok(reels.includes("- **Silent reels.** No audio track is produced or uploaded (`-an`); Instagram's acceptance of a silent reel is **untested until the first reel publish**."), "R2-03: the silent-reel bullet is labelled untested");
   // FEAT-203 (P2-04/P2-05): the Analyst step, its number rule, the insights metric names with their source and date, the
   // on-demand command and the honest first-report sentence
-  has("8. **Sunday 05:30 IST — Analyst**");
+  has(`8. **Sunday ${engineTime} — Analyst**`);
   has("`GET /{igMediaId}/insights?metric=reach,views,likes,comments,saved,shares`");
   has("a metric Meta leaves out is never written as 0");
   has("\"report number not in metrics\"");
@@ -194,7 +205,11 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   assert.ok(!readme.includes('as "not built yet (phase 2)": the Analyst'), "the Analyst left the unbuilt list");
   // FEAT-204 (P2-06): the HR step, its evidence rule, the qa/publisher guard, the admin's Apply / Dismiss through the decisions
   // log (N14), the on-demand command, and HR off the unbuilt list
-  has("7a. **1st of the month 05:30 IST — HR**");
+  has(`7a. **1st of the month ${engineTime} — HR**`);
+  has(`1. **Monday ${engineTime} — CEO.**`);
+  has(`2. **${config.schedule.engineLabel} — Strategist**`);
+  has(`7. **${config.schedule.publisherLabel} — Publisher**`);
+  has(`Wait for the next publisher run (${config.schedule.publisherLabel})`, "the throwaway-post step names the publisher cadence");
   has("\"evidence number not in stats\"");
   has("a proposal can never remove or disable QA or the Publisher");
   has("HR never edits `roster.json`");

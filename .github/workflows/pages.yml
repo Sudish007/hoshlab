@@ -4,7 +4,7 @@
 # trigger `push` workflows (GitHub's recursion guard), so the callers deploy explicitly in the same run.
 # `ref: main` builds the commit the engine just pushed, not the SHA the cron started with. The `media`
 # checkout is optional until the branch exists (review M16); src/build.js prints "not copied" honestly.
-# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+# Engine: Daily 05:53 IST (cron 23 0 * * *) · Publisher: Hourly at :47 IST (cron 17 * * * *) · GitHub may delay or skip scheduled runs; a due slot posts at the next run that fires
 name: Deploy to GitHub Pages
 
 on:

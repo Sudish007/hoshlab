@@ -6,7 +6,7 @@
 # uploaded as the run's artifact even when a step fails. REQUIRE_FFMPEG=1 (Phase 2, FEAT-201): the reel render test
 # must RUN here — ffmpeg/ffprobe are installed with apt (the ubuntu-24.04 image stopped shipping them) — and a
 # missing ffprobe fails the suite instead of skipping it.
-# Engine: Daily 05:30 IST (cron 0 0 * * *) · Publisher: Hourly at :30 IST (cron 0 * * * *) · Actions cron may start 10–30 min late
+# Engine: Daily 05:53 IST (cron 23 0 * * *) · Publisher: Hourly at :47 IST (cron 17 * * * *) · GitHub may delay or skip scheduled runs; a due slot posts at the next run that fires
 name: CI
 
 on:
