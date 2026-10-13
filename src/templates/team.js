@@ -4,7 +4,7 @@
 // "Last run" lines come from the run log, never invented.
 import { layout } from "./layout.js";
 import { escapeHtml } from "../lib/xml.js";
-import { providerLabel, providerTierLabel, spendLabel } from "../lib/labels.js";
+import { modelRoutingLabel, providerLabel, providerTierLabel, spendLabel } from "../lib/labels.js";
 import { formatIst, monthName } from "../lib/dates.js";
 import { chip, sectionHead, numberWord } from "./partials.js";
 import { lastRunOf } from "../lib/view.js";
@@ -88,7 +88,8 @@ function hrReviewLine(view) {
 
 function acceptsTemperature(agent, config) {
   const provider = agent.provider && config.providers[agent.provider];
-  const price = provider && provider.models && provider.models[agent.model];
+  const model = agent.model || (provider && Array.isArray(provider.modelLadder) ? provider.modelLadder[0] : null);
+  const price = provider && provider.models && provider.models[model];
   return !(price && price.acceptsTemperature === false);
 }
 
@@ -97,8 +98,9 @@ export function agentCard(view, agent) {
   const role = ROLE[agent.name] || { monogram: agent.name.slice(0, 2).toUpperCase(), what: "", output: "" };
   const foot = [];
   if (agent.kind === "llm") {
-    foot.push(chip(`${providerLabel(agent.provider)} · ${agent.model}`));
     const provider = config.providers[agent.provider] || {};
+    const ladder = agent.modelLadder === true && Array.isArray(provider.modelLadder) && provider.modelLadder.length > 1;
+    foot.push(chip(ladder ? `${providerLabel(agent.provider)} · ${modelRoutingLabel(agent.provider)}` : `${providerLabel(agent.provider)} · ${agent.model}`));
     const tier = provider.tier || "paid";
     const spend = (view.usage && view.usage.byAgent && view.usage.byAgent[agent.name]) || { billedUsd: 0, paidEquivalentUsd: 0, hasFreeTierUsage: false };
     const money = spend.hasFreeTierUsage
@@ -106,7 +108,7 @@ export function agentCard(view, agent) {
       : `${providerTierLabel(tier)} · ${spendLabel({ billedUsd: spend.billedUsd })}`;
     foot.push(chip(`${money} this month`, tier === "free" ? "ok" : ""));
     if (agent.temperature !== undefined && acceptsTemperature(agent, config)) foot.push(chip(`temperature ${agent.temperature}`));
-    if (agent.fallback && agent.fallback.length) foot.push(chip(`fallback: ${agent.fallback.map(providerLabel).join(", ")}`));
+    if (agent.fallback && agent.fallback.length) foot.push(chip(`${ladder ? "paid fallback after ladder" : "fallback"}: ${agent.fallback.map(providerLabel).join(", ")}`));
   } else {
     foot.push(chip("deterministic code, no language model"));
   }

@@ -228,6 +228,14 @@ export function configRules(config) {
   for (const name of PROVIDER_NAMES) {
     const p = providers[name];
     if (p && p.enabled && Object.keys(p.models || {}).length === 0) errors.push(`$.providers.${name}.models: enabled provider needs at least one model`);
+    if (p && Array.isArray(p.modelLadder)) {
+      const seenModels = new Set();
+      p.modelLadder.forEach((model, i) => {
+        if (seenModels.has(model)) errors.push(`$.providers.${name}.modelLadder[${i}]: duplicate model ${model}`);
+        seenModels.add(model);
+        if (!(model in (p.models || {}))) errors.push(`$.providers.${name}.modelLadder[${i}]: ${model} not in providers.${name}.models`);
+      });
+    }
   }
   const reel = config.defaults && config.defaults.reel;
   if (reel) {
@@ -248,10 +256,12 @@ export function rosterRules(roster, config) {
     seen.set(agent.name, agent);
     if (agent.kind === "llm") {
       if (!agent.provider) errors.push(`$.agents[${i}].provider: required for kind llm`);
-      if (!agent.model) errors.push(`$.agents[${i}].model: required for kind llm`);
+      if (!agent.model && agent.modelLadder !== true) errors.push(`$.agents[${i}]: model or modelLadder:true required for kind llm`);
+      if (agent.model && agent.modelLadder === true) errors.push(`$.agents[${i}]: model and modelLadder:true are mutually exclusive`);
       if (config && agent.provider) {
         const p = (config.providers || {})[agent.provider];
         if (!p || !p.enabled) errors.push(`$.agents[${i}].provider: ${agent.provider} is not an enabled provider`);
+        else if (agent.modelLadder === true && (!Array.isArray(p.modelLadder) || p.modelLadder.length < 1)) errors.push(`$.agents[${i}].modelLadder: providers.${agent.provider}.modelLadder is not configured`);
         else if (agent.model && !(agent.model in (p.models || {}))) errors.push(`$.agents[${i}].model: ${agent.model} not in providers.${agent.provider}.models`);
         for (const fb of agent.fallback || []) {
           const fp = (config.providers || {})[fb];
@@ -284,6 +294,7 @@ export function applyRosterChanges(roster, changes = []) {
     if (c.field === "charterAppend") continue;
     if (c.field === "temperature") agent.temperature = Number(c.to);
     else agent[c.field] = String(c.to);
+    if (c.field === "model") delete agent.modelLadder;
     if (c.field === "provider" && Array.isArray(agent.fallback)) agent.fallback = agent.fallback.filter((p) => p !== agent.provider);
   }
   return { ...roster, agents };
@@ -490,9 +501,9 @@ export const STATUS_FLAG = "pattern:^(?:budget_warn|budget_exhausted|token_inval
 // ---------------------------------------------------------------------------------------
 // §4.1 config.json (+ N3 features.reels, D5 altTextMax/appScopedId, D9 expireAfterHours, §12)
 
-// acceptsTemperature:false = the model returns 400 on a non-default temperature, so the adapter omits
-// the field (claude-sonnet-5-5, see providers.anthropic.priceNote). reasoning = the cheapest thinking
-// level the model accepts: Gemini thinkingConfig.thinkingLevel, OpenAI reasoning_effort (FEAT-102 findings).
+// acceptsTemperature:false = the model returns 400 on a non-default temperature. reasoning is a
+// thinkingLevel/reasoning_effort token; thinkingBudget is the integer Gemini 2.5 control. A model row
+// carries at most the control it supports, so the adapter never sends a 3.x-only field to a 2.5 model.
 export const REASONING_LEVELS = ["none", "minimal", "low", "medium", "high", "xhigh", "max"];
 const MODEL_PRICE_SPEC = {
   inputPerMTok: "num[0..10000]",
@@ -500,6 +511,7 @@ const MODEL_PRICE_SPEC = {
   maxOutputTokens: "int[1..1000000]",
   "acceptsTemperature?": "bool",
   "reasoning?": `enum[${REASONING_LEVELS.join("|")}]`,
+  "thinkingBudget?": "int[0..65536]",
 };
 // tier: what the provider bills this project — 'paid' (default when absent) or 'free' (polish-gemini): a free-tier
 // usage line records costUsd 0 (billed) plus paidEquivalentUsd (the price table's figure), the budget gate sums
@@ -517,6 +529,7 @@ const PROVIDER_SPEC = {
   secret: SECRET_NAME,
   endpoint: "url",
   "apiVersion?": "str",
+  "modelLadder?": ["str", { min: 1, max: 3 }],
   models: { "*": MODEL_PRICE_SPEC },
   priceSource: "str",
   pricesVerifiedAt: "date",
@@ -585,6 +598,7 @@ export const ROSTER_SPEC = {
       kind: "enum[llm|deterministic]",
       "provider?": PROVIDER,
       "model?": "str",
+      "modelLadder?": "bool",
       "fallback?": [PROVIDER, { max: 2 }],
       "temperature?": "num[0..2]",
       "maxOutputTokens?": "int[1..1000000]",

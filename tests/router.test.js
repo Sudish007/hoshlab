@@ -7,13 +7,19 @@ import { loadCompany } from "../src/lib/company.js";
 import { createState } from "../engine/lib/state.js";
 import { readEnv } from "../engine/lib/env.js";
 import { USAGE_SPEC, validate } from "../engine/lib/schema.js";
-import { AgentOutputError, AllProvidersFailedError, BACKOFF_MS, BudgetExhaustedError, MAX_RATE_LIMIT_RETRIES, RATE_LIMIT_CAP_MS, REPAIR_SENTENCE, createRouter, providerTier, rateLimitDelayMs, resolveAgent, validateOutput } from "../engine/llm/router.js";
+import { AgentOutputError, AllProvidersFailedError, BACKOFF_MS, BudgetExhaustedError, MAX_GEMINI_LADDER_ATTEMPTS, RATE_LIMIT_CAP_MS, REPAIR_SENTENCE, createRouter, geminiFailureAction, geminiLadderDelayMs, providerTier, rateLimitDelayMs, resolveAgent, validateOutput } from "../engine/llm/router.js";
 import { buildEnvelope, houseRules, HOUSE_RULES_HEADING, CONTEXT_HEADING, OUTPUT_HEADING } from "../engine/llm/prompt.js";
 import { costUsd } from "../engine/lib/budget.js";
 
 const company = loadCompany({ companyDir: COMPANY_DIR, warn: () => {} });
 const { config, roster, charters, brands } = company;
-const PRICES = { anthropic: config.providers.anthropic.models["claude-sonnet-5-5"], gemini: config.providers.gemini.models["gemini-3.8-flash"], openai: config.providers.openai.models["gpt-6-luna"] };
+const PRICES = {
+  anthropic: config.providers.anthropic.models["claude-sonnet-5-5"],
+  gemini: config.providers.gemini.models["gemini-3.8-flash"],
+  flash25: config.providers.gemini.models["gemini-2.5-flash"],
+  flashLite: config.providers.gemini.models["gemini-2.5-flash-lite"],
+  openai: config.providers.openai.models["gpt-6-luna"],
+};
 const KEYS = { ANTHROPIC_API_KEY: "FAKE-anthropic-key-aaaaaaaaaaaaaaaaaaaaaaaa", GEMINI_API_KEY: "FAKE-gemini-key-bbbbbbbbbbbbbbbbbbbbbbbbbbbb", OPENAI_API_KEY: "FAKE-openai-key-cccccccccccccccccccccccccccc" };
 const NOW = "2026-10-12T05:31:00+05:30"; // Monday
 const RUN_ID = "engine-daily-20261012-0531-abc123";
@@ -23,7 +29,7 @@ const BAD = { caption: 42, hashtags: "nope" };
 const TASK = { idea: { title: "Free kundali", factIds: ["rp-f07"] }, format: "image" };
 
 const anthropicBody = (output, usage = { input_tokens: 6000, output_tokens: 900 }) => ({ id: "msg_1", model: "claude-sonnet-5-5", stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify(output) }], usage });
-const geminiBody = (output, usage = { promptTokenCount: 5000, candidatesTokenCount: 700 }) => ({ responseId: "g1", candidates: [{ finishReason: "STOP", content: { parts: [{ text: JSON.stringify(output) }] } }], usageMetadata: usage });
+const geminiBody = (output, usage = { promptTokenCount: 5000, candidatesTokenCount: 700 }, model = "gemini-3.8-flash") => ({ responseId: "g1", modelVersion: model, candidates: [{ finishReason: "STOP", content: { parts: [{ text: JSON.stringify(output) }] } }], usageMetadata: usage });
 const openaiBody = (output, usage = { prompt_tokens: 7000, completion_tokens: 800 }) => ({ id: "c1", model: "gpt-6-luna", choices: [{ finish_reason: "stop", message: { content: JSON.stringify(output) } }], usage });
 
 function providerOf(url) {
@@ -69,29 +75,38 @@ function harness({ keys = KEYS, processEnv = {}, queues = {}, usageSeed = [], no
 
 const seedLine = (cost, at = "2026-10-05T05:31:00+05:30") => ({ at, runId: "engine-daily-20261005-0531-aaaaaa", agent: "writer", page: "kaatdo", provider: "anthropic", model: "claude-sonnet-5-5", inputTokens: 1, outputTokens: 1, costUsd: cost, ms: 1, ok: true, mock: false });
 
-test("resolveAgent: every LLM agent is Gemini first with Anthropic/OpenAI fallback models, free tier and pacing from config", () => {
+test("resolveAgent: all six LLM agents inherit the same three-model Gemini ladder before paid provider fallbacks", () => {
   const writer = resolveAgent(roster, config, "writer");
   assert.deepEqual(
     writer.chain.map((c) => [c.provider, c.model]),
     [
       ["gemini", "gemini-3.8-flash"],
+      ["gemini", "gemini-2.5-flash"],
+      ["gemini", "gemini-2.5-flash-lite"],
       ["anthropic", "claude-sonnet-5-5"],
       ["openai", "gpt-6-luna"],
     ],
   );
   assert.equal(writer.temperature, 0.8);
   assert.equal(writer.maxOutputTokens, 4000);
-  assert.equal(writer.chain[0].acceptsTemperature, true);
   assert.equal(writer.chain[0].reasoning, "low");
+  assert.equal(writer.chain[0].thinkingBudget, undefined);
+  assert.equal(writer.chain[1].reasoning, undefined);
+  assert.equal(writer.chain[1].thinkingBudget, 1024);
+  assert.equal(writer.chain[2].reasoning, undefined);
+  assert.equal(writer.chain[2].thinkingBudget, undefined);
   assert.equal(writer.chain[0].tier, "free");
   assert.equal(writer.chain[0].minIntervalMs, 7000);
   assert.equal(writer.chain[0].secret, "GEMINI_API_KEY");
-  assert.equal(writer.chain[1].acceptsTemperature, false, "claude-sonnet-5-5 returns 400 on a non-default temperature");
-  assert.equal(writer.chain[1].apiVersion, "2023-06-01");
-  assert.equal(writer.chain[1].tier, "paid");
+  assert.equal(writer.chain[3].acceptsTemperature, false, "claude-sonnet-5-5 returns 400 on a non-default temperature");
+  assert.equal(writer.chain[3].apiVersion, "2023-06-01");
+  assert.equal(writer.chain[3].tier, "paid");
   for (const name of ["ceo", "hr", "strategist", "writer", "qa", "analyst"]) {
-    assert.deepEqual(resolveAgent(roster, config, name).chain.map((c) => c.provider), ["gemini", "anthropic", "openai"], name);
+    assert.equal(roster.agents.find((a) => a.name === name).model, undefined, `${name}: no model id duplicated in the roster`);
+    assert.equal(roster.agents.find((a) => a.name === name).modelLadder, true, `${name}: inherits provider ladder`);
+    assert.deepEqual(resolveAgent(roster, config, name).chain.map((c) => c.model), ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite", "claude-sonnet-5-5", "gpt-6-luna"], name);
   }
+  assert.equal(MAX_GEMINI_LADDER_ATTEMPTS, 3);
   assert.equal(resolveAgent(roster, config, "qa").temperature, 0);
   assert.equal(resolveAgent(roster, config, "qa").maxOutputTokens, 2000);
   assert.equal(providerTier({ tier: "free" }), "free");
@@ -149,43 +164,68 @@ test("happy path: Gemini free tier answers; usage records USD 0 billed plus the 
   }
 });
 
-test("429 honours Retry-After, retries three times on Gemini, then preserves fallback order; every attempt has a usage line", async () => {
-  const h = harness({ queues: { gemini: [{ status: 429, headers: { "retry-after": "12" }, body: { error: { status: "RESOURCE_EXHAUSTED", message: `slow down ${KEYS.GEMINI_API_KEY}` } } }], anthropic: [{ body: anthropicBody(GOOD) }] } });
+test("Gemini ladder: primary 503 advances to 2.5 Flash and records each actual model at free-tier cost", async () => {
+  const h = harness({ queues: { gemini: [{ status: 503, body: { error: { status: "UNAVAILABLE", message: `high demand ${KEYS.GEMINI_API_KEY}` } } }, { body: geminiBody(GOOD, { promptTokenCount: 4000, candidatesTokenCount: 600 }, "gemini-2.5-flash") }] } });
   try {
     const res = await h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra, page: "rishtapatra" } });
-    assert.equal(res.provider, "anthropic");
-    assert.equal(res.model, "claude-sonnet-5-5");
-    assert.equal(res.calls, 5);
-    assert.deepEqual(h.sleeps, [12000, 20000, 40000], "Retry-After 12 s beats only the first 10 s exponential step");
-    assert.equal(MAX_RATE_LIMIT_RETRIES, 3);
-    assert.deepEqual(
-      h.fetchImpl.calls.map((c) => c.provider),
-      ["gemini", "gemini", "gemini", "gemini", "anthropic"],
-      "fallback stays Gemini → Anthropic → OpenAI and begins only after the third retry",
-    );
-    const aBody = h.fetchImpl.calls[4].body;
-    assert.equal("temperature" in aBody, false, "roster temperature is omitted for the Anthropic fallback model");
+    assert.equal(res.provider, "gemini");
+    assert.equal(res.model, "gemini-2.5-flash");
+    assert.equal(res.calls, 2);
+    assert.equal(res.costUsd, 0);
+    assert.equal(res.paidEquivalentUsd, costUsd(PRICES.flash25, 4000, 600));
+    assert.deepEqual(h.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), ["gemini-3.8-flash", "gemini-2.5-flash"]);
+    assert.deepEqual(h.fetchImpl.calls[1].body.generationConfig.thinkingConfig, { thinkingBudget: 1024 });
+    assert.deepEqual(h.sleeps, [7000], "provider pacing is observed before the alternate model");
     const lines = h.usage();
-    assert.equal(lines.length, 5);
-    for (const l of lines) assert.equal(validate(l, USAGE_SPEC).ok, true);
-    assert.deepEqual(lines.map((l) => [l.provider, l.ok]), [["gemini", false], ["gemini", false], ["gemini", false], ["gemini", false], ["anthropic", true]]);
-    for (const l of lines.slice(0, 4)) {
-      assert.match(l.error, /gemini: HTTP 429/);
-      assert.ok(!l.error.includes(KEYS.GEMINI_API_KEY), "key scrubbed from the usage line");
-      assert.equal(l.costUsd, 0);
-      assert.equal(l.paidEquivalentUsd, 0);
-      assert.equal(l.inputTokens, 0);
-    }
-    assert.equal(lines[4].costUsd, costUsd(PRICES.anthropic, 6000, 900));
-    assert.equal(res.costUsd, lines[4].costUsd);
-    assert.equal(res.paidEquivalentUsd, lines[4].costUsd);
-    assert.deepEqual([...h.router.flags], [], "429 is not provider_down");
-    assert.equal(res.failures.length, 1);
-    assert.equal(res.failures[0].attempts, 4);
-    assert.equal(h.router.totalsFor("writer").failed, 4);
+    assert.deepEqual(lines.map((l) => [l.model, l.ok, l.costUsd]), [["gemini-3.8-flash", false, 0], ["gemini-2.5-flash", true, 0]]);
+    assert.equal(lines[1].paidEquivalentUsd, costUsd(PRICES.flash25, 4000, 600));
+    assert.ok(!lines[0].error.includes(KEYS.GEMINI_API_KEY), "key scrubbed from failure usage");
+    assert.deepEqual([...h.router.flags], [], "a successful alternate does not flag provider_down:gemini");
+    assert.deepEqual(h.router.completionsFor("writer"), [{ provider: "gemini", model: "gemini-2.5-flash", page: "rishtapatra" }]);
   } finally {
     h.cleanup();
   }
+});
+
+test("Gemini ladder: two 503s advance to Flash-Lite with three HTTP attempts total", async () => {
+  const down = { status: 503, body: { error: { status: "UNAVAILABLE", message: "model overloaded" } } };
+  const h = harness({ queues: { gemini: [down, down, { body: geminiBody(GOOD, { promptTokenCount: 3000, candidatesTokenCount: 500 }, "gemini-2.5-flash-lite") }] } });
+  try {
+    const res = await h.router.complete("strategist", { task: TASK, spec: SPEC, context: { brand: brands.jobrez, page: "job_rez" } });
+    assert.equal(res.model, "gemini-2.5-flash-lite");
+    assert.equal(res.calls, MAX_GEMINI_LADDER_ATTEMPTS);
+    assert.equal(h.fetchImpl.calls.length, 3);
+    assert.deepEqual(h.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), config.providers.gemini.modelLadder);
+    assert.equal("thinkingConfig" in h.fetchImpl.calls[2].body.generationConfig, false, "Flash-Lite omits reasoning configuration");
+    assert.equal(res.paidEquivalentUsd, costUsd(PRICES.flashLite, 3000, 500));
+    assert.deepEqual(h.usage().map((l) => l.model), config.providers.gemini.modelLadder);
+    assert.deepEqual([...h.router.flags], []);
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("Gemini ladder attempt cap remains three even if an unvalidated config supplies a fourth model", async () => {
+  const oversized = structuredClone(config);
+  oversized.providers.gemini.modelLadder.push("gemini-impossible-fourth");
+  oversized.providers.gemini.models["gemini-impossible-fourth"] = { inputPerMTok: 1, outputPerMTok: 1, maxOutputTokens: 1000 };
+  const h = harness({ companyConfig: oversized, keys: { GEMINI_API_KEY: KEYS.GEMINI_API_KEY }, queues: { gemini: [{ status: 503, body: { error: { message: "overloaded" } } }] } });
+  try {
+    await assert.rejects(h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra } }), AllProvidersFailedError);
+    assert.equal(h.fetchImpl.calls.length, MAX_GEMINI_LADDER_ATTEMPTS);
+    assert.ok(h.fetchImpl.calls.every((c) => !c.url.includes("impossible-fourth")));
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("Gemini failure classification advances only for transient and model-availability errors", () => {
+  for (const status of [429, 500, 502, 503, 504]) assert.equal(geminiFailureAction({ status, message: "transient" }), "next_model", String(status));
+  assert.equal(geminiFailureAction({ status: 400, message: "model overloaded" }), "next_model");
+  assert.equal(geminiFailureAction({ status: 404, message: "models/x is not found or unsupported" }), "next_model");
+  assert.equal(geminiFailureAction({ status: 401, message: "bad key" }), "stop_ladder");
+  assert.equal(geminiFailureAction({ status: 403, message: "permission denied" }), "stop_ladder");
+  assert.equal(geminiFailureAction({ status: 400, message: "bad response schema" }), "stop_ladder");
 });
 
 test("Gemini minIntervalMs is enforced between consecutive calls in one process with an injected clock", async () => {
@@ -202,52 +242,67 @@ test("Gemini minIntervalMs is enforced between consecutive calls in one process 
   }
 });
 
-test("429 Gemini retryDelay is honoured and an oversized server hint is capped at 60 seconds before fallback", async () => {
+test("Gemini Retry-After/retryDelay is honoured before the next model and capped at 60 seconds", async () => {
   const h = harness({
     queues: {
-      gemini: [{ status: 429, body: { error: { status: "RESOURCE_EXHAUSTED", message: "quota", details: [{ "@type": "type.googleapis.com/google.rpc.RetryInfo", retryDelay: "90s" }] } } }],
-      anthropic: [{ body: anthropicBody(GOOD) }],
+      gemini: [
+        { status: 429, body: { error: { status: "RESOURCE_EXHAUSTED", message: "quota", details: [{ "@type": "type.googleapis.com/google.rpc.RetryInfo", retryDelay: "90s" }] } } },
+        { body: geminiBody(GOOD, undefined, "gemini-2.5-flash") },
+      ],
     },
   });
   try {
     const res = await h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra } });
-    assert.equal(res.provider, "anthropic");
-    assert.deepEqual(h.sleeps, [RATE_LIMIT_CAP_MS, RATE_LIMIT_CAP_MS, RATE_LIMIT_CAP_MS]);
+    assert.equal(res.provider, "gemini");
+    assert.equal(res.model, "gemini-2.5-flash");
+    assert.deepEqual(h.sleeps, [RATE_LIMIT_CAP_MS]);
     assert.equal(RATE_LIMIT_CAP_MS, 60000);
     assert.equal(rateLimitDelayMs(90000, 0), 60000);
     assert.equal(rateLimitDelayMs(null, 0), 10000);
-    assert.equal(h.fetchImpl.calls.filter((c) => c.provider === "gemini").length, 4, "initial call plus max 3 retries");
+    assert.equal(geminiLadderDelayMs({ status: 429, retryAfterMs: 90000, message: "quota" }, 0), 60000);
+    assert.equal(h.fetchImpl.calls.length, 2);
   } finally {
     h.cleanup();
   }
 });
 
-test("401 flags provider_down:<name> and falls back immediately (no sleep); 400/403/404 fall back immediately without the flag", async () => {
-  const h = harness({ queues: { gemini: [{ status: 401, body: { error: { message: "invalid x-goog-api-key" } } }], anthropic: [{ body: anthropicBody(GOOD) }] } });
-  try {
-    const res = await h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra } });
-    assert.equal(res.provider, "anthropic");
-    assert.deepEqual(h.sleeps, []);
-    assert.deepEqual(
-      h.fetchImpl.calls.map((c) => c.provider),
-      ["gemini", "anthropic"],
-    );
-    assert.deepEqual([...h.router.flags], ["provider_down:gemini"]);
-    assert.equal(h.usage().length, 2);
-    assert.equal(h.usage()[0].page, "rishtapatra", "page taken from the brand when context.page is absent");
-  } finally {
-    h.cleanup();
-  }
-  for (const status of [400, 403, 404]) {
-    const h2 = harness({ queues: { gemini: [{ status, body: { error: { message: "nope" } } }], anthropic: [{ body: anthropicBody(GOOD) }] } });
+test("Gemini auth/permission errors stop the shared-key ladder; paid fallback remains after it", async () => {
+  for (const status of [401, 403]) {
+    const h = harness({ queues: { gemini: [{ status, body: { error: { message: "shared key denied" } } }], anthropic: [{ body: anthropicBody(GOOD) }] } });
     try {
-      const res = await h2.router.complete("qa", { task: TASK, spec: SPEC, context: { brand: brands.kaatdo, page: "kaatdo" } });
-      assert.equal(res.provider, "anthropic", `qa falls back gemini → anthropic on ${status}`);
-      assert.deepEqual(h2.sleeps, []);
-      assert.deepEqual([...h2.router.flags], [], `${status} is not provider_down`);
-      assert.equal(h2.usage().length, 2);
+      const res = await h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra } });
+      assert.equal(res.provider, "anthropic");
+      assert.deepEqual(h.sleeps, []);
+      assert.deepEqual(h.fetchImpl.calls.map((c) => c.provider), ["gemini", "anthropic"], `${status}: no alternate Gemini call`);
+      assert.deepEqual([...h.router.flags], ["provider_down:gemini"]);
+      assert.equal(h.usage().length, 2);
+      assert.equal(h.usage()[0].model, "gemini-3.8-flash");
+      assert.equal(h.usage()[0].page, "rishtapatra");
     } finally {
-      h2.cleanup();
+      h.cleanup();
+    }
+  }
+});
+
+test("Gemini model-not-found semantics skip only that model; generic 400/404 stop the ladder", async () => {
+  const missing = harness({ queues: { gemini: [{ status: 404, body: { error: { message: "models/gemini-3.8-flash is not found or is not supported for generateContent" } } }, { body: geminiBody(GOOD, undefined, "gemini-2.5-flash") }] } });
+  try {
+    const res = await missing.router.complete("qa", { task: TASK, spec: SPEC, context: { brand: brands.kaatdo, page: "kaatdo" } });
+    assert.equal(res.model, "gemini-2.5-flash");
+    assert.deepEqual(missing.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), ["gemini-3.8-flash", "gemini-2.5-flash"]);
+    assert.deepEqual([...missing.router.flags], []);
+  } finally {
+    missing.cleanup();
+  }
+  for (const status of [400, 404]) {
+    const h = harness({ queues: { gemini: [{ status, body: { error: { message: "bad request shape" } } }], anthropic: [{ body: anthropicBody(GOOD) }] } });
+    try {
+      const res = await h.router.complete("qa", { task: TASK, spec: SPEC, context: { brand: brands.kaatdo, page: "kaatdo" } });
+      assert.equal(res.provider, "anthropic");
+      assert.deepEqual(h.fetchImpl.calls.map((c) => c.provider), ["gemini", "anthropic"]);
+      assert.deepEqual([...h.router.flags], []);
+    } finally {
+      h.cleanup();
     }
   }
 });
@@ -371,6 +426,24 @@ test("invalid output then a valid repair → free-tier result combines billed an
   }
 });
 
+test("schema repair uses the last successful alternate model and is the only fourth Gemini HTTP attempt", async () => {
+  const down = { status: 503, body: { error: { status: "UNAVAILABLE", message: "high demand" } } };
+  const h = harness({ queues: { gemini: [down, down, { body: geminiBody(BAD, undefined, "gemini-2.5-flash-lite") }, { body: geminiBody(GOOD, undefined, "gemini-2.5-flash-lite") }] } });
+  try {
+    const res = await h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra, page: "rishtapatra" } });
+    assert.equal(res.repaired, true);
+    assert.equal(res.calls, MAX_GEMINI_LADDER_ATTEMPTS + 1);
+    assert.equal(res.model, "gemini-2.5-flash-lite");
+    assert.deepEqual(h.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-flash-lite"]);
+    assert.ok(h.fetchImpl.calls[3].body.contents[0].parts[0].text.includes("Return only the corrected JSON."));
+    assert.equal(res.costUsd, 0);
+    assert.equal(res.paidEquivalentUsd, Math.round(2 * costUsd(PRICES.flashLite, 5000, 700) * 1e6) / 1e6);
+    assert.deepEqual(h.usage().map((l) => [l.model, l.ok]), [["gemini-3.8-flash", false], ["gemini-2.5-flash", false], ["gemini-2.5-flash-lite", true], ["gemini-2.5-flash-lite", true]]);
+  } finally {
+    h.cleanup();
+  }
+});
+
 test("budget gate sums billed cost only: free Gemini projects USD 0, while a paid provider still projects its price-table cost", async () => {
   const h = harness({ usageSeed: [seedLine(20), seedLine(5)], queues: { gemini: [{ body: geminiBody(GOOD) }] }, processEnv: {} });
   try {
@@ -415,7 +488,7 @@ test("budget gate sums billed cost only: free Gemini projects USD 0, while a pai
   }
 
   const paidRoster = structuredClone(roster);
-  Object.assign(paidRoster.agents.find((a) => a.name === "writer"), { provider: "anthropic", model: "claude-sonnet-5-5", fallback: ["gemini", "openai"] });
+  Object.assign(paidRoster.agents.find((a) => a.name === "writer"), { provider: "anthropic", model: "claude-sonnet-5-5", modelLadder: false, fallback: ["gemini", "openai"] });
   const h4 = harness({ usageSeed: [seedLine(24.97)], companyRoster: paidRoster, queues: { anthropic: [{ body: anthropicBody(GOOD) }] } });
   try {
     await assert.rejects(h4.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra } }), (e) => e instanceof BudgetExhaustedError && e.estimate > 0);

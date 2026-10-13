@@ -8,17 +8,13 @@
 //   router.flags      Set of status flags raised during this run (budget_warn, budget_exhausted, provider_down:<name>)
 //   router.totals     Map agent → { calls, ok, failed, costUsd, paidEquivalentUsd, ms, inputTokens, outputTokens }
 //
-// Per call: resolve provider/model/temperature/fallback from the roster → budget gate before EVERY
-// attempt (BudgetExhaustedError, no call) → try the provider then each fallback. Failures on one provider:
-//   HTTP 429 (rate limit) is retried up to MAX_RATE_LIMIT_RETRIES times on the same provider, waiting the server's
-//   Retry-After / Gemini retryDelay hint or the exponential RATE_LIMIT_BACKOFF_MS step, whichever is longer, never
-//   more than RATE_LIMIT_CAP_MS — a free tier allows few requests a minute, so the wait is worth more than a fallover;
-//   other retryable failures (network, 408, 5xx) retry twice on the same provider with backoff 2 s then 8 s;
-//   400/401/403/404 fall back immediately (401 also flags provider_down:<name>).
-// Only then does the next provider get its turn; when none answers the call ends with AllProvidersFailedError.
-// A provider whose secret is absent or which is not enabled is skipped without a call. Pacing: with
-// config.providers.<p>.minIntervalMs the router waits so that two consecutive calls to that provider (any agent,
-// this process) are at least that far apart, measured from the end of the previous call.
+// Per logical completion: resolve the roster's provider-level model ladder, then optional provider fallbacks.
+// Each Gemini model gets one HTTP attempt, in configured order (maximum three); transient/capacity/rate errors
+// and model-not-found semantics advance, while shared-key auth/permission failures stop the Gemini ladder.
+// Retry-After / retryDelay is honoured before the next model, capped at 60 seconds. Paid provider fallbacks keep
+// their existing bounded retries. After a model returns JSON, validation may make exactly one repair request on
+// that same successful model. A missing or disabled provider is skipped without a call.
+// Pacing from config.providers.<p>.minIntervalMs applies between every call to the same provider.
 // Every attempt, success or failure, is one usage line: costUsd is what the provider bills — 0 on a free-tier
 // provider (config tier 'free'), whose lines also carry paidEquivalentUsd (the price table's figure) so nothing
 // is lost; the budget gate sums billed cost only, and a free-tier call adds 0 to its projection.
@@ -38,21 +34,41 @@ import * as openai from "./openai.js";
 import * as mock from "./mock.js";
 
 export const ADAPTERS = { anthropic, gemini, openai };
-// Network / 408 / 5xx: two retries on the same provider, then the next provider.
+// Non-ladder paid providers retain the existing bounded retries. A Gemini ladder candidate is called once.
 export const BACKOFF_MS = [2000, 8000];
 export const MAX_ATTEMPTS_PER_PROVIDER = BACKOFF_MS.length + 1;
-// HTTP 429: three retries on the same provider; wait max(server hint, step), capped (polish-gemini).
 export const RATE_LIMIT_BACKOFF_MS = [10000, 20000, 40000];
 export const MAX_RATE_LIMIT_RETRIES = RATE_LIMIT_BACKOFF_MS.length;
 export const RATE_LIMIT_CAP_MS = 60000;
+export const MAX_GEMINI_LADDER_ATTEMPTS = 3;
 export const REPAIR_SENTENCE = (errors) => `Your previous output failed validation: ${errors.join("; ")}. Return only the corrected JSON.`;
 
-// rateLimitDelayMs(hintMs, retry) → how long to wait before 429 retry number `retry` (0-based): the server's
-// Retry-After / retryDelay when it is longer than the exponential step, never more than RATE_LIMIT_CAP_MS.
+// A server delay is honoured before moving to the next model. Without a hint, 429 uses the
+// bounded rate-limit steps; other transient failures rely on the provider pacing floor.
 export function rateLimitDelayMs(hintMs, retry) {
   const step = RATE_LIMIT_BACKOFF_MS[Math.min(retry, RATE_LIMIT_BACKOFF_MS.length - 1)];
   const hint = Number.isFinite(hintMs) && hintMs > 0 ? hintMs : 0;
   return Math.min(RATE_LIMIT_CAP_MS, Math.max(step, hint));
+}
+
+const GEMINI_MODEL_ERROR_RE = /(?:model(?:s\/[\w.-]+)?[\s\S]{0,80}(?:not found|not supported|unsupported|does not exist|not available)|(?:not found|not supported|unsupported)[\s\S]{0,40}model)/i;
+const GEMINI_TRANSIENT_RE = /(?:overload|high demand|capacity|temporar(?:y|ily)|unavailable|resource exhausted)/i;
+
+// Shared-key auth/permission failures stop the Gemini ladder. A missing/unsupported model and
+// capacity/rate/network failures move to the next configured model; other request errors stop it.
+export function geminiFailureAction(err) {
+  const status = Number(err && err.status) || 0;
+  const message = String((err && err.message) || "");
+  if (status === 401 || status === 403) return "stop_ladder";
+  if ((status === 400 || status === 404) && GEMINI_MODEL_ERROR_RE.test(message)) return "next_model";
+  if (status === 0 || status === 408 || status === 429 || (status >= 500 && status <= 599) || GEMINI_TRANSIENT_RE.test(message)) return "next_model";
+  return "stop_ladder";
+}
+
+export function geminiLadderDelayMs(err, attempt) {
+  if (geminiFailureAction(err) !== "next_model") return 0;
+  if (Number.isFinite(err && err.retryAfterMs) && err.retryAfterMs > 0) return Math.min(RATE_LIMIT_CAP_MS, err.retryAfterMs);
+  return Number(err && err.status) === 429 ? rateLimitDelayMs(null, attempt) : 0;
 }
 
 // providerTier(providerConfig) → 'free' | 'paid' ('paid' when the config says nothing).
@@ -117,19 +133,24 @@ function candidate(config, providerName, model) {
     apiVersion: p.apiVersion,
     acceptsTemperature: !(price && price.acceptsTemperature === false),
     reasoning: (price && price.reasoning) || undefined,
+    thinkingBudget: price && Number.isInteger(price.thinkingBudget) ? price.thinkingBudget : undefined,
   };
 }
 
 // resolveAgent(roster, config, name) → { agent, chain: [candidate…], temperature, maxOutputTokens }
-// chain = the agent's provider (its roster model) followed by each fallback provider (that provider's
-// first configured model). Roster fallbacks name providers only (ROSTER_SPEC), so the model is the
-// provider's own table entry. Each candidate carries the provider's tier ('free' | 'paid') and minIntervalMs.
+// A roster agent with modelLadder:true inherits the ordered model ids from its provider config; ids therefore
+// live in config.json once rather than being copied into every agent. Optional fallback providers follow only
+// after every model in that same-key ladder.
 export function resolveAgent(roster, config, name) {
   const agent = (roster.agents || []).find((a) => a.name === name);
   if (!agent) throw new TypeError(`router: unknown agent ${name}`);
   if (agent.kind !== "llm") throw new TypeError(`router: agent ${name} is deterministic (kind ${agent.kind}) and never calls a model`);
   if (agent.enabled === false) throw new TypeError(`router: agent ${name} is disabled in the roster`);
-  const chain = [candidate(config, agent.provider, agent.model)];
+  const providerConfig = config.providers[agent.provider];
+  const configuredModels = agent.modelLadder === true ? (providerConfig && providerConfig.modelLadder) || [] : [agent.model || firstModel(providerConfig)].filter(Boolean);
+  const models = agent.provider === "gemini" ? configuredModels.slice(0, MAX_GEMINI_LADDER_ATTEMPTS) : configuredModels;
+  const chain = models.map((model) => candidate(config, agent.provider, model));
+  if (!chain.length) chain.push(candidate(config, agent.provider, null));
   for (const fb of agent.fallback || []) if (!chain.some((c) => c.provider === fb)) chain.push(candidate(config, fb));
   return {
     agent,
@@ -199,6 +220,7 @@ export function createRouter({
   const id = runId || makeRunId("engine-local", clock());
   const flags = new Set();
   const totals = new Map();
+  const completions = new Map();
   const mockEnabled = mockAdapter.isMockEnabled(processEnv);
   const secrets = () => (typeof environment.secrets === "function" ? environment.secrets() : []);
   const clean = (text) => scrub(text, secrets());
@@ -208,6 +230,11 @@ export function createRouter({
   function totalsFor(agent) {
     if (!totals.has(agent)) totals.set(agent, { calls: 0, ok: 0, failed: 0, costUsd: 0, paidEquivalentUsd: 0, freeTierCalls: 0, ms: 0, inputTokens: 0, outputTokens: 0 });
     return totals.get(agent);
+  }
+
+  function completionsFor(agent) {
+    if (!completions.has(agent)) completions.set(agent, []);
+    return completions.get(agent);
   }
 
   function charterFor(agentName, context) {
@@ -277,7 +304,7 @@ export function createRouter({
       agent: agentName,
       page,
       provider: isMock ? "mock" : c.provider,
-      model: isMock ? "mock" : (res && res.model) || c.model,
+      model: isMock ? "mock" : c.model,
       inputTokens,
       outputTokens,
       costUsd: cost,
@@ -299,10 +326,9 @@ export function createRouter({
     return { costUsd: cost, paidEquivalentUsd: isMock ? 0 : atPaidRates };
   }
 
-  // One provider: a 429 is retried up to MAX_RATE_LIMIT_RETRIES times (server hint / RATE_LIMIT_BACKOFF_MS, capped),
-  // any other retryable failure up to BACKOFF_MS.length times; 400/401/403/404 end the provider at once.
-  // Returns { res, costUsd, paidEquivalentUsd, attempts, budget } or null after pushing the final reason onto `failures`.
-  async function attemptProvider(agentName, c, { system, user, spec, tokensEstimate, maxOutputTokens, temperature, page }, failures, counter) {
+  // A Gemini ladder candidate is attempted exactly once. Other providers keep their bounded retries.
+  // `oneAttempt` is also used for the single schema-repair completion on the model that succeeded.
+  async function attemptProvider(agentName, c, { system, user, spec, tokensEstimate, maxOutputTokens, temperature, page }, failures, counter, { oneAttempt = false, ladderIndex = 0, repair = false } = {}) {
     const isMock = c.provider === "mock";
     let attempts = 0;
     let retries = 0;
@@ -331,16 +357,26 @@ export function createRouter({
               apiVersion: c.apiVersion,
               agent: agentName,
               reasoning: c.reasoning,
+              thinkingBudget: c.thinkingBudget,
             });
       } catch (err) {
         const ms = Date.now() - started;
         if (!isMock) lastCallEndMs.set(c.provider, nowMs());
         if (!(err instanceof LlmError)) {
           record(agentName, page, c, null, { ok: false, error: clean(`${err.name}: ${err.message}`), ms, mock: isMock });
-          throw err; // programming errors and missing mock fixtures surface unchanged
+          throw err;
         }
         record(agentName, page, c, null, { ok: false, error: clean(err.message), ms, mock: isMock });
-        if (err.status === 401) flags.add(`provider_down:${c.provider}`);
+        if (err.status === 401 || err.status === 403) flags.add(`provider_down:${c.provider}`);
+        if (oneAttempt) {
+          const ladderAction = c.provider === "gemini" ? geminiFailureAction(err) : "stop_ladder";
+          if (!repair) {
+            const delay = c.provider === "gemini" ? geminiLadderDelayMs(err, ladderIndex) : 0;
+            if (delay > 0) await sleep(delay);
+          }
+          failures.push({ provider: c.provider, model: c.model, status: err.status, retryable: err.retryable, reason: err.message, attempts, ladderAction });
+          return null;
+        }
         if (err.status === 429) {
           if (rateLimitRetries < MAX_RATE_LIMIT_RETRIES) {
             await sleep(rateLimitDelayMs(err.retryAfterMs, rateLimitRetries));
@@ -374,24 +410,34 @@ export function createRouter({
     const chain = mockEnabled ? [{ provider: "mock", model: "mock", price: resolved.chain[0].price, enabled: true, acceptsTemperature: true, tier: "paid", minIntervalMs: 0 }] : resolved.chain;
     let outcome = null;
     let used = null;
+    let geminiIndex = 0;
+    const blockedProviders = new Set();
     for (const c of chain) {
+      if (blockedProviders.has(c.provider)) continue;
       if (!c.enabled) {
         failures.push({ provider: c.provider, model: c.model, status: null, reason: "skipped: provider not enabled", attempts: 0 });
+        blockedProviders.add(c.provider);
         continue;
       }
       if (c.provider !== "mock" && !environment.present[c.secret]) {
         failures.push({ provider: c.provider, model: c.model, status: null, reason: `skipped: secret ${c.secret} missing`, attempts: 0 });
+        blockedProviders.add(c.provider);
         continue;
       }
       if (c.provider !== "mock" && !c.model) {
         failures.push({ provider: c.provider, model: null, status: null, reason: "skipped: no model configured", attempts: 0 });
+        blockedProviders.add(c.provider);
         continue;
       }
-      outcome = await attemptProvider(agentName, c, call, failures, counter);
+      const isGemini = c.provider === "gemini";
+      outcome = await attemptProvider(agentName, c, call, failures, counter, { oneAttempt: isGemini, ladderIndex: geminiIndex });
+      if (isGemini) geminiIndex += 1;
       if (outcome) {
         used = c;
         break;
       }
+      const failure = failures[failures.length - 1];
+      if (isGemini && failure && failure.ladderAction === "stop_ladder") blockedProviders.add("gemini");
     }
     if (!outcome) throw new AllProvidersFailedError(agentName, failures);
 
@@ -404,7 +450,7 @@ export function createRouter({
     if (errors.length) {
       // Exactly one repair call, on the provider that answered, carrying the previous output.
       const repairUser = `${user}\n\n## Previous output\n${res.text}\n\n${REPAIR_SENTENCE(errors)}`;
-      const repair = await attemptProvider(agentName, used, { ...call, user: repairUser }, failures, counter);
+      const repair = await attemptProvider(agentName, used, { ...call, user: repairUser }, failures, counter, { oneAttempt: true, repair: true });
       if (!repair) throw new AllProvidersFailedError(agentName, failures);
       const repairJson = repair.res.json !== undefined && repair.res.json !== null ? repair.res.json : parseJson(repair.res.text);
       const repairErrors = validateOutput(repairJson, spec, validate);
@@ -417,14 +463,15 @@ export function createRouter({
       json = repairJson;
       repaired = true;
     }
+    completionsFor(agentName).push({ provider: used.provider, model: used.model, page });
     return {
       json,
       text: res.text,
       usage: res.usage,
       costUsd: cost,
       paidEquivalentUsd: paidEquivalent,
-      provider: res.provider,
-      model: res.model,
+      provider: used.provider,
+      model: used.model,
       ms: res.ms,
       mock: res.mock === true,
       calls: counter.calls,
@@ -440,6 +487,7 @@ export function createRouter({
     flags,
     totals,
     totalsFor,
+    completionsFor,
     runId: id,
     isMock: mockEnabled,
     resolve: (name) => resolveAgent(roster, config, name),

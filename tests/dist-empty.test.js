@@ -87,6 +87,8 @@ test("Reports keeps the honest empty state (no report, no insights, nothing inve
   assert.ok(!reports.includes("phase 2"), "the Analyst is built: the empty state no longer blames the phase");
   assert.ok(reports.includes("none fetched yet"), "no insights records → says so");
   assert.ok(reports.includes("nothing published yet"));
+  assert.ok(reports.includes("Google Gemini · automatic free-model ladder"));
+  assert.ok(!reports.includes("undefined"));
   assert.ok(!reports.includes('class="report-row"'), "no report rows");
   assert.ok(!existsSync(join(dist, "reports", "2026-W41")), "no report detail page is built from the empty fixture");
   const activity = page("activity/index.html");

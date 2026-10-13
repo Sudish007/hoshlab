@@ -198,7 +198,7 @@ test("Monday run on the fixture (MOCK_LLM): CEO memo, Strategist per page, Write
     assert.equal(routing.length, 6);
     for (const name of ["ceo", "hr", "strategist", "writer", "qa", "analyst"]) {
       const line = routing.find((l) => l.startsWith(`[router] ${name}:`));
-      assert.ok(line && line.includes("provider gemini (free tier) model gemini-3.8-flash · fallback anthropic, openai · MOCK_LLM=1"), `${name}: ${line}`);
+      assert.ok(line && line.includes("Google Gemini (free tier) · automatic free-model ladder gemini-3.8-flash → gemini-2.5-flash → gemini-2.5-flash-lite · paid fallback after ladder Anthropic, OpenAI · MOCK_LLM=1"), `${name}: ${line}`);
     }
     for (const name of AGENT_ORDER) assert.ok(out.lines.some((l) => l.startsWith(`[${name}] `)), name);
     assert.ok(out.lines.at(-1).startsWith("[daily] ok "), out.lines.at(-1));
@@ -414,13 +414,13 @@ test("R1-05: when every provider fails with retryable 503s the agent row is ok:f
   assert.equal(chain.length, 3, "the CEO has two fallbacks in the fixture roster");
   const fx = copyFixture();
   try {
-    // every provider configured → each is attempted (3 tries each) → every one is flagged
+    // all providers configured → three same-key Gemini models, then each paid provider's three bounded attempts
     const r = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: MONDAY, processEnv: KEYS, fetchImpl: down, sleep: noSleep, flags: { agents: "ceo" }, renderer: fakeRenderer(), stdout: () => {} });
     assert.equal(r.ok, true, "a failed agent step is not a run failure (design §11)");
     assert.equal(r.run.ok, true);
     assert.equal(agent(r, "ceo").ok, false);
     assert.match(agent(r, "ceo").note, /^AllProvidersFailedError: ceo: no provider answered — /);
-    assert.equal(agent(r, "ceo").calls, 9, "3 attempts × 3 providers");
+    assert.equal(agent(r, "ceo").calls, 9, "3 Gemini ladder models + 3 bounded attempts on each paid provider");
     assert.equal(calls.length, 9);
     assert.deepEqual([...r.flags].sort(), chain.map((p) => `provider_down:${p}`).sort());
     assert.deepEqual([...fx.status().flags].sort(), chain.map((p) => `provider_down:${p}`).sort());
@@ -430,14 +430,14 @@ test("R1-05: when every provider fails with retryable 503s the agent row is ok:f
     assert.ok(usage.every((u) => u.ok === false && u.costUsd === 0 && !u.mock));
     for (const v of Object.values(KEYS)) assert.ok(!JSON.stringify([r.run, fx.status(), usage]).includes(v), "no key material in the state");
 
-    // only the Gemini primary has a secret → only it is attempted and flagged; the paid fallbacks are skipped
+    // only the Gemini key is present → each free ladder model is attempted once and the paid fallbacks are skipped
     // (the Writer is given a draft in rework so it has one call to make; every LLM chain is gemini → anthropic → openai)
     fx.state.writeDraft({ ...fx.draft(RP), status: "rework", qaReasons: ["tone: too salesy"] });
     calls.length = 0;
     const r2 = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: TUESDAY, processEnv: { GEMINI_API_KEY: KEYS.GEMINI_API_KEY }, fetchImpl: down, sleep: noSleep, flags: { agents: "writer", page: "rishtapatra" }, renderer: fakeRenderer(), stdout: () => {} });
     assert.equal(r2.ok, true);
     assert.equal(agent(r2, "writer").ok, false);
-    assert.equal(agent(r2, "writer").calls, 3, "3 attempts on Gemini; Anthropic/OpenAI skipped (secrets missing) → not attempted, not flagged");
+    assert.equal(agent(r2, "writer").calls, 3, "one attempt on each Gemini ladder model; paid fallbacks skipped (secrets missing)");
     assert.equal(calls.length, 3);
     assert.deepEqual(r2.flags, ["provider_down:gemini"]);
     assert.deepEqual(fx.status().flags, ["provider_down:gemini"], "the stale Anthropic/OpenAI flags from the previous run are dropped");
@@ -451,6 +451,29 @@ test("R1-05: when every provider fails with retryable 503s the agent row is ok:f
     fx.cleanup();
   }
   assert.equal(FETCH_ATTEMPTS.length, 0, "every call went through the injected fetchImpl, none through globalThis.fetch");
+});
+
+test("a successful alternate Gemini model makes the agent step successful and records the actual model in the run log", async () => {
+  const fx = copyFixture();
+  const key = "FAKE-gemini-key-bbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+  const output = JSON.parse(readFileSync(join(ROOT, "tests", "fixtures", "llm", "ceo.ok.json"), "utf8")).output;
+  let n = 0;
+  const fetchImpl = async () => {
+    n += 1;
+    if (n === 1) return new Response(JSON.stringify({ error: { status: "UNAVAILABLE", message: "high demand" } }), { status: 503, headers: { "content-type": "application/json" } });
+    return new Response(JSON.stringify({ responseId: "alternate-ok", modelVersion: "gemini-2.5-flash", candidates: [{ finishReason: "STOP", content: { parts: [{ text: JSON.stringify(output) }] } }], usageMetadata: { promptTokenCount: 4000, candidatesTokenCount: 600 } }), { status: 200, headers: { "content-type": "application/json" } });
+  };
+  try {
+    const r = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: MONDAY, processEnv: { GEMINI_API_KEY: key }, fetchImpl, sleep: async () => {}, flags: { agents: "ceo" }, renderer: fakeRenderer(), stdout: () => {} });
+    assert.equal(agent(r, "ceo").ok, true);
+    assert.equal(agent(r, "ceo").calls, 2);
+    assert.match(agent(r, "ceo").note, /completed models: Google Gemini · gemini-2\.5-flash/);
+    assert.ok(!r.flags.includes("provider_down:gemini"));
+    const usage = fx.usage().filter((u) => u.runId === r.run.id);
+    assert.deepEqual(usage.map((u) => [u.model, u.ok, u.costUsd]), [["gemini-3.8-flash", false, 0], ["gemini-2.5-flash", true, 0]]);
+  } finally {
+    fx.cleanup();
+  }
 });
 
 test("P1-24: a corrupted config.json → ok:false (CLI exit 1) and the ONLY write is runs/<month>.jsonl { ok:false, errors[] }", async () => {

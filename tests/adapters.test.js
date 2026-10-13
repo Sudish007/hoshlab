@@ -74,7 +74,7 @@ test("anthropic: temperature undefined → field omitted (acceptsTemperature:fal
   assert.equal(fetchImpl.calls[0].init.headers["anthropic-version"], anthropic.DEFAULT_API_VERSION);
 });
 
-test("gemini: URL, x-goog-api-key, systemInstruction/contents, generationConfig with responseSchema (no additionalProperties) and thinkingLevel; usage adds thought tokens", async () => {
+test("gemini: exact structured JSON request bodies use model-specific thinking controls across the free ladder", async () => {
   const fetchImpl = fakeFetch([{ status: 200, body: geminiOk }]);
   const res = await gemini.complete({ ...common, temperature: 0.3, fetchImpl, model: "gemini-3.8-flash", endpoint: "https://generativelanguage.googleapis.com/v1beta", reasoning: "low" });
   const call = fetchImpl.calls[0];
@@ -96,6 +96,46 @@ test("gemini: URL, x-goog-api-key, systemInstruction/contents, generationConfig 
   assert.equal(res.provider, "gemini");
   assert.deepEqual(res.raw, { status: 200, id: "resp-1", finishReason: "STOP" });
   assert.ok(!res.text.includes("thinking…"), "thought parts excluded from text");
+  assert.deepEqual(call.body, {
+    systemInstruction: { parts: [{ text: "SYSTEM TEXT" }] },
+    contents: [{ role: "user", parts: [{ text: '{"task":"x"}' }] }],
+    generationConfig: {
+      maxOutputTokens: 4000,
+      responseMimeType: "application/json",
+      temperature: 0.3,
+      responseSchema: toJsonSchema(SPEC, "gemini"),
+      thinkingConfig: { thinkingLevel: "low" },
+    },
+  });
+
+  const flash25 = fakeFetch([{ status: 200, body: geminiOk }]);
+  await gemini.complete({ ...common, temperature: 0.3, fetchImpl: flash25, model: "gemini-2.5-flash", endpoint: "https://generativelanguage.googleapis.com/v1beta", thinkingBudget: 1024 });
+  assert.equal(flash25.calls[0].url, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent");
+  assert.deepEqual(flash25.calls[0].body, {
+    systemInstruction: { parts: [{ text: "SYSTEM TEXT" }] },
+    contents: [{ role: "user", parts: [{ text: '{"task":"x"}' }] }],
+    generationConfig: {
+      maxOutputTokens: 4000,
+      responseMimeType: "application/json",
+      temperature: 0.3,
+      responseSchema: toJsonSchema(SPEC, "gemini"),
+      thinkingConfig: { thinkingBudget: 1024 },
+    },
+  });
+
+  const flashLite = fakeFetch([{ status: 200, body: geminiOk }]);
+  await gemini.complete({ ...common, temperature: 0.3, fetchImpl: flashLite, model: "gemini-2.5-flash-lite", endpoint: "https://generativelanguage.googleapis.com/v1beta" });
+  assert.equal(flashLite.calls[0].url, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent");
+  assert.deepEqual(flashLite.calls[0].body, {
+    systemInstruction: { parts: [{ text: "SYSTEM TEXT" }] },
+    contents: [{ role: "user", parts: [{ text: '{"task":"x"}' }] }],
+    generationConfig: {
+      maxOutputTokens: 4000,
+      responseMimeType: "application/json",
+      temperature: 0.3,
+      responseSchema: toJsonSchema(SPEC, "gemini"),
+    },
+  });
 
   const plain = fakeFetch([{ status: 200, body: { ...geminiOk, usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 5 } } }]);
   const res2 = await gemini.complete({ ...common, temperature: undefined, fetchImpl: plain, model: "gemini-3.8-flash", endpoint: "https://generativelanguage.googleapis.com/v1beta/" });

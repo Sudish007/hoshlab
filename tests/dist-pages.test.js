@@ -98,15 +98,15 @@ test("N4: Team says 'no language model' exactly twice (Designer, Publisher) and 
   assert.ok(!/not built yet/.test(team.replace(/<ul class="run-lines">[\s\S]*?<\/ul>/g, "")), "nothing on the Team page is labelled unbuilt any more (run-log lines excepted)");
 });
 
-test("N5: all six LLM cards use human-labelled Gemini/free-tier chips and the same paid fallback order", () => {
+test("N5: all six LLM cards use the human-labelled automatic free Gemini ladder and paid fallback order", () => {
   const team = page("team/index.html");
   assert.doesNotMatch(team, /provider: (anthropic|gemini|openai)/);
   const cards = [...team.matchAll(/<article class="card agent" data-agent="([^"]+)">[\s\S]*?<\/article>/g)].map((m) => ({ name: m[1], html: m[0] }));
   const llmCards = cards.filter((c) => !["designer", "publisher"].includes(c.name));
   assert.equal(llmCards.length, 6);
   for (const card of llmCards) {
-    assert.ok(card.html.includes("Google Gemini · gemini-3.8-flash"), card.name);
-    assert.ok(card.html.includes("fallback: Anthropic, OpenAI"), card.name);
+    assert.ok(card.html.includes("Google Gemini · automatic free-model ladder"), card.name);
+    assert.ok(card.html.includes("paid fallback after ladder: Anthropic, OpenAI"), card.name);
     assert.ok(card.html.includes("free tier · USD"), `${card.name}: free-tier billed-spend chip`);
     assert.ok(!card.html.includes("Anthropic · claude-sonnet-5-5") && !card.html.includes("OpenAI · gpt-6-luna"), `${card.name}: no paid provider as primary`);
   }

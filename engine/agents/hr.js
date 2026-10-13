@@ -239,9 +239,18 @@ export function enabledProviders(config) {
   const out = {};
   for (const [name, p] of Object.entries((config && config.providers) || {})) {
     if (!p || p.enabled !== true) continue;
-    out[name] = { models: Object.fromEntries(Object.entries(p.models || {}).map(([id, price]) => [id, { inputPerMTok: price.inputPerMTok, outputPerMTok: price.outputPerMTok, maxOutputTokens: price.maxOutputTokens, acceptsTemperature: price.acceptsTemperature !== false }])) };
+    out[name] = {
+      modelLadder: Array.isArray(p.modelLadder) ? [...p.modelLadder] : [],
+      models: Object.fromEntries(Object.entries(p.models || {}).map(([id, price]) => [id, { inputPerMTok: price.inputPerMTok, outputPerMTok: price.outputPerMTok, maxOutputTokens: price.maxOutputTokens, acceptsTemperature: price.acceptsTemperature !== false }])),
+    };
   }
   return out;
+}
+
+export function effectiveModel(agent, config) {
+  if (agent && agent.model) return agent.model;
+  const provider = agent && agent.provider && config && config.providers ? config.providers[agent.provider] : null;
+  return agent && agent.modelLadder === true && provider && Array.isArray(provider.modelLadder) ? provider.modelLadder[0] || null : null;
 }
 
 // The task JSON (charter "Inputs you receive in the task JSON").
@@ -254,7 +263,7 @@ export function buildTask({ config, roster, month, now, stats, feedback = [] } =
   return {
     month,
     today: istDate(toDate(now)),
-    roster: (roster.agents || []).map((a) => ({ name: a.name, title: a.title || a.name, group: a.group, kind: a.kind, provider: a.provider || null, model: a.model || null, fallback: a.fallback || [], temperature: a.temperature === undefined ? null : a.temperature, schedule: a.schedule, never: a.never, enabled: a.enabled !== false })),
+    roster: (roster.agents || []).map((a) => ({ name: a.name, title: a.title || a.name, group: a.group, kind: a.kind, provider: a.provider || null, model: effectiveModel(a, config), modelLadder: a.modelLadder === true, fallback: a.fallback || [], temperature: a.temperature === undefined ? null : a.temperature, schedule: a.schedule, never: a.never, enabled: a.enabled !== false })),
     stats,
     feedback: feedback.map((r) => ({ at: r.at, kind: r.kind, page: r.page || null, draftId: r.draftId || null, text: r.text, tags: r.tags || [] })),
     providers: enabledProviders(config),
@@ -323,7 +332,7 @@ export function validateHrOutput(json, { month = null, roster, config, stats = {
         break;
       }
       case "model": {
-        expectFrom(String(a.model || ""));
+        expectFrom(String(effectiveModel(a, config) || ""));
         const providerChange = changes.find((x) => x && x.agent === c.agent && x.field === "provider");
         const providerName = providerChange ? String(providerChange.to) : a.provider;
         const table = ((config && config.providers && config.providers[providerName]) || {}).models || {};

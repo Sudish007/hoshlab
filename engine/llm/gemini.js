@@ -3,21 +3,22 @@
 // body { systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: user }] }],
 //        generationConfig: { [temperature], maxOutputTokens, responseMimeType: 'application/json',
 //                            responseSchema: toJsonSchema(spec, 'gemini'), [thinkingConfig: { thinkingLevel }] } }
-// The Gemini dialect carries no additionalProperties (the API rejects it). `reasoning` (config
-// models table) maps to generationConfig.thinkingConfig.thinkingLevel — 'low' is the cheapest level
-// gemini-3.8-flash accepts ('minimal' returns an error; the default is 'medium').
-// maxOutputTokens includes thought tokens on Gemini 3; thought tokens are billed as output, so
+// The Gemini dialect carries no additionalProperties (the API rejects it). Model configuration
+// selects exactly one thinking control: Gemini 3.x uses thinkingLevel, Gemini 2.5 Flash uses the
+// integer thinkingBudget, and Flash-Lite omits thinkingConfig.
+// maxOutputTokens includes thought tokens; thought tokens are billed as output, so
 // outputTokens = candidatesTokenCount + thoughtsTokenCount.
 import { toJsonSchema } from "../lib/schema.js";
 import { DEFAULT_TIMEOUT_MS, parseJson, requestJson, requireFields, toInt } from "./adapter.js";
 
 export const provider = "gemini";
 
-export function buildRequest({ system, user, spec, maxOutputTokens, temperature, model, apiKey, endpoint, reasoning }) {
+export function buildRequest({ system, user, spec, maxOutputTokens, temperature, model, apiKey, endpoint, reasoning, thinkingBudget }) {
   const generationConfig = { maxOutputTokens, responseMimeType: "application/json" };
   if (Number.isFinite(temperature)) generationConfig.temperature = temperature;
   if (spec) generationConfig.responseSchema = toJsonSchema(spec, "gemini");
-  if (reasoning) generationConfig.thinkingConfig = { thinkingLevel: reasoning };
+  if (Number.isInteger(thinkingBudget)) generationConfig.thinkingConfig = { thinkingBudget };
+  else if (reasoning) generationConfig.thinkingConfig = { thinkingLevel: reasoning };
   const body = {
     systemInstruction: { parts: [{ text: system }] },
     contents: [{ role: "user", parts: [{ text: user }] }],

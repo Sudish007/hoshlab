@@ -1,7 +1,7 @@
 // The one interface every LLM provider implements (design.md §7, review M7, plan D10).
 //
 //   complete({ system, user, spec, dialect, maxOutputTokens, temperature, timeoutMs, fetchImpl,
-//              model, apiKey, endpoint, apiVersion, agent, reasoning })
+//              model, apiKey, endpoint, apiVersion, agent, reasoning, thinkingBudget })
 //     → { text, json | null, usage: { inputTokens, outputTokens }, model, provider, ms, raw: { status, id } }
 //
 //   system          the envelope's system text (charter + generated house rules + context), see prompt.js
@@ -13,6 +13,7 @@
 //                   non-default temperature carry acceptsTemperature:false in config.json)
 //   reasoning       optional config.providers.<p>.models.<m>.reasoning: Gemini → thinkingConfig.thinkingLevel,
 //                   OpenAI → reasoning_effort; Anthropic ignores it (adaptive thinking is its default)
+//   thinkingBudget optional Gemini 2.5 integer control → thinkingConfig.thinkingBudget; models without it omit it
 //   timeoutMs       AbortController timeout (default DEFAULT_TIMEOUT_MS)
 //   fetchImpl       injected fetch (tests pass a fake; tests/helpers.js throws on the global one)
 //   apiKey          the provider secret — sent in a header only, never in a URL, an Error or a log line
