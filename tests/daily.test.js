@@ -172,6 +172,7 @@ test("Monday run on the fixture (MOCK_LLM): CEO memo, Strategist per page, Write
     assert.ok(r.run.changed.includes("company/state/calendar.json"));
     assert.ok(r.run.changed.includes("company/state/status.json"));
     assert.ok(r.run.changed.includes("company/state/runs/2026-10.jsonl"));
+    assert.ok(r.run.changed.includes("company/state/usage/2026-10.jsonl"), "every model attempt partition is included in the bot commit paths");
     for (const id of created) assert.ok(r.run.changed.includes(`company/state/drafts/${id}/qa.json`));
     // R2-05: the engine-owned draft index is rewritten with the run's clock and lists every folder as it stands — the
     // drafts created today (rework after the mock QA) as live entries beside the fixture's
