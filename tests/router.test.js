@@ -223,6 +223,7 @@ test("Gemini failure classification advances only for transient and model-availa
   for (const status of [429, 500, 502, 503, 504]) assert.equal(geminiFailureAction({ status, message: "transient" }), "next_model", String(status));
   assert.equal(geminiFailureAction({ status: 400, message: "model overloaded" }), "next_model");
   assert.equal(geminiFailureAction({ status: 404, message: "models/x is not found or unsupported" }), "next_model");
+  assert.equal(geminiFailureAction({ status: 404, message: "This model models/gemini-2.5-flash is no longer available to new users." }), "next_model");
   assert.equal(geminiFailureAction({ status: 401, message: "bad key" }), "stop_ladder");
   assert.equal(geminiFailureAction({ status: 403, message: "permission denied" }), "stop_ladder");
   assert.equal(geminiFailureAction({ status: 400, message: "bad response schema" }), "stop_ladder");
@@ -285,7 +286,7 @@ test("Gemini auth/permission errors stop the shared-key ladder; paid fallback re
 });
 
 test("Gemini model-not-found semantics skip only that model; generic 400/404 stop the ladder", async () => {
-  const missing = harness({ queues: { gemini: [{ status: 404, body: { error: { message: "models/gemini-3.8-flash is not found or is not supported for generateContent" } } }, { body: geminiBody(GOOD, undefined, "gemini-2.5-flash") }] } });
+  const missing = harness({ queues: { gemini: [{ status: 404, body: { error: { message: "This model models/gemini-3.8-flash is no longer available to new users. Please update your code." } } }, { body: geminiBody(GOOD, undefined, "gemini-2.5-flash") }] } });
   try {
     const res = await missing.router.complete("qa", { task: TASK, spec: SPEC, context: { brand: brands.kaatdo, page: "kaatdo" } });
     assert.equal(res.model, "gemini-2.5-flash");

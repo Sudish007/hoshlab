@@ -51,7 +51,7 @@ export function rateLimitDelayMs(hintMs, retry) {
   return Math.min(RATE_LIMIT_CAP_MS, Math.max(step, hint));
 }
 
-const GEMINI_MODEL_ERROR_RE = /(?:model(?:s\/[\w.-]+)?[\s\S]{0,80}(?:not found|not supported|unsupported|does not exist|not available)|(?:not found|not supported|unsupported)[\s\S]{0,40}model)/i;
+const GEMINI_MODEL_ERROR_RE = /(?:model(?:s\/[\w.-]+)?[\s\S]{0,100}(?:not found|not supported|unsupported|does not exist|not available|no longer available)|(?:not found|not supported|unsupported|not available|no longer available)[\s\S]{0,60}model)/i;
 const GEMINI_TRANSIENT_RE = /(?:overload|high demand|capacity|temporar(?:y|ily)|unavailable|resource exhausted)/i;
 
 // Shared-key auth/permission failures stop the Gemini ladder. A missing/unsupported model and
