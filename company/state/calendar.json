@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13T23:16:54+05:30",
+  "generatedAt": "2026-10-14T00:01:42+05:30",
   "horizonDays": 14,
   "slots": [
     {
@@ -16,9 +16,10 @@
       "page": "rishtapatra",
       "at": "2026-10-14T19:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0001",
-      "reason": "Structured walkthrough of the 7-step biodata editor suited for Wednesday carousel slot."
+      "reason": "Structured walkthrough of the 7-step biodata editor suited for Wednesday carousel slot.",
+      "draftId": "rp-2026-10-14-guided-7-step-biodata-flow"
     },
     {
       "slotId": "kaatdo-2026-10-15-0815",
