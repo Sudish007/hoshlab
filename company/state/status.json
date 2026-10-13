@@ -1,12 +1,89 @@
 {
-  "updatedAt": "2026-10-13T14:58:05+05:30",
+  "updatedAt": "2026-10-13T21:27:49+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261013-1458-110533",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261013-2127-7c9108",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-10-13T14:58:05+05:30"
+    "at": "2026-10-13T21:27:49+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261013-2127-7c9108",
+      "workflow": "engine-daily",
+      "trigger": "dispatch",
+      "startedAt": "2026-10-13T21:27:06+05:30",
+      "endedAt": "2026-10-13T21:27:49+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": false,
+          "ms": 20087,
+          "calls": 3,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0,
+          "note": "AllProvidersFailedError: ceo: no provider answered — gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | anthropic: skipped: secret ANTHROPIC_API_KEY missing | openai: skipped: secret OPENAI_API_KEY missing"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and 2026-09 has no runs or model calls to catch up on (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": false,
+          "ms": 23633,
+          "calls": 3,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0,
+          "note": "rishtapatra: AllProvidersFailedError: strategist: no provider answered — gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | anthropic: skipped: secret ANTHROPIC_API_KEY missing | openai: skipped: secret OPENAI_API_KEY missing"
+        },
+        {
+          "name": "writer",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 written, 0 reworked"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 1,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 queued, 0 rework, 0 blocked"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0
+    },
     {
       "id": "publisher-hourly-20261013-1458-110533",
       "workflow": "publisher-hourly",
@@ -488,7 +565,8 @@
     "usedUsd": 0,
     "limitUsd": 25,
     "exhausted": false,
-    "warn": false
+    "warn": false,
+    "paidEquivalentUsd": 0
   },
   "pages": {
     "rishtapatra": {
@@ -510,5 +588,7 @@
       "lastPublishedAt": null
     }
   },
-  "flags": []
+  "flags": [
+    "provider_down:gemini"
+  ]
 }
