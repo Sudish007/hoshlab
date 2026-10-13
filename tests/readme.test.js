@@ -103,11 +103,16 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("## Cadence");
   has("A 19:30 IST slot posts in the first publisher run at or after 19:30 IST");
   has("## Limits");
-  has("Content used to improve our products");
+  has("[official Gemini models catalog](https://ai.google.dev/gemini-api/docs/models)");
+  has("[Gemini 2.5 Flash](https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash)");
+  has("[Gemini 2.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-lite)");
+  has("[Gemini API pricing page](https://ai.google.dev/gemini-api/docs/pricing)");
+  has("free-tier content may be used to improve Google's products");
   has("Rate limits are applied per project, not per API key");
   has("shown in Google AI Studio");
-  has("On HTTP 429 it honours `Retry-After`, or Gemini's `retryDelay` when present");
-  has("after at most 3 retries it tries Anthropic then OpenAI");
+  has("at most one HTTP attempt on each configured free model");
+  has("A server `Retry-After` or Gemini `retryDelay` is honoured but capped at 60 seconds");
+  has("Only after the free ladder is exhausted are Anthropic and OpenAI considered");
   has("**5–9 model calls per steady-state day**");
   has("**13–17 model calls before rework or retries**");
   const callsByDay = Object.fromEntries(["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map((day) => [day, config.pages.reduce((n, p) => n + p.cadence.slots.filter((s) => s.dow === day).length, 0)]));
@@ -182,7 +187,20 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   for (const s of ["node --env-file=.env engine/index.js check-models", "daily --dry-run", "MOCK_LLM=1", "IG_DRY_RUN=1", "RENDER_TESTS=1", "npm run build:fonts", "npm run audit", "npm run audit:admin", "npm run dryrun", "BUILD_NOW", "PUBLIC_DIR", "node scripts/render-brand.mjs"]) has(s);
   has("## Phase 2 — not built yet");
   for (const s of ["not built yet", "not configured yet", "untested"]) has(`**${s}**`, "honesty label");
-  has("`—` / `No runs yet`", "the launch-day empty state");
+  // R2-02 + Gemini ladder: the status paragraph describes the live site, existing media/workflows,
+  // configured required model key, and the two honest 503-only runs that motivated this change.
+  const status = readme.slice(readme.indexOf("**Status of this repository at the time of writing:**"), readme.indexOf("## Owner to-do"));
+  assert.ok(status.length > 100, "the status paragraph exists before the owner to-do");
+  assert.ok(!status.includes("GitHub Pages is **not configured yet**"), "Pages is live");
+  assert.ok(!status.includes("the `media` branch is **not configured yet**"), "the media branch exists");
+  assert.ok(status.includes("https://sudish007.github.io/hoshlab/"), "names the live site");
+  assert.ok(status.includes("`media` branch exists") && status.includes("`sample: true`"), "the media branch carries fixture samples");
+  assert.ok(status.includes("`engine-daily.yml` and `publisher-hourly.yml` run on their schedules"), "the state workflows are live");
+  assert.ok(status.includes("`GEMINI_API_KEY` is stored as a GitHub Actions secret"), "the required model key is configured without exposing it");
+  assert.ok(status.includes("run 38426296275") && status.includes("run 38426835639"), "the two honest failed runs remain linked");
+  assert.ok(status.includes("HTTP 503 at high demand") && status.includes("created no drafts"), "the confirmed production failure is recorded");
+  assert.ok(/Still \*\*not configured yet\*\*: the Instagram tokens/.test(status), "only Instagram tokens keep the not-configured label");
+  assert.ok(status.includes("the real Instagram publishing path, until the throwaway post"), "the publishing path keeps the label");
   // R2-01: IG_DRY_RUN=1 alone is a dry run for daily/analyst/hr too (temp copy, no commit), and a real Analyst run ignores dryRun records
   has("makes `publish`, `daily`, `analyst` and `hr` work on a temp copy of `company/` and commit nothing", "R2-01: the env var alone implies the temp copy for every state-writing command");
   has("a real Analyst run ignores any `dryRun: true` record it finds", "R2-01: stray dry-run metrics neither block nor feed a real run");
@@ -190,20 +208,6 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   // R2-06: refresh-tokens honours IG_DRY_RUN=1 like the other four — temp copy, no refresh call, no gh, nothing written — and never the fake token
   has("`IG_DRY_RUN=1` makes `refresh-tokens` a dry run too, exactly as its `--dry-run` does: a temp copy of `company/`, no `refresh_access_token` call, no `gh secret set`", "R2-06: the IG_DRY_RUN sentence names refresh-tokens");
   has("no fake value may ever be piped into `gh secret set`");
-  // R2-02: the status paragraph describes the live state (Pages, media branch and the scheduled workflows are live since the
-  // Phase 1 merge); the honest labels stay only where they are true
-  const status = readme.slice(readme.indexOf("**Status of this repository at the time of writing:**"), readme.indexOf("## Owner to-do"));
-  assert.ok(status.length > 100, "the status paragraph exists before the owner to-do");
-  assert.ok(!status.includes("GitHub Pages is **not configured yet**"), "R2-02: Pages is live");
-  assert.ok(!status.includes("the `media` branch is **not configured yet**"), "R2-02: the media branch exists");
-  assert.ok(!status.includes("have never run") && !status.includes("has never run"), "R2-02: engine-daily and publisher-hourly run on schedule");
-  assert.ok(status.includes("https://sudish007.github.io/hoshlab/"), "R2-02: names the live site");
-  assert.ok(status.includes("`media` branch exists") && status.includes("`sample: true`"), "R2-02: the media branch carries fixture samples only");
-  assert.ok(status.includes("`engine-daily.yml` and `publisher-hourly.yml` run on their schedules"), "R2-02: the two state workflows are live");
-  assert.ok(status.includes("every page still `not_configured`"), "R2-02: no token yet, so nothing was attempted");
-  assert.ok(/Still \*\*not configured yet\*\*: the required free-tier `GEMINI_API_KEY` and the Instagram tokens/.test(status), "R2-02: required Gemini key and Instagram tokens keep the label");
-  assert.ok(/Still \*\*untested\*\*: `token-refresh\.yml` \(zero runs/.test(status), "R2-02: token-refresh.yml keeps the label");
-  assert.ok(status.includes("the real Instagram publishing path, until the throwaway post"), "R2-02: the publishing path keeps the label");
   assert.ok(!readme.includes("not needed in phase 1"), "R2-02: the phase-1 ffmpeg sentence is gone");
   has("`ffmpeg`/`ffprobe` are needed to render reels locally (see Reels)", "R2-02: the Local development note matches the Reels section");
   // R2-03: Instagram's acceptance of a silent reel is an unverified assumption until the first reel publish

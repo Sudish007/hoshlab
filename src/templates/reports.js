@@ -7,7 +7,7 @@
 import { layout } from "./layout.js";
 import { url } from "../lib/urls.js";
 import { escapeHtml } from "../lib/xml.js";
-import { metricLabel, providerLabel, windowLabel } from "../lib/labels.js";
+import { metricLabel, modelRoutingLabel, providerLabel, windowLabel } from "../lib/labels.js";
 import { renderDocument } from "../lib/markdown.js";
 import { formatIst, formatIstDate } from "../lib/dates.js";
 import { chip, hi, hiHtml, sectionHead, sideBox } from "./partials.js";
@@ -58,7 +58,7 @@ function emptyBody(view) {
     { k: "reports", v: "none yet", chip: "waiting for insights", kind: "warn", plain: true },
     { k: "insights", v: m ? `${plural(m, "record")} fetched so far` : "none fetched yet", plain: !m },
     { k: "published", v: n ? `${plural(n, "post")} a report could cover` : "nothing published yet", plain: !n },
-    { k: "analyst", v: analyst ? `${providerLabel(analyst.provider)} · ${analyst.model}` : "not in the roster", plain: true },
+    { k: "analyst", v: analyst ? `${providerLabel(analyst.provider)} · ${analyst.modelLadder === true ? modelRoutingLabel(analyst.provider) : analyst.model}` : "not in the roster", plain: true },
   ];
   return `<section class="hero">
     <div>

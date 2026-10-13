@@ -85,6 +85,11 @@ jobs:
         run: |
           git config user.name hoshlab-bot
           git config user.email hoshlab-bot@users.noreply.github.com
+      - name: Check the free Gemini model ladder
+        if: ${{ inputs.render_sample != true && inputs.mock_llm != true }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node engine/index.js check-models
       # render_sample=true (plan D19, FEAT-201): the live proof without owner keys — one fixture image and one
       # kinetic reel per page land on the media branch as 'media: samples' (sample:true in index.json, never listed on
       # the site), then the deploy job copies them to Pages. Kinetic only: the capture style records the live product

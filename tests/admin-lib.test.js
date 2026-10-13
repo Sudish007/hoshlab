@@ -264,10 +264,10 @@ test("proposals.js: a proposal whose result has no valid qa — or that no longe
   const config = fixtureConfig();
   const gh = fakeGitHub({ files: { "company/roster.json": JSON.stringify(roster, null, 2) + "\n" } });
   const state = createAdminState(createClient({ token: TOKEN, owner: OWNER, repo: REPO, branch: "main", fetchImpl: gh.fetchImpl }));
-  // a swap of qa's provider leaves its model outside the new provider's table → ROSTER_SPEC refuses
+  // a swap of qa's provider cannot carry Gemini's inherited ladder to a provider without that ladder → ROSTER_SPEC refuses
   const qaSwap = { ...proposal, changes: [{ agent: "qa", field: "provider", from: "gemini", to: "openai", why: "x" }] };
   const plan = buildApply({ proposal: qaSwap, roster, config });
-  assert.match(plan.errors.join("\n"), /roster after the proposal: \$\.agents\[5\]\.model: gemini-3\.8-flash not in providers\.openai\.models/);
+  assert.match(plan.errors.join("\n"), /roster after the proposal: \$\.agents\[5\]\.modelLadder: providers\.openai\.modelLadder is not configured/);
   await assert.rejects(applyProposal(state, { proposal: qaSwap, roster, config, at: AT }), /cannot apply the 2026-09 proposal: roster after the proposal/);
   // a roster that already lacks qa can never be the base of an apply
   const noQa = { ...roster, agents: roster.agents.filter((a) => a.name !== "qa") };

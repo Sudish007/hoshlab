@@ -19,7 +19,7 @@ function sink() {
   return fn;
 }
 
-function modelLists({ anthropic = ["claude-sonnet-5-5"], gemini = ["gemini-3.8-flash"], openai = ["gpt-6-luna"], fail = {} } = {}) {
+function modelLists({ anthropic = ["claude-sonnet-5-5"], gemini = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"], openai = ["gpt-6-luna"], fail = {} } = {}) {
   const calls = [];
   const fn = async (url, init = {}) => {
     const u = String(url);
@@ -69,14 +69,18 @@ test("registry: every designed command is listed; unbuilt ones print 'not built 
   assert.ok(usage().includes("daily --agents hr, forced") && usage().includes("hr/proposals/<month>.json"), "the hr command names its daily equivalent and its output (FEAT-204)");
 });
 
-test("check-models without keys: one 'not configured yet (secret <NAME> missing)' line per enabled provider, exit 1, no network, no key material", async () => {
+test("check-models without keys: required Gemini fails while missing paid fallbacks are clean optional skips", async () => {
   const out = sink();
   const err = sink();
   const fetchImpl = modelLists();
   const code = await main(["check-models"], { stdout: out, stderr: err, processEnv: {}, fetchImpl, companyDir: COMPANY_DIR });
   assert.equal(code, 1);
-  assert.deepEqual(out.lines, [NOT_CONFIGURED("anthropic", "ANTHROPIC_API_KEY"), NOT_CONFIGURED("gemini", "GEMINI_API_KEY"), NOT_CONFIGURED("openai", "OPENAI_API_KEY"), "check-models: 0 of 3 enabled providers validated"]);
-  assert.equal(out.lines[0], "anthropic: not configured yet (secret ANTHROPIC_API_KEY missing)");
+  assert.deepEqual(out.lines, [
+    "anthropic: optional paid fallback skipped (secret ANTHROPIC_API_KEY missing)",
+    NOT_CONFIGURED("gemini", "GEMINI_API_KEY"),
+    "openai: optional paid fallback skipped (secret OPENAI_API_KEY missing)",
+    "check-models: 0 of 1 configured provider validated; 2 optional providers skipped",
+  ]);
   assert.equal(fetchImpl.calls.length, 0);
   assert.equal(err.lines.length, 0);
   assert.equal(FETCH_ATTEMPTS.length, 0);
@@ -87,14 +91,41 @@ test("check-models with keys (fake fetch): model ids verified against the provid
   const out = sink();
   const code = await main(["check-models"], { stdout: out, stderr: sink(), processEnv: { ...KEYS }, fetchImpl, companyDir: COMPANY_DIR });
   assert.equal(code, 0, out.text());
-  assert.ok(out.lines.includes("anthropic: claude-sonnet-5-5 ok (temperature ignored by model (not sent))"), out.text());
-  assert.ok(out.lines.includes("gemini: gemini-3.8-flash ok (reasoning low)"), out.text());
-  assert.ok(out.lines.includes("openai: gpt-6-luna ok (reasoning low)"), out.text());
+  assert.ok(out.lines.includes("anthropic: claude-sonnet-5-5 available (temperature ignored by model (not sent))"), out.text());
+  assert.ok(out.lines.includes("gemini: gemini-3.8-flash available (reasoning low)"), out.text());
+  assert.ok(out.lines.includes("gemini: gemini-2.5-flash available (thinking budget 1024)"), out.text());
+  assert.ok(out.lines.includes("gemini: gemini-2.5-flash-lite available"), out.text());
+  assert.ok(out.lines.includes("gemini: automatic free-model ladder ready (primary gemini-3.8-flash; 2 of 2 alternates available)"), out.text());
+  assert.ok(out.lines.includes("openai: gpt-6-luna available (reasoning low)"), out.text());
   assert.ok(out.lines.includes("anthropic: prices verified 2026-10-10 (https://platform.claude.com/docs/en/docs/about-claude/pricing)"));
   assert.equal(out.lines.at(-1), "check-models: 3 of 3 enabled providers validated");
   assert.equal(fetchImpl.calls.length, 3);
   for (const c of fetchImpl.calls) assert.equal(c.init.method, "GET");
   for (const v of SECRET_VALUES) assert.ok(!out.text().includes(v), "no key material on stdout");
+
+  // GitHub Actions has only the required Gemini secret: primary + one listed alternate is enough,
+  // the unavailable configured alternate is named, and paid providers remain clean skips.
+  const onlyGemini = sink();
+  const onlyGeminiCode = await main(["check-models"], {
+    stdout: onlyGemini,
+    stderr: sink(),
+    processEnv: { GEMINI_API_KEY: KEYS.GEMINI_API_KEY },
+    fetchImpl: modelLists({ gemini: ["gemini-3.8-flash", "gemini-2.5-flash"] }),
+    companyDir: COMPANY_DIR,
+  });
+  assert.equal(onlyGeminiCode, 0, onlyGemini.text());
+  assert.ok(onlyGemini.lines.includes("gemini: gemini-2.5-flash-lite unavailable (2 models listed by the provider)"), onlyGemini.text());
+  assert.ok(onlyGemini.lines.includes("gemini: automatic free-model ladder ready (primary gemini-3.8-flash; 1 of 2 alternates available)"), onlyGemini.text());
+  assert.equal(onlyGemini.lines.at(-1), "check-models: 1 of 1 configured provider validated; 2 optional providers skipped");
+  assert.ok(!onlyGemini.text().includes(KEYS.GEMINI_API_KEY));
+
+  const noAlternate = await checkModels({
+    config,
+    env: readEnv(["ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"], { GEMINI_API_KEY: KEYS.GEMINI_API_KEY }),
+    fetchImpl: modelLists({ gemini: ["gemini-3.8-flash"] }),
+  });
+  assert.equal(noAlternate.ok, false);
+  assert.ok(noAlternate.lines.includes("gemini: ladder has no available alternate (gemini-2.5-flash, gemini-2.5-flash-lite)"));
 
   // unknown model id on one provider → that provider fails, exit 1
   const env = readEnv(["ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"], KEYS);

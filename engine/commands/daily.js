@@ -33,6 +33,7 @@ import { cpSync, existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { CompanyError, loadCompany } from "../../src/lib/company.js";
+import { modelRoutingLabel, providerLabel } from "../../src/lib/labels.js";
 import { monthHasFreeTierUsage, monthPaidEquivalentUsd, monthUsedUsd } from "../lib/budget.js";
 import { readEnv } from "../lib/env.js";
 import { commitAndPush, PushConflictError, repoRootFor, shouldCommit, writeGithubOutput } from "../lib/git.js";
@@ -210,13 +211,16 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   const flags = new Set();
   const addFlag = (f) => flags.add(f);
   const mediaCommits = [];
-  // One line per model-backed agent with the chain the roster resolves to (provider/model, tier, fallbacks), so a run
-  // log shows where every call would go — under MOCK_LLM=1 the mock adapter answers instead and the line says so.
+  // One line per model-backed agent with the inherited same-key ladder and the paid provider fallbacks.
   for (const a of roster.agents) {
     if (a.kind !== "llm" || a.enabled === false) continue;
-    const [primary, ...fallbacks] = router.resolve(a.name).chain;
-    const fb = fallbacks.length ? ` · fallback ${fallbacks.map((c) => c.provider).join(", ")}` : "";
-    log(`[router] ${a.name}: provider ${primary.provider} (${primary.tier} tier) model ${primary.model}${fb}${router.isMock ? " · MOCK_LLM=1: the mock adapter answers, no provider is called" : ""}`);
+    const chain = router.resolve(a.name).chain;
+    const primary = chain[0];
+    const ladder = chain.filter((c) => c.provider === primary.provider);
+    const fallbacks = chain.filter((c) => c.provider !== primary.provider);
+    const route = ladder.length > 1 ? `${modelRoutingLabel(primary.provider)} ${ladder.map((c) => c.model).join(" → ")}` : `model ${primary.model}`;
+    const fb = fallbacks.length ? ` · paid fallback after ladder ${fallbacks.map((c) => providerLabel(c.provider)).join(", ")}` : "";
+    log(`[router] ${a.name}: ${providerLabel(primary.provider)} (${primary.tier} tier) · ${route}${fb}${router.isMock ? " · MOCK_LLM=1: the mock adapter answers, no provider is called" : ""}`);
   }
 
   // 2. budget (M5.4): the month's spend decides whether any model-backed step runs at all
@@ -597,6 +601,11 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     }
     const agents = AGENT_ORDER.map((name) => {
       const r = rec(name);
+      const completed = router.completionsFor(name).filter((c) => c.provider !== "mock");
+      if (completed.length) {
+        const models = completed.map((c) => `${providerLabel(c.provider)} · ${c.model}${c.page ? ` (@${c.page})` : ""}`);
+        r.notes.push(`completed models: ${models.join("; ")}`);
+      }
       const out = { name, ok: r.ok, ms: r.ms, calls: r.calls, costUsd: r.costUsd };
       if (router.totalsFor(name).freeTierCalls > 0) out.paidEquivalentUsd = r.paidEquivalentUsd;
       if (r.notes.length) out.note = r.notes.join(" | ");

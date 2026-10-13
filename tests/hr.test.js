@@ -257,7 +257,7 @@ test("validateHrOutput: every agent once, evidence = the engine's numbers, provi
   assert.match(errs(withChange({ agent: "writer", field: "provider", from: "gemini", to: "openai", why: "x" }, "swap"), { ...ctx, config: disabled }).join("\n"), /"openai" is not an enabled provider \(anthropic, gemini\)/);
   assert.match(errs(withChange({ agent: "writer", field: "model", from: "gemini-3.8-flash", to: "gpt-6-luna", why: "x" }, "swap")).join("\n"), /changes\[0\]\.to: "gpt-6-luna" is not in providers\.gemini\.models/);
   assert.deepEqual(errs({ ...withChange({ agent: "writer", field: "provider", from: "gemini", to: "openai", why: "x" }, "swap"), rosterProposal: { changes: [{ agent: "writer", field: "provider", from: "gemini", to: "openai", why: "x" }, { agent: "writer", field: "model", from: "gemini-3.8-flash", to: "gpt-6-luna", why: "x" }] } }), [], "provider + model together: the model is checked against the NEW provider's table");
-  assert.match(errs(withChange({ agent: "writer", field: "provider", from: "gemini", to: "openai", why: "x" }, "swap")).join("\n"), /\$\.rosterProposal: \$\.agents\[3\]\.model: gemini-3\.8-flash not in providers\.openai\.models/, "a provider change alone leaves the model outside the new table");
+  assert.match(errs(withChange({ agent: "writer", field: "provider", from: "gemini", to: "openai", why: "x" }, "swap")).join("\n"), /\$\.rosterProposal: \$\.agents\[3\]\.modelLadder: providers\.openai\.modelLadder is not configured/, "a provider change alone cannot carry Gemini's inherited ladder to the new provider");
   assert.match(errs(withChange({ agent: "writer", field: "temperature", from: "0.8", to: "1.5", why: "x" })).join("\n"), /temperature must be a number between 0 and 1, got "1\.5"/);
   assert.match(errs(withChange({ agent: "writer", field: "temperature", from: "0.8", to: "warm", why: "x" })).join("\n"), /temperature must be a number between 0 and 1, got "warm"/);
   assert.match(errs(withChange({ agent: "writer", field: "temperature", from: "0.8", to: "0.8", why: "x" })).join("\n"), /0\.8 is already the writer temperature/);
@@ -276,7 +276,7 @@ test("validateHrOutput: every agent once, evidence = the engine's numbers, provi
   // qa / publisher: the change fields cannot remove or disable them, and the resulting roster is re-validated
   for (const field of CHANGE_FIELDS) assert.ok(!["enabled", "kind", "name"].includes(field));
   const qaSwap = { ...ok, review: ok.review.map((r) => (r.agent === "qa" ? { ...r, verdict: "swap" } : r.agent === "writer" ? { ...r, verdict: "keep" } : r)), rosterProposal: { changes: [{ agent: "qa", field: "provider", from: "gemini", to: "openai", why: "x" }] } };
-  assert.match(errs(qaSwap).join("\n"), /\$\.rosterProposal: \$\.agents\[5\]\.model: gemini-3\.8-flash not in providers\.openai\.models/);
+  assert.match(errs(qaSwap).join("\n"), /\$\.rosterProposal: \$\.agents\[5\]\.modelLadder: providers\.openai\.modelLadder is not configured/);
   const noPublisher = { ...roster, agents: roster.agents.filter((a) => a.name !== "publisher") };
   assert.match(validateHrOutput({ ...ok, review: ok.review.filter((r) => r.agent !== "publisher") }, { ...ctx, roster: noPublisher }).join("\n"), /\$\.rosterProposal: \$\.agents: expected at least 8 items \(7\)/, "a roster without the publisher never validates, proposal or not (the shape rule fires before the by-name rule)");
   const publisherOff = { ...roster, agents: roster.agents.map((a) => (a.name === "publisher" ? { ...a, enabled: false } : a)) };
@@ -300,6 +300,9 @@ test("buildTask carries the roster, the stats, the month's feedback and ONLY the
   assert.equal(task.today, "2026-11-01");
   assert.deepEqual(task.roster.map((a) => a.name), NAMES);
   assert.equal(task.roster.find((a) => a.name === "designer").provider, null);
+  assert.equal(task.roster.find((a) => a.name === "writer").model, "gemini-3.8-flash", "HR sees the ladder's effective primary");
+  assert.equal(task.roster.find((a) => a.name === "writer").modelLadder, true);
+  assert.deepEqual(task.providers.gemini.modelLadder, ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"]);
   assert.deepEqual(task.stats, stats);
   assert.equal(task.feedback.length, 4, "all four fixture feedback lines are from October (two rejects, two notes — FEAT-205)");
   assert.deepEqual(Object.keys(task.providers), ["anthropic", "gemini", "openai"]);

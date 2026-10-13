@@ -63,19 +63,35 @@
       "minIntervalMs": 7000,
       "secret": "GEMINI_API_KEY",
       "endpoint": "https://generativelanguage.googleapis.com/v1beta",
+      "modelLadder": [
+        "gemini-3.8-flash",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite"
+      ],
       "models": {
         "gemini-3.8-flash": {
           "inputPerMTok": 0.75,
           "outputPerMTok": 3.75,
           "maxOutputTokens": 65536,
           "reasoning": "low"
+        },
+        "gemini-2.5-flash": {
+          "inputPerMTok": 0.3,
+          "outputPerMTok": 2.5,
+          "maxOutputTokens": 65536,
+          "thinkingBudget": 1024
+        },
+        "gemini-2.5-flash-lite": {
+          "inputPerMTok": 0.1,
+          "outputPerMTok": 0.4,
+          "maxOutputTokens": 65536
         }
       },
       "priceSource": "https://ai.google.dev/gemini-api/docs/pricing",
-      "pricesVerifiedAt": "2026-10-12",
+      "pricesVerifiedAt": "2026-10-13",
       "modelSource": "https://ai.google.dev/gemini-api/docs/models",
-      "modelsVerifiedAt": "2026-10-12",
-      "priceNote": "Gemini 3.8 Flash is the current stable Flash model and has free input/output tokens on the free tier. Paid-equivalent rates are $0.75 / $3.75 per MTok through 2026-12-31 and $1.50 / $7.50 from 2027-01-01; output includes thinking tokens. The model page lists a 65,536 output-token limit; thinkingLevel low is its lowest accepted level. Re-run check-models in January 2027."
+      "modelsVerifiedAt": "2026-10-13",
+      "priceNote": "The free tier bills input/output at USD 0. Paid-equivalent standard rates per MTok: Gemini 3.8 Flash $0.75/$3.75 through 2026-12-31; Gemini 2.5 Flash $0.30/$2.50; Gemini 2.5 Flash-Lite $0.10/$0.40. Output includes thinking tokens. All three model pages list a 65,536 output-token limit; 3.8 uses thinkingLevel low, 2.5 Flash uses thinkingBudget 1024, and Flash-Lite omits thinking configuration."
     },
     "openai": {
       "enabled": true,

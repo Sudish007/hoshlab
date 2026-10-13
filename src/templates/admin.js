@@ -224,7 +224,7 @@ export function adminPage({ config: company, roster, year }) {
 
   <section id="view-roster" class="view" hidden aria-labelledby="roster-heading">
     <h2 id="roster-heading" class="h3">Roster</h2>
-    <p class="meta">JSON editor for <span class="mono">company/roster.json</span> with the roster invariants: exactly the eight agents, <span class="mono">qa</span> and <span class="mono">publisher</span> cannot be removed or disabled, every language-model agent names an enabled provider and one of its models, every agent keeps a non-empty never-list.</p>
+    <p class="meta">JSON editor for <span class="mono">company/roster.json</span> with the roster invariants: exactly the eight agents, <span class="mono">qa</span> and <span class="mono">publisher</span> cannot be removed or disabled, every language-model agent names an enabled provider and either inherits its configured model ladder or names one model, every agent keeps a non-empty never-list.</p>
     <label for="roster-text">roster.json</label>
     <textarea id="roster-text" rows="28" spellcheck="false" aria-describedby="roster-errors"></textarea>
     <ul id="roster-errors" class="errors" aria-live="polite"></ul>

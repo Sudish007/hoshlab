@@ -5,6 +5,7 @@
 
 const MODES = { approve_first: "Approve first", autopilot: "Autopilot" };
 const PROVIDERS = { anthropic: "Anthropic", gemini: "Google Gemini", openai: "OpenAI", mock: "Mock adapter" };
+const MODEL_ROUTING = { gemini: "automatic free-model ladder" };
 const PROVIDER_TIERS = { free: "free tier", paid: "paid tier" };
 const TOKEN_STATES = { ok: "token ok", invalid: "token invalid", not_configured: "not configured yet", expiring: "token expiring", unknown: "token untested" };
 // Insights windows (design §4.10, FEAT-203): the metrics record token → the words the Reports page prints.
@@ -27,6 +28,10 @@ export function modeLabel(mode) {
 
 export function providerLabel(provider) {
   return lookup(PROVIDERS, provider, "provider");
+}
+
+export function modelRoutingLabel(provider) {
+  return lookup(MODEL_ROUTING, provider, "model routing");
 }
 
 // Config defaults to the paid tier when `tier` is absent; call with no value for that default. The config token
