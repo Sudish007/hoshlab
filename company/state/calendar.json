@@ -1,0 +1,240 @@
+{
+  "generatedAt": "2026-10-13T23:16:54+05:30",
+  "horizonDays": 14,
+  "slots": [
+    {
+      "slotId": "job_rez-2026-10-14-1230",
+      "page": "job_rez",
+      "at": "2026-10-14T12:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "jr-i0001",
+      "reason": "Carousel detailing the six layout rules checked on rendered pages."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-14-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-14T19:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "rp-i0001",
+      "reason": "Structured walkthrough of the 7-step biodata editor suited for Wednesday carousel slot."
+    },
+    {
+      "slotId": "kaatdo-2026-10-15-0815",
+      "page": "kaatdo",
+      "at": "2026-10-15T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0001",
+      "reason": "Direct introduction to breach mechanics on image slot."
+    },
+    {
+      "slotId": "job_rez-2026-10-15-1230",
+      "page": "job_rez",
+      "at": "2026-10-15T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0002",
+      "reason": "Single image focused on deterministic taxonomy matching."
+    },
+    {
+      "slotId": "job_rez-2026-10-16-1230",
+      "page": "job_rez",
+      "at": "2026-10-16T12:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "jr-i0003",
+      "reason": "Reel demonstrating branching tailored copies from a single master resume."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-16-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-16T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0002",
+      "reason": "Single clear claim highlighting local-first browser privacy for Friday image slot."
+    },
+    {
+      "slotId": "kaatdo-2026-10-17-1100",
+      "page": "kaatdo",
+      "at": "2026-10-17T11:00:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "kd-i0002",
+      "reason": "Deep dive into the 6 risk rules for Saturday carousel."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-17-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-17T19:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "rp-i0003",
+      "reason": "Fast visual explanation of client-side kundali math for Saturday reel slot."
+    },
+    {
+      "slotId": "kaatdo-2026-10-18-1100",
+      "page": "kaatdo",
+      "at": "2026-10-18T11:00:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "kd-i0003",
+      "reason": "Walkthrough of SEBI token expiry cycle suited for Sunday reel."
+    },
+    {
+      "slotId": "job_rez-2026-10-19-1230",
+      "page": "job_rez",
+      "at": "2026-10-19T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0004",
+      "reason": "Image explaining rule-based grounded rewrites that preserve truth."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-19-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-19T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0004",
+      "reason": "Brand values and community inclusivity focus for Monday image slot."
+    },
+    {
+      "slotId": "kaatdo-2026-10-20-0815",
+      "page": "kaatdo",
+      "at": "2026-10-20T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0004",
+      "reason": "Honest technical limitation highlight on Tuesday image slot."
+    },
+    {
+      "slotId": "job_rez-2026-10-20-1230",
+      "page": "job_rez",
+      "at": "2026-10-20T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0005",
+      "reason": "Image defining the three self-reported evidence states."
+    },
+    {
+      "slotId": "job_rez-2026-10-21-1230",
+      "page": "job_rez",
+      "at": "2026-10-21T12:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "jr-i0006",
+      "reason": "Carousel walking through live jobs panel sources and local browser tracking."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-21-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-21T19:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "rp-i0005",
+      "reason": "Product overview mapping the three core offerings for Wednesday carousel slot."
+    },
+    {
+      "slotId": "kaatdo-2026-10-22-0815",
+      "page": "kaatdo",
+      "at": "2026-10-22T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0005",
+      "reason": "Focus on locked parameters during market hours on Thursday image slot."
+    },
+    {
+      "slotId": "job_rez-2026-10-22-1230",
+      "page": "job_rez",
+      "at": "2026-10-22T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0007",
+      "reason": "Image highlighting unlimited watermark-free PDF exports."
+    },
+    {
+      "slotId": "job_rez-2026-10-23-1230",
+      "page": "job_rez",
+      "at": "2026-10-23T12:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "jr-i0008",
+      "reason": "Reel breaking down Job DNA scoring against posting requirements."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-23-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-23T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0006",
+      "reason": "Practical utility post emphasizing the live A4 auto-fit layout for Friday image slot."
+    },
+    {
+      "slotId": "kaatdo-2026-10-24-1100",
+      "page": "kaatdo",
+      "at": "2026-10-24T11:00:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "kd-i0006",
+      "reason": "Broker API comparison breakdown for Saturday carousel slot."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-24-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-24T19:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "rp-i0007",
+      "reason": "Matchmaking moderation overview for Saturday reel slot."
+    },
+    {
+      "slotId": "kaatdo-2026-10-25-1100",
+      "page": "kaatdo",
+      "at": "2026-10-25T11:00:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "kd-i0007",
+      "reason": "Transparent discussion of slippage and illiquid strikes for Sunday reel."
+    },
+    {
+      "slotId": "job_rez-2026-10-26-1230",
+      "page": "job_rez",
+      "at": "2026-10-26T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0009",
+      "reason": "Image covering free templates and standard typography options."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-26-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-26T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0008",
+      "reason": "Reinforcing freedom of choice around astrological details for Monday image slot."
+    },
+    {
+      "slotId": "kaatdo-2026-10-27-0815",
+      "page": "kaatdo",
+      "at": "2026-10-27T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0008",
+      "reason": "Technical transparency on audit log entries for Tuesday image slot."
+    },
+    {
+      "slotId": "job_rez-2026-10-27-1230",
+      "page": "job_rez",
+      "at": "2026-10-27T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0010",
+      "reason": "Image explaining the five local browser application statuses."
+    }
+  ]
+}
