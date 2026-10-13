@@ -1,12 +1,53 @@
 {
-  "updatedAt": "2026-10-13T12:22:53+05:30",
+  "updatedAt": "2026-10-13T14:58:05+05:30",
   "lastRun": {
-    "id": "engine-daily-20261013-1222-d51247",
-    "workflow": "engine-daily",
+    "id": "publisher-hourly-20261013-1458-110533",
+    "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-13T12:22:53+05:30"
+    "at": "2026-10-13T14:58:05+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261013-1458-110533",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-13T14:58:05+05:30",
+      "endedAt": "2026-10-13T14:58:05+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 17,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 0 waiting, 0 failed, 0 expired"
+        }
+      ],
+      "changed": [
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [],
+        "staleEdits": [],
+        "expired": [],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "idle"
+          },
+          "kaatdo": {
+            "outcome": "idle"
+          },
+          "job_rez": {
+            "outcome": "idle"
+          }
+        }
+      }
+    },
     {
       "id": "engine-daily-20261013-1222-d51247",
       "workflow": "engine-daily",
