@@ -1,12 +1,92 @@
 {
-  "updatedAt": "2026-10-13T23:07:08+05:30",
+  "updatedAt": "2026-10-13T23:19:10+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261013-2307-5e7992",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261013-2316-19e295",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-10-13T23:07:08+05:30"
+    "at": "2026-10-13T23:19:10+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261013-2316-19e295",
+      "workflow": "engine-daily",
+      "trigger": "dispatch",
+      "startedAt": "2026-10-13T23:16:54+05:30",
+      "endedAt": "2026-10-13T23:19:10+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": false,
+          "ms": 7732,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0,
+          "note": "AllProvidersFailedError: ceo: no provider answered — gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: gemini: HTTP 404 NOT_FOUND: This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started). | anthropic: skipped: secret ANTHROPIC_API_KEY missing | openai: skipped: secret OPENAI_API_KEY missing"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and 2026-09 has no runs or model calls to catch up on (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 111170,
+          "calls": 3,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.026114,
+          "note": "rishtapatra: 10 ideas, 8 slots, 8 assigned | kaatdo: 10 ideas, 8 slots, 8 assigned | job_rez: 12 ideas, 10 slots, 10 assigned | completed models: Google Gemini · gemini-3.8-flash (@rishtapatra); Google Gemini · gemini-3.8-flash (@kaatdo); Google Gemini · gemini-3.8-flash (@job_rez)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 17651,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0,
+          "note": "rishtapatra-2026-10-14-1930: AllProvidersFailedError: writer: no provider answered — gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: gemini: HTTP 404 NOT_FOUND: This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started). | anthropic: skipped: secret ANTHROPIC_API_KEY missing | openai: skipped: secret OPENAI_API_KEY missing | 0 written, 0 reworked"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 queued, 0 rework, 0 blocked"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.026114
+    },
     {
       "id": "publisher-hourly-20261013-2307-5e7992",
       "workflow": "publisher-hourly",
@@ -684,7 +764,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0
+    "paidEquivalentUsd": 0.026114
   },
   "pages": {
     "rishtapatra": {
