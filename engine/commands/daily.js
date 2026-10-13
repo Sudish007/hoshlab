@@ -578,6 +578,9 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
     // the engine-owned draft index the admin reads instead of listing state/drafts/ (R2-05); untouched when nothing moved
     const indexRel = state.writeDraftIndex(startedAt);
     if (indexRel) changedFiles.push(indexRel);
+    // Router attempts are appended immediately, but the git step commits only `changedFiles`; name the
+    // month partition whenever this run made a model call so usage never disappears with the runner.
+    if (AGENT_ORDER.some((name) => router.totalsFor(name).calls > 0)) changedFiles.push(state.monthLogPath("usage", startedAt));
 
     used = monthUsedUsd(state, startedAt);
     const hasFreeTierUsage = monthHasFreeTierUsage(state, startedAt);
