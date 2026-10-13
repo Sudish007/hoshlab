@@ -200,7 +200,7 @@ test("roster invariants: eight agents, qa/publisher deterministic-or-llm as desi
       const p = real.config.providers[a.provider];
       assert.ok(p && p.enabled, `${a.name}: provider enabled`);
       if (a.modelLadder === true) {
-        assert.deepEqual(p.modelLadder, ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"], `${a.name}: configured ladder`);
+        assert.deepEqual(p.modelLadder, ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"], `${a.name}: configured ladder`);
         for (const model of p.modelLadder) assert.ok(model in p.models, `${a.name}: ladder model ${model}`);
       } else assert.ok(a.model in p.models, `${a.name}: model ${a.model} in providers.${a.provider}.models`);
       for (const fb of a.fallback || []) assert.ok(real.config.providers[fb].enabled, `${a.name}: fallback ${fb}`);
@@ -236,17 +236,24 @@ test("config.json: real model ids with priceSource + pricesVerifiedAt per provid
   assert.equal(real.config.providers.gemini.minIntervalMs, 7000);
   assert.equal(real.config.providers.gemini.modelSource, "https://ai.google.dev/gemini-api/docs/models");
   assert.equal(real.config.providers.gemini.modelsVerifiedAt, "2026-10-13");
-  assert.deepEqual(real.config.providers.gemini.modelLadder, ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"]);
+  assert.deepEqual(real.config.providers.gemini.modelLadder, ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]);
   assert.equal(real.config.providers.anthropic.tier, "paid");
   assert.equal(real.config.providers.openai.tier, "paid");
   assert.equal(real.config.providers.anthropic.minIntervalMs, 0);
   assert.equal(real.config.providers.openai.minIntervalMs, 0);
   assert.ok("claude-sonnet-5-5" in real.config.providers.anthropic.models);
   assert.ok("gemini-3.8-flash" in real.config.providers.gemini.models);
-  assert.ok("gemini-2.5-flash" in real.config.providers.gemini.models);
-  assert.ok("gemini-2.5-flash-lite" in real.config.providers.gemini.models);
-  assert.equal(real.config.providers.gemini.models["gemini-2.5-flash"].thinkingBudget, 1024);
-  assert.equal(real.config.providers.gemini.models["gemini-2.5-flash-lite"].reasoning, undefined);
+  assert.ok("gemini-3.5-flash-lite" in real.config.providers.gemini.models);
+  assert.ok("gemini-3.1-flash-lite" in real.config.providers.gemini.models);
+  assert.equal(real.config.providers.gemini.models["gemini-3.5-flash-lite"].thinkingBudget, undefined);
+  assert.deepEqual(
+    [real.config.providers.gemini.models["gemini-3.5-flash-lite"].inputPerMTok, real.config.providers.gemini.models["gemini-3.5-flash-lite"].outputPerMTok],
+    [0.3, 2.5],
+  );
+  assert.deepEqual(
+    [real.config.providers.gemini.models["gemini-3.1-flash-lite"].inputPerMTok, real.config.providers.gemini.models["gemini-3.1-flash-lite"].outputPerMTok],
+    [0.25, 1.5],
+  );
   assert.ok("gpt-6-luna" in real.config.providers.openai.models);
 });
 

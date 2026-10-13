@@ -19,7 +19,7 @@ function sink() {
   return fn;
 }
 
-function modelLists({ anthropic = ["claude-sonnet-5-5"], gemini = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"], openai = ["gpt-6-luna"], fail = {} } = {}) {
+function modelLists({ anthropic = ["claude-sonnet-5-5"], gemini = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"], openai = ["gpt-6-luna"], fail = {} } = {}) {
   const calls = [];
   const fn = async (url, init = {}) => {
     const u = String(url);
@@ -93,8 +93,8 @@ test("check-models with keys (fake fetch): model ids verified against the provid
   assert.equal(code, 0, out.text());
   assert.ok(out.lines.includes("anthropic: claude-sonnet-5-5 available (temperature ignored by model (not sent))"), out.text());
   assert.ok(out.lines.includes("gemini: gemini-3.8-flash available (reasoning low)"), out.text());
-  assert.ok(out.lines.includes("gemini: gemini-2.5-flash available (thinking budget 1024)"), out.text());
-  assert.ok(out.lines.includes("gemini: gemini-2.5-flash-lite available"), out.text());
+  assert.ok(out.lines.includes("gemini: gemini-3.5-flash-lite available"), out.text());
+  assert.ok(out.lines.includes("gemini: gemini-3.1-flash-lite available"), out.text());
   assert.ok(out.lines.includes("gemini: automatic free-model ladder ready (primary gemini-3.8-flash; 2 of 2 alternates available)"), out.text());
   assert.ok(out.lines.includes("openai: gpt-6-luna available (reasoning low)"), out.text());
   assert.ok(out.lines.includes("anthropic: prices verified 2026-10-10 (https://platform.claude.com/docs/en/docs/about-claude/pricing)"));
@@ -110,11 +110,11 @@ test("check-models with keys (fake fetch): model ids verified against the provid
     stdout: onlyGemini,
     stderr: sink(),
     processEnv: { GEMINI_API_KEY: KEYS.GEMINI_API_KEY },
-    fetchImpl: modelLists({ gemini: ["gemini-3.8-flash", "gemini-2.5-flash"] }),
+    fetchImpl: modelLists({ gemini: ["gemini-3.8-flash", "gemini-3.5-flash-lite"] }),
     companyDir: COMPANY_DIR,
   });
   assert.equal(onlyGeminiCode, 0, onlyGemini.text());
-  assert.ok(onlyGemini.lines.includes("gemini: gemini-2.5-flash-lite unavailable (2 models listed by the provider)"), onlyGemini.text());
+  assert.ok(onlyGemini.lines.includes("gemini: gemini-3.1-flash-lite unavailable (2 models listed by the provider)"), onlyGemini.text());
   assert.ok(onlyGemini.lines.includes("gemini: automatic free-model ladder ready (primary gemini-3.8-flash; 1 of 2 alternates available)"), onlyGemini.text());
   assert.equal(onlyGemini.lines.at(-1), "check-models: 1 of 1 configured provider validated; 2 optional providers skipped");
   assert.ok(!onlyGemini.text().includes(KEYS.GEMINI_API_KEY));
@@ -125,7 +125,7 @@ test("check-models with keys (fake fetch): model ids verified against the provid
     fetchImpl: modelLists({ gemini: ["gemini-3.8-flash"] }),
   });
   assert.equal(noAlternate.ok, false);
-  assert.ok(noAlternate.lines.includes("gemini: ladder has no available alternate (gemini-2.5-flash, gemini-2.5-flash-lite)"));
+  assert.ok(noAlternate.lines.includes("gemini: ladder has no available alternate (gemini-3.5-flash-lite, gemini-3.1-flash-lite)"));
 
   // unknown model id on one provider → that provider fails, exit 1
   const env = readEnv(["ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"], KEYS);

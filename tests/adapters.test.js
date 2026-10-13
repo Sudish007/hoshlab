@@ -74,7 +74,7 @@ test("anthropic: temperature undefined → field omitted (acceptsTemperature:fal
   assert.equal(fetchImpl.calls[0].init.headers["anthropic-version"], anthropic.DEFAULT_API_VERSION);
 });
 
-test("gemini: exact structured JSON request bodies use model-specific thinking controls across the free ladder", async () => {
+test("gemini: exact structured JSON request bodies use configured ladder controls and 2.5 compatibility controls", async () => {
   const fetchImpl = fakeFetch([{ status: 200, body: geminiOk }]);
   const res = await gemini.complete({ ...common, temperature: 0.3, fetchImpl, model: "gemini-3.8-flash", endpoint: "https://generativelanguage.googleapis.com/v1beta", reasoning: "low" });
   const call = fetchImpl.calls[0];
@@ -105,6 +105,34 @@ test("gemini: exact structured JSON request bodies use model-specific thinking c
       temperature: 0.3,
       responseSchema: toJsonSchema(SPEC, "gemini"),
       thinkingConfig: { thinkingLevel: "low" },
+    },
+  });
+
+  const flash35Lite = fakeFetch([{ status: 200, body: geminiOk }]);
+  await gemini.complete({ ...common, temperature: 0.3, fetchImpl: flash35Lite, model: "gemini-3.5-flash-lite", endpoint: "https://generativelanguage.googleapis.com/v1beta" });
+  assert.equal(flash35Lite.calls[0].url, "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent");
+  assert.deepEqual(flash35Lite.calls[0].body, {
+    systemInstruction: { parts: [{ text: "SYSTEM TEXT" }] },
+    contents: [{ role: "user", parts: [{ text: '{"task":"x"}' }] }],
+    generationConfig: {
+      maxOutputTokens: 4000,
+      responseMimeType: "application/json",
+      temperature: 0.3,
+      responseSchema: toJsonSchema(SPEC, "gemini"),
+    },
+  });
+
+  const flash31Lite = fakeFetch([{ status: 200, body: geminiOk }]);
+  await gemini.complete({ ...common, temperature: 0.3, fetchImpl: flash31Lite, model: "gemini-3.1-flash-lite", endpoint: "https://generativelanguage.googleapis.com/v1beta" });
+  assert.equal(flash31Lite.calls[0].url, "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent");
+  assert.deepEqual(flash31Lite.calls[0].body, {
+    systemInstruction: { parts: [{ text: "SYSTEM TEXT" }] },
+    contents: [{ role: "user", parts: [{ text: '{"task":"x"}' }] }],
+    generationConfig: {
+      maxOutputTokens: 4000,
+      responseMimeType: "application/json",
+      temperature: 0.3,
+      responseSchema: toJsonSchema(SPEC, "gemini"),
     },
   });
 

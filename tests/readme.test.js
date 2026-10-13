@@ -104,8 +104,8 @@ test("how a post happens, honesty rules, cadence sentences, limits (N16, N21), r
   has("A 19:30 IST slot posts in the first publisher run at or after 19:30 IST");
   has("## Limits");
   has("[official Gemini models catalog](https://ai.google.dev/gemini-api/docs/models)");
-  has("[Gemini 2.5 Flash](https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash)");
-  has("[Gemini 2.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-lite)");
+  has("[Gemini 3.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite)");
+  has("[Gemini 3.1 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite)");
   has("[Gemini API pricing page](https://ai.google.dev/gemini-api/docs/pricing)");
   has("free-tier content may be used to improve Google's products");
   has("Rate limits are applied per project, not per API key");
