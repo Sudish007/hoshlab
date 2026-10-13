@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T00:01:42+05:30",
+  "generatedAt": "2026-10-14T00:16:24+05:30",
   "horizonDays": 14,
   "slots": [
     {
@@ -53,9 +53,10 @@
       "page": "rishtapatra",
       "at": "2026-10-16T19:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0002",
-      "reason": "Single clear claim highlighting local-first browser privacy for Friday image slot."
+      "reason": "Single clear claim highlighting local-first browser privacy for Friday image slot.",
+      "draftId": "rp-2026-10-16-device-first-biodata-privacy"
     },
     {
       "slotId": "kaatdo-2026-10-17-1100",

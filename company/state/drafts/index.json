@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-14T00:01:42+05:30",
+  "updatedAt": "2026-10-14T00:16:24+05:30",
   "drafts": [
     {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
@@ -10,6 +10,17 @@
       "slotAt": "2026-10-14T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-10-14T00:01:42+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-10-16-device-first-biodata-privacy",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "image",
+      "slotId": "rishtapatra-2026-10-16-1930",
+      "slotAt": "2026-10-16T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-14T00:16:24+05:30",
       "qa": true
     }
   ]
