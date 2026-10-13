@@ -16,8 +16,8 @@ const { config, roster, charters, brands } = company;
 const PRICES = {
   anthropic: config.providers.anthropic.models["claude-sonnet-5-5"],
   gemini: config.providers.gemini.models["gemini-3.8-flash"],
-  flash25: config.providers.gemini.models["gemini-2.5-flash"],
-  flashLite: config.providers.gemini.models["gemini-2.5-flash-lite"],
+  flash35Lite: config.providers.gemini.models["gemini-3.5-flash-lite"],
+  flash31Lite: config.providers.gemini.models["gemini-3.1-flash-lite"],
   openai: config.providers.openai.models["gpt-6-luna"],
 };
 const KEYS = { ANTHROPIC_API_KEY: "FAKE-anthropic-key-aaaaaaaaaaaaaaaaaaaaaaaa", GEMINI_API_KEY: "FAKE-gemini-key-bbbbbbbbbbbbbbbbbbbbbbbbbbbb", OPENAI_API_KEY: "FAKE-openai-key-cccccccccccccccccccccccccccc" };
@@ -81,8 +81,8 @@ test("resolveAgent: all six LLM agents inherit the same three-model Gemini ladde
     writer.chain.map((c) => [c.provider, c.model]),
     [
       ["gemini", "gemini-3.8-flash"],
-      ["gemini", "gemini-2.5-flash"],
-      ["gemini", "gemini-2.5-flash-lite"],
+      ["gemini", "gemini-3.5-flash-lite"],
+      ["gemini", "gemini-3.1-flash-lite"],
       ["anthropic", "claude-sonnet-5-5"],
       ["openai", "gpt-6-luna"],
     ],
@@ -92,7 +92,7 @@ test("resolveAgent: all six LLM agents inherit the same three-model Gemini ladde
   assert.equal(writer.chain[0].reasoning, "low");
   assert.equal(writer.chain[0].thinkingBudget, undefined);
   assert.equal(writer.chain[1].reasoning, undefined);
-  assert.equal(writer.chain[1].thinkingBudget, 1024);
+  assert.equal(writer.chain[1].thinkingBudget, undefined);
   assert.equal(writer.chain[2].reasoning, undefined);
   assert.equal(writer.chain[2].thinkingBudget, undefined);
   assert.equal(writer.chain[0].tier, "free");
@@ -104,7 +104,7 @@ test("resolveAgent: all six LLM agents inherit the same three-model Gemini ladde
   for (const name of ["ceo", "hr", "strategist", "writer", "qa", "analyst"]) {
     assert.equal(roster.agents.find((a) => a.name === name).model, undefined, `${name}: no model id duplicated in the roster`);
     assert.equal(roster.agents.find((a) => a.name === name).modelLadder, true, `${name}: inherits provider ladder`);
-    assert.deepEqual(resolveAgent(roster, config, name).chain.map((c) => c.model), ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite", "claude-sonnet-5-5", "gpt-6-luna"], name);
+    assert.deepEqual(resolveAgent(roster, config, name).chain.map((c) => c.model), ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "claude-sonnet-5-5", "gpt-6-luna"], name);
   }
   assert.equal(MAX_GEMINI_LADDER_ATTEMPTS, 3);
   assert.equal(resolveAgent(roster, config, "qa").temperature, 0);
@@ -164,40 +164,40 @@ test("happy path: Gemini free tier answers; usage records USD 0 billed plus the 
   }
 });
 
-test("Gemini ladder: primary 503 advances to 2.5 Flash and records each actual model at free-tier cost", async () => {
-  const h = harness({ queues: { gemini: [{ status: 503, body: { error: { status: "UNAVAILABLE", message: `high demand ${KEYS.GEMINI_API_KEY}` } } }, { body: geminiBody(GOOD, { promptTokenCount: 4000, candidatesTokenCount: 600 }, "gemini-2.5-flash") }] } });
+test("Gemini ladder: primary 503 advances to 3.5 Flash-Lite and records each actual model at free-tier cost", async () => {
+  const h = harness({ queues: { gemini: [{ status: 503, body: { error: { status: "UNAVAILABLE", message: `high demand ${KEYS.GEMINI_API_KEY}` } } }, { body: geminiBody(GOOD, { promptTokenCount: 4000, candidatesTokenCount: 600 }, "gemini-3.5-flash-lite") }] } });
   try {
     const res = await h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra, page: "rishtapatra" } });
     assert.equal(res.provider, "gemini");
-    assert.equal(res.model, "gemini-2.5-flash");
+    assert.equal(res.model, "gemini-3.5-flash-lite");
     assert.equal(res.calls, 2);
     assert.equal(res.costUsd, 0);
-    assert.equal(res.paidEquivalentUsd, costUsd(PRICES.flash25, 4000, 600));
-    assert.deepEqual(h.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), ["gemini-3.8-flash", "gemini-2.5-flash"]);
-    assert.deepEqual(h.fetchImpl.calls[1].body.generationConfig.thinkingConfig, { thinkingBudget: 1024 });
+    assert.equal(res.paidEquivalentUsd, costUsd(PRICES.flash35Lite, 4000, 600));
+    assert.deepEqual(h.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), ["gemini-3.8-flash", "gemini-3.5-flash-lite"]);
+    assert.equal("thinkingConfig" in h.fetchImpl.calls[1].body.generationConfig, false, "Flash-Lite omits reasoning configuration");
     assert.deepEqual(h.sleeps, [7000], "provider pacing is observed before the alternate model");
     const lines = h.usage();
-    assert.deepEqual(lines.map((l) => [l.model, l.ok, l.costUsd]), [["gemini-3.8-flash", false, 0], ["gemini-2.5-flash", true, 0]]);
-    assert.equal(lines[1].paidEquivalentUsd, costUsd(PRICES.flash25, 4000, 600));
+    assert.deepEqual(lines.map((l) => [l.model, l.ok, l.costUsd]), [["gemini-3.8-flash", false, 0], ["gemini-3.5-flash-lite", true, 0]]);
+    assert.equal(lines[1].paidEquivalentUsd, costUsd(PRICES.flash35Lite, 4000, 600));
     assert.ok(!lines[0].error.includes(KEYS.GEMINI_API_KEY), "key scrubbed from failure usage");
     assert.deepEqual([...h.router.flags], [], "a successful alternate does not flag provider_down:gemini");
-    assert.deepEqual(h.router.completionsFor("writer"), [{ provider: "gemini", model: "gemini-2.5-flash", page: "rishtapatra" }]);
+    assert.deepEqual(h.router.completionsFor("writer"), [{ provider: "gemini", model: "gemini-3.5-flash-lite", page: "rishtapatra" }]);
   } finally {
     h.cleanup();
   }
 });
 
-test("Gemini ladder: two 503s advance to Flash-Lite with three HTTP attempts total", async () => {
+test("Gemini ladder: two 503s advance to 3.1 Flash-Lite with three HTTP attempts total", async () => {
   const down = { status: 503, body: { error: { status: "UNAVAILABLE", message: "model overloaded" } } };
-  const h = harness({ queues: { gemini: [down, down, { body: geminiBody(GOOD, { promptTokenCount: 3000, candidatesTokenCount: 500 }, "gemini-2.5-flash-lite") }] } });
+  const h = harness({ queues: { gemini: [down, down, { body: geminiBody(GOOD, { promptTokenCount: 3000, candidatesTokenCount: 500 }, "gemini-3.1-flash-lite") }] } });
   try {
     const res = await h.router.complete("strategist", { task: TASK, spec: SPEC, context: { brand: brands.jobrez, page: "job_rez" } });
-    assert.equal(res.model, "gemini-2.5-flash-lite");
+    assert.equal(res.model, "gemini-3.1-flash-lite");
     assert.equal(res.calls, MAX_GEMINI_LADDER_ATTEMPTS);
     assert.equal(h.fetchImpl.calls.length, 3);
     assert.deepEqual(h.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), config.providers.gemini.modelLadder);
     assert.equal("thinkingConfig" in h.fetchImpl.calls[2].body.generationConfig, false, "Flash-Lite omits reasoning configuration");
-    assert.equal(res.paidEquivalentUsd, costUsd(PRICES.flashLite, 3000, 500));
+    assert.equal(res.paidEquivalentUsd, costUsd(PRICES.flash31Lite, 3000, 500));
     assert.deepEqual(h.usage().map((l) => l.model), config.providers.gemini.modelLadder);
     assert.deepEqual([...h.router.flags], []);
   } finally {
@@ -223,6 +223,7 @@ test("Gemini failure classification advances only for transient and model-availa
   for (const status of [429, 500, 502, 503, 504]) assert.equal(geminiFailureAction({ status, message: "transient" }), "next_model", String(status));
   assert.equal(geminiFailureAction({ status: 400, message: "model overloaded" }), "next_model");
   assert.equal(geminiFailureAction({ status: 404, message: "models/x is not found or unsupported" }), "next_model");
+  assert.equal(geminiFailureAction({ status: 404, message: "This model models/gemini-3.5-flash-lite is no longer available to new users." }), "next_model");
   assert.equal(geminiFailureAction({ status: 404, message: "This model models/gemini-2.5-flash is no longer available to new users." }), "next_model");
   assert.equal(geminiFailureAction({ status: 401, message: "bad key" }), "stop_ladder");
   assert.equal(geminiFailureAction({ status: 403, message: "permission denied" }), "stop_ladder");
@@ -248,14 +249,14 @@ test("Gemini Retry-After/retryDelay is honoured before the next model and capped
     queues: {
       gemini: [
         { status: 429, body: { error: { status: "RESOURCE_EXHAUSTED", message: "quota", details: [{ "@type": "type.googleapis.com/google.rpc.RetryInfo", retryDelay: "90s" }] } } },
-        { body: geminiBody(GOOD, undefined, "gemini-2.5-flash") },
+        { body: geminiBody(GOOD, undefined, "gemini-3.5-flash-lite") },
       ],
     },
   });
   try {
     const res = await h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra } });
     assert.equal(res.provider, "gemini");
-    assert.equal(res.model, "gemini-2.5-flash");
+    assert.equal(res.model, "gemini-3.5-flash-lite");
     assert.deepEqual(h.sleeps, [RATE_LIMIT_CAP_MS]);
     assert.equal(RATE_LIMIT_CAP_MS, 60000);
     assert.equal(rateLimitDelayMs(90000, 0), 60000);
@@ -286,11 +287,11 @@ test("Gemini auth/permission errors stop the shared-key ladder; paid fallback re
 });
 
 test("Gemini model-not-found semantics skip only that model; generic 400/404 stop the ladder", async () => {
-  const missing = harness({ queues: { gemini: [{ status: 404, body: { error: { message: "This model models/gemini-3.8-flash is no longer available to new users. Please update your code." } } }, { body: geminiBody(GOOD, undefined, "gemini-2.5-flash") }] } });
+  const missing = harness({ queues: { gemini: [{ status: 404, body: { error: { message: "This model models/gemini-3.8-flash is no longer available to new users. Please update your code." } } }, { body: geminiBody(GOOD, undefined, "gemini-3.5-flash-lite") }] } });
   try {
     const res = await missing.router.complete("qa", { task: TASK, spec: SPEC, context: { brand: brands.kaatdo, page: "kaatdo" } });
-    assert.equal(res.model, "gemini-2.5-flash");
-    assert.deepEqual(missing.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), ["gemini-3.8-flash", "gemini-2.5-flash"]);
+    assert.equal(res.model, "gemini-3.5-flash-lite");
+    assert.deepEqual(missing.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), ["gemini-3.8-flash", "gemini-3.5-flash-lite"]);
     assert.deepEqual([...missing.router.flags], []);
   } finally {
     missing.cleanup();
@@ -429,17 +430,17 @@ test("invalid output then a valid repair → free-tier result combines billed an
 
 test("schema repair uses the last successful alternate model and is the only fourth Gemini HTTP attempt", async () => {
   const down = { status: 503, body: { error: { status: "UNAVAILABLE", message: "high demand" } } };
-  const h = harness({ queues: { gemini: [down, down, { body: geminiBody(BAD, undefined, "gemini-2.5-flash-lite") }, { body: geminiBody(GOOD, undefined, "gemini-2.5-flash-lite") }] } });
+  const h = harness({ queues: { gemini: [down, down, { body: geminiBody(BAD, undefined, "gemini-3.1-flash-lite") }, { body: geminiBody(GOOD, undefined, "gemini-3.1-flash-lite") }] } });
   try {
     const res = await h.router.complete("writer", { task: TASK, spec: SPEC, context: { brand: brands.rishtapatra, page: "rishtapatra" } });
     assert.equal(res.repaired, true);
     assert.equal(res.calls, MAX_GEMINI_LADDER_ATTEMPTS + 1);
-    assert.equal(res.model, "gemini-2.5-flash-lite");
-    assert.deepEqual(h.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-flash-lite"]);
+    assert.equal(res.model, "gemini-3.1-flash-lite");
+    assert.deepEqual(h.fetchImpl.calls.map((c) => c.url.match(/models\/([^:]+)/)[1]), ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.1-flash-lite"]);
     assert.ok(h.fetchImpl.calls[3].body.contents[0].parts[0].text.includes("Return only the corrected JSON."));
     assert.equal(res.costUsd, 0);
-    assert.equal(res.paidEquivalentUsd, Math.round(2 * costUsd(PRICES.flashLite, 5000, 700) * 1e6) / 1e6);
-    assert.deepEqual(h.usage().map((l) => [l.model, l.ok]), [["gemini-3.8-flash", false], ["gemini-2.5-flash", false], ["gemini-2.5-flash-lite", true], ["gemini-2.5-flash-lite", true]]);
+    assert.equal(res.paidEquivalentUsd, Math.round(2 * costUsd(PRICES.flash31Lite, 5000, 700) * 1e6) / 1e6);
+    assert.deepEqual(h.usage().map((l) => [l.model, l.ok]), [["gemini-3.8-flash", false], ["gemini-3.5-flash-lite", false], ["gemini-3.1-flash-lite", true], ["gemini-3.1-flash-lite", true]]);
   } finally {
     h.cleanup();
   }

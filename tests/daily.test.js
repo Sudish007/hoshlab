@@ -198,7 +198,7 @@ test("Monday run on the fixture (MOCK_LLM): CEO memo, Strategist per page, Write
     assert.equal(routing.length, 6);
     for (const name of ["ceo", "hr", "strategist", "writer", "qa", "analyst"]) {
       const line = routing.find((l) => l.startsWith(`[router] ${name}:`));
-      assert.ok(line && line.includes("Google Gemini (free tier) · automatic free-model ladder gemini-3.8-flash → gemini-2.5-flash → gemini-2.5-flash-lite · paid fallback after ladder Anthropic, OpenAI · MOCK_LLM=1"), `${name}: ${line}`);
+      assert.ok(line && line.includes("Google Gemini (free tier) · automatic free-model ladder gemini-3.8-flash → gemini-3.5-flash-lite → gemini-3.1-flash-lite · paid fallback after ladder Anthropic, OpenAI · MOCK_LLM=1"), `${name}: ${line}`);
     }
     for (const name of AGENT_ORDER) assert.ok(out.lines.some((l) => l.startsWith(`[${name}] `)), name);
     assert.ok(out.lines.at(-1).startsWith("[daily] ok "), out.lines.at(-1));
@@ -461,16 +461,16 @@ test("a successful alternate Gemini model makes the agent step successful and re
   const fetchImpl = async () => {
     n += 1;
     if (n === 1) return new Response(JSON.stringify({ error: { status: "UNAVAILABLE", message: "high demand" } }), { status: 503, headers: { "content-type": "application/json" } });
-    return new Response(JSON.stringify({ responseId: "alternate-ok", modelVersion: "gemini-2.5-flash", candidates: [{ finishReason: "STOP", content: { parts: [{ text: JSON.stringify(output) }] } }], usageMetadata: { promptTokenCount: 4000, candidatesTokenCount: 600 } }), { status: 200, headers: { "content-type": "application/json" } });
+    return new Response(JSON.stringify({ responseId: "alternate-ok", modelVersion: "gemini-3.5-flash-lite", candidates: [{ finishReason: "STOP", content: { parts: [{ text: JSON.stringify(output) }] } }], usageMetadata: { promptTokenCount: 4000, candidatesTokenCount: 600 } }), { status: 200, headers: { "content-type": "application/json" } });
   };
   try {
     const r = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: MONDAY, processEnv: { GEMINI_API_KEY: key }, fetchImpl, sleep: async () => {}, flags: { agents: "ceo" }, renderer: fakeRenderer(), stdout: () => {} });
     assert.equal(agent(r, "ceo").ok, true);
     assert.equal(agent(r, "ceo").calls, 2);
-    assert.match(agent(r, "ceo").note, /completed models: Google Gemini · gemini-2\.5-flash/);
+    assert.match(agent(r, "ceo").note, /completed models: Google Gemini · gemini-3\.5-flash-lite/);
     assert.ok(!r.flags.includes("provider_down:gemini"));
     const usage = fx.usage().filter((u) => u.runId === r.run.id);
-    assert.deepEqual(usage.map((u) => [u.model, u.ok, u.costUsd]), [["gemini-3.8-flash", false, 0], ["gemini-2.5-flash", true, 0]]);
+    assert.deepEqual(usage.map((u) => [u.model, u.ok, u.costUsd]), [["gemini-3.8-flash", false, 0], ["gemini-3.5-flash-lite", true, 0]]);
   } finally {
     fx.cleanup();
   }

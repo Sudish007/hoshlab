@@ -302,7 +302,7 @@ test("buildTask carries the roster, the stats, the month's feedback and ONLY the
   assert.equal(task.roster.find((a) => a.name === "designer").provider, null);
   assert.equal(task.roster.find((a) => a.name === "writer").model, "gemini-3.8-flash", "HR sees the ladder's effective primary");
   assert.equal(task.roster.find((a) => a.name === "writer").modelLadder, true);
-  assert.deepEqual(task.providers.gemini.modelLadder, ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"]);
+  assert.deepEqual(task.providers.gemini.modelLadder, ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]);
   assert.deepEqual(task.stats, stats);
   assert.equal(task.feedback.length, 4, "all four fixture feedback lines are from October (two rejects, two notes — FEAT-205)");
   assert.deepEqual(Object.keys(task.providers), ["anthropic", "gemini", "openai"]);
