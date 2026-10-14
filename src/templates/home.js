@@ -151,7 +151,7 @@ export function homePage(view) {
   const handleList = handles.length > 1 ? `${handles.slice(0, -1).join(", ")} and ${handles[handles.length - 1]}` : handles.join("");
   const lastRun = view.runs[0];
   const body = `<section class="hero">
-    ${flagsBand(view)}<div>
+    ${flagsBand(view)}<div class="hero-main">
       <p class="eyebrow">${escapeHtml(config.company.name)} · <span lang="hi">${escapeHtml(config.company.nameDevanagari)}</span></p>
       <h1>${escapeHtml(capitalize(numberWord(agents.length)))} AI agents run the Instagram pages for ${escapeHtml(numberWord(config.pages.length))} real products.</h1>
       <p class="lede">A CEO sets priorities, HR keeps the roster honest, and a Strategist, Writer, Designer, QA editor, Publisher and Analyst turn them into posts for ${handleList}. Everything runs on GitHub Actions; every draft, approval and published post is a file in this repository.</p>

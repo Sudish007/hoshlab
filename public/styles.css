@@ -192,7 +192,7 @@ strong { font-weight: 650; }
 /* Brand pages: the title shares its row with the page's status chips, so the top of the band is composed. */
 .title-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1.5rem; }
 .title-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-@media (min-width: 64em) { .hero { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: stretch; } }
+@media (min-width: 64em) { .hero { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: stretch; } .hero-main { display: flex; flex-direction: column; min-width: 0; } .hero-main .trust-row { flex: 1; } }
 .page-title [lang="hi"] { font-weight: 700; }
 
 .next-up { border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); padding: 0.75rem 1rem; display: grid; gap: 0.25rem; align-content: start; }
@@ -293,7 +293,8 @@ strong { font-weight: 650; }
 .agent .body { display: grid; gap: 0.35rem; min-width: 0; }
 .agent ul { margin: 0; padding-left: 1.1rem; font-size: var(--fs-sm); }
 .agent .nots { color: var(--ink-2); font-size: var(--fs-sm); margin: 0; }
-.agent .foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; font-size: var(--fs-xs); color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 0.6rem; }
+.agent .foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; font-size: var(--fs-xs); color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 0.6rem; min-width: 0; }
+.agent .foot .chip { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 .org { display: grid; gap: 0.5rem; font-size: var(--fs-sm); border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); padding: 1rem; align-content: start; }
 .org .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 .org .lvl { font-weight: 700; min-width: 7rem; color: var(--ink-2); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; }
