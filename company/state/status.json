@@ -1,12 +1,79 @@
 {
-  "updatedAt": "2026-10-14T19:16:20+05:30",
+  "updatedAt": "2026-10-15T00:09:36+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261014-1916-615fde",
+    "id": "publisher-hourly-20261015-0009-467c5a",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-14T19:16:20+05:30"
+    "at": "2026-10-15T00:09:36+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261015-0009-467c5a",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-15T00:09:36+05:30",
+      "endedAt": "2026-10-15T00:09:36+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 12,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 3 waiting, 0 failed, 0 expired"
+        }
+      ],
+      "changed": [
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-16-device-first-biodata-privacy",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-15-automated-breach-reaction",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-10-14-six-layout-rules-measured-live",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-16-branching-from-a-master-resume",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "idle"
+          },
+          "kaatdo": {
+            "outcome": "idle"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.048445
+    },
     {
       "id": "publisher-hourly-20261014-1916-615fde",
       "workflow": "publisher-hourly",
@@ -1224,71 +1291,6 @@
           "expiresAt": null
         }
       }
-    },
-    {
-      "id": "engine-daily-20261012-0831-b93e97",
-      "workflow": "engine-daily",
-      "trigger": "schedule",
-      "startedAt": "2026-10-12T08:31:45+05:30",
-      "endedAt": "2026-10-12T08:31:46+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "ceo",
-          "ok": false,
-          "ms": 3,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "AllProvidersFailedError: ceo: no provider answered — anthropic: skipped: secret ANTHROPIC_API_KEY missing | openai: skipped: secret OPENAI_API_KEY missing | gemini: skipped: secret GEMINI_API_KEY missing"
-        },
-        {
-          "name": "hr",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: phase2 — HR monthly review: not built yet (phase 2)",
-          "skipped": "phase2"
-        },
-        {
-          "name": "strategist",
-          "ok": false,
-          "ms": 2,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "rishtapatra: AllProvidersFailedError: strategist: no provider answered — openai: skipped: secret OPENAI_API_KEY missing | anthropic: skipped: secret ANTHROPIC_API_KEY missing"
-        },
-        {
-          "name": "writer",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 written, 0 reworked"
-        },
-        {
-          "name": "designer",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 rendered, 0 refused"
-        },
-        {
-          "name": "qa",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 queued, 0 rework, 0 blocked"
-        }
-      ],
-      "changed": [
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0
     }
   ],
   "queue": {
