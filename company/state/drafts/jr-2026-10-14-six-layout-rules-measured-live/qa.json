@@ -1,0 +1,94 @@
+{
+  "draftId": "jr-2026-10-14-six-layout-rules-measured-live",
+  "revision": 1,
+  "at": "2026-10-14T10:10:41+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "535/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "13 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "9.5 → jr-f07"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "4 alt texts, longest 91/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "4 × 1080x1350 jpeg max 93 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.01 over 1 recent caption"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Six layout rules are checked on the rendered page after every edit including single-column order, standard headings, real bullet lists, selectable text, no tables or floats, and body text of at least 9.5pt",
+        "ok": true,
+        "factId": "jr-f07"
+      },
+      {
+        "claim": "This check is structural enforcement, not a certification against any ATS vendor",
+        "ok": true,
+        "factId": "jr-f07"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is precise and matches the voice requirements."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261014-1010-d13868"
+}

@@ -6,12 +6,12 @@
   "slotAt": "2026-10-14T19:30:00+05:30",
   "format": "carousel",
   "language": "hi",
-  "status": "queued",
+  "status": "rework",
   "revision": 1,
-  "reworkCount": 0,
+  "reworkCount": 1,
   "mock": false,
   "createdAt": "2026-10-14T00:01:42+05:30",
-  "updatedAt": "2026-10-14T00:01:42+05:30",
+  "updatedAt": "2026-10-14T10:10:41+05:30",
   "by": "writer",
   "runId": "engine-daily-20261014-0001-3ed4b2",
   "caption": "बायोडाटा बनाते समय क्या लिखें और क्या छोड़ें, यह तय करना अब आसान है। Our guided 7-step editor takes you through personal, family, education and career details smoothly, while keeping your information private on your device. Visit https://rishtapatra.com to create your biodata today. #RishtaPatra #BiodataMaker",
@@ -87,5 +87,9 @@
   ],
   "publishAttempts": [],
   "designNote": "3 slides · variant A · maroon and cream",
-  "qaRef": "drafts/rp-2026-10-14-guided-7-step-biodata-flow/qa.json"
+  "qaRef": "drafts/rp-2026-10-14-guided-7-step-biodata-flow/qa.json",
+  "qaReasons": [
+    "alt_text: altText: describes a product UI/screen/preview, but this format renders branded text artwork; slides[0].altText: include words that are visibly rendered in the artwork; slides[2].altText: describes a product UI/screen/preview, but this format renders branded text artwork",
+    "invalid_output: $.slides[2].altText: describes a product UI/screen/preview, but this format renders branded text artwork"
+  ]
 }

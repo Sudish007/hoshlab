@@ -1,15 +1,48 @@
 {
-  "updatedAt": "2026-10-14T00:16:24+05:30",
+  "updatedAt": "2026-10-14T10:10:41+05:30",
   "drafts": [
+    {
+      "id": "jr-2026-10-14-six-layout-rules-measured-live",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "job_rez-2026-10-14-1230",
+      "slotAt": "2026-10-14T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-14T10:10:41+05:30",
+      "qa": true
+    },
+    {
+      "id": "jr-2026-10-16-branching-from-a-master-resume",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "job_rez-2026-10-16-1230",
+      "slotAt": "2026-10-16T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-14T10:10:41+05:30",
+      "qa": true
+    },
+    {
+      "id": "kd-2026-10-15-automated-breach-reaction",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "image",
+      "slotId": "kaatdo-2026-10-15-0815",
+      "slotAt": "2026-10-15T08:15:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-14T10:10:41+05:30",
+      "qa": true
+    },
     {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "rework",
       "format": "carousel",
       "slotId": "rishtapatra-2026-10-14-1930",
       "slotAt": "2026-10-14T19:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-14T00:01:42+05:30",
+      "updatedAt": "2026-10-14T10:10:41+05:30",
       "qa": true
     },
     {
@@ -19,8 +52,8 @@
       "format": "image",
       "slotId": "rishtapatra-2026-10-16-1930",
       "slotAt": "2026-10-16T19:30:00+05:30",
-      "revision": 1,
-      "updatedAt": "2026-10-14T00:16:24+05:30",
+      "revision": 2,
+      "updatedAt": "2026-10-14T10:10:41+05:30",
       "qa": true
     }
   ]

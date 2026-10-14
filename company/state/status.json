@@ -1,12 +1,104 @@
 {
-  "updatedAt": "2026-10-14T07:25:28+05:30",
+  "updatedAt": "2026-10-14T10:22:30+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261014-0725-0faacb",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261014-1010-d13868",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-10-14T07:25:28+05:30"
+    "at": "2026-10-14T10:22:30+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261014-1010-d13868",
+      "workflow": "engine-daily",
+      "trigger": "dispatch",
+      "startedAt": "2026-10-14T10:10:41+05:30",
+      "endedAt": "2026-10-14T10:22:30+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W42.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and 2026-09 has no runs or model calls to catch up on (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 23,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "rishtapatra: 0 ideas, 8 slots, model not called (backlog full) | kaatdo: 0 ideas, 8 slots, model not called (backlog full) | job_rez: 0 ideas, 10 slots, model not called (backlog full)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 390958,
+          "calls": 14,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.031011,
+          "note": "rp-2026-10-14-guided-7-step-biodata-flow: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | job_rez-2026-10-15-1230: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | 3 written, 1 reworked, 2 invalid_output | completed models: Google Gemini · gemini-3.8-flash (@job_rez); Google Gemini · gemini-3.8-flash (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 51396,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "4 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 266010,
+          "calls": 8,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.007469,
+          "note": "queued recheck rp-2026-10-14-guided-7-step-biodata-flow → rework: alt_text: altText: describes a product UI/screen/preview, but this format renders branded text artwork; slides[0].altText: include words that are visibly rendered in the artwork; slides[2].altText: describes a product UI/screen/preview, but this format renders branded text artwork | queued recheck rp-2026-10-16-device-first-biodata-privacy → rework: alt_text: altText: describe the rendered text artwork (card, graphic or slide); altText: describes a product UI/screen/preview, but this format renders branded text artwork; altText: include words that are visibly rendered in the artwork; brand_lint: caption: rp-f05 is the local biodata maker; say create/build your biodata, not a rishta or matchmaking profile; artwork.facts[2]: qualify privacy to the local biodata-making flow | 4 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/rp-2026-10-14-guided-7-step-biodata-flow/draft.json",
+        "company/state/drafts/rp-2026-10-14-guided-7-step-biodata-flow/qa.json",
+        "company/state/drafts/rp-2026-10-16-device-first-biodata-privacy/draft.json",
+        "company/state/drafts/rp-2026-10-16-device-first-biodata-privacy/qa.json",
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/drafts/jr-2026-10-14-six-layout-rules-measured-live/draft.json",
+        "company/state/drafts/kd-2026-10-15-automated-breach-reaction/draft.json",
+        "company/state/drafts/jr-2026-10-16-branching-from-a-master-resume/draft.json",
+        "company/state/drafts/jr-2026-10-14-six-layout-rules-measured-live/qa.json",
+        "company/state/drafts/jr-2026-10-16-branching-from-a-master-resume/qa.json",
+        "company/state/drafts/kd-2026-10-15-automated-breach-reaction/qa.json",
+        "company/state/drafts/index.json",
+        "company/state/usage/2026-10.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.03848
+    },
     {
       "id": "publisher-hourly-20261014-0725-0faacb",
       "workflow": "publisher-hourly",
@@ -1107,9 +1199,9 @@
     }
   ],
   "queue": {
-    "rishtapatra": 2,
-    "kaatdo": 0,
-    "job_rez": 0
+    "rishtapatra": 1,
+    "kaatdo": 1,
+    "job_rez": 2
   },
   "blocked": {},
   "budget": {
@@ -1118,7 +1210,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.005897
+    "paidEquivalentUsd": 0.03848
   },
   "pages": {
     "rishtapatra": {
@@ -1140,7 +1232,5 @@
       "lastPublishedAt": null
     }
   },
-  "flags": [
-    "provider_down:gemini"
-  ]
+  "flags": []
 }

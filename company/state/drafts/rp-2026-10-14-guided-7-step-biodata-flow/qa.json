@@ -1,10 +1,10 @@
 {
   "draftId": "rp-2026-10-14-guided-7-step-biodata-flow",
   "revision": 1,
-  "at": "2026-10-14T00:01:42+05:30",
-  "passed": true,
+  "at": "2026-10-14T10:10:41+05:30",
+  "passed": false,
   "deterministic": {
-    "passed": true,
+    "passed": false,
     "checks": [
       {
         "id": "caption_length",
@@ -33,8 +33,8 @@
       },
       {
         "id": "alt_text",
-        "ok": true,
-        "detail": "3 alt texts, longest 41/100"
+        "ok": false,
+        "detail": "altText: describes a product UI/screen/preview, but this format renders branded text artwork; slides[0].altText: include words that are visibly rendered in the artwork; slides[2].altText: describes a product UI/screen/preview, but this format renders branded text artwork"
       },
       {
         "id": "language",
@@ -44,7 +44,7 @@
       {
         "id": "media_spec",
         "ok": true,
-        "detail": "3 × 1080x1350 jpeg max 78 KB"
+        "detail": "3 × 1080x1350 jpeg max 78 KB (metadata only: magic and SOF not verified)"
       },
       {
         "id": "links",
@@ -59,7 +59,7 @@
       {
         "id": "duplicate",
         "ok": true,
-        "detail": "max jaccard 0.00 (no recent captions)"
+        "detail": "max jaccard 0.04 over 1 recent caption"
       },
       {
         "id": "brand_lint",
@@ -68,32 +68,10 @@
       }
     ]
   },
-  "model": {
-    "provider": "gemini",
-    "model": "gemini-3.5-flash-lite",
-    "verdict": "pass",
-    "toneScore": 4,
-    "claims": [
-      {
-        "claim": "Guided 7-step editor takes you through personal, family, education and career details smoothly",
-        "ok": true,
-        "factId": "rp-f06"
-      },
-      {
-        "claim": "Information kept private on your device",
-        "ok": true,
-        "factId": "rp-f05"
-      },
-      {
-        "claim": "Live A4 preview that auto-fits neatly to one page",
-        "ok": true,
-        "factId": "rp-f06"
-      }
-    ],
-    "reasons": [],
-    "notes": "Tone is warm and family-facing, facts are properly backed, and no triggers for disclaimers were hit."
-  },
-  "reasons": [],
+  "model": null,
+  "reasons": [
+    "alt_text: altText: describes a product UI/screen/preview, but this format renders branded text artwork; slides[0].altText: include words that are visibly rendered in the artwork; slides[2].altText: describes a product UI/screen/preview, but this format renders branded text artwork"
+  ],
   "mock": false,
-  "runId": "engine-daily-20261014-0001-3ed4b2"
+  "runId": "engine-daily-20261014-1010-d13868"
 }

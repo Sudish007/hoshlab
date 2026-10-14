@@ -1,7 +1,7 @@
 {
   "draftId": "rp-2026-10-16-device-first-biodata-privacy",
-  "revision": 1,
-  "at": "2026-10-14T00:16:24+05:30",
+  "revision": 2,
+  "at": "2026-10-14T10:10:41+05:30",
   "passed": true,
   "deterministic": {
     "passed": true,
@@ -9,7 +9,7 @@
       {
         "id": "caption_length",
         "ok": true,
-        "detail": "310/2200"
+        "detail": "296/2200"
       },
       {
         "id": "hashtags",
@@ -34,7 +34,7 @@
       {
         "id": "alt_text",
         "ok": true,
-        "detail": "55/100"
+        "detail": "49/100"
       },
       {
         "id": "language",
@@ -44,7 +44,7 @@
       {
         "id": "media_spec",
         "ok": true,
-        "detail": "1080x1350 jpeg 98 KB"
+        "detail": "1080x1350 jpeg 97 KB"
       },
       {
         "id": "links",
@@ -70,7 +70,7 @@
   },
   "model": {
     "provider": "gemini",
-    "model": "gemini-3.8-flash",
+    "model": "gemini-3.5-flash-lite",
     "verdict": "pass",
     "toneScore": 5,
     "claims": [
@@ -85,15 +85,15 @@
         "factId": "rp-f05"
       },
       {
-        "claim": "Website is rishtapatra.com",
+        "claim": "Site is rishtapatra.com",
         "ok": true,
         "factId": "rp-f01"
       }
     ],
     "reasons": [],
-    "notes": "Accurate representation of local-first privacy rules without exaggeration. Tone aligns well with family-facing brand voice."
+    "notes": "Tone is warm and strictly aligned with local-first privacy facts. No disclaimers needed as no kundali trigger was used."
   },
   "reasons": [],
   "mock": false,
-  "runId": "engine-daily-20261014-0016-82afee"
+  "runId": "engine-daily-20261014-1010-d13868"
 }

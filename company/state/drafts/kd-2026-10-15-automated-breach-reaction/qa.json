@@ -1,0 +1,114 @@
+{
+  "draftId": "kd-2026-10-15-automated-breach-reaction",
+  "revision": 1,
+  "at": "2026-10-14T10:10:41+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "463/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "5/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "always → 3/3 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "10 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "92/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; Devanagari only \"काट दो\")"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 118 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on kaatdo.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.00 (no recent captions)"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Your rule fires. Every order is cancelled.",
+        "ok": true,
+        "factId": "kd-f05"
+      },
+      {
+        "claim": "When a risk limit breaches, KaatDo cancels every pending order and squares off every position at market.",
+        "ok": true,
+        "factId": "kd-f05"
+      },
+      {
+        "claim": "The account stays locked until close.",
+        "ok": true,
+        "factId": "kd-f05"
+      },
+      {
+        "claim": "If trading activity reappears, the kill switch re-fires.",
+        "ok": true,
+        "factId": "kd-f05"
+      },
+      {
+        "claim": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI.",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "Broker API execution is never guaranteed.",
+        "ok": true,
+        "factId": "kd-f10"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone matches brand voice cleanly with no emoji and correct disclaimer usage."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261014-1010-d13868"
+}

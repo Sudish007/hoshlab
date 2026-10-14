@@ -1,0 +1,95 @@
+{
+  "id": "jr-2026-10-16-branching-from-a-master-resume",
+  "page": "job_rez",
+  "ideaId": "jr-i0003",
+  "slotId": "job_rez-2026-10-16-1230",
+  "slotAt": "2026-10-16T12:30:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-14T10:10:41+05:30",
+  "updatedAt": "2026-10-14T10:10:41+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261014-1010-d13868",
+  "caption": "Maintaining separate resume files manually causes drift across different versions. Instead, keep one honest master resume and branch clean copies tailored to each role. Each branch is scored against the posting in Job DNA.\n\nRead more at https://jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#masterresume",
+    "#jobhunt",
+    "#softwareengineering"
+  ],
+  "altText": "Kinetic text reel stating maintaining separate resume files causes drift.",
+  "factsUsed": [
+    {
+      "factId": "jr-f03",
+      "quote": "One honest master resume, branched for every role and matched to real postings."
+    },
+    {
+      "factId": "jr-f04",
+      "quote": "One master resume; branches are copies tailored per role; each branch is scored against the posting in Job DNA"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 18,
+    "scenes": [
+      {
+        "text": "Maintaining separate resume files manually causes drift.",
+        "seconds": 4
+      },
+      {
+        "text": "Keep one honest master resume.",
+        "seconds": 4
+      },
+      {
+        "text": "Branch clean copies tailored to each role.",
+        "seconds": 5
+      },
+      {
+        "text": "Each branch is scored against Job DNA.",
+        "seconds": 5
+      }
+    ]
+  },
+  "writerNote": "Shortened the root altText to strictly fit under 100 characters while maintaining compliance with engine rules.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/jr-2026-10-16-branching-from-a-master-resume/reel-0a339b0e.mp4",
+      "bytes": 172945,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "0a339b0e0ff537b00398fdb811e3e02471f6b5e09dce67ef6b1faba87a7e2441",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-16-branching-from-a-master-resume/reel-0a339b0e.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-16-branching-from-a-master-resume/reel-0a339b0e.mp4",
+      "durationSec": 18,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 18,
+        "bytes": 172945,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/jr-2026-10-16-branching-from-a-master-resume/poster-09f00fc0.jpg",
+      "bytes": 84361,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "09f00fc0a0ba81bc15a5ca179c2895ab886bffb4139a1d6fb76251f8dfbd05dc",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-16-branching-from-a-master-resume/poster-09f00fc0.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-16-branching-from-a-master-resume/poster-09f00fc0.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 18 s · 540 frames · violet on cream",
+  "qaRef": "drafts/jr-2026-10-16-branching-from-a-master-resume/qa.json"
+}

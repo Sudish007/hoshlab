@@ -1,0 +1,107 @@
+{
+  "id": "jr-2026-10-14-six-layout-rules-measured-live",
+  "page": "job_rez",
+  "ideaId": "jr-i0001",
+  "slotId": "job_rez-2026-10-14-1230",
+  "slotAt": "2026-10-14T12:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-14T10:10:41+05:30",
+  "updatedAt": "2026-10-14T10:10:41+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261014-1010-d13868",
+  "caption": "Six layout rules are checked on the rendered page after every edit.\n\nWe measure the actual rendered output across six baseline requirements: single-column order, standard headings, real bullet lists, selectable text, no tables or floats, and body text of at least 9.5pt.\n\nThis check is structural enforcement, not a certification against any ATS vendor. It keeps the exported document clean and parseable by construction.\n\nRead more at jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#ResumeFormatting",
+    "#SoftwareEngineering",
+    "#CareerTools",
+    "#TechCareers",
+    "#ResumeReview"
+  ],
+  "altText": "Slide graphic titled Six Layout Rules outlining structural checks on resume formatting.",
+  "factsUsed": [
+    {
+      "factId": "jr-f07",
+      "quote": "Six layout rules measured on the rendered page after every edit (single-column order, standard headings, real bullet lists, selectable text, no tables or floats, body text of at least 9.5pt); \"not a certification against any ATS vendor\""
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Six layout rules measured live",
+      "body": "JobRez checks six layout rules on the rendered page after every edit. Structural integrity remains intact as you draft.",
+      "altText": "Slide graphic titled Six layout rules measured live describing structural layout checks."
+    },
+    {
+      "heading": "Order and headings",
+      "body": "The renderer enforces single-column reading order and standard headings so section structure remains explicit.",
+      "altText": "Slide graphic titled Order and headings covering single-column order and standard headings."
+    },
+    {
+      "heading": "Lists and text selection",
+      "body": "Content relies on real bullet lists and fully selectable text. No tables or floats are used in document layout.",
+      "altText": "Slide graphic titled Lists and text selection explaining real bullet lists and no tables."
+    },
+    {
+      "heading": "Type size and scope",
+      "body": "Body text is kept to at least 9.5pt. This is structural formatting, not a certification against any ATS vendor.",
+      "altText": "Slide graphic titled Type size and scope noting 9.5pt body text and vendor disclaimer."
+    }
+  ],
+  "altTexts": [
+    "Slide graphic titled Six layout rules measured live describing structural layout checks.",
+    "Slide graphic titled Order and headings covering single-column order and standard headings.",
+    "Slide graphic titled Lists and text selection explaining real bullet lists and no tables.",
+    "Slide graphic titled Type size and scope noting 9.5pt body text and vendor disclaimer."
+  ],
+  "writerNote": "Carousel focuses strictly on fact jr-f07. No exclamation marks, no emoji, and explicitly includes the exact phrasing 'not a certification against any ATS vendor'.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-14-six-layout-rules-measured-live/slide-1-75b70959.jpg",
+      "bytes": 92709,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "75b7095945cbe9aaf6c8e323d04dc37f2a06e7ffc9f4dd63d70a65cd4ec47734",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-14-six-layout-rules-measured-live/slide-1-75b70959.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-14-six-layout-rules-measured-live/slide-1-75b70959.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-14-six-layout-rules-measured-live/slide-2-3a6bdf00.jpg",
+      "bytes": 81467,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "3a6bdf003de4687162fde6c3f14de1eb0671417dcf0ebf7ffaef7066ea309851",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-14-six-layout-rules-measured-live/slide-2-3a6bdf00.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-14-six-layout-rules-measured-live/slide-2-3a6bdf00.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-14-six-layout-rules-measured-live/slide-3-5751241d.jpg",
+      "bytes": 82026,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "5751241d8ac5d4e0c719a8a1a391f500860369464a2d84ac2b329b45e667c216",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-14-six-layout-rules-measured-live/slide-3-5751241d.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-14-six-layout-rules-measured-live/slide-3-5751241d.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-14-six-layout-rules-measured-live/slide-4-78b2e3bf.jpg",
+      "bytes": 85456,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "78b2e3bf8d6eeec626a0be833775ae30a65277f6f5eed082156e5b0ef19bc9c0",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-14-six-layout-rules-measured-live/slide-4-78b2e3bf.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-14-six-layout-rules-measured-live/slide-4-78b2e3bf.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "4 slides · variant A · cream on ink",
+  "qaRef": "drafts/jr-2026-10-14-six-layout-rules-measured-live/qa.json"
+}
