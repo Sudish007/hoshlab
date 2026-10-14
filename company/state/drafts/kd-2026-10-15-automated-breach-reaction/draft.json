@@ -1,0 +1,70 @@
+{
+  "id": "kd-2026-10-15-automated-breach-reaction",
+  "page": "kaatdo",
+  "ideaId": "kd-i0001",
+  "slotId": "kaatdo-2026-10-15-0815",
+  "slotAt": "2026-10-15T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-14T10:10:41+05:30",
+  "updatedAt": "2026-10-14T10:10:41+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261014-1010-d13868",
+  "caption": "Your rule fires. Every order is cancelled.\n\nWhen a risk limit breaches, KaatDo cancels every pending order and squares off every position at market. The account stays locked until close. If trading activity reappears, the kill switch re-fires.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#trading",
+    "#riskmanagement",
+    "#discipline",
+    "#fno",
+    "#killswitch"
+  ],
+  "altText": "Text card stating: Your rule fires. Every order is cancelled. Squares off at market. काट दो.",
+  "factsUsed": [
+    {
+      "factId": "kd-f02",
+      "quote": "Tagline \"The kill switch for Indian F&O traders\""
+    },
+    {
+      "factId": "kd-f05",
+      "quote": "On breach: cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    },
+    {
+      "factId": "kd-f13",
+      "quote": "The hero headline ends with the sign-off \"काट दो.\""
+    }
+  ],
+  "artwork": {
+    "headline": "Your rule fires. Every order is cancelled.",
+    "subline": "When your risk boundary breaches, the kill switch takes over.",
+    "facts": [
+      "Cancels every pending order immediately",
+      "Squares off every position at market",
+      "Keeps the account locked until market close"
+    ],
+    "footer": "kaatdo.com ╱ काट दो."
+  },
+  "writerNote": "Strictly adheres to brand voice rules: no exclamation marks, no emoji, terse declaratives, and incorporates all mandatory disclaimers unweakened. Uses the required Hindi sign-off 'काट दो.' cleanly.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-15-automated-breach-reaction/image-1-ed668018.jpg",
+      "bytes": 117510,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "ed668018ba42fc304e191e76fddf73bd70b98aa0eb60c64b5509634d4da4b4e8",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-15-automated-breach-reaction/image-1-ed668018.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-15-automated-breach-reaction/image-1-ed668018.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · dark console palette",
+  "qaRef": "drafts/kd-2026-10-15-automated-breach-reaction/qa.json"
+}

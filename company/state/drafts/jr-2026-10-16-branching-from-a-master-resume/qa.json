@@ -1,0 +1,94 @@
+{
+  "draftId": "jr-2026-10-16-branching-from-a-master-resume",
+  "revision": 1,
+  "at": "2026-10-14T10:10:41+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "309/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "13 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "73/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "h264 1080x1920 yuv420p 30/1 18 s 173 KB faststart; poster 1080x1920 jpeg 84 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.01 over 1 recent caption"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Keep one honest master resume and branch clean copies tailored to each role",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "Each branch is scored against the posting in Job DNA",
+        "ok": true,
+        "factId": "jr-f04"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is clean, factual, and strictly follows the brand voice with concrete nouns."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261014-1010-d13868"
+}

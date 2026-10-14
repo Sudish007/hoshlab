@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T00:16:24+05:30",
+  "generatedAt": "2026-10-14T10:10:41+05:30",
   "horizonDays": 14,
   "slots": [
     {
@@ -7,16 +7,17 @@
       "page": "job_rez",
       "at": "2026-10-14T12:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0001",
-      "reason": "Carousel detailing the six layout rules checked on rendered pages."
+      "reason": "Carousel detailing the six layout rules checked on rendered pages.",
+      "draftId": "jr-2026-10-14-six-layout-rules-measured-live"
     },
     {
       "slotId": "rishtapatra-2026-10-14-1930",
       "page": "rishtapatra",
       "at": "2026-10-14T19:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
+      "status": "rework",
       "ideaId": "rp-i0001",
       "reason": "Structured walkthrough of the 7-step biodata editor suited for Wednesday carousel slot.",
       "draftId": "rp-2026-10-14-guided-7-step-biodata-flow"
@@ -26,9 +27,10 @@
       "page": "kaatdo",
       "at": "2026-10-15T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0001",
-      "reason": "Direct introduction to breach mechanics on image slot."
+      "reason": "Direct introduction to breach mechanics on image slot.",
+      "draftId": "kd-2026-10-15-automated-breach-reaction"
     },
     {
       "slotId": "job_rez-2026-10-15-1230",
@@ -44,9 +46,10 @@
       "page": "job_rez",
       "at": "2026-10-16T12:30:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0003",
-      "reason": "Reel demonstrating branching tailored copies from a single master resume."
+      "reason": "Reel demonstrating branching tailored copies from a single master resume.",
+      "draftId": "jr-2026-10-16-branching-from-a-master-resume"
     },
     {
       "slotId": "rishtapatra-2026-10-16-1930",
