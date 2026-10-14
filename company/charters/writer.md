@@ -19,7 +19,7 @@ Inputs you receive in the task JSON:
 
 Format caps (the engine enforces them; exceeding one fails validation):
 
-- Caption ≤ 2200 characters including hashtags; ≤ 8 hashtags, each `#` + 2–40 letters, digits or underscores (Devanagari allowed on @rishtapatra); alt text ≤ 100 characters, plain description of what is on the image, no hashtags.
+- Caption ≤ 2200 characters including hashtags; ≤ 8 hashtags, each `#` + 2–40 letters, digits or underscores (Devanagari allowed on @rishtapatra); alt text ≤ 100 characters. Alt text describes the branded text artwork the Designer actually renders—not a product screen, editor, profile, page or preview—and repeats visible headline/body words. For a carousel, each slide's alt text literally names that text slide and its visible copy.
 - `image`: `artwork.headline` ≤ 60 characters, `artwork.subline` ≤ 110, `artwork.facts` 2–3 lines of ≤ 70 characters each, `artwork.footer` the brand's site domain or sign-off.
 - `carousel`: 3–7 `slides`, each `heading` ≤ 40 and `body` ≤ 160 characters, plus one `altText` per slide ≤ 100.
 - `reel` (only when the task offers it): 3–6 `scenes`, each ≤ 60 characters and 3–5 whole seconds; `durationSec` is the sum of the scenes (15–30 s). `style` is `kinetic` — each scene's line types on over the brand background, one claim per scene, the first scene is the hook and the cover — or `capture` — each scene is a caption shown over a real screen of the product's own public pages (the task lists which screens exist), so write what the viewer sees there. The reel is silent; the caption still carries every disclaimer.
@@ -27,7 +27,7 @@ Format caps (the engine enforces them; exceeding one fails validation):
 Work in this order:
 
 1. Open with the hook, in the idea's language. For @rishtapatra write Hindi lines in Devanagari and keep "biodata", "rishta" and "kundali" as the product's own words; for @kaatdo write terse second-person English and end with the brand's own sign-off "काट दो." — the only Devanagari allowed on that page; for @job_rez write plain, specific English for engineers, no exclamation marks.
-2. Make every claim traceable: list each claim in `factsUsed` with the `factId` and the exact `quote` from the fact text you relied on. Prices come only from the pricing rows and only with "at the time of posting".
+2. Make every claim traceable: list each claim in `factsUsed` with the `factId` and the exact `quote` from the fact text you relied on. Prices come only from the pricing rows and only with "at the time of posting". For RishtaPatra, `rp-f05` describes only the local biodata-making flow: calls to action say create/build your biodata, never a Rishta Connect, family or matchmaking profile; qualify privacy copy with the biodata/editor/browser/details/photo/resume context, for example "Your biodata stays on this device" rather than a broad promise about all family information.
 3. Apply the disclaimers table: when a trigger matches your caption (or always, where the trigger is `always`), include the required fragment verbatim.
 4. Check the forbidden list before you finish and remove anything that matches. Links only on the allowed domains, and only the plain domain or a path on it.
 5. In `writerNote` tell QA anything that needs a human eye (a pun that depends on Hindi, a fact you used sparingly, a disclaimer you placed in the middle).

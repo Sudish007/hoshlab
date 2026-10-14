@@ -11,7 +11,7 @@ import { EXIT, main } from "../engine/index.js";
 import { createState } from "../engine/lib/state.js";
 import { CALENDAR_SPEC, DRAFT_SPEC, RUN_SPEC, STATUS_SPEC, USAGE_SPEC, assertShape, validate } from "../engine/lib/schema.js";
 import { monthUsedUsd } from "../engine/lib/budget.js";
-import { AGENT_ORDER, SKIP_BUDGET, WORKFLOW, parseAgents, recentCaptionsFor, relinkCalendar, runDaily, slotsToWrite } from "../engine/commands/daily.js";
+import { AGENT_ORDER, SKIP_BUDGET, WORKFLOW, fairWriterTargets, parseAgents, recentCaptionsFor, relinkCalendar, runDaily, slotsToWrite } from "../engine/commands/daily.js";
 import { setPageMode } from "../engine/commands/set-page.js";
 import { RenderError, RenderUnavailableError } from "../engine/render/render.js";
 
@@ -247,6 +247,37 @@ test("P1-06 / M5.4: a usage file at or over monthlyUsd → budget_exhausted flag
     assert.equal(fx.usage().filter((u) => u.runId === r.run.id).length, 0, "no model call was attempted");
     // the designer still runs (deterministic) but has nothing written to render
     assert.equal(agent(r, "designer").note, "0 rendered, 0 refused");
+  } finally {
+    fx.cleanup();
+  }
+});
+
+test("queued deterministic recheck sends newly invalid copy through QA rework without a model call or hand edit", async () => {
+  const fx = copyFixture();
+  const out = sink();
+  try {
+    const base = fx.draft(RP);
+    fx.state.writeDraft({
+      ...base,
+      caption: "Visit rishtapatra.com to build your family rishta profile safely.",
+      altText: "A clean preview of a family biodata page on RishtaPatra",
+      artwork: { ...base.artwork, facts: ["Your family information stays private", ...base.artwork.facts.slice(1)] },
+      factsUsed: [...base.factsUsed, { factId: "rp-f05", quote: "Local-first biodata maker" }],
+    });
+    const r = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: TUESDAY, processEnv: MOCK, flags: { agents: "qa", page: "rishtapatra" }, renderer: fakeRenderer(), stdout: out });
+    assert.equal(r.ok, true, out.text());
+    const draft = fx.draft(RP);
+    assert.equal(draft.status, "rework");
+    assert.equal(draft.reworkCount, 1);
+    assert.equal(draft.revision, 1, "the queued content is not edited by the transition");
+    assert.ok(draft.qaReasons.some((reason) => reason.startsWith("alt_text:")), draft.qaReasons.join(" | "));
+    assert.ok(draft.qaReasons.some((reason) => reason.startsWith("brand_lint:")), draft.qaReasons.join(" | "));
+    const qa = fx.state.readQa(RP);
+    assert.equal(qa.passed, false);
+    assert.equal(qa.model, null, "deterministic rejection makes no model call");
+    assert.equal(agent(r, "qa").calls, 0);
+    assert.match(agent(r, "qa").note, /queued recheck .* → rework/);
+    assert.ok(out.lines.some((line) => line.includes(`[qa] queued recheck ${RP} rework`)));
   } finally {
     fx.cleanup();
   }
@@ -670,6 +701,30 @@ test("pure helpers: slotsToWrite (lead window, live drafts, dropped slots), rece
   );
   assert.deepEqual(recentCaptionsFor(drafts, "kaatdo"), ["blocked one", "old"]);
   assert.deepEqual(recentCaptionsFor(drafts, "kaatdo", KD), ["blocked one"]);
+
+  const rpPage = { handle: "rishtapatra" };
+  const kdPage = { handle: "kaatdo" };
+  const jrPage = { handle: "job_rez" };
+  const fair = fairWriterTargets(
+    [
+      { page: rpPage, slot: { slotId: "rp-fresh", at: "2026-10-17T19:30:00+05:30" } },
+      { page: rpPage, draft: { id: "rp-rework-2", slotAt: "2026-10-16T19:30:00+05:30" } },
+      { page: rpPage, draft: { id: "rp-rework-1", slotAt: "2026-10-14T19:30:00+05:30" } },
+      { page: kdPage, slot: { slotId: "kd-first", at: "2026-10-15T08:15:00+05:30" } },
+      { page: jrPage, slot: { slotId: "jr-first", at: "2026-10-14T12:30:00+05:30" } },
+      { page: jrPage, slot: { slotId: "jr-second", at: "2026-10-15T12:30:00+05:30" } },
+    ],
+    [
+      { id: "rp-old-1", page: "rishtapatra", status: "queued" },
+      { id: "rp-old-2", page: "rishtapatra", status: "queued" },
+    ],
+  );
+  assert.deepEqual(
+    fair.map((t) => (t.slot ? t.slot.slotId : t.draft.id)),
+    ["jr-first", "kd-first", "rp-rework-1", "rp-rework-2", "jr-second", "rp-fresh"],
+    "zero-queue pages each get one Writer opportunity before existing RishtaPatra rework, then fresh work round-robins",
+  );
+
   const fresh = { id: "kd-2026-10-14-y", page: "kaatdo", slotId: "kaatdo-2026-10-14-1100", status: "written", createdAt: "2026-10-12T05:35:00+05:30", caption: "new" };
   const relinked = relinkCalendar({ generatedAt: now, horizonDays: 14, slots }, [...drafts, fresh]);
   assert.ok(relinked);

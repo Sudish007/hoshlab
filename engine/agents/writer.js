@@ -16,7 +16,7 @@
 // caption + hashtag line fits captionMax (the length rule QA applies, engine/lib/checks.js).
 import { HASHTAG } from "../lib/schema.js";
 import { usableFacts } from "../lib/brand.js";
-import { codePoints, fullCaption } from "../lib/checks.js";
+import { codePoints, fullCaption, rishtapatraLocalFirstErrors, visualAltTextErrors } from "../lib/checks.js";
 import { draftId as makeDraftId } from "../lib/ids.js";
 import { nowIst, parseIso } from "../lib/time.js";
 import { AgentOutputError } from "../llm/router.js";
@@ -86,7 +86,7 @@ export const OUTPUT_SPEC = outputSpec();
 export function formatSpecText(format, caps = DEFAULT_CAPS, reel = reelRules(null, null)) {
   const c = { ...DEFAULT_CAPS, ...caps };
   const r = reel || reelRules(null, null);
-  const common = `caption ≤ ${c.captionMax} characters including the hashtag line; ≤ ${c.hashtagCap} hashtags, each # followed by 2–40 letters, digits or underscores; altText ≤ ${c.altTextMax} characters, a plain description of the image, no hashtags`;
+  const common = `caption ≤ ${c.captionMax} characters including the hashtag line; ≤ ${c.hashtagCap} hashtags, each # followed by 2–40 letters, digits or underscores; altText ≤ ${c.altTextMax} characters, literally describes the rendered branded text artwork (not a product screen, editor, page or preview) and repeats words visibly rendered in it; carousel slide alt text identifies a slide and repeats its visible heading/body copy; no hashtags`;
   const captureNote = r.capturePaths.length ? `the product screens available are ${r.capturePaths.join(", ")}` : "no product screens are listed for this brand, so use kinetic";
   const byFormat = {
     image: `image: artwork.headline ≤ ${ARTWORK_CAPS.headline} characters, artwork.subline ≤ ${ARTWORK_CAPS.subline}, artwork.facts 2–3 lines of ≤ ${ARTWORK_CAPS.fact} characters each, artwork.footer the brand's site domain or sign-off; omit slides and reel`,
@@ -109,6 +109,8 @@ export function validateWriterOutput(json, { format, offeredIds, caps = DEFAULT_
   if (format === "image" && !json.artwork) errors.push("$.artwork: required for format image");
   if (format === "carousel" && !Array.isArray(json.slides)) errors.push("$.slides: required for format carousel");
   if (format === "reel" && !json.reel) errors.push("$.reel: required for format reel");
+  errors.push(...visualAltTextErrors(json, format));
+  errors.push(...rishtapatraLocalFirstErrors(json));
   if (format === "reel" && json.reel && typeof json.reel === "object") errors.push(...reelErrors(json.reel, reel || reelRules(null, null)));
   const max = caps.captionMax || DEFAULT_CAPS.captionMax;
   const full = codePoints(fullCaption({ caption: json.caption, hashtags: json.hashtags }));
@@ -169,6 +171,12 @@ export function buildTask({ slot, idea, brand, page, config, recentCaptions = []
       disclaimers: brand.disclaimers || [],
       forbidden: brand.forbidden || [],
       allowedDomains: brand.allowedDomains || [],
+    },
+    copyRules: {
+      altText: "Describe only the branded text artwork that will be rendered. Name the card/graphic/slide, repeat visible words, and never call it a product screen, editor, page or preview.",
+      ...(fm.handle === "rishtapatra"
+        ? { localFirst: "rp-f05 applies only to the local biodata-making flow. Say create/build your biodata, never a Rishta Connect/family/matchmaking profile; qualify every privacy claim with biodata, editor, browser, details, photo or resume." }
+        : {}),
     },
     recentCaptions: recentCaptions.map(captionText).filter(Boolean).slice(-RECENT_CAPTIONS),
     rework,

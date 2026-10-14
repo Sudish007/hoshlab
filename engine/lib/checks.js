@@ -53,6 +53,11 @@ const EMOJI_RE = /\p{Extended_Pictographic}/gu;
 const EMOJI_ONE_RE = /\p{Extended_Pictographic}/u;
 const DEVANAGARI_RUN_RE = /[\u0900-\u097F\uA8E0-\uA8FF]+/gu;
 const WORD_SPLIT_RE = /[^\p{L}\p{M}\p{N}]+/u;
+const ALT_TEXT_MEDIUM_RE = /\b(?:artwork|card|carousel|graphic|headline|poster|slide|text|typography)\b/iu;
+const ALT_TEXT_UI_RE = /\b(?:screenshot|screen|interface|preview|\bui\b|view)\b|\bshow(?:s|ing)?\b.*\b(?:editor|app|website|page|profile)\b/iu;
+const RISHTAPATRA_PROFILE_RE = /\b(?:family\s+)?rishta\s+profile\b|\b(?:family|matchmaking)\s+profile\b/iu;
+const PRIVACY_RE = /\b(?:private|privacy)\b|निजी|गोपनीय/iu;
+const LOCAL_BIODATA_QUALIFIER_RE = /\b(?:biodata|editor|browser|detail|photo|resume)\b|बायोडाटा/iu;
 const SOF_MARKERS = new Set([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf]);
 const DETAIL_MAX = 300;
 
@@ -273,6 +278,53 @@ export function copySurfaces(draft) {
   return out;
 }
 
+function hasVisiblePhrase(altText, visible = []) {
+  const alt = words(altText);
+  if (!alt.length) return false;
+  const hay = ` ${alt.join(" ")} `;
+  for (const text of visible) {
+    const tokens = words(text);
+    for (const size of [3, 2]) {
+      if (tokens.length < size) continue;
+      for (let i = 0; i + size <= tokens.length; i++) if (hay.includes(` ${tokens.slice(i, i + size).join(" ")} `)) return true;
+    }
+    if (tokens.length === 1 && tokens[0].length >= 4 && alt.includes(tokens[0])) return true;
+  }
+  return false;
+}
+
+// Text templates render only the supplied artwork/slide copy. Their alt text must identify a text-art medium,
+// must not claim the image is a product UI/screen/preview, and must repeat words that are actually visible.
+export function visualAltTextErrors(draft, format = draft && draft.format) {
+  const errors = [];
+  const check = (where, altText, visible) => {
+    const text = String(altText || "").trim();
+    if (!ALT_TEXT_MEDIUM_RE.test(text)) errors.push(`${where}: describe the rendered text artwork (card, graphic or slide)`);
+    if (ALT_TEXT_UI_RE.test(text)) errors.push(`${where}: describes a product UI/screen/preview, but this format renders branded text artwork`);
+    if (!hasVisiblePhrase(text, visible)) errors.push(`${where}: include words that are visibly rendered in the artwork`);
+  };
+  if (format === "image" && draft && draft.artwork) {
+    check("$.altText", draft.altText, [draft.artwork.headline, draft.artwork.subline, ...(draft.artwork.facts || [])]);
+  }
+  if (format === "carousel" && draft && Array.isArray(draft.slides)) {
+    check("$.altText", draft.altText, draft.slides.flatMap((slide) => [slide && slide.heading, slide && slide.body]));
+    draft.slides.forEach((slide, i) => check(`$.slides[${i}].altText`, slide && slide.altText, [slide && slide.heading, slide && slide.body]));
+  }
+  return errors;
+}
+
+// rp-f05 describes the local biodata maker, not Rishta Connect. Copy using it cannot call the output a
+// rishta/matchmaking profile, and every privacy claim must name the biodata/editor/browser/detail flow.
+export function rishtapatraLocalFirstErrors(draft) {
+  if (!draft || !(draft.factsUsed || []).some((f) => f && f.factId === "rp-f05")) return [];
+  const errors = [];
+  for (const { where, text } of copySurfaces(draft)) {
+    if (RISHTAPATRA_PROFILE_RE.test(text)) errors.push(`$.${where}: rp-f05 is the local biodata maker; say create/build your biodata, not a rishta or matchmaking profile`);
+    if (PRIVACY_RE.test(text) && !LOCAL_BIODATA_QUALIFIER_RE.test(text)) errors.push(`$.${where}: qualify privacy to the local biodata-making flow`);
+  }
+  return errors;
+}
+
 function clip(s, max = DETAIL_MAX) {
   const t = String(s);
   return codePoints(t) > max ? [...t].slice(0, max - 1).join("") + "…" : t;
@@ -485,6 +537,7 @@ function checkAltText({ draft, caps, media }) {
     if (n < 1) problems.push(`${label}[${i}] empty`);
     else if (n > max) problems.push(`${label}[${i}] ${n}/${max}`);
   });
+  for (const error of visualAltTextErrors(draft)) problems.push(error.replace(/^\$\./, ""));
   if (problems.length) return { ok: false, detail: clip(problems.join("; ")) };
   return { ok: true, detail: texts.length === 1 ? `${lengths[0]}/${max}` : `${texts.length} alt texts, longest ${Math.max(...lengths)}/${max}` };
 }
@@ -701,9 +754,9 @@ function checkDuplicate({ draft, recentCaptions }) {
 
 // brand_lint — (a) @job_rez only: the OF-2 tokens \bIndia\b, \bIndian\b, \bNaukri\b, B\.?Tech,
 // \bGST\b and #India (flags iu) must not appear in caption, hashtags, alt text, artwork or slides;
-// (b) every page: a ₹ amount may appear only when the whole price token (₹ + digits) equals a price
-// token of a ## Pricing row; (c) disputed facts are excluded from every allow-list (usableFacts), so
-// a disputed number fails numbers_sourced and a disputed claim has no fact id for the QA model.
+// (b) @rishtapatra local-first claims (rp-f05) stay within the biodata maker: no rishta/matchmaking profile
+// conflation, and privacy language names the biodata/editor/browser/detail flow; (c) every page: a ₹ amount
+// may appear only when the whole price token equals a ## Pricing row; (d) disputed facts stay excluded.
 function checkBrandLint({ draft, brand }) {
   const handle = (brand.frontMatter || {}).handle;
   const surfaces = copySurfaces(draft);
@@ -718,6 +771,7 @@ function checkBrandLint({ draft, brand }) {
       }
     }
   }
+  if (handle === "rishtapatra") for (const error of rishtapatraLocalFirstErrors(draft)) problems.push(error.replace(/^\$\./, ""));
   const priceRows = new Map();
   for (const p of brand.pricing || []) for (const m of nfc(`${p.sku} ${p.price}`).matchAll(PRICE_TOKEN_RE)) priceRows.set(normPrice(m[0]), p.sku);
   let prices = 0;
