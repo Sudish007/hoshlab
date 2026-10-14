@@ -269,6 +269,7 @@ test("task JSON on rework: QA reasons and the previous output are in `rework`, o
     assert.match(task.format.spec, /artwork\.headline ≤ 60 characters/);
     assert.match(task.format.spec, /caption ≤ 2200 characters including the hashtag line; ≤ 8 hashtags/);
     assert.match(task.format.spec, /altText ≤ 100 characters/);
+    assert.match(task.format.spec, /literally describes the rendered branded text artwork/);
     assert.match(formatSpecText("carousel", capsOf(config)), /3–7 slides \(the engine accepts 2–10\), each heading ≤ 40 and body ≤ 160/);
     assert.match(formatSpecText("reel"), /3–6 scenes of ≤ 60 characters, 3–5 seconds each/);
     assert.ok(task.brand.facts.some((f) => f.id === "kd-f04"));
@@ -276,12 +277,17 @@ test("task JSON on rework: QA reasons and the previous output are in `rework`, o
     assert.ok(task.brand.pricing.some((p) => p.sku === "monthly"));
     assert.equal(task.brand.disclaimers.length, 1);
     assert.deepEqual(task.brand.allowedDomains, ["kaatdo.com"]);
+    assert.match(task.copyRules.altText, /branded text artwork/);
+    assert.match(task.copyRules.altText, /never call it a product screen, editor, page or preview/);
+    assert.equal(task.copyRules.localFirst, undefined);
     assert.equal(task.feedback, "owner: shorter");
     // a fresh draft has no rework block and no reasons
     const fresh = buildTask({ slot: SLOTS.rpImage, idea: IDEAS.rp, brand: brands.rishtapatra, page: RP, config, recentCaptions: [{ caption: "a" }, "b"] });
     assert.equal(fresh.rework, null);
     assert.deepEqual(fresh.recentCaptions, ["a", "b"]);
     assert.ok(!fresh.brand.facts.some((f) => f.id === "rp-f12"), "disputed fact never offered (P1-04)");
+    assert.match(fresh.copyRules.localFirst, /create\/build your biodata/);
+    assert.match(fresh.copyRules.localFirst, /never a Rishta Connect\/family\/matchmaking profile/);
     // when qaReasons are not passed they are taken from the draft
     const r2 = fakeRouter(llm("writer.ok.kaatdo").output);
     await runWriter({ slot: SLOTS.kdImage, idea: IDEAS.kd, brand: brands.kaatdo, page: KD, config, state, router: r2, draft: existing, now: NOW });
@@ -338,6 +344,19 @@ test("validateWriterOutput: a factsUsed id that is disputed, foreign or unknown 
   const caps = capsOf(config);
   assert.deepEqual(validateWriterOutput(ok, { format: "image", offeredIds: offered, caps }), []);
   assert.deepEqual(validateWriterOutput(ok, { format: "carousel", offeredIds: offered, caps }), []);
+  const local = {
+    ...ok,
+    caption: "Every biodata detail stays in your browser. Visit rishtapatra.com to create your biodata.",
+    altText: "RishtaPatra text card: Keep your biodata on your device",
+    artwork: { headline: "Keep your biodata on your device", subline: "Create your biodata in the browser", facts: ["Your biodata stays on this device", "Photos stay in the biodata editor"], footer: "rishtapatra.com" },
+    factsUsed: [{ factId: "rp-f05", quote: "Local-first biodata maker" }],
+  };
+  assert.deepEqual(validateWriterOutput(local, { format: "image", offeredIds: offered, caps }), []);
+  const conflated = { ...local, caption: "Build your family rishta profile safely.", altText: "A clean preview of a family biodata page", artwork: { ...local.artwork, facts: ["Your family information stays private", "Your biodata stays on this device"] } };
+  const localErrors = validateWriterOutput(conflated, { format: "image", offeredIds: offered, caps });
+  assert.ok(localErrors.some((e) => e.startsWith("$.altText:") && e.includes("product UI")), localErrors.join("; "));
+  assert.ok(localErrors.some((e) => e.includes("say create/build your biodata")), localErrors.join("; "));
+  assert.ok(localErrors.some((e) => e.includes("artwork.facts[0]") && e.includes("local biodata-making flow")), localErrors.join("; "));
   const disputed = { ...ok, factsUsed: [...ok.factsUsed, { factId: "rp-f12", quote: "12 languages" }] };
   assert.deepEqual(validateWriterOutput(disputed, { format: "image", offeredIds: offered, caps }), ["$.factsUsed[4].factId: rp-f12 was not offered (usable facts only)"]);
   const foreign = { ...ok, factsUsed: [{ factId: "kd-f04", quote: "x" }] };

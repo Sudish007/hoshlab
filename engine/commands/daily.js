@@ -49,6 +49,7 @@ import { createRenderer } from "../render/render.js";
 import { createClient } from "../ig/client.js";
 import { DRY_USER_ID, createDryRunClient, isDryRun } from "../ig/dry-run.js";
 import { buildDigest } from "../lib/feedback.js";
+import { runChecks } from "../lib/checks.js";
 import { readMemo, runCeo, shouldRun as ceoShouldRun } from "../agents/ceo.js";
 import * as hr from "../agents/hr.js";
 import { collectMetrics, latestReport, readMetrics, runAnalyst, shouldRun as analystShouldRun } from "../agents/analyst.js";
@@ -118,6 +119,41 @@ export function slotsToWrite(calendar, drafts, page, now, leadDays) {
     if (s.draftId && isLive(byId.get(s.draftId))) return false;
     return true;
   });
+}
+
+function writerTargetAt(target) {
+  return String((target.slot && target.slot.at) || (target.draft && target.draft.slotAt) || "");
+}
+
+// Fair work order: pages with no queued/live drafts go first, ordered by their earliest due target, then
+// one target per page per round. A page that already has a queue can never consume the run before an empty page.
+export function fairWriterTargets(targets, priorityDrafts = []) {
+  const groups = new Map();
+  for (const target of targets || []) {
+    const handle = target && target.page && target.page.handle;
+    if (!handle) continue;
+    if (!groups.has(handle)) groups.set(handle, []);
+    groups.get(handle).push(target);
+  }
+  const ranked = [...groups.entries()].map(([handle, rows], index) => ({
+    handle,
+    index,
+    rows: [...rows].sort((a, b) => writerTargetAt(a).localeCompare(writerTargetAt(b))),
+    queued: priorityDrafts.filter((d) => d && d.page === handle && d.status === "queued").length,
+    live: priorityDrafts.filter((d) => d && d.page === handle && isLive(d)).length,
+  }));
+  ranked.sort((a, b) => a.queued - b.queued || a.live - b.live || writerTargetAt(a.rows[0]).localeCompare(writerTargetAt(b.rows[0])) || a.index - b.index);
+  const ordered = [];
+  // Give every page that started with no queue one opportunity before any already-served page.
+  for (const group of ranked) if (group.queued === 0 && group.rows.length) ordered.push(group.rows.shift());
+  // Then repair existing drafts before filling additional fresh slots.
+  for (const group of ranked) {
+    const rework = group.rows.filter((target) => target.draft);
+    group.rows = group.rows.filter((target) => !target.draft);
+    ordered.push(...rework);
+  }
+  while (ranked.some((g) => g.rows.length)) for (const group of ranked) if (group.rows.length) ordered.push(group.rows.shift());
+  return ordered;
 }
 
 // Captions of the page's drafts, newest first (the Writer and QA read the last 10 / 30).
@@ -280,6 +316,25 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
   const feedbackRows = state.readJsonl("state/feedback.jsonl");
   const reportAtStart = latestReport(state);
   const digestFor = (handle) => buildDigest({ feedback: feedbackRows, page: handle, lastReport: reportAtStart ? reportAtStart.report : null, now: startedAt });
+  // Preserve the queue distribution from the start of the run for fair Writer ordering even when the
+  // deterministic recheck below moves an existing queued draft into rework.
+  const writerPriorityDrafts = drafts();
+
+  // Re-run deterministic QA on queued drafts before the Writer. A newly strengthened rule can therefore
+  // send stale queued copy through the normal QA → rework → Writer path without hand-editing generated JSON.
+  if (wants("qa") && mediaBranchPresent(media)) {
+    for (const draft of writerPriorityDrafts.filter((d) => d.status === "queued" && pages.some((p) => p.handle === d.page))) {
+      const mediaItems = draft.media || [];
+      const deterministic = runChecks(draft, brands[draft.page], { config, slotDate: draft.slotAt.slice(0, 10), recentCaptions: recentCaptionsFor(writerPriorityDrafts, draft.page, draft.id), media: mediaItems });
+      if (deterministic.passed) continue;
+      await timed("qa", async () => {
+        const r = await runQa({ draft, brand: brands[draft.page], config, router, state, recentCaptions: recentCaptionsFor(writerPriorityDrafts, draft.page, draft.id), media: mediaItems, runId: id, now: startedAt });
+        changedFiles.push(`state/drafts/${draft.id}/draft.json`, `state/drafts/${draft.id}/qa.json`);
+        note("qa", `queued recheck ${draft.id} → ${r.status}: ${r.reasons.join("; ")}`);
+        log(`[qa] queued recheck ${draft.id} ${r.status} — ${r.reasons.join("; ")}`);
+      });
+    }
+  }
 
   // 3. CEO — Monday IST or this week's memo missing; company-wide, so a --page filter skips it. Inputs beyond the
   //    state it reads itself (P2-07): the latest Analyst report (every forCeo item must be answered) and the latest
@@ -430,7 +485,7 @@ export async function runDaily({ companyDir, mediaRoot, now, processEnv = proces
       if (!reworkIds) for (const slot of slotsToWrite(cal, all, page, startedAt, d.leadDays)) out.push({ page, slot });
       for (const dr of all) if (dr.page === page.handle && dr.status === "rework" && (!reworkIds || reworkIds.has(dr.id))) out.push({ page, draft: dr });
     }
-    return out;
+    return fairWriterTargets(out, writerPriorityDrafts);
   };
   if (!wants("writer")) skip("writer", "skipped: not selected (--agents)", "not_selected");
   else if (exhausted) skip("writer", SKIP_BUDGET, "budget_exhausted");

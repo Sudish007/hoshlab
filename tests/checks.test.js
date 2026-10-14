@@ -25,8 +25,10 @@ import {
   numberTokens,
   pngSize,
   reelProbeErrors,
+  rishtapatraLocalFirstErrors,
   runChecks,
   shingles3,
+  visualAltTextErrors,
 } from "../engine/lib/checks.js";
 
 const company = loadCompany({ companyDir: join(ROOT, "company"), warn: () => {} });
@@ -307,10 +309,29 @@ test("alt_text: fail — empty, longer than altTextMax (code points), or fewer a
   assert.match(run(RP, { altText: "" }).check("alt_text").detail, /altText\[0\] empty/);
   const long = run(RP, { altText: "क".repeat(config.defaults.altTextMax + 1) }).check("alt_text");
   assert.equal(long.ok, false);
-  assert.equal(long.detail, `altText[0] ${config.defaults.altTextMax + 1}/${config.defaults.altTextMax}`);
+  assert.match(long.detail, new RegExp(`^altText\\[0\\] ${config.defaults.altTextMax + 1}/${config.defaults.altTextMax}`));
+  assert.match(long.detail, /describe the rendered text artwork/);
   const few = run(JR, { altTexts: JR.altTexts.slice(0, 3) }).check("alt_text");
   assert.equal(few.ok, false);
   assert.match(few.detail, /3 alt texts for 4 media items/);
+});
+
+test("alt_text: text artwork must not be described as a product UI/preview and must repeat visible copy", () => {
+  const badImage = { ...RP, altText: "A clean preview of a family biodata page on RishtaPatra" };
+  const imageErrors = visualAltTextErrors(badImage);
+  assert.ok(imageErrors.some((e) => e.includes("product UI/screen/preview")), imageErrors.join("; "));
+  assert.ok(imageErrors.some((e) => e.includes("visibly rendered")), imageErrors.join("; "));
+  assert.equal(run(RP, { altText: badImage.altText }).check("alt_text").ok, false);
+
+  const carousel = { ...JR, altText: "A carousel showing the resume editor", slides: JR.slides.map((s, i) => (i === 1 ? { ...s, altText: "Slide two: useful information" } : s)) };
+  const carouselErrors = visualAltTextErrors(carousel);
+  assert.ok(carouselErrors.some((e) => e.startsWith("$.altText:") && e.includes("product UI")), carouselErrors.join("; "));
+  assert.ok(carouselErrors.some((e) => e.startsWith("$.slides[1].altText:") && e.includes("visibly rendered")), carouselErrors.join("; "));
+  const result = runChecks(carousel, brands.job_rez, { config, recentCaptions: [], media: mediaFor(JR) });
+  assert.equal(result.checks.find((c) => c.id === "alt_text").ok, false);
+
+  assert.deepEqual(visualAltTextErrors(RP), [], "literal image fixture passes");
+  assert.deepEqual(visualAltTextErrors(JR), [], "literal carousel fixture passes");
 });
 
 // ---------------------------------------------------------------------------------------------------
@@ -532,6 +553,32 @@ test("brand_lint: fail — a JobRez caption with '#India' (M14), 'B.Tech' in a s
   // ₹ on JobRez is allowed only for its own pricing rows (OF-2 note in the brand file)
   assert.equal(withCaption(JR, "Pro for 30 days at ₹699 at the time of posting. jobrez.com").check("brand_lint").ok, true);
   assert.equal(withCaption(JR, "Pro for 30 days at ₹700. jobrez.com").check("brand_lint").ok, false);
+});
+
+test("brand_lint: RishtaPatra local-first copy stays within the biodata maker and qualifies privacy claims", () => {
+  const local = {
+    ...RP,
+    caption: "Every biodata detail is processed in your browser. Visit rishtapatra.com to create your biodata.",
+    hashtags: ["#RishtaPatra", "#Biodata"],
+    artwork: { ...RP.artwork, headline: "Keep your biodata on your device", subline: "Create your biodata in the browser", facts: ["Your biodata stays on this device", "Photos stay in the biodata editor"] },
+    altText: "RishtaPatra text card: Keep your biodata on your device",
+    factsUsed: [{ factId: "rp-f05", quote: "Local-first biodata maker" }],
+  };
+  assert.deepEqual(rishtapatraLocalFirstErrors(local), []);
+  assert.equal(runChecks(local, brands.rishtapatra, { config, media: mediaFor(RP) }).checks.find((c) => c.id === "brand_lint").ok, true);
+
+  const conflated = {
+    ...local,
+    caption: "Your details stay private. Visit rishtapatra.com to build your family rishta profile safely.",
+    artwork: { ...local.artwork, facts: ["Your family information stays private", "Your biodata stays on this device"] },
+  };
+  const errors = rishtapatraLocalFirstErrors(conflated);
+  assert.ok(errors.some((e) => e.includes("say create/build your biodata")), errors.join("; "));
+  assert.ok(errors.some((e) => e.includes("artwork.facts[0]") && e.includes("local biodata-making flow")), errors.join("; "));
+  const lint = runChecks(conflated, brands.rishtapatra, { config, media: mediaFor(RP) }).checks.find((c) => c.id === "brand_lint");
+  assert.equal(lint.ok, false);
+  assert.match(lint.detail, /rishta or matchmaking profile/);
+  assert.match(lint.detail, /qualify privacy to the local biodata-making flow/);
 });
 
 // ---------------------------------------------------------------------------------------------------
