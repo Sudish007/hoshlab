@@ -72,7 +72,19 @@ One regular expression per line (flags `iu`); a match anywhere in the caption, h
 - `\bGST\b`
 - `#India`
 - `ATS[- ]certified`
-- `guaranteed (?:interview|parsing|job|offer)`
+- `(?<!\bnot\s)(?<!\bnever\s)\bparseable\s+by\s+construction\b`
+- `(?<!\bnot\s)(?<!\bnever\s)\bparser[- ]safe\b`
+- `(?<!\bnot\s)(?<!\bnever\s)\bATS[- ]proof\b`
+- `(?<!\bnot\s)(?<!\bnever\s)\bATS[- ]compatible\b`
+- `(?<!\bnot\s)(?<!\bnever\s)\bpasses?\s+(?:all|every|any)\s+ATS\b`
+- `(?<!\bnot\s)(?<!\bno\s)(?<!\bnever\s)(?<!\bcannot\s)(?<!\bwithout\s)\b(?:guarante(?:e|es|ed|eing)|ensur(?:e|es|ed|ing))\b.{0,40}\b(?:pars(?:e|es|ed|ing|able)|parser|ATS)\b`
+- `\b(?:pars(?:e|es|ed|ing|able)|parser|ATS)\b.{0,40}(?<!\bnot\s)(?<!\bno\s)(?<!\bnever\s)(?<!\bcannot\s)(?<!\bwithout\s)\b(?:guarante(?:e|es|ed|eing)|ensur(?:e|es|ed|ing))\b`
+- `(?<!\bnot\s)(?<!\bnever\s)\b(?:works?|compatib(?:le|ility))\s+(?:with|across)\s+(?:all|every|any)\s+(?:ATS|parsers?)\b`
+- `(?<!\bnot\s)(?<!\bnever\s)\b(?:all|every|any)\s+(?:ATS|parsers?)\b.{0,30}\b(?:can|will)\s+(?:read|parse|accept)\b`
+- `(?<!\bnot\s)(?<!\bnever\s)\b(?:read|parsed?|accepted)\s+by\s+(?:all|every|any)\s+(?:ATS|parsers?)\b`
+- `(?<!\bnot\s)(?<!\bnever\s)\b(?:always|universally)\s+(?:pars(?:e|es|ed|able)|ATS[- ]compatible)\b`
+- `(?<!\bnot\s)(?<!\bno\s)\b(?:universal|full|complete|100\s*%)\s+(?:ATS|parser)[- ]compatib(?:le|ility)\b`
+- `(?<!\bnot\s)(?<!\bnever\s)(?<!\bno\s)\bguaranteed\s+(?:interview|job|offer)\b`
 - `beat the ATS`
 - `AI[- ]powered`
 - `\b\d[\d,.]*\s*(?:\+|k)?\s*(?:users|members|candidates|job seekers|engineers trust)\b`
