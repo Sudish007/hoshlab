@@ -88,6 +88,29 @@ test("deterministic failure → the model is NOT called, qa.json has model:null 
   }
 });
 
+test("JobRez parser guarantee fails deterministic forbidden QA and never calls the QA model", async () => {
+  const h = harness();
+  const router = fakeRouter("qa.ok");
+  const draft = JSON.parse(readFileSync(join(ROOT, "tests", "fixtures", "regressions", "jobrez-parser-claim.json"), "utf8"));
+  try {
+    const res = await runQa({ draft, brand: brands.job_rez, config, router, state: h.state, media: mediaFor(draft), runId: RUN_ID });
+    assert.equal(res.passed, false);
+    assert.equal(res.modelCalled, false);
+    assert.equal(router.calls.length, 0, "deterministic rejection stops before router.complete");
+    assert.equal(res.status, "rework");
+    assert.deepEqual(res.qa.deterministic.checks.filter((check) => !check.ok).map((check) => check.id), ["forbidden"]);
+    assert.equal(res.reasons.length, 1);
+    assert.match(res.reasons[0], /^forbidden: caption: "parseable by construction" matches/);
+    assert.equal(res.qa.model, null);
+    const updated = h.state.readDraft(draft.id);
+    assert.equal(updated.caption, draft.caption, "QA transitions state without editing generated copy");
+    assert.equal(updated.revision, draft.revision);
+    assert.equal(updated.reworkCount, 1);
+  } finally {
+    h.cleanup();
+  }
+});
+
 test("deterministic pass + qa.ok fixture → the model is called once with the task JSON (draft, media metadata, brand rules, 12 deterministic results) and the draft is queued", async () => {
   const h = harness();
   const router = fakeRouter("qa.ok");

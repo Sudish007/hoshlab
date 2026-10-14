@@ -189,6 +189,22 @@ test("carousel slot: slides kept with one altText per slide (altTexts[]), artwor
   }
 });
 
+test("JobRez Writer task carries the structural fact and parser-guarantee Forbidden rules from the brand", () => {
+  const task = buildTask({ slot: SLOTS.jrCarousel, idea: { ...IDEAS.jr, format: "carousel", facts: ["jr-f07"] }, brand: brands.job_rez, page: JR, config });
+  const layoutFact = task.brand.facts.find((fact) => fact.id === "jr-f07");
+  assert.match(layoutFact.fact, /selectable text/);
+  assert.match(layoutFact.fact, /not a certification against any ATS vendor/);
+  for (const source of [
+    "(?<!\\bnot\\s)(?<!\\bnever\\s)\\bparseable\\s+by\\s+construction\\b",
+    "(?<!\\bnot\\s)(?<!\\bnever\\s)\\bparser[- ]safe\\b",
+    "(?<!\\bnot\\s)(?<!\\bnever\\s)\\bATS[- ]proof\\b",
+    "(?<!\\bnot\\s)(?<!\\bnever\\s)\\bATS[- ]compatible\\b",
+    "(?<!\\bnot\\s)(?<!\\bnever\\s)\\bpasses?\\s+(?:all|every|any)\\s+ATS\\b",
+  ]) {
+    assert.ok(task.brand.forbidden.includes(source), `Writer receives Forbidden pattern ${source}`);
+  }
+});
+
 test("rework: revision + 1, status written, reworkCount untouched (QA owns the counter), qaReasons cleared, old media dropped, identity and publishAttempts kept", async () => {
   const h = harness();
   try {

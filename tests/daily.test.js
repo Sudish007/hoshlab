@@ -283,6 +283,37 @@ test("queued deterministic recheck sends newly invalid copy through QA rework wi
   }
 });
 
+test("next daily run rechecks the exact queued JobRez draft and transitions queued → rework without editing generated fields", async () => {
+  const fx = copyFixture();
+  const out = sink();
+  const fixturePath = join(ROOT, "tests", "fixtures", "regressions", "jobrez-parser-claim.json");
+  const queued = JSON.parse(readFileSync(fixturePath, "utf8"));
+  try {
+    fx.state.writeDraft(structuredClone(queued));
+    const r = await runDaily({ companyDir: fx.dir, mediaRoot: fx.mediaRoot, now: "2026-10-15T05:53:00+05:30", processEnv: {}, flags: { agents: "qa", page: "job_rez" }, stdout: out });
+    assert.equal(r.ok, true, out.text());
+    const draft = fx.draft(queued.id);
+    assert.equal(queued.status, "queued");
+    assert.equal(draft.status, "rework");
+    assert.equal(draft.reworkCount, 1);
+    assert.equal(draft.revision, queued.revision);
+    assert.deepEqual(draft.qaReasons.length, 1);
+    assert.match(draft.qaReasons[0], /^forbidden: caption: "parseable by construction" matches/);
+    const qa = fx.state.readQa(queued.id);
+    assert.deepEqual(qa.deterministic.checks.filter((check) => !check.ok).map((check) => check.id), ["forbidden"]);
+    assert.equal(qa.model, null);
+    assert.equal(agent(r, "qa").calls, 0, "queued deterministic recheck makes no model call");
+    assert.match(agent(r, "qa").note, new RegExp(`queued recheck ${queued.id} → rework`));
+    assert.ok(out.lines.some((line) => line.includes(`[qa] queued recheck ${queued.id} rework`)));
+    for (const key of ["caption", "hashtags", "altText", "factsUsed", "slides", "altTexts", "writerNote", "media", "publishAttempts", "designNote"]) {
+      assert.deepEqual(draft[key], queued[key], `${key} is untouched by the engine-owned transition`);
+    }
+    assert.deepEqual(JSON.parse(readFileSync(fixturePath, "utf8")), queued, "the committed regression fixture is read-only; all state writes stay in the temp copy");
+  } finally {
+    fx.cleanup();
+  }
+});
+
 test("P1-08: a rendered draft failing QA (qa.fail fixture) goes to rework, the inline loop reworks it (mock → mock_output) and the next run blocks it after the second rework (reworkCount 2 → blocked)", async () => {
   const fx = copyFixture();
   try {

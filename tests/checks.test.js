@@ -232,6 +232,55 @@ test("forbidden: pass — the fixtures match none of the brand regexes; KaatDo's
   assert.equal(run(JR).check("forbidden").ok, true);
 });
 
+test("forbidden: JobRez rejects parser and ATS guarantees but permits structural facts and honest negation", () => {
+  const parserClaim = JSON.parse(readFileSync(join(ROOT, "tests", "fixtures", "regressions", "jobrez-parser-claim.json"), "utf8"));
+  const current = run(parserClaim);
+  assert.equal(current.check("forbidden").ok, false);
+  assert.match(current.check("forbidden").detail, /caption: "parseable by construction" matches/);
+  assert.deepEqual(current.result.checks.filter((check) => !check.ok).map((check) => check.id), ["forbidden"], "the queued caption fails the named deterministic rule only");
+
+  const honest = [
+    "Six layout rules measure single-column order, standard headings, real bullet lists, selectable text, no tables or floats, and structurally simple output.",
+    "This is not a certification against any ATS vendor.",
+    "ATS-safe by structure.",
+    "Parsing is not guaranteed, and the document is not ATS compatible.",
+    "We do not guarantee parser compatibility.",
+  ];
+  for (const wording of honest) {
+    const check = withCaption(JR, `${wording}\n\nRead more at jobrez.com.`).check("forbidden");
+    assert.equal(check.ok, true, `${JSON.stringify(wording)}: ${check.detail}`);
+  }
+
+  const guarantees = [
+    "It is parseable by construction.",
+    "The export is parser-safe.",
+    "The export is parser safe.",
+    "The resume is ATS-proof.",
+    "The resume is ATS proof.",
+    "The document is ATS compatible.",
+    "The document is ATS-compatible.",
+    "It passes all ATS systems.",
+    "It passes every ATS parser.",
+    "It passes any ATS scanner.",
+    "Guaranteed parsing.",
+    "Guaranteed to parse everywhere.",
+    "This guarantees parser compatibility.",
+    "Parser compatibility is guaranteed.",
+    "It works with every ATS.",
+    "It is compatible with all parsers.",
+    "Every parser can read it.",
+    "Any ATS will accept it.",
+    "It can be read by all parsers.",
+    "It always parses.",
+    "Universal ATS compatibility.",
+    "Full parser compatibility.",
+  ];
+  for (const wording of guarantees) {
+    const check = withCaption(JR, `${wording}\n\nRead more at jobrez.com.`).check("forbidden");
+    assert.equal(check.ok, false, `${JSON.stringify(wording)} should fail the JobRez guarantee guard`);
+  }
+});
+
 test("forbidden: fail — KaatDo 'guaranteed' in the caption, JobRez '!' and a user count in the artwork", () => {
   const kd = withCaption(KD, KD.caption + "\nGuaranteed exits.").check("forbidden");
   assert.equal(kd.ok, false);
