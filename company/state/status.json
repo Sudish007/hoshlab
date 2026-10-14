@@ -1,12 +1,79 @@
 {
-  "updatedAt": "2026-10-14T10:32:53+05:30",
+  "updatedAt": "2026-10-14T13:11:05+05:30",
   "lastRun": {
-    "id": "engine-daily-20261014-1031-63450d",
-    "workflow": "engine-daily",
+    "id": "publisher-hourly-20261014-1311-cb61be",
+    "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-14T10:32:53+05:30"
+    "at": "2026-10-14T13:11:05+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261014-1311-cb61be",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-14T13:11:05+05:30",
+      "endedAt": "2026-10-14T13:11:05+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 12,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 3 waiting, 0 failed, 0 expired"
+        }
+      ],
+      "changed": [
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-16-device-first-biodata-privacy",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-15-automated-breach-reaction",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-10-14-six-layout-rules-measured-live",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-16-branching-from-a-master-resume",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "idle"
+          },
+          "kaatdo": {
+            "outcome": "idle"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.048445
+    },
     {
       "id": "engine-daily-20261014-1031-63450d",
       "workflow": "engine-daily",
@@ -1162,47 +1229,6 @@
       "trigger": "schedule",
       "startedAt": "2026-10-12T05:50:02+05:30",
       "endedAt": "2026-10-12T05:50:02+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 14,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 0 waiting, 0 failed, 0 expired"
-        }
-      ],
-      "changed": [
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [],
-        "staleEdits": [],
-        "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "idle"
-          },
-          "kaatdo": {
-            "outcome": "idle"
-          },
-          "job_rez": {
-            "outcome": "idle"
-          }
-        }
-      }
-    },
-    {
-      "id": "publisher-hourly-20261012-0221-314c79",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-12T02:21:00+05:30",
-      "endedAt": "2026-10-12T02:21:00+05:30",
       "ok": true,
       "agents": [
         {
