@@ -58,5 +58,7 @@ test("chrome rules: no gradients, no box-shadow except the nav underline, no ove
   assert.ok(!/\.mock-banner|\.post-rp|\.post-kd|\.post-jr|\.admin-tabs|\.queue-item|\.mode-row/.test(css), "mock-only and admin-only rules are not in styles.css");
   assert.match(css, /\.site-nav ul \{[^}]*flex-wrap: wrap/, "nav wraps (OF-8)");
   assert.match(css, /\.run-lines li > span \{[^}]*min-width: 0;[^}]*overflow-wrap: anywhere;/, "long provider errors wrap inside Activity rows");
+  assert.match(css, /\.agent \.foot \.chip \{[^}]*max-width: 100%;[^}]*white-space: normal;[^}]*overflow-wrap: anywhere;/, "long live cost chips wrap within Team cards");
+  assert.match(css, /\.hero-main \.trust-row \{ flex: 1; \}/, "Home trust facts fill a taller live status side at monitor widths");
   assert.match(css, /__BASE__fonts\/inter-latin-400-normal\.woff2/, "font URLs use the __BASE__ token");
 });
