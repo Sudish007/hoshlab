@@ -332,6 +332,12 @@ test("alt_text: text artwork must not be described as a product UI/preview and m
 
   assert.deepEqual(visualAltTextErrors(RP), [], "literal image fixture passes");
   assert.deepEqual(visualAltTextErrors(JR), [], "literal carousel fixture passes");
+  const visiblePreview = {
+    format: "carousel",
+    altText: "Text carousel titled One Page Preview",
+    slides: [{ heading: "One Page Preview", body: "Live A4 preview that auto-fits neatly", altText: "Text slide titled One Page Preview with live A4 preview copy" }],
+  };
+  assert.deepEqual(visualAltTextErrors(visiblePreview), [], "the visible word Preview is allowed when alt text clearly identifies text artwork");
 });
 
 // ---------------------------------------------------------------------------------------------------
