@@ -7,14 +7,14 @@
   "format": "carousel",
   "language": "en",
   "status": "queued",
-  "revision": 1,
-  "reworkCount": 0,
+  "revision": 2,
+  "reworkCount": 1,
   "mock": false,
   "createdAt": "2026-10-14T10:10:41+05:30",
-  "updatedAt": "2026-10-14T10:10:41+05:30",
+  "updatedAt": "2026-10-15T10:19:51+05:30",
   "by": "writer",
-  "runId": "engine-daily-20261014-1010-d13868",
-  "caption": "Six layout rules are checked on the rendered page after every edit.\n\nWe measure the actual rendered output across six baseline requirements: single-column order, standard headings, real bullet lists, selectable text, no tables or floats, and body text of at least 9.5pt.\n\nThis check is structural enforcement, not a certification against any ATS vendor. It keeps the exported document clean and parseable by construction.\n\nRead more at jobrez.com.",
+  "runId": "engine-daily-20261015-1019-ed8d50",
+  "caption": "Six layout rules are checked on the rendered page after every edit.\n\nWe measure the actual rendered output across six baseline requirements: single-column order, standard headings, real bullet lists, selectable text, no tables or floats, and body text of at least 9.5pt.\n\nThis check is structural enforcement, not a certification against any ATS vendor. It keeps the exported document clean and consistently formatted.\n\nRead more at jobrez.com.",
   "hashtags": [
     "#JobRez",
     "#ResumeFormatting",
@@ -58,7 +58,7 @@
     "Slide graphic titled Lists and text selection explaining real bullet lists and no tables.",
     "Slide graphic titled Type size and scope noting 9.5pt body text and vendor disclaimer."
   ],
-  "writerNote": "Carousel focuses strictly on fact jr-f07. No exclamation marks, no emoji, and explicitly includes the exact phrasing 'not a certification against any ATS vendor'.",
+  "writerNote": "Removed the phrase 'parseable by construction' from the caption as flagged by QA. All text adheres to character caps, facts table, and forbidden regex constraints.",
   "media": [
     {
       "kind": "image",
@@ -102,6 +102,6 @@
     }
   ],
   "publishAttempts": [],
-  "designNote": "4 slides · variant A · cream on ink",
-  "qaRef": "drafts/jr-2026-10-14-six-layout-rules-measured-live/qa.json"
+  "qaRef": "drafts/jr-2026-10-14-six-layout-rules-measured-live/qa.json",
+  "designNote": "4 slides · variant A · cream on ink"
 }

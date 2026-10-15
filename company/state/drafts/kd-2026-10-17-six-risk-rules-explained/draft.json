@@ -1,0 +1,118 @@
+{
+  "id": "kd-2026-10-17-six-risk-rules-explained",
+  "page": "kaatdo",
+  "ideaId": "kd-i0002",
+  "slotId": "kaatdo-2026-10-17-1100",
+  "slotAt": "2026-10-17T11:00:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-15T10:19:51+05:30",
+  "updatedAt": "2026-10-15T10:19:51+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261015-1019-ed8d50",
+  "caption": "Six rules dictate when your terminal locks.\n\nYou configure them before market open. Once live, rules are locked during market hours to stop emotional edits. When any limit breaches, KaatDo cancels every pending order, squares off every position at market, and keeps the account locked until close. If trading activity reappears, the kill switch re-fires.\n\nEvery evaluation and broker call is written to a full audit log. Notifications dispatch via Telegram, webhook, and email.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#riskmanagement",
+    "#tradingdiscipline",
+    "#tradingrules",
+    "#killswitch",
+    "#kaatdo"
+  ],
+  "altText": "Slide series detailing the six server-side risk rules and automated execution on breach.",
+  "factsUsed": [
+    {
+      "factId": "kd-f04",
+      "quote": "Six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates"
+    },
+    {
+      "factId": "kd-f05",
+      "quote": "On breach: cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    },
+    {
+      "factId": "kd-f06",
+      "quote": "Extras: override PIN, rules locked during market hours, full audit log of every evaluation and broker call, Telegram alerts, webhook and email notifications"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Six Risk Rules",
+      "body": "Six rules dictate when your terminal locks: max_daily_loss, profit_target, max_trades, kill_time, kill_days, and kill_dates.",
+      "altText": "Slide 1 with heading Six Risk Rules and copy listing the six server-side rules."
+    },
+    {
+      "heading": "Locked During Market Hours",
+      "body": "Rules are locked during market hours. You set parameters in calm hours so impulse cannot intervene when risk escalates.",
+      "altText": "Slide 2 with heading Locked During Market Hours detailing rule locking during active trade."
+    },
+    {
+      "heading": "Execution on Breach",
+      "body": "On breach, the system cancels every pending order and squares off every position at market. The account stays locked until close.",
+      "altText": "Slide 3 with heading Execution on Breach describing cancellation and market square-off."
+    },
+    {
+      "heading": "Audit Log and Alerts",
+      "body": "Every evaluation and broker call enters a full audit log, supported by Telegram alerts, webhooks, and email notifications.",
+      "altText": "Slide 4 with heading Audit Log and Alerts detailing logs, Telegram alerts, and webhook updates."
+    }
+  ],
+  "altTexts": [
+    "Slide 1 with heading Six Risk Rules and copy listing the six server-side rules.",
+    "Slide 2 with heading Locked During Market Hours detailing rule locking during active trade.",
+    "Slide 3 with heading Execution on Breach describing cancellation and market square-off.",
+    "Slide 4 with heading Audit Log and Alerts detailing logs, Telegram alerts, and webhook updates."
+  ],
+  "writerNote": "Followed carousel specs with 4 slides, terse console tone, no exclamation marks or emoji. Incorporated all mandatory disclaimers and brand sign-off काट दो.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-17-six-risk-rules-explained/slide-1-5152d801.jpg",
+      "bytes": 74460,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "5152d801d48e10f521b3c7dda4ee32eb013e42afd57def34ee2f68ceb73f8003",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-17-six-risk-rules-explained/slide-1-5152d801.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-17-six-risk-rules-explained/slide-1-5152d801.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-17-six-risk-rules-explained/slide-2-33900ab8.jpg",
+      "bytes": 86499,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "33900ab82ffc6d7942194bd501b955f9ebbb43ed5f2c4c67ce897d99fe098bad",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-17-six-risk-rules-explained/slide-2-33900ab8.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-17-six-risk-rules-explained/slide-2-33900ab8.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-17-six-risk-rules-explained/slide-3-f8eaa129.jpg",
+      "bytes": 83613,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "f8eaa1291e959df35672e1aba36e261e7f54190662222ecf0b810d249146a3d8",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-17-six-risk-rules-explained/slide-3-f8eaa129.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-17-six-risk-rules-explained/slide-3-f8eaa129.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-17-six-risk-rules-explained/slide-4-e2557521.jpg",
+      "bytes": 81859,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "e25575219249b5ddbdf213510c891f85c81a5c6fd5a490d464dc5415c962eb01",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-17-six-risk-rules-explained/slide-4-e2557521.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-17-six-risk-rules-explained/slide-4-e2557521.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "4 slides · variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-10-17-six-risk-rules-explained/qa.json"
+}

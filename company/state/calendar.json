@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T10:31:14+05:30",
+  "generatedAt": "2026-10-15T10:19:51+05:30",
   "horizonDays": 14,
   "slots": [
     {
@@ -17,7 +17,7 @@
       "page": "rishtapatra",
       "at": "2026-10-14T19:30:00+05:30",
       "format": "carousel",
-      "status": "rework",
+      "status": "queued",
       "ideaId": "rp-i0001",
       "reason": "Structured walkthrough of the 7-step biodata editor suited for Wednesday carousel slot.",
       "draftId": "rp-2026-10-14-guided-7-step-biodata-flow"
@@ -37,9 +37,10 @@
       "page": "job_rez",
       "at": "2026-10-15T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0002",
-      "reason": "Single image focused on deterministic taxonomy matching."
+      "reason": "Single image focused on deterministic taxonomy matching.",
+      "draftId": "jr-2026-10-15-deterministic-role-matching"
     },
     {
       "slotId": "job_rez-2026-10-16-1230",
@@ -66,18 +67,20 @@
       "page": "kaatdo",
       "at": "2026-10-17T11:00:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0002",
-      "reason": "Deep dive into the 6 risk rules for Saturday carousel."
+      "reason": "Deep dive into the 6 risk rules for Saturday carousel.",
+      "draftId": "kd-2026-10-17-six-risk-rules-explained"
     },
     {
       "slotId": "rishtapatra-2026-10-17-1930",
       "page": "rishtapatra",
       "at": "2026-10-17T19:30:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0003",
-      "reason": "Fast visual explanation of client-side kundali math for Saturday reel slot."
+      "reason": "Fast visual explanation of client-side kundali math for Saturday reel slot.",
+      "draftId": "rp-2026-10-17-private-kundali-calculation-in-browser"
     },
     {
       "slotId": "kaatdo-2026-10-18-1100",
@@ -240,6 +243,33 @@
       "status": "planned",
       "ideaId": "jr-i0010",
       "reason": "Image explaining the five local browser application statuses."
+    },
+    {
+      "slotId": "job_rez-2026-10-28-1230",
+      "page": "job_rez",
+      "at": "2026-10-28T12:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "jr-i0012",
+      "reason": "Uses backlog idea focusing on live jobs panel and refreshing sources."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-28-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-28T19:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "rp-i0015",
+      "reason": "Assigning existing open carousel idea focusing on Priority 1: free Janam Kundali computed locally in the browser."
+    },
+    {
+      "slotId": "kaatdo-2026-10-29-0815",
+      "page": "kaatdo",
+      "at": "2026-10-29T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0011",
+      "reason": "Aligns with Priority 1 targeting core server-side kill switch execution across the six supported brokers."
     }
   ]
 }

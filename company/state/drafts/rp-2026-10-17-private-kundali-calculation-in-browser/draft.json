@@ -1,0 +1,100 @@
+{
+  "id": "rp-2026-10-17-private-kundali-calculation-in-browser",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0003",
+  "slotId": "rishtapatra-2026-10-17-1930",
+  "slotAt": "2026-10-17T19:30:00+05:30",
+  "format": "reel",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-15T10:19:51+05:30",
+  "updatedAt": "2026-10-15T10:19:51+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261015-1019-ed8d50",
+  "caption": "जन्म कुंडली निकालते समय क्या आपकी जन्म तिथि इंटरनेट पर सुरक्षित रहती है? RishtaPatra पर Janam Kundali पूरी तरह आपके ब्राउज़र में तैयार होती है। कोई भी रिक्वेस्ट आपका जन्म विवरण सर्वर पर नहीं भेजती। Note: Kundali calculations are indicative; please consult your pandit. Visit rishtapatra.com to generate your free janam kundali safely on your device.",
+  "hashtags": [
+    "#RishtaPatra",
+    "#JanamKundali",
+    "#कुंडली",
+    "#PrivacyFirst",
+    "#Kundali"
+  ],
+  "altText": "Branded text video showing: जन्म कुंडली निकालते समय क्या आपकी जन्म तिथि सुरक्षित रहती है?",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f07",
+      "quote": "Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\"; no health, money or legal advice"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "जन्म कुंडली निकालते समय क्या आपका डेटा सुरक्षित है?",
+        "seconds": 4
+      },
+      {
+        "text": "RishtaPatra पर Janam Kundali है बिल्कुल free",
+        "seconds": 4
+      },
+      {
+        "text": "Astrology engine आपके ही ब्राउज़र में चलता है",
+        "seconds": 4
+      },
+      {
+        "text": "कोई भी रिक्वेस्ट जन्म विवरण सर्वर पर नहीं भेजती",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Added required reel property for format reel. Kinetic style with 4 scenes totaling 16 seconds (within 15-30s range, 4s each). Verbatim disclaimers 'indicative' and 'consult your pandit' included in caption.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/rp-2026-10-17-private-kundali-calculation-in-browser/reel-02d0305d.mp4",
+      "bytes": 163069,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "02d0305d94a9493abd84383cea210ccf54e93cc550eca9147822bfe6d9a0b41f",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-17-private-kundali-calculation-in-browser/reel-02d0305d.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-17-private-kundali-calculation-in-browser/reel-02d0305d.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 163069,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/rp-2026-10-17-private-kundali-calculation-in-browser/poster-7313caa0.jpg",
+      "bytes": 82751,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "7313caa0648aba81d5fb54635a8fea1226b90703a9400958187a0b3343647c93",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-17-private-kundali-calculation-in-browser/poster-7313caa0.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-17-private-kundali-calculation-in-browser/poster-7313caa0.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · cream and maroon",
+  "qaRef": "drafts/rp-2026-10-17-private-kundali-calculation-in-browser/qa.json"
+}
