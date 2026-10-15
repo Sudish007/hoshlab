@@ -1,7 +1,7 @@
 {
   "draftId": "jr-2026-10-14-six-layout-rules-measured-live",
-  "revision": 1,
-  "at": "2026-10-14T10:10:41+05:30",
+  "revision": 2,
+  "at": "2026-10-15T10:19:51+05:30",
   "passed": true,
   "deterministic": {
     "passed": true,
@@ -9,7 +9,7 @@
       {
         "id": "caption_length",
         "ok": true,
-        "detail": "535/2200"
+        "detail": "532/2200"
       },
       {
         "id": "hashtags",
@@ -24,7 +24,7 @@
       {
         "id": "forbidden",
         "ok": true,
-        "detail": "13 patterns, no match"
+        "detail": "25 patterns, no match"
       },
       {
         "id": "numbers_sourced",
@@ -59,7 +59,7 @@
       {
         "id": "duplicate",
         "ok": true,
-        "detail": "max jaccard 0.01 over 1 recent caption"
+        "detail": "max jaccard 0.02 over 2 recent captions"
       },
       {
         "id": "brand_lint",
@@ -70,25 +70,30 @@
   },
   "model": {
     "provider": "gemini",
-    "model": "gemini-3.5-flash-lite",
+    "model": "gemini-3.8-flash",
     "verdict": "pass",
     "toneScore": 5,
     "claims": [
       {
-        "claim": "Six layout rules are checked on the rendered page after every edit including single-column order, standard headings, real bullet lists, selectable text, no tables or floats, and body text of at least 9.5pt",
+        "claim": "JobRez checks six layout rules on the rendered page after every edit (single-column order, standard headings, real bullet lists, selectable text, no tables or floats, body text of at least 9.5pt)",
         "ok": true,
         "factId": "jr-f07"
       },
       {
-        "claim": "This check is structural enforcement, not a certification against any ATS vendor",
+        "claim": "Structural formatting check is not a certification against any ATS vendor",
         "ok": true,
         "factId": "jr-f07"
+      },
+      {
+        "claim": "JobRez website domain is jobrez.com",
+        "ok": true,
+        "factId": "jr-f01"
       }
     ],
     "reasons": [],
-    "notes": "Tone is precise and matches the voice requirements."
+    "notes": "Revision 2 successfully addresses the forbidden pattern issue, adheres strictly to fact jr-f07, maintains the required disclaimer verbatim, and adopts the engineering README tone perfectly."
   },
   "reasons": [],
   "mock": false,
-  "runId": "engine-daily-20261014-1010-d13868"
+  "runId": "engine-daily-20261015-1019-ed8d50"
 }

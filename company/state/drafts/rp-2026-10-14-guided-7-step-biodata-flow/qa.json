@@ -1,25 +1,25 @@
 {
   "draftId": "rp-2026-10-14-guided-7-step-biodata-flow",
-  "revision": 1,
-  "at": "2026-10-14T10:10:41+05:30",
-  "passed": false,
+  "revision": 2,
+  "at": "2026-10-15T10:19:51+05:30",
+  "passed": true,
   "deterministic": {
-    "passed": false,
+    "passed": true,
     "checks": [
       {
         "id": "caption_length",
         "ok": true,
-        "detail": "310/2200"
+        "detail": "418/2200"
       },
       {
         "id": "hashtags",
         "ok": true,
-        "detail": "2/8"
+        "detail": "4/8"
       },
       {
         "id": "disclaimer",
         "ok": true,
-        "detail": "no trigger fired"
+        "detail": "kundali → 2/2 groups"
       },
       {
         "id": "forbidden",
@@ -33,8 +33,8 @@
       },
       {
         "id": "alt_text",
-        "ok": false,
-        "detail": "altText: describes a product UI/screen/preview, but this format renders branded text artwork; slides[0].altText: include words that are visibly rendered in the artwork; slides[2].altText: describes a product UI/screen/preview, but this format renders branded text artwork"
+        "ok": true,
+        "detail": "3 alt texts, longest 84/100"
       },
       {
         "id": "language",
@@ -44,7 +44,7 @@
       {
         "id": "media_spec",
         "ok": true,
-        "detail": "3 × 1080x1350 jpeg max 78 KB (metadata only: magic and SOF not verified)"
+        "detail": "3 × 1080x1350 jpeg max 76 KB"
       },
       {
         "id": "links",
@@ -59,7 +59,7 @@
       {
         "id": "duplicate",
         "ok": true,
-        "detail": "max jaccard 0.04 over 1 recent caption"
+        "detail": "max jaccard 0.05 over 2 recent captions"
       },
       {
         "id": "brand_lint",
@@ -68,10 +68,42 @@
       }
     ]
   },
-  "model": null,
-  "reasons": [
-    "alt_text: altText: describes a product UI/screen/preview, but this format renders branded text artwork; slides[0].altText: include words that are visibly rendered in the artwork; slides[2].altText: describes a product UI/screen/preview, but this format renders branded text artwork"
-  ],
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "RishtaPatra offers a guided 7-step editor (Personal, Kundali, Education & Career, Family, About, Partner, Contact) plus a Photo step",
+        "ok": true,
+        "factId": "rp-f06"
+      },
+      {
+        "claim": "Live A4 preview that auto-fits your details to one A4 page",
+        "ok": true,
+        "factId": "rp-f06"
+      },
+      {
+        "claim": "Tagline: बायोडाटा से रिश्ते तक / From biodata to rishta",
+        "ok": true,
+        "factId": "rp-f02"
+      },
+      {
+        "claim": "Kundali details are indicative; consult your pandit",
+        "ok": true,
+        "factId": "rp-f09"
+      },
+      {
+        "claim": "Official website is rishtapatra.com",
+        "ok": true,
+        "factId": "rp-f01"
+      }
+    ],
+    "reasons": [],
+    "notes": "All claims are strictly sourced to confirmed facts, required disclaimer fragments are included verbatim, tone is warm, religion-neutral, and adheres strictly to voice guidelines."
+  },
+  "reasons": [],
   "mock": false,
-  "runId": "engine-daily-20261014-1010-d13868"
+  "runId": "engine-daily-20261015-1019-ed8d50"
 }

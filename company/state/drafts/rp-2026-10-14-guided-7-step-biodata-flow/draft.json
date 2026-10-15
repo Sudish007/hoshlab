@@ -6,20 +6,22 @@
   "slotAt": "2026-10-14T19:30:00+05:30",
   "format": "carousel",
   "language": "hi",
-  "status": "rework",
-  "revision": 1,
+  "status": "queued",
+  "revision": 2,
   "reworkCount": 1,
   "mock": false,
   "createdAt": "2026-10-14T00:01:42+05:30",
-  "updatedAt": "2026-10-14T10:31:14+05:30",
+  "updatedAt": "2026-10-15T10:19:51+05:30",
   "by": "writer",
-  "runId": "engine-daily-20261014-0001-3ed4b2",
-  "caption": "बायोडाटा बनाते समय क्या लिखें और क्या छोड़ें, यह तय करना अब आसान है। Our guided 7-step editor takes you through personal, family, education and career details smoothly, while keeping your information private on your device. Visit https://rishtapatra.com to create your biodata today. #RishtaPatra #BiodataMaker",
+  "runId": "engine-daily-20261015-1019-ed8d50",
+  "caption": "बायोडाटा बनाते समय क्या लिखें और क्या छोड़ें, यह तय करना अब आसान है। RishtaPatra offers a guided 7-step editor (Personal, Kundali, Education & Career, Family, About, Partner, Contact) plus a Photo step, auto-fitting your details to one A4 page. बायोडाटा से रिश्ते तक। Note: kundali details are indicative; consult your pandit. Visit rishtapatra.com to create your biodata.",
   "hashtags": [
     "#RishtaPatra",
-    "#BiodataMaker"
+    "#BiodataMaker",
+    "#बायोडाटा",
+    "#Rishta"
   ],
-  "altText": "A carousel showing the guided 7-step editor for making marriage biodata on RishtaPatra.",
+  "altText": "Branded text slide graphic titled बायोडाटा बनाना हुआ आसान with overview text",
   "factsUsed": [
     {
       "factId": "rp-f02",
@@ -28,68 +30,68 @@
     {
       "factId": "rp-f06",
       "quote": "Guided 7-step editor (Personal, Kundali, Education & Career, Family, About, Partner, Contact) plus a Photo step; live A4 preview that auto-fits to one page"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\"; no health, money or legal advice"
     }
   ],
   "slides": [
     {
-      "heading": "पहला कदम",
+      "heading": "बायोडाटा बनाना हुआ आसान",
       "body": "बायोडाटा बनाते समय क्या लिखें और क्या छोड़ें, यह तय करना अब आसान है।",
-      "altText": "Slide 1: Introduction to the guided steps"
+      "altText": "Text slide titled बायोडाटा बनाना हुआ आसान showing opening note on making biodata"
     },
     {
-      "heading": "7-Step Editor",
-      "body": "Personal, Kundali, Education & Career, Family, About, Partner, Contact and Photo steps guide you clearly.",
-      "altText": "Slide 2: The 7-step editor breakdown"
+      "heading": "7 Clear Steps",
+      "body": "Personal, Kundali, Education & Career, Family, About, Partner, Contact plus a Photo step.",
+      "altText": "Text slide titled 7 Clear Steps listing Personal, Kundali, Family, and Contact steps"
     },
     {
-      "heading": "One Page Preview",
-      "body": "Live A4 preview that auto-fits neatly to one page without formatting hassles.",
-      "altText": "Slide 3: Live A4 preview feature"
+      "heading": "Fits One Page",
+      "body": "Live A4 preview that auto-fits to one page cleanly. From biodata to rishta.",
+      "altText": "Text slide titled Fits One Page stating auto-fits to one page cleanly"
     }
   ],
   "altTexts": [
-    "Slide 1: Introduction to the guided steps",
-    "Slide 2: The 7-step editor breakdown",
-    "Slide 3: Live A4 preview feature"
+    "Text slide titled बायोडाटा बनाना हुआ आसान showing opening note on making biodata",
+    "Text slide titled 7 Clear Steps listing Personal, Kundali, Family, and Contact steps",
+    "Text slide titled Fits One Page stating auto-fits to one page cleanly"
   ],
-  "writerNote": "Used facts rp-f02 and rp-f06 as requested. Kept emoji sparse and tone warm and family-facing.",
+  "writerNote": "Addressed rework feedback: removed all references to UI/screens/preview/editor in alt texts, ensuring altText strictly describes the rendered branded text artwork and repeats visible heading/body words. Retained kundali disclaimer triggers.",
   "media": [
     {
       "kind": "image",
-      "path": "media/rp-2026-10-14-guided-7-step-biodata-flow/slide-1-ce196afc.jpg",
-      "bytes": 60662,
+      "path": "media/rp-2026-10-14-guided-7-step-biodata-flow/slide-1-e07bec87.jpg",
+      "bytes": 75850,
       "width": 1080,
       "height": 1350,
-      "sha256": "ce196afc5e959b7151dc1d93b68942f6822f783f6839ea79a183ad1776e61909",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-1-ce196afc.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-1-ce196afc.jpg"
+      "sha256": "e07bec87c557dda80416b72669393d86de75d1741d1feb89229e3b55b1bfa065",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-1-e07bec87.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-1-e07bec87.jpg"
     },
     {
       "kind": "image",
-      "path": "media/rp-2026-10-14-guided-7-step-biodata-flow/slide-2-ba7296b9.jpg",
-      "bytes": 76299,
+      "path": "media/rp-2026-10-14-guided-7-step-biodata-flow/slide-2-6237ab03.jpg",
+      "bytes": 69166,
       "width": 1080,
       "height": 1350,
-      "sha256": "ba7296b9fce136953a95f3e6757134ac8a94a8d23374d461c01670aab895ec2d",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-2-ba7296b9.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-2-ba7296b9.jpg"
+      "sha256": "6237ab03098b10287982cf5026c772da9dfcbd3a9e5347a521da2d24defdc944",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-2-6237ab03.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-2-6237ab03.jpg"
     },
     {
       "kind": "image",
-      "path": "media/rp-2026-10-14-guided-7-step-biodata-flow/slide-3-4e2af529.jpg",
-      "bytes": 78341,
+      "path": "media/rp-2026-10-14-guided-7-step-biodata-flow/slide-3-100bd1f5.jpg",
+      "bytes": 73133,
       "width": 1080,
       "height": 1350,
-      "sha256": "4e2af529729bfec7f998ba3d72666481c45ac9d3800f306b7b20a65ac8ae5ee4",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-3-4e2af529.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-3-4e2af529.jpg"
+      "sha256": "100bd1f5c0cd2531365b3985139b6337d37cf4ddf1296e4db9d3ed48078d5a25",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-3-100bd1f5.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-14-guided-7-step-biodata-flow/slide-3-100bd1f5.jpg"
     }
   ],
   "publishAttempts": [],
-  "designNote": "3 slides · variant A · maroon and cream",
   "qaRef": "drafts/rp-2026-10-14-guided-7-step-biodata-flow/qa.json",
-  "qaReasons": [
-    "alt_text: altText: describes a product UI/screen/preview, but this format renders branded text artwork; slides[0].altText: include words that are visibly rendered in the artwork; slides[2].altText: describes a product UI/screen/preview, but this format renders branded text artwork",
-    "invalid_output: $.slides[1].altText: describes a product UI/screen/preview, but this format renders branded text artwork; $.slides[2].altText: describes a product UI/screen/preview, but this format renders branded text artwork"
-  ]
+  "designNote": "3 slides · variant A · maroon and cream"
 }
