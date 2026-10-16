@@ -1,12 +1,101 @@
 {
-  "updatedAt": "2026-10-16T18:00:25+05:30",
+  "updatedAt": "2026-10-16T22:57:31+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261016-1800-cd22c8",
+    "id": "publisher-hourly-20261016-2257-d6eb9b",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-16T18:00:25+05:30"
+    "at": "2026-10-16T22:57:31+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261016-2257-d6eb9b",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-16T22:57:31+05:30",
+      "endedAt": "2026-10-16T22:57:31+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 14,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 3 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/rp-2026-10-14-guided-7-step-biodata-flow/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-16-device-first-biodata-privacy",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-10-17-private-kundali-calculation-in-browser",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-15-automated-breach-reaction",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-10-17-six-risk-rules-explained",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-18-morning-token-routine",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-10-15-deterministic-role-matching",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-16-branching-from-a-master-resume",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "rp-2026-10-14-guided-7-step-biodata-flow"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.128095
+    },
     {
       "id": "publisher-hourly-20261016-1800-cd22c8",
       "workflow": "publisher-hourly",
@@ -1525,95 +1614,10 @@
       "errors": [],
       "budgetUsedUsd": 0,
       "budgetPaidEquivalentUsd": 0.005897
-    },
-    {
-      "id": "engine-daily-20261014-0001-3ed4b2",
-      "workflow": "engine-daily",
-      "trigger": "dispatch",
-      "startedAt": "2026-10-14T00:01:42+05:30",
-      "endedAt": "2026-10-14T00:11:54+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "ceo",
-          "ok": true,
-          "ms": 104358,
-          "calls": 3,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.007888,
-          "note": "6 priorities, 0 paused, no Analyst report to answer, 0 owner questions → memos/2026-W42.md | completed models: Google Gemini · gemini-3.5-flash-lite"
-        },
-        {
-          "name": "hr",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not_due — not the 1st of the month and 2026-09 has no runs or model calls to catch up on (the review runs on the 1st or with `node engine/index.js hr`)",
-          "skipped": "not_due"
-        },
-        {
-          "name": "strategist",
-          "ok": true,
-          "ms": 292620,
-          "calls": 6,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.007947,
-          "note": "rishtapatra: 6 ideas, 8 slots | kaatdo: 6 ideas, 8 slots | job_rez: 8 ideas, 10 slots | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
-        },
-        {
-          "name": "writer",
-          "ok": false,
-          "ms": 96801,
-          "calls": 5,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.002404,
-          "note": "rishtapatra-2026-10-16-1930: AllProvidersFailedError: writer: no provider answered — gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | anthropic: skipped: secret ANTHROPIC_API_KEY missing | openai: skipped: secret OPENAI_API_KEY missing | 1 written, 0 reworked | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
-        },
-        {
-          "name": "designer",
-          "ok": true,
-          "ms": 1166,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "1 rendered, 0 refused"
-        },
-        {
-          "name": "qa",
-          "ok": true,
-          "ms": 117028,
-          "calls": 2,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.001784,
-          "note": "1 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
-        },
-        {
-          "name": "analyst",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
-          "skipped": "not_due"
-        }
-      ],
-      "changed": [
-        "company/state/memos/2026-W42.md",
-        "company/state/calendar.json",
-        "company/state/ideas.jsonl",
-        "company/state/drafts/rp-2026-10-14-guided-7-step-biodata-flow/draft.json",
-        "company/state/drafts/rp-2026-10-14-guided-7-step-biodata-flow/qa.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "budgetPaidEquivalentUsd": 0.020023
     }
   ],
   "queue": {
-    "rishtapatra": 3,
+    "rishtapatra": 2,
     "kaatdo": 3,
     "job_rez": 2
   },

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-16T12:44:08+05:30",
+  "updatedAt": "2026-10-16T22:57:31+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -70,12 +70,12 @@
     {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "carousel",
       "slotId": "rishtapatra-2026-10-14-1930",
       "slotAt": "2026-10-14T19:30:00+05:30",
       "revision": 2,
-      "updatedAt": "2026-10-15T10:19:51+05:30",
+      "updatedAt": "2026-10-16T22:57:31+05:30",
       "qa": true
     },
     {
