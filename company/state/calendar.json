@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-15T10:19:51+05:30",
+  "generatedAt": "2026-10-16T10:10:02+05:30",
   "horizonDays": 14,
   "slots": [
     {
@@ -87,9 +87,10 @@
       "page": "kaatdo",
       "at": "2026-10-18T11:00:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0003",
-      "reason": "Walkthrough of SEBI token expiry cycle suited for Sunday reel."
+      "reason": "Walkthrough of SEBI token expiry cycle suited for Sunday reel.",
+      "draftId": "kd-2026-10-18-morning-token-routine"
     },
     {
       "slotId": "job_rez-2026-10-19-1230",
@@ -270,6 +271,15 @@
       "status": "planned",
       "ideaId": "kd-i0011",
       "reason": "Aligns with Priority 1 targeting core server-side kill switch execution across the six supported brokers."
+    },
+    {
+      "slotId": "job_rez-2026-10-29-1230",
+      "page": "job_rez",
+      "at": "2026-10-29T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0014",
+      "reason": "Assigning open idea jr-i0014 to cover the live jobs panel priority."
     }
   ]
 }

@@ -1,0 +1,103 @@
+{
+  "id": "kd-2026-10-18-morning-token-routine",
+  "page": "kaatdo",
+  "ideaId": "kd-i0003",
+  "slotId": "kaatdo-2026-10-18-1100",
+  "slotAt": "2026-10-18T11:00:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-16T10:10:02+05:30",
+  "updatedAt": "2026-10-16T10:10:02+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261016-1010-355077",
+  "caption": "08:45 IST: your broker token is expired. Broker tokens expire every day under SEBI norms. Reconnect your broker each trading morning to keep monitoring active. Watch for the stale-token nudge and the connected but not armed alert at 09:20 IST. KaatDo runs a server-side kill switch on six brokers using official trade APIs.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#Trading",
+    "#RiskManagement",
+    "#Fyers",
+    "#Upstox",
+    "#Zerodha",
+    "#Dhan",
+    "#Groww"
+  ],
+  "altText": "Kinetic text reel about morning broker token expiry and reconnection requirements.",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f07",
+      "quote": "Broker tokens expire every day (SEBI norms), so the trader reconnects each trading morning; 08:45 IST stale-token nudge and 09:20 IST \"connected but NOT armed\" alert"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 20,
+    "scenes": [
+      {
+        "text": "08:45 IST: your broker token is expired.",
+        "seconds": 4
+      },
+      {
+        "text": "Broker tokens expire every day under SEBI norms.",
+        "seconds": 4
+      },
+      {
+        "text": "Reconnect your broker each trading morning.",
+        "seconds": 4
+      },
+      {
+        "text": "Watch for the 09:20 alert.",
+        "seconds": 4
+      },
+      {
+        "text": "Keep your kill switch armed.",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Used kinetic reel style to display the morning broker token workflow clearly across five scenes summing to 20 seconds. Included mandatory disclaimers and brand sign-off.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/kd-2026-10-18-morning-token-routine/reel-83b2c870.mp4",
+      "bytes": 181029,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "83b2c870c8e3da021882fd4979c0882fa6cd250157ebbbd745d3b07db7a70c81",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-18-morning-token-routine/reel-83b2c870.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-18-morning-token-routine/reel-83b2c870.mp4",
+      "durationSec": 20,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 20,
+        "bytes": 181029,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/kd-2026-10-18-morning-token-routine/poster-48a64247.jpg",
+      "bytes": 65898,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "48a64247eb8fb3c29c941687f21f341b5cff10447694cc07a9638d1ee8e5bf8f",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-18-morning-token-routine/poster-48a64247.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-18-morning-token-routine/poster-48a64247.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 5 scenes · 20 s · 600 frames · dark console palette",
+  "qaRef": "drafts/kd-2026-10-18-morning-token-routine/qa.json"
+}

@@ -1,0 +1,109 @@
+{
+  "draftId": "kd-2026-10-18-morning-token-routine",
+  "revision": 1,
+  "at": "2026-10-16T10:10:02+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "559/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "8/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "always → 3/3 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "10 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "08:45 → kd-f07, 09:20 → kd-f07"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "82/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; Devanagari only \"काट दो\")"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "h264 1080x1920 yuv420p 30/1 20 s 181 KB faststart; poster 1080x1920 jpeg 66 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on kaatdo.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.20 over 2 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Broker tokens expire every day under SEBI norms",
+        "ok": true,
+        "factId": "kd-f07"
+      },
+      {
+        "claim": "Stale-token nudge at 08:45 IST and connected but not armed alert at 09:20 IST",
+        "ok": true,
+        "factId": "kd-f07"
+      },
+      {
+        "claim": "KaatDo runs a server-side kill switch on six brokers using official trade APIs",
+        "ok": true,
+        "factId": "kd-f03"
+      },
+      {
+        "claim": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "Broker API execution is never guaranteed",
+        "ok": true,
+        "factId": "kd-f10"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is console-like and precise. Disclaimers are verbatim."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261016-1010-355077"
+}
