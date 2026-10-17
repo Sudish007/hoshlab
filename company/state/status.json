@@ -1,12 +1,95 @@
 {
-  "updatedAt": "2026-10-17T05:09:10+05:30",
+  "updatedAt": "2026-10-17T10:02:14+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261017-0509-1a29c4",
+    "id": "publisher-hourly-20261017-1002-5f892c",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-17T05:09:10+05:30"
+    "at": "2026-10-17T10:02:14+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261017-1002-5f892c",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-17T10:02:14+05:30",
+      "endedAt": "2026-10-17T10:02:14+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 16,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 3 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/kd-2026-10-15-automated-breach-reaction/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-16-device-first-biodata-privacy",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-10-17-private-kundali-calculation-in-browser",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-17-six-risk-rules-explained",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-18-morning-token-routine",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-10-15-deterministic-role-matching",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-16-branching-from-a-master-resume",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "kd-2026-10-15-automated-breach-reaction"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "idle"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.128095
+    },
     {
       "id": "publisher-hourly-20261017-0509-1a29c4",
       "workflow": "publisher-hourly",
@@ -1593,65 +1676,11 @@
       "errors": [],
       "budgetUsedUsd": 0,
       "budgetPaidEquivalentUsd": 0.03848
-    },
-    {
-      "id": "publisher-hourly-20261014-0725-0faacb",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-14T07:25:28+05:30",
-      "endedAt": "2026-10-14T07:25:28+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 19,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 2 waiting, 0 failed, 0 expired"
-        }
-      ],
-      "changed": [
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-14-guided-7-step-biodata-flow",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "rp-2026-10-16-device-first-biodata-privacy",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "idle"
-          },
-          "kaatdo": {
-            "outcome": "idle"
-          },
-          "job_rez": {
-            "outcome": "idle"
-          }
-        }
-      }
     }
   ],
   "queue": {
     "rishtapatra": 2,
-    "kaatdo": 3,
+    "kaatdo": 2,
     "job_rez": 2
   },
   "blocked": {},
