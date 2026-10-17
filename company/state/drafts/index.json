@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-16T22:57:31+05:30",
+  "updatedAt": "2026-10-17T10:02:14+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -37,12 +37,12 @@
     {
       "id": "kd-2026-10-15-automated-breach-reaction",
       "page": "kaatdo",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "kaatdo-2026-10-15-0815",
       "slotAt": "2026-10-15T08:15:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-14T10:10:41+05:30",
+      "updatedAt": "2026-10-17T10:02:14+05:30",
       "qa": true
     },
     {
