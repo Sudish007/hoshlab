@@ -1,0 +1,61 @@
+{
+  "id": "kd-2026-10-20-the-refire-loop-reality",
+  "page": "kaatdo",
+  "ideaId": "kd-i0004",
+  "slotId": "kaatdo-2026-10-20-0815",
+  "slotAt": "2026-10-20T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-17T10:07:20+05:30",
+  "updatedAt": "2026-10-17T10:07:20+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261017-1007-1f021c",
+  "caption": "Squared off within seconds, not prevented outright.\n\nNo broker-level block trading API exists except at Dhan. When your account enters a LOCKED state, enforcement relies on a server-side re-fire loop. Any new trade detected is squared off within seconds rather than blocked at entry.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#RiskManagement",
+    "#TradingDiscipline",
+    "#TradingRules"
+  ],
+  "altText": "Text graphic reading Squared off within seconds, not prevented outright. Re-fire loop mechanics.",
+  "factsUsed": [
+    {
+      "factId": "kd-f08",
+      "quote": "Honest limitation: no broker-level \"block trading\" API exists except at Dhan; the LOCKED state is enforced by a re-fire loop, so trades are squared off within seconds, not prevented outright"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "artwork": {
+    "headline": "Squared off within seconds, not prevented outright.",
+    "subline": "How the server-side re-fire loop handles locked trading states.",
+    "facts": [
+      "No broker-level block trading API exists except at Dhan.",
+      "LOCKED state is enforced by an active re-fire loop.",
+      "New activity is squared off within seconds."
+    ],
+    "footer": "kaatdo.com"
+  },
+  "writerNote": "Adheres to honest limitations voice guidelines. Includes mandatory disclaimers unweakened. Uses Devanagari only for the brand sign-off 'काट दो.'.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-20-the-refire-loop-reality/image-1-291f979e.jpg",
+      "bytes": 137021,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "291f979e2212c83ebe8ce5cf7b7b9cea7d838defbd8a68a41b13dddd6db7c2ee",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-20-the-refire-loop-reality/image-1-291f979e.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-20-the-refire-loop-reality/image-1-291f979e.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · dark console palette",
+  "qaRef": "drafts/kd-2026-10-20-the-refire-loop-reality/qa.json"
+}

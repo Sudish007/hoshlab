@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-16T10:10:02+05:30",
+  "generatedAt": "2026-10-17T10:07:20+05:30",
   "horizonDays": 14,
   "slots": [
     {
@@ -7,30 +7,24 @@
       "page": "job_rez",
       "at": "2026-10-14T12:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "jr-i0001",
-      "reason": "Carousel detailing the six layout rules checked on rendered pages.",
-      "draftId": "jr-2026-10-14-six-layout-rules-measured-live"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-14-six-layout-rules-measured-live expired -2.9 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-10-14-1930",
       "page": "rishtapatra",
       "at": "2026-10-14T19:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "rp-i0001",
-      "reason": "Structured walkthrough of the 7-step biodata editor suited for Wednesday carousel slot.",
-      "draftId": "rp-2026-10-14-guided-7-step-biodata-flow"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-10-14-guided-7-step-biodata-flow expired -2.6 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-10-15-0815",
       "page": "kaatdo",
       "at": "2026-10-15T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0001",
-      "reason": "Direct introduction to breach mechanics on image slot.",
-      "draftId": "kd-2026-10-15-automated-breach-reaction"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-10-15-automated-breach-reaction expired -2.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-10-15-1230",
@@ -97,27 +91,30 @@
       "page": "job_rez",
       "at": "2026-10-19T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0004",
-      "reason": "Image explaining rule-based grounded rewrites that preserve truth."
+      "reason": "Image explaining rule-based grounded rewrites that preserve truth.",
+      "draftId": "jr-2026-10-19-grounded-rule-based-rewrites"
     },
     {
       "slotId": "rishtapatra-2026-10-19-1930",
       "page": "rishtapatra",
       "at": "2026-10-19T19:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0004",
-      "reason": "Brand values and community inclusivity focus for Monday image slot."
+      "reason": "Brand values and community inclusivity focus for Monday image slot.",
+      "draftId": "rp-2026-10-19-inclusive-do-patra-biodata"
     },
     {
       "slotId": "kaatdo-2026-10-20-0815",
       "page": "kaatdo",
       "at": "2026-10-20T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0004",
-      "reason": "Honest technical limitation highlight on Tuesday image slot."
+      "reason": "Honest technical limitation highlight on Tuesday image slot.",
+      "draftId": "kd-2026-10-20-the-refire-loop-reality"
     },
     {
       "slotId": "job_rez-2026-10-20-1230",
@@ -280,6 +277,24 @@
       "status": "planned",
       "ideaId": "jr-i0014",
       "reason": "Assigning open idea jr-i0014 to cover the live jobs panel priority."
+    },
+    {
+      "slotId": "job_rez-2026-10-30-1230",
+      "page": "job_rez",
+      "at": "2026-10-30T12:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "jr-i0017",
+      "reason": "Assigns existing reel idea directly aligning with CEO priority 1 on the live jobs panel."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-30-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-30T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0011",
+      "reason": "Directly addresses Priority 1 (lead with free product and local-first privacy) matching the required image format."
     }
   ]
 }

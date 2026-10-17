@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-17T10:02:14+05:30",
+  "updatedAt": "2026-10-17T10:07:20+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -32,6 +32,17 @@
       "slotAt": "2026-10-16T12:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-10-14T10:10:41+05:30",
+      "qa": true
+    },
+    {
+      "id": "jr-2026-10-19-grounded-rule-based-rewrites",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "image",
+      "slotId": "job_rez-2026-10-19-1230",
+      "slotAt": "2026-10-19T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-17T10:07:20+05:30",
       "qa": true
     },
     {
@@ -68,6 +79,17 @@
       "qa": true
     },
     {
+      "id": "kd-2026-10-20-the-refire-loop-reality",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "image",
+      "slotId": "kaatdo-2026-10-20-0815",
+      "slotAt": "2026-10-20T08:15:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-17T10:07:20+05:30",
+      "qa": true
+    },
+    {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
       "status": "expired",
@@ -98,6 +120,17 @@
       "slotAt": "2026-10-17T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-10-15T10:19:51+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-10-19-inclusive-do-patra-biodata",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "image",
+      "slotId": "rishtapatra-2026-10-19-1930",
+      "slotAt": "2026-10-19T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-17T10:07:20+05:30",
       "qa": true
     }
   ]

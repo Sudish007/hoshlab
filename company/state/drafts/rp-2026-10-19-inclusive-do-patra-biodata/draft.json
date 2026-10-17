@@ -1,0 +1,61 @@
+{
+  "id": "rp-2026-10-19-inclusive-do-patra-biodata",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0004",
+  "slotId": "rishtapatra-2026-10-19-1930",
+  "slotAt": "2026-10-19T19:30:00+05:30",
+  "format": "image",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-17T10:07:20+05:30",
+  "updatedAt": "2026-10-17T10:07:20+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261017-1007-1f021c",
+  "caption": "हर परिवार और परंपरा के लिए एक सरल और सम्मानजनक बायोडाटा।\n\nRishtaPatra का 'Do Patra' प्रतीक सभी परंपराओं का सम्मान करता है। चाहे आप किसी भी समुदाय से हों, अपने परिवार के लिए एक सुंदर विवाह बायोडाटा आसानी से तैयार करें। The product serves Hindu, Muslim, Sikh, Christian, Jain, Buddhist and Parsi users.\n\nबायोडाटा से रिश्ते तक। Visit rishtapatra.com to create your biodata.",
+  "hashtags": [
+    "#RishtaPatra",
+    "#बायोडाटा",
+    "#biodatamaker",
+    "#rishta"
+  ],
+  "altText": "Graphic with text: हर परंपरा के लिए एक सम्मानजनक बायोडाटा and Do Patra mark details",
+  "factsUsed": [
+    {
+      "factId": "rp-f02",
+      "quote": "बायोडाटा से रिश्ते तक"
+    },
+    {
+      "factId": "rp-f10",
+      "quote": "Religion-neutral mark \"Do Patra\" (two overlapping biodata pages, gold where they meet); the product serves Hindu, Muslim, Sikh, Christian, Jain, Buddhist and Parsi users"
+    }
+  ],
+  "artwork": {
+    "headline": "हर परंपरा के लिए एक सम्मानजनक बायोडाटा",
+    "subline": "दो पत्र, एक नया रिश्ता — सभी समुदायों के लिए सरल और सुंदर प्रारूप।",
+    "facts": [
+      "Religion-neutral mark Do Patra",
+      "Serves Hindu, Muslim, Sikh, Christian, Jain, Buddhist & Parsi users",
+      "बायोडाटा से रिश्ते तक"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Post focuses on the inclusive Do Patra brand mark and community-neutral biodata maker, using rp-f02 and rp-f10. No kundali trigger used so kundali disclaimer not triggered.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-19-inclusive-do-patra-biodata/image-1-b0ceac0e.jpg",
+      "bytes": 113550,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "b0ceac0e2081a7b9f185e97c6cacef2f73e0bc5f739391da06954fa6f5c2b987",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-19-inclusive-do-patra-biodata/image-1-b0ceac0e.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-19-inclusive-do-patra-biodata/image-1-b0ceac0e.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · cream and maroon",
+  "qaRef": "drafts/rp-2026-10-19-inclusive-do-patra-biodata/qa.json"
+}

@@ -1,0 +1,104 @@
+{
+  "draftId": "rp-2026-10-19-inclusive-do-patra-biodata",
+  "revision": 1,
+  "at": "2026-10-17T10:07:20+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "416/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "no trigger fired"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "8 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "83/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (hi+en; Devanagari allowed)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 114 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on rishtapatra.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/2 (sparse)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.06 over 3 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "RishtaPatra का 'Do Patra' प्रतीक सभी परंपराओं का सम्मान करता है / Religion-neutral mark Do Patra",
+        "ok": true,
+        "factId": "rp-f10"
+      },
+      {
+        "claim": "The product serves Hindu, Muslim, Sikh, Christian, Jain, Buddhist and Parsi users",
+        "ok": true,
+        "factId": "rp-f10"
+      },
+      {
+        "claim": "बायोडाटा से रिश्ते तक",
+        "ok": true,
+        "factId": "rp-f02"
+      },
+      {
+        "claim": "rishtapatra.com to create your biodata / site rishtapatra.com",
+        "ok": true,
+        "factId": "rp-f01"
+      }
+    ],
+    "reasons": [],
+    "notes": "Complies fully with brand facts, tone, and religion-neutral guidelines. No kundali trigger present, so disclaimer was not required."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261017-1007-1f021c"
+}
