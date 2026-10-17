@@ -1,0 +1,109 @@
+{
+  "draftId": "jr-2026-10-19-grounded-rule-based-rewrites",
+  "revision": 1,
+  "at": "2026-10-17T10:07:20+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "391/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "5/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "93/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 119 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.03 over 3 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Grounded rewrites are rule-based in JobRez",
+        "ok": true,
+        "factId": "jr-f08"
+      },
+      {
+        "claim": "Rewrites replace weak openers, remove filler, and fix capitalisation and punctuation",
+        "ok": true,
+        "factId": "jr-f08"
+      },
+      {
+        "claim": "Every edit is listed directly",
+        "ok": true,
+        "factId": "jr-f08"
+      },
+      {
+        "claim": "The system never adds numbers, tools, or employers to bullets",
+        "ok": true,
+        "factId": "jr-f08"
+      },
+      {
+        "claim": "JobRez domain is jobrez.com",
+        "ok": true,
+        "factId": "jr-f01"
+      }
+    ],
+    "reasons": [],
+    "notes": "Accurate, factual copy adhering strictly to jr-f08 and jr-f01 with appropriate neutral tone."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261017-1007-1f021c"
+}
