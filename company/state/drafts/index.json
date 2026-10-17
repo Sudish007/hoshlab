@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-17T10:07:20+05:30",
+  "updatedAt": "2026-10-17T14:55:18+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -15,12 +15,12 @@
     {
       "id": "jr-2026-10-15-deterministic-role-matching",
       "page": "job_rez",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "job_rez-2026-10-15-1230",
       "slotAt": "2026-10-15T12:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-15T10:19:51+05:30",
+      "updatedAt": "2026-10-17T14:55:18+05:30",
       "qa": true
     },
     {
