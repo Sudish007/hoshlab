@@ -1,12 +1,107 @@
 {
-  "updatedAt": "2026-10-17T10:08:48+05:30",
+  "updatedAt": "2026-10-17T14:55:18+05:30",
   "lastRun": {
-    "id": "engine-daily-20261017-1007-1f021c",
-    "workflow": "engine-daily",
+    "id": "publisher-hourly-20261017-1455-59cc31",
+    "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-17T10:08:48+05:30"
+    "at": "2026-10-17T14:55:18+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261017-1455-59cc31",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-17T14:55:18+05:30",
+      "endedAt": "2026-10-17T14:55:18+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 22,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 5 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/jr-2026-10-15-deterministic-role-matching/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-16-device-first-biodata-privacy",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-10-17-private-kundali-calculation-in-browser",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "rp-2026-10-19-inclusive-do-patra-biodata",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-17-six-risk-rules-explained",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-10-18-morning-token-routine",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-20-the-refire-loop-reality",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-10-16-branching-from-a-master-resume",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-19-grounded-rule-based-rewrites",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "jr-2026-10-15-deterministic-role-matching"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.167849
+    },
     {
       "id": "engine-daily-20261017-1007-1f021c",
       "workflow": "engine-daily",
@@ -1591,94 +1686,12 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.048445
-    },
-    {
-      "id": "engine-daily-20261014-1031-63450d",
-      "workflow": "engine-daily",
-      "trigger": "schedule",
-      "startedAt": "2026-10-14T10:31:14+05:30",
-      "endedAt": "2026-10-14T10:32:53+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "ceo",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Monday and state/memos/2026-W42.md exists",
-          "skipped": "not_due"
-        },
-        {
-          "name": "hr",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not_due — not the 1st of the month and 2026-09 has no runs or model calls to catch up on (the review runs on the 1st or with `node engine/index.js hr`)",
-          "skipped": "not_due"
-        },
-        {
-          "name": "strategist",
-          "ok": true,
-          "ms": 13,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "rishtapatra: 0 ideas, 8 slots, model not called (backlog full) | kaatdo: 0 ideas, 8 slots, model not called (backlog full) | job_rez: 0 ideas, 10 slots, model not called (backlog full)"
-        },
-        {
-          "name": "writer",
-          "ok": false,
-          "ms": 99363,
-          "calls": 6,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.009965,
-          "note": "rp-2026-10-14-guided-7-step-biodata-flow: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | job_rez-2026-10-15-1230: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | 0 written, 0 reworked, 2 invalid_output"
-        },
-        {
-          "name": "designer",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 rendered, 0 refused"
-        },
-        {
-          "name": "qa",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 queued, 0 rework, 0 blocked"
-        },
-        {
-          "name": "analyst",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
-          "skipped": "not_due"
-        }
-      ],
-      "changed": [
-        "company/state/calendar.json",
-        "company/state/ideas.jsonl",
-        "company/state/drafts/rp-2026-10-14-guided-7-step-biodata-flow/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/usage/2026-10.jsonl",
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "budgetPaidEquivalentUsd": 0.048445
     }
   ],
   "queue": {
     "rishtapatra": 3,
     "kaatdo": 3,
-    "job_rez": 3
+    "job_rez": 2
   },
   "blocked": {},
   "budget": {
