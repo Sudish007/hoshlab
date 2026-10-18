@@ -1,0 +1,119 @@
+{
+  "draftId": "jr-2026-10-20-honest-evidence-notes",
+  "revision": 1,
+  "at": "2026-10-18T10:12:35+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "404/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "67/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 106 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.03 over 4 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "In JobRez, evidence notes are entirely self-reported.",
+        "ok": true,
+        "factId": "jr-f06"
+      },
+      {
+        "claim": "You can attach a linked source with a URL attached, mark a claim as self-attested when a source was named, or leave it open when nothing supports the claim yet.",
+        "ok": true,
+        "factId": "jr-f06"
+      },
+      {
+        "claim": "Nothing on the platform is externally verified.",
+        "ok": true,
+        "factId": "jr-f06"
+      },
+      {
+        "claim": "Transparent Evidence States: Self-reported notes for every line on your resume.",
+        "ok": true,
+        "factId": "jr-f06"
+      },
+      {
+        "claim": "Linked source, self-attested, or open states.",
+        "ok": true,
+        "factId": "jr-f06"
+      },
+      {
+        "claim": "Nothing is externally verified.",
+        "ok": true,
+        "factId": "jr-f06"
+      },
+      {
+        "claim": "Attach URLs and name sources directly.",
+        "ok": true,
+        "factId": "jr-f06"
+      }
+    ],
+    "reasons": [],
+    "notes": "Clear, grounded copy that accurately reflects fact jr-f06 without overstating or hyping features."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261018-1012-e944dd"
+}

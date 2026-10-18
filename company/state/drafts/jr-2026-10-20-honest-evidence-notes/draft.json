@@ -1,0 +1,59 @@
+{
+  "id": "jr-2026-10-20-honest-evidence-notes",
+  "page": "job_rez",
+  "ideaId": "jr-i0005",
+  "slotId": "job_rez-2026-10-20-1230",
+  "slotAt": "2026-10-20T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-18T10:12:35+05:30",
+  "updatedAt": "2026-10-18T10:12:35+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261018-1012-e944dd",
+  "caption": "Every line on your resume can carry an evidence state.\n\nIn JobRez, evidence notes are entirely self-reported. You can attach a linked source with a URL attached, mark a claim as self-attested when a source was named, or leave it open when nothing supports the claim yet. Nothing on the platform is externally verified.\n\nLearn more at jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#resume",
+    "#engineer",
+    "#career",
+    "#masterresume",
+    "#evidence"
+  ],
+  "altText": "Text graphic: Transparent Evidence States with self-reported notes.",
+  "factsUsed": [
+    {
+      "factId": "jr-f06",
+      "quote": "Evidence notes are self-reported: \"linked source\" (a URL is attached), \"self-attested\" (a source was named), \"open\" (nothing supports the claim yet); nothing is externally verified"
+    }
+  ],
+  "artwork": {
+    "headline": "Transparent Evidence States",
+    "subline": "Self-reported notes for every line on your resume.",
+    "facts": [
+      "Linked source, self-attested, or open states",
+      "Nothing is externally verified",
+      "Attach URLs and name sources directly"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Corrected alt text length to under 100 characters while keeping all facts and constraints intact.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-20-honest-evidence-notes/image-1-6d79b5be.jpg",
+      "bytes": 105954,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "6d79b5be68a2a8d604f511454b46bc658e8e8279c5f7382e309b3260a5783569",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-20-honest-evidence-notes/image-1-6d79b5be.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-20-honest-evidence-notes/image-1-6d79b5be.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-10-20-honest-evidence-notes/qa.json"
+}

@@ -1,40 +1,14 @@
 {
-  "generatedAt": "2026-10-17T10:07:20+05:30",
+  "generatedAt": "2026-10-18T10:12:35+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-10-14-1230",
-      "page": "job_rez",
-      "at": "2026-10-14T12:30:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-10-14-six-layout-rules-measured-live expired -2.9 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-10-14-1930",
-      "page": "rishtapatra",
-      "at": "2026-10-14T19:30:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-10-14-guided-7-step-biodata-flow expired -2.6 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "kaatdo-2026-10-15-0815",
-      "page": "kaatdo",
-      "at": "2026-10-15T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-10-15-automated-breach-reaction expired -2.1 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-10-15-1230",
       "page": "job_rez",
       "at": "2026-10-15T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0002",
-      "reason": "Single image focused on deterministic taxonomy matching.",
-      "draftId": "jr-2026-10-15-deterministic-role-matching"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-15-deterministic-role-matching expired -2.9 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-10-16-1230",
@@ -121,9 +95,10 @@
       "page": "job_rez",
       "at": "2026-10-20T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0005",
-      "reason": "Image defining the three self-reported evidence states."
+      "reason": "Image defining the three self-reported evidence states.",
+      "draftId": "jr-2026-10-20-honest-evidence-notes"
     },
     {
       "slotId": "job_rez-2026-10-21-1230",
@@ -295,6 +270,24 @@
       "status": "planned",
       "ideaId": "rp-i0011",
       "reason": "Directly addresses Priority 1 (lead with free product and local-first privacy) matching the required image format."
+    },
+    {
+      "slotId": "kaatdo-2026-10-31-1100",
+      "page": "kaatdo",
+      "at": "2026-10-31T11:00:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "kd-i0013",
+      "reason": "Assigning existing carousel idea focusing on CEO Priority 2 regarding daily broker token reconnection."
+    },
+    {
+      "slotId": "rishtapatra-2026-10-31-1930",
+      "page": "rishtapatra",
+      "at": "2026-10-31T19:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "rp-i0014",
+      "reason": "Assigning existing backlog reel idea highlighting the A4 page auto-fit preview."
     }
   ]
 }
