@@ -1,34 +1,22 @@
 {
-  "generatedAt": "2026-10-18T10:12:35+05:30",
+  "generatedAt": "2026-10-19T10:21:16+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-10-15-1230",
-      "page": "job_rez",
-      "at": "2026-10-15T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-10-15-deterministic-role-matching expired -2.9 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-10-16-1230",
       "page": "job_rez",
       "at": "2026-10-16T12:30:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "jr-i0003",
-      "reason": "Reel demonstrating branching tailored copies from a single master resume.",
-      "draftId": "jr-2026-10-16-branching-from-a-master-resume"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-16-branching-from-a-master-resume expired -2.9 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-10-16-1930",
       "page": "rishtapatra",
       "at": "2026-10-16T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0002",
-      "reason": "Single clear claim highlighting local-first browser privacy for Friday image slot.",
-      "draftId": "rp-2026-10-16-device-first-biodata-privacy"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-10-16-device-first-biodata-privacy expired -2.6 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-10-17-1100",
@@ -105,27 +93,30 @@
       "page": "job_rez",
       "at": "2026-10-21T12:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0006",
-      "reason": "Carousel walking through live jobs panel sources and local browser tracking."
+      "reason": "Carousel walking through live jobs panel sources and local browser tracking.",
+      "draftId": "jr-2026-10-21-live-jobs-panel-tracking"
     },
     {
       "slotId": "rishtapatra-2026-10-21-1930",
       "page": "rishtapatra",
       "at": "2026-10-21T19:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0005",
-      "reason": "Product overview mapping the three core offerings for Wednesday carousel slot."
+      "reason": "Product overview mapping the three core offerings for Wednesday carousel slot.",
+      "draftId": "rp-2026-10-21-three-pillars-from-biodata-to-rishta"
     },
     {
       "slotId": "kaatdo-2026-10-22-0815",
       "page": "kaatdo",
       "at": "2026-10-22T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0005",
-      "reason": "Focus on locked parameters during market hours on Thursday image slot."
+      "reason": "Focus on locked parameters during market hours on Thursday image slot.",
+      "draftId": "kd-2026-10-22-rules-locked-during-market-hours"
     },
     {
       "slotId": "job_rez-2026-10-22-1230",
@@ -288,6 +279,15 @@
       "status": "planned",
       "ideaId": "rp-i0014",
       "reason": "Assigning existing backlog reel idea highlighting the A4 page auto-fit preview."
+    },
+    {
+      "slotId": "kaatdo-2026-11-01-1100",
+      "page": "kaatdo",
+      "at": "2026-11-01T11:00:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "kd-i0014",
+      "reason": "Assigns existing open reel matching CEO priority 3 on honest execution boundaries and the seconds-level locked loop."
     }
   ]
 }

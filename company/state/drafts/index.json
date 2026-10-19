@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-18T20:07:57+05:30",
+  "updatedAt": "2026-10-19T10:21:16+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -57,6 +57,17 @@
       "qa": true
     },
     {
+      "id": "jr-2026-10-21-live-jobs-panel-tracking",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "job_rez-2026-10-21-1230",
+      "slotAt": "2026-10-21T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-19T10:21:16+05:30",
+      "qa": true
+    },
+    {
       "id": "kd-2026-10-15-automated-breach-reaction",
       "page": "kaatdo",
       "status": "expired",
@@ -101,6 +112,17 @@
       "qa": true
     },
     {
+      "id": "kd-2026-10-22-rules-locked-during-market-hours",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "image",
+      "slotId": "kaatdo-2026-10-22-0815",
+      "slotAt": "2026-10-22T08:15:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-19T10:21:16+05:30",
+      "qa": true
+    },
+    {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
       "status": "expired",
@@ -142,6 +164,17 @@
       "slotAt": "2026-10-19T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-10-17T10:07:20+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-10-21-three-pillars-from-biodata-to-rishta",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "rishtapatra-2026-10-21-1930",
+      "slotAt": "2026-10-21T19:30:00+05:30",
+      "revision": 2,
+      "updatedAt": "2026-10-19T10:21:16+05:30",
       "qa": true
     }
   ]

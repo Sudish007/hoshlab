@@ -1,0 +1,135 @@
+{
+  "id": "rp-2026-10-21-three-pillars-from-biodata-to-rishta",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0005",
+  "slotId": "rishtapatra-2026-10-21-1930",
+  "slotAt": "2026-10-21T19:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 2,
+  "reworkCount": 1,
+  "mock": false,
+  "createdAt": "2026-10-19T10:21:16+05:30",
+  "updatedAt": "2026-10-19T10:21:16+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261019-1021-90b9b0",
+  "caption": "From drafting your first biodata to finding a rishta, here is how RishtaPatra helps.\n\nMake your biodata. Match your kundali. Find your rishta.\n\nRishtaPatra brings three products together:\n• Biodata maker: Build your biodata on your device for your family.\n• Janam Kundali (free): Astrological details at your fingertips.\n• Rishta Connect (matchmaking): Find matches where cards display a 36-point Guna Milan score, such as \"Guna Milan 22.5/36\".\n\nKundali details are indicative; consult your pandit.\n\nVisit rishtapatra.com to get started.",
+  "hashtags": [
+    "#RishtaPatra",
+    "#Biodata",
+    "#Rishta",
+    "#Kundali",
+    "#BiodataMaker",
+    "#GunaMilan"
+  ],
+  "altText": "Text slide showing RishtaPatra: Make your biodata. Match your kundali. Find your rishta.",
+  "factsUsed": [
+    {
+      "factId": "rp-f03",
+      "quote": "Hero line \"Make your biodata. Match your kundali. Find your rishta.\" / \"बायोडाटा बनाइए। कुंडली मिलाइए। रिश्ता ढूंढिए।\""
+    },
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f08",
+      "quote": "36-point Guna Milan score shown on Rishta Connect match cards (\"Guna Milan 22.5/36\")"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\"; no health, money or legal advice"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "From Biodata to Rishta",
+      "body": "Make your biodata. Match your kundali. Find your rishta.",
+      "altText": "Slide reading From Biodata to Rishta: Make your biodata. Match your kundali. Find your rishta."
+    },
+    {
+      "heading": "Biodata Maker",
+      "body": "Build a respectful biodata for yourself or your family with ease.",
+      "altText": "Slide reading Biodata Maker: Build a respectful biodata for yourself or your family with ease."
+    },
+    {
+      "heading": "Janam Kundali (Free)",
+      "body": "Kundali details are indicative; consult your pandit.",
+      "altText": "Slide reading Janam Kundali (Free): Kundali details are indicative; consult your pandit."
+    },
+    {
+      "heading": "Rishta Connect",
+      "body": "Match cards show a 36-point Guna Milan score, such as \"Guna Milan 22.5/36\".",
+      "altText": "Slide reading Rishta Connect: Match cards show a 36-point Guna Milan score."
+    },
+    {
+      "heading": "RishtaPatra",
+      "body": "Start your journey at rishtapatra.com.",
+      "altText": "Slide reading RishtaPatra: Start your journey at rishtapatra.com."
+    }
+  ],
+  "altTexts": [
+    "Slide reading From Biodata to Rishta: Make your biodata. Match your kundali. Find your rishta.",
+    "Slide reading Biodata Maker: Build a respectful biodata for yourself or your family with ease.",
+    "Slide reading Janam Kundali (Free): Kundali details are indicative; consult your pandit.",
+    "Slide reading Rishta Connect: Match cards show a 36-point Guna Milan score.",
+    "Slide reading RishtaPatra: Start your journey at rishtapatra.com."
+  ],
+  "writerNote": "Removed list item digits 1, 2, 3 that triggered unsourced number errors. Numbers 36 and 22.5 are sourced directly from rp-f08. Verified disclaimers 'indicative' and 'consult your pandit' are included verbatim.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-1-612016c9.jpg",
+      "bytes": 70772,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "612016c9fd3e54afc2a24381a7ae4328a32a2fc0c17577fb9d14c206ac407ed4",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-1-612016c9.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-1-612016c9.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-2-a41c9ee4.jpg",
+      "bytes": 62051,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "a41c9ee4882b751663914f781fb7318efb95d1ad41a79c0ac59808e7e2552e26",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-2-a41c9ee4.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-2-a41c9ee4.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-3-3d092e6a.jpg",
+      "bytes": 62864,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "3d092e6a841668154d7ac2b9d0a0575fa0592d6bff3c35ab5b58f48d537b7dc8",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-3-3d092e6a.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-3-3d092e6a.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-4-d269d6c2.jpg",
+      "bytes": 67756,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "d269d6c270d6c19bad505106ec97de6a516e86af24e33200b59b3ac7c80eaa29",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-4-d269d6c2.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-4-d269d6c2.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-5-2b84bae9.jpg",
+      "bytes": 58519,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "2b84bae95950335fe724ef2bc633effcd3ad8342b15df34efd6f596bf834e4b0",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-5-2b84bae9.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-21-three-pillars-from-biodata-to-rishta/slide-5-2b84bae9.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "qaRef": "drafts/rp-2026-10-21-three-pillars-from-biodata-to-rishta/qa.json",
+  "designNote": "5 slides · variant A · maroon and cream"
+}

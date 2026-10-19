@@ -1,0 +1,114 @@
+{
+  "draftId": "rp-2026-10-21-three-pillars-from-biodata-to-rishta",
+  "revision": 2,
+  "at": "2026-10-19T10:21:16+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "602/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "kundali → 2/2 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "8 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "36 → rp-f08, 22.5 → rp-f08"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "5 alt texts, longest 94/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (hi+en; Devanagari allowed)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "5 × 1080x1350 jpeg max 71 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "4 link tokens, all on rishtapatra.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/2 (sparse)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.07 over 4 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Tagline / intro: From drafting your first biodata to finding a rishta",
+        "ok": true,
+        "factId": "rp-f02"
+      },
+      {
+        "claim": "Make your biodata. Match your kundali. Find your rishta.",
+        "ok": true,
+        "factId": "rp-f03"
+      },
+      {
+        "claim": "RishtaPatra brings three products together: Biodata maker, Janam Kundali (free), Rishta Connect (matchmaking)",
+        "ok": true,
+        "factId": "rp-f04"
+      },
+      {
+        "claim": "Biodata maker processes/saves on your device",
+        "ok": true,
+        "factId": "rp-f05"
+      },
+      {
+        "claim": "Rishta Connect match cards display a 36-point Guna Milan score, such as 'Guna Milan 22.5/36'",
+        "ok": true,
+        "factId": "rp-f08"
+      },
+      {
+        "claim": "Site rishtapatra.com",
+        "ok": true,
+        "factId": "rp-f01"
+      }
+    ],
+    "reasons": [],
+    "notes": "All claims are strictly backed by confirmed and source-only facts. Disclaimers ('indicative' and 'consult your pandit') are present verbatim and unweakened. Tone is calm, family-facing, and strictly non-pushy."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261019-1021-90b9b0"
+}

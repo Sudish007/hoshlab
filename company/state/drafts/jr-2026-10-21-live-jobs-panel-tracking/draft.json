@@ -1,0 +1,111 @@
+{
+  "id": "jr-2026-10-21-live-jobs-panel-tracking",
+  "page": "job_rez",
+  "ideaId": "jr-i0006",
+  "slotId": "job_rez-2026-10-21-1230",
+  "slotAt": "2026-10-21T12:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-19T10:21:16+05:30",
+  "updatedAt": "2026-10-19T10:21:16+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261019-1021-90b9b0",
+  "caption": "No placeholder postings and no remote tracking databases.\n\nThe live jobs panel in JobRez lists real roles directly from company careers pages on Lever, Greenhouse, and Ashby boards, alongside Adzuna and direct employer posts. Every listing links back to the original posting, with zero sample or placeholder listings.\n\nYour application tracking stays local. Statuses including Saved, Applied, Interviewing, Offer, and Closed are stored directly in your browser rather than on a remote server.\n\nExplore the live jobs panel at jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#jobsearch",
+    "#jobtracker",
+    "#softwareengineer",
+    "#techcareers",
+    "#engineeringjobs"
+  ],
+  "altText": "Slide series titled Live jobs panel tracking explaining local storage and real career page listings",
+  "factsUsed": [
+    {
+      "factId": "jr-f12",
+      "quote": "The Jobs panel lists live roles from company careers pages (Lever, Greenhouse and Ashby boards), Adzuna and employer posts, with a link to the original posting; no sample or placeholder listings exist (write \"live jobs panel\", never a country)"
+    },
+    {
+      "factId": "jr-f13",
+      "quote": "Tracker statuses: Saved, Applied, Interviewing, Offer, Closed; stored locally in the browser"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Live jobs panel tracking",
+      "body": "No placeholder postings and no remote tracking databases. Direct links to careers pages and private local status tracking.",
+      "altText": "Slide 1 with title Live jobs panel tracking and copy on real postings and local tracking"
+    },
+    {
+      "heading": "Direct company boards",
+      "body": "Listings pull from Lever, Greenhouse, and Ashby careers pages, Adzuna, and employer posts. Each entry links directly to the original posting.",
+      "altText": "Slide 2 titled Direct company boards detailing Lever, Greenhouse, Ashby, and Adzuna links"
+    },
+    {
+      "heading": "Zero sample listings",
+      "body": "Every listing in the live jobs panel represents an actual role. No dummy data, fabricated posts, or placeholder listings exist.",
+      "altText": "Slide 3 titled Zero sample listings explaining all listings in the panel represent real roles"
+    },
+    {
+      "heading": "Local browser tracking",
+      "body": "Move applications across Saved, Applied, Interviewing, Offer, and Closed. All pipeline stages remain stored locally in your browser.",
+      "altText": "Slide 4 titled Local browser tracking detailing pipeline statuses saved in the browser"
+    }
+  ],
+  "altTexts": [
+    "Slide 1 with title Live jobs panel tracking and copy on real postings and local tracking",
+    "Slide 2 titled Direct company boards detailing Lever, Greenhouse, Ashby, and Adzuna links",
+    "Slide 3 titled Zero sample listings explaining all listings in the panel represent real roles",
+    "Slide 4 titled Local browser tracking detailing pipeline statuses saved in the browser"
+  ],
+  "writerNote": "Followed carousel format constraints (4 slides, under character limits). Complied with OF-2 by phrasing as 'live jobs panel' and avoiding any regional or country branding. Used no exclamation marks or emojis.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-21-live-jobs-panel-tracking/slide-1-2985bac8.jpg",
+      "bytes": 88321,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "2985bac8dfa68d5f389e6fe2865da82ecd747dd5680caf22cf7ad617a25f6bb2",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-21-live-jobs-panel-tracking/slide-1-2985bac8.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-21-live-jobs-panel-tracking/slide-1-2985bac8.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-21-live-jobs-panel-tracking/slide-2-0a4c9fcf.jpg",
+      "bytes": 94605,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "0a4c9fcfa23969d3400e78a4cd70c565f47bc829f0c4c537ff0a2960213c5316",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-21-live-jobs-panel-tracking/slide-2-0a4c9fcf.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-21-live-jobs-panel-tracking/slide-2-0a4c9fcf.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-21-live-jobs-panel-tracking/slide-3-3f987ebe.jpg",
+      "bytes": 85810,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "3f987ebe309ff367b0420142376b49acd4a93061bf8b6b993e51e936e274a352",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-21-live-jobs-panel-tracking/slide-3-3f987ebe.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-21-live-jobs-panel-tracking/slide-3-3f987ebe.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-21-live-jobs-panel-tracking/slide-4-05359041.jpg",
+      "bytes": 97402,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "053590412626795e69757ce72a56b29bc87efea6908297810019a0738a4e801f",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-21-live-jobs-panel-tracking/slide-4-05359041.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-21-live-jobs-panel-tracking/slide-4-05359041.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "4 slides · variant A · cream on ink",
+  "qaRef": "drafts/jr-2026-10-21-live-jobs-panel-tracking/qa.json"
+}

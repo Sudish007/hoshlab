@@ -1,0 +1,69 @@
+{
+  "id": "kd-2026-10-22-rules-locked-during-market-hours",
+  "page": "kaatdo",
+  "ideaId": "kd-i0005",
+  "slotId": "kaatdo-2026-10-22-0815",
+  "slotAt": "2026-10-22T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-19T10:21:16+05:30",
+  "updatedAt": "2026-10-19T10:21:16+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261019-1021-90b9b0",
+  "caption": "You cannot widen your stop in the middle of market hours.\n\nWhen a session turns against you, the impulse is to adjust limits. KaatDo keeps your rules locked during market hours. The six rules you set—max_daily_loss, profit_target, max_trades, kill_time, kill_days, and kill_dates—cannot be loosened while trading is live.\n\nEvery evaluation and broker action is recorded in a full audit log. You also get Telegram alerts, webhook calls, and email notifications.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#riskmanagement",
+    "#tradingdiscipline",
+    "#killswitch",
+    "#fno",
+    "#kaatdo"
+  ],
+  "altText": "Branded text artwork stating rules locked during market hours with KaatDo sign-off काट दो.",
+  "factsUsed": [
+    {
+      "factId": "kd-f04",
+      "quote": "Six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates"
+    },
+    {
+      "factId": "kd-f06",
+      "quote": "rules locked during market hours, full audit log of every evaluation and broker call, Telegram alerts, webhook and email notifications"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    },
+    {
+      "factId": "kd-f13",
+      "quote": "The hero headline ends with the sign-off \"काट दो.\""
+    }
+  ],
+  "artwork": {
+    "headline": "Rules locked during market hours.",
+    "subline": "You cannot widen limits once the session begins.",
+    "facts": [
+      "Six rules configured before market open.",
+      "Full audit log of every evaluation and broker call."
+    ],
+    "footer": "kaatdo.com"
+  },
+  "writerNote": "Post follows the required risk-first console tone. Mandatory disclaimers 'not investment advice', 'not registered with SEBI', and 'execution is never guaranteed' are included verbatim. Sign-off contains the only Devanagari permitted on this handle.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-22-rules-locked-during-market-hours/image-1-620437c2.jpg",
+      "bytes": 103139,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "620437c2a726dbd7bd52cd48f5aa4c91cb7a551f17a47ff2de875c950b543f21",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-22-rules-locked-during-market-hours/image-1-620437c2.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-22-rules-locked-during-market-hours/image-1-620437c2.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-10-22-rules-locked-during-market-hours/qa.json"
+}

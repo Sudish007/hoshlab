@@ -1,0 +1,119 @@
+{
+  "draftId": "kd-2026-10-22-rules-locked-during-market-hours",
+  "revision": 1,
+  "at": "2026-10-19T10:21:16+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "650/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "5/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "always → 3/3 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "10 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "90/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; Devanagari only \"काट दो\")"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 103 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on kaatdo.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.13 over 4 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "KaatDo keeps your rules locked during market hours",
+        "ok": true,
+        "factId": "kd-f06"
+      },
+      {
+        "claim": "The six rules you set—max_daily_loss, profit_target, max_trades, kill_time, kill_days, and kill_dates",
+        "ok": true,
+        "factId": "kd-f04"
+      },
+      {
+        "claim": "Full audit log of every evaluation and broker call",
+        "ok": true,
+        "factId": "kd-f06"
+      },
+      {
+        "claim": "Telegram alerts, webhook calls, and email notifications",
+        "ok": true,
+        "factId": "kd-f06"
+      },
+      {
+        "claim": "काट दो sign-off",
+        "ok": true,
+        "factId": "kd-f13"
+      },
+      {
+        "claim": "KaatDo is not investment advice and is not registered with SEBI",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "Broker API execution is never guaranteed",
+        "ok": true,
+        "factId": "kd-f10"
+      }
+    ],
+    "reasons": [],
+    "notes": "Crisp console tone strictly aligned with voice guidelines; all claims sourced and disclaimers rendered verbatim."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261019-1021-90b9b0"
+}
