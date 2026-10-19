@@ -1,12 +1,55 @@
 {
-  "updatedAt": "2026-10-19T10:23:02+05:30",
+  "updatedAt": "2026-10-19T13:15:03+05:30",
   "lastRun": {
-    "id": "engine-daily-20261019-1021-90b9b0",
-    "workflow": "engine-daily",
+    "id": "token-refresh-20261019-1315-2a1b8e",
+    "workflow": "token-refresh",
     "ok": true,
-    "at": "2026-10-19T10:23:02+05:30"
+    "at": "2026-10-19T13:15:03+05:30"
   },
   "lastRuns": [
+    {
+      "id": "token-refresh-20261019-1315-2a1b8e",
+      "workflow": "token-refresh",
+      "trigger": "schedule",
+      "startedAt": "2026-10-19T13:15:03+05:30",
+      "endedAt": "2026-10-19T13:15:03+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 12,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "tokens: 0 refreshed, 0 expiring, 0 expiry not known yet, 3 not configured"
+        }
+      ],
+      "changed": [
+        "company/state/tokens.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "tokens": {
+        "rishtapatra": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        },
+        "kaatdo": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        },
+        "job_rez": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.241429
+    },
     {
       "id": "engine-daily-20261019-1021-90b9b0",
       "workflow": "engine-daily",
@@ -1680,95 +1723,6 @@
         ],
         "staleEdits": [],
         "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.128095
-    },
-    {
-      "id": "publisher-hourly-20261016-2257-d6eb9b",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-16T22:57:31+05:30",
-      "endedAt": "2026-10-16T22:57:31+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 14,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 3 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/rp-2026-10-14-guided-7-step-biodata-flow/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-16-device-first-biodata-privacy",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-10-17-private-kundali-calculation-in-browser",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-15-automated-breach-reaction",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-17-six-risk-rules-explained",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-18-morning-token-routine",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-15-deterministic-role-matching",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-10-16-branching-from-a-master-resume",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "rp-2026-10-14-guided-7-step-biodata-flow"
-        ],
         "rejected": [],
         "pages": {
           "rishtapatra": {
