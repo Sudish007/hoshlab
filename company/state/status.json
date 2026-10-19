@@ -1,12 +1,113 @@
 {
-  "updatedAt": "2026-10-19T13:15:03+05:30",
+  "updatedAt": "2026-10-19T13:20:44+05:30",
   "lastRun": {
-    "id": "token-refresh-20261019-1315-2a1b8e",
-    "workflow": "token-refresh",
+    "id": "publisher-hourly-20261019-1320-807660",
+    "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-19T13:15:03+05:30"
+    "at": "2026-10-19T13:20:44+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261019-1320-807660",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-19T13:20:44+05:30",
+      "endedAt": "2026-10-19T13:20:44+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 22,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 6 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/kd-2026-10-17-six-risk-rules-explained/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-17-private-kundali-calculation-in-browser",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-10-19-inclusive-do-patra-biodata",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "rp-2026-10-21-three-pillars-from-biodata-to-rishta",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-18-morning-token-routine",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-10-20-the-refire-loop-reality",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-22-rules-locked-during-market-hours",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-10-19-grounded-rule-based-rewrites",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-20-honest-evidence-notes",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-10-21-live-jobs-panel-tracking",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "kd-2026-10-17-six-risk-rules-explained"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.241429
+    },
     {
       "id": "token-refresh-20261019-1315-2a1b8e",
       "workflow": "token-refresh",
@@ -1652,96 +1753,11 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.128095
-    },
-    {
-      "id": "publisher-hourly-20261017-0243-6d3d31",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-17T02:43:33+05:30",
-      "endedAt": "2026-10-17T02:43:33+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 21,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 3 waiting, 0 failed, 0 expired"
-        }
-      ],
-      "changed": [
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-16-device-first-biodata-privacy",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-10-17-private-kundali-calculation-in-browser",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-15-automated-breach-reaction",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-17-six-risk-rules-explained",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-18-morning-token-routine",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-15-deterministic-role-matching",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-10-16-branching-from-a-master-resume",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.128095
     }
   ],
   "queue": {
     "rishtapatra": 3,
-    "kaatdo": 4,
+    "kaatdo": 3,
     "job_rez": 3
   },
   "blocked": {},
