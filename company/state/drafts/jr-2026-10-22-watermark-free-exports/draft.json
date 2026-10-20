@@ -1,0 +1,60 @@
+{
+  "id": "jr-2026-10-22-watermark-free-exports",
+  "page": "job_rez",
+  "ideaId": "jr-i0007",
+  "slotId": "job_rez-2026-10-22-1230",
+  "slotAt": "2026-10-22T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-20T10:29:16+05:30",
+  "updatedAt": "2026-10-20T10:29:16+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261020-1029-116454",
+  "caption": "Unlimited PDF and plain text exports stay free.\n\nJobRez exports your master resume to PDF, Word, and plain text. PDF and plain-text export are completely unlimited and watermark-free on the free plan, while Word document export is available on the Pro tier.\n\nBuild your master resume and export clean files at jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#masterresume",
+    "#resumeexport",
+    "#pdfexport",
+    "#plaintext",
+    "#careers",
+    "#softwareengineers"
+  ],
+  "altText": "Unlimited PDF and plain text exports stay free at jobrez.com",
+  "factsUsed": [
+    {
+      "factId": "jr-f09",
+      "quote": "Exports to PDF, Word and plain text; PDF and plain-text export are unlimited and watermark-free on the free plan; Word (.docx) export is Pro"
+    }
+  ],
+  "artwork": {
+    "headline": "Unlimited PDF and plain text exports stay free",
+    "subline": "Export your master resume without watermarks on the free plan",
+    "facts": [
+      "PDF and plain-text export are unlimited and watermark-free",
+      "Word document export is available on Pro",
+      "One honest master resume for every role"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Fixed altText length to be under 100 characters while keeping it descriptive of the rendered text graphic.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-22-watermark-free-exports/image-1-0a064855.jpg",
+      "bytes": 127224,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "0a064855311135de0cbb7479c841ea13b8f073bf95a0573261384324ba92b771",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-22-watermark-free-exports/image-1-0a064855.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-22-watermark-free-exports/image-1-0a064855.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · violet on cream",
+  "qaRef": "drafts/jr-2026-10-22-watermark-free-exports/qa.json"
+}
