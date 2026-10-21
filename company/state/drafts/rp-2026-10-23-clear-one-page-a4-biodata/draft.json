@@ -1,0 +1,60 @@
+{
+  "id": "rp-2026-10-23-clear-one-page-a4-biodata",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0006",
+  "slotId": "rishtapatra-2026-10-23-1930",
+  "slotAt": "2026-10-23T19:30:00+05:30",
+  "format": "image",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-21T10:28:32+05:30",
+  "updatedAt": "2026-10-21T10:28:32+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261021-1028-fc694a",
+  "caption": "एक साफ-सुथरा बायोडाटा जो एक ही पन्ने पर पूरी जानकारी समेट ले।\n\nजब आप विवाह के लिए बायोडाटा तैयार करते हैं, तो अक्सर जानकारी दूसरे पन्ने पर बिखर जाती है। RishtaPatra का guided 7-step editor और live A4 preview आपकी जानकारी को संतुलित करके एक ही पेज पर सेट करता है।\n\nसाथ ही, आपकी गोपनीयता पूरी तरह सुरक्षित है। Your biodata details, photo and imported resume are processed in the browser and saved only on the device; an account is optional.\n\nNote: In the kundali step, calculations are indicative; consult your pandit.\n\nअपने परिवार के लिए बायोडाटा बनाएं: rishtapatra.com",
+  "hashtags": [
+    "#RishtaPatra",
+    "#बायोडाटा",
+    "#biodatamaker",
+    "#rishta"
+  ],
+  "altText": "Text graphic titled साफ बायोडाटा, एक ही पन्ने पर with details on A4 auto-fit layout and privacy.",
+  "factsUsed": [
+    {
+      "factId": "rp-f06",
+      "quote": "Guided 7-step editor (Personal, Kundali, Education & Career, Family, About, Partner, Contact) plus a Photo step; live A4 preview that auto-fits to one page"
+    },
+    {
+      "factId": "rp-f05",
+      "quote": "Local-first: every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    }
+  ],
+  "artwork": {
+    "headline": "साफ बायोडाटा, एक ही पन्ने पर",
+    "subline": "बिना किसी बिखराव के पूरी जानकारी सही जगह",
+    "facts": [
+      "Live A4 preview that auto-fits to one page",
+      "Details and photo stay saved only on your device"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Included required disclaimer fragments ('indicative' and 'consult your pandit') because the editor's kundali step is mentioned. Qualified rp-f05 privacy strictly around biodata details on the device.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-23-clear-one-page-a4-biodata/image-1-f5c9e11a.jpg",
+      "bytes": 98819,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "f5c9e11ade5872ba21624dadb981c96652c9f37ae771fbaf9c096fe325b0b111",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-23-clear-one-page-a4-biodata/image-1-f5c9e11a.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-23-clear-one-page-a4-biodata/image-1-f5c9e11a.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · cream and maroon",
+  "qaRef": "drafts/rp-2026-10-23-clear-one-page-a4-biodata/qa.json"
+}

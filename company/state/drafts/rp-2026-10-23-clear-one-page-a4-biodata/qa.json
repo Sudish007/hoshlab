@@ -1,0 +1,104 @@
+{
+  "draftId": "rp-2026-10-23-clear-one-page-a4-biodata",
+  "revision": 1,
+  "at": "2026-10-21T10:28:32+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "614/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "kundali → 2/2 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "8 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "7 → rp-f06, 4 → rp-f06"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "96/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (hi+en; Devanagari allowed)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 99 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on rishtapatra.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/2 (sparse)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.11 over 5 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Guided 7-step editor and live A4 preview that auto-fits to one page",
+        "ok": true,
+        "factId": "rp-f06"
+      },
+      {
+        "claim": "Your biodata details, photo and imported resume are processed in the browser and saved only on the device; an account is optional",
+        "ok": true,
+        "factId": "rp-f05"
+      },
+      {
+        "claim": "Live A4 preview that auto-fits to one page",
+        "ok": true,
+        "factId": "rp-f06"
+      },
+      {
+        "claim": "Details and photo stay saved only on your device",
+        "ok": true,
+        "factId": "rp-f05"
+      }
+    ],
+    "reasons": [],
+    "notes": "Accurate, grounded claims with verbatim disclaimer fragments included for the Kundali trigger."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261021-1028-fc694a"
+}
