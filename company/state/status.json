@@ -1,12 +1,107 @@
 {
-  "updatedAt": "2026-10-21T10:29:37+05:30",
+  "updatedAt": "2026-10-21T15:43:41+05:30",
   "lastRun": {
-    "id": "engine-daily-20261021-1028-fc694a",
-    "workflow": "engine-daily",
+    "id": "publisher-hourly-20261021-1543-4c7595",
+    "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-21T10:29:37+05:30"
+    "at": "2026-10-21T15:43:41+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261021-1543-4c7595",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-21T15:43:41+05:30",
+      "endedAt": "2026-10-21T15:43:41+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 25,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 4 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/jr-2026-10-19-grounded-rule-based-rewrites/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-19-inclusive-do-patra-biodata",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-10-21-three-pillars-from-biodata-to-rishta",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "rp-2026-10-23-clear-one-page-a4-biodata",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-20-the-refire-loop-reality",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-10-22-rules-locked-during-market-hours",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-10-20-honest-evidence-notes",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-21-live-jobs-panel-tracking",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-22-watermark-free-exports",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "jr-2026-10-19-grounded-rule-based-rewrites"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.299572
+    },
     {
       "id": "engine-daily-20261021-1028-fc694a",
       "workflow": "engine-daily",
@@ -1666,107 +1761,12 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.184905
-    },
-    {
-      "id": "publisher-hourly-20261018-1642-0af8d6",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-18T16:42:18+05:30",
-      "endedAt": "2026-10-18T16:42:18+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 14,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 4 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/jr-2026-10-16-branching-from-a-master-resume/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-16-device-first-biodata-privacy",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-10-17-private-kundali-calculation-in-browser",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-10-19-inclusive-do-patra-biodata",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-17-six-risk-rules-explained",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-18-morning-token-routine",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-20-the-refire-loop-reality",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-19-grounded-rule-based-rewrites",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-20-honest-evidence-notes",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "jr-2026-10-16-branching-from-a-master-resume"
-        ],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "idle"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.184905
     }
   ],
   "queue": {
     "rishtapatra": 3,
     "kaatdo": 2,
-    "job_rez": 4
+    "job_rez": 3
   },
   "blocked": {},
   "budget": {
