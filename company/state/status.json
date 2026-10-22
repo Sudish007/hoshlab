@@ -1,12 +1,97 @@
 {
-  "updatedAt": "2026-10-22T20:51:24+05:30",
+  "updatedAt": "2026-10-23T01:40:05+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261022-2051-4b4e49",
+    "id": "publisher-hourly-20261023-0140-f67942",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-22T20:51:24+05:30"
+    "at": "2026-10-23T01:40:05+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261023-0140-f67942",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-23T01:40:05+05:30",
+      "endedAt": "2026-10-23T01:40:05+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 17,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 3 waiting, 0 failed, 0 expired"
+        }
+      ],
+      "changed": [
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-21-three-pillars-from-biodata-to-rishta",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-10-23-clear-one-page-a4-biodata",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-10-22-rules-locked-during-market-hours",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-10-24-supported-broker-coverage",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-10-21-live-jobs-panel-tracking",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-22-watermark-free-exports",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-10-23-job-dna-score-breakdown",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.337184
+    },
     {
       "id": "publisher-hourly-20261022-2051-4b4e49",
       "workflow": "publisher-hourly",
@@ -1686,107 +1771,6 @@
         "staleEdits": [],
         "expired": [
           "rp-2026-10-17-private-kundali-calculation-in-browser"
-        ],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.241429
-    },
-    {
-      "id": "publisher-hourly-20261019-1320-807660",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-19T13:20:44+05:30",
-      "endedAt": "2026-10-19T13:20:44+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 22,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 6 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/kd-2026-10-17-six-risk-rules-explained/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-17-private-kundali-calculation-in-browser",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-10-19-inclusive-do-patra-biodata",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "rp-2026-10-21-three-pillars-from-biodata-to-rishta",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-18-morning-token-routine",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-20-the-refire-loop-reality",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-22-rules-locked-during-market-hours",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-19-grounded-rule-based-rewrites",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-10-20-honest-evidence-notes",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-21-live-jobs-panel-tracking",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "kd-2026-10-17-six-risk-rules-explained"
         ],
         "rejected": [],
         "pages": {
