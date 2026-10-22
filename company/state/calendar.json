@@ -1,44 +1,30 @@
 {
-  "generatedAt": "2026-10-21T10:28:32+05:30",
+  "generatedAt": "2026-10-22T10:29:16+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-10-18-1100",
-      "page": "kaatdo",
-      "at": "2026-10-18T11:00:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-10-18-morning-token-routine expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-10-19-1230",
       "page": "job_rez",
       "at": "2026-10-19T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0004",
-      "reason": "Image explaining rule-based grounded rewrites that preserve truth.",
-      "draftId": "jr-2026-10-19-grounded-rule-based-rewrites"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-19-grounded-rule-based-rewrites expired -2.9 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-10-19-1930",
       "page": "rishtapatra",
       "at": "2026-10-19T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0004",
-      "reason": "Brand values and community inclusivity focus for Monday image slot.",
-      "draftId": "rp-2026-10-19-inclusive-do-patra-biodata"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-10-19-inclusive-do-patra-biodata expired -2.6 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-10-20-0815",
       "page": "kaatdo",
       "at": "2026-10-20T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0004",
-      "reason": "Honest technical limitation highlight on Tuesday image slot.",
-      "draftId": "kd-2026-10-20-the-refire-loop-reality"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-10-20-the-refire-loop-reality expired -2.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-10-20-1230",
@@ -95,9 +81,10 @@
       "page": "job_rez",
       "at": "2026-10-23T12:30:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0008",
-      "reason": "Reel breaking down Job DNA scoring against posting requirements."
+      "reason": "Reel breaking down Job DNA scoring against posting requirements.",
+      "draftId": "jr-2026-10-23-job-dna-score-breakdown"
     },
     {
       "slotId": "rishtapatra-2026-10-23-1930",
@@ -114,9 +101,10 @@
       "page": "kaatdo",
       "at": "2026-10-24T11:00:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0006",
-      "reason": "Broker API comparison breakdown for Saturday carousel slot."
+      "reason": "Broker API comparison breakdown for Saturday carousel slot.",
+      "draftId": "kd-2026-10-24-supported-broker-coverage"
     },
     {
       "slotId": "rishtapatra-2026-10-24-1930",
@@ -288,6 +276,33 @@
       "status": "planned",
       "ideaId": "jr-i0002",
       "reason": "Fulfills rank 1 CEO priority on deterministic matching using an existing verified image idea."
+    },
+    {
+      "slotId": "job_rez-2026-11-04-1230",
+      "page": "job_rez",
+      "at": "2026-11-04T12:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "jr-i0015",
+      "reason": "Filling carousel slot using an existing open idea matching priority 1 on deterministic role matching."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-04-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-04T19:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "rp-i0017",
+      "reason": "Assigns CEO Priority 1 (Local-first privacy and client-side processing) using existing carousel idea rp-i0017."
+    },
+    {
+      "slotId": "kaatdo-2026-11-05-0815",
+      "page": "kaatdo",
+      "at": "2026-11-05T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0001",
+      "reason": "Directly targets CEO Priority 1 for automated order cancellation and position square-off."
     }
   ]
 }

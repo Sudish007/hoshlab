@@ -1,0 +1,95 @@
+{
+  "id": "jr-2026-10-23-job-dna-score-breakdown",
+  "page": "job_rez",
+  "ideaId": "jr-i0008",
+  "slotId": "job_rez-2026-10-23-1230",
+  "slotAt": "2026-10-23T12:30:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-22T10:29:16+05:30",
+  "updatedAt": "2026-10-22T10:29:16+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261022-1029-13008c",
+  "caption": "Job DNA scores each resume branch against the target posting.\n\nJobRez maintains one master resume, where branches are copies tailored per role. Each branch is scored against the posting in Job DNA.\n\nRole match is deterministic through a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once, with no cloud AI and no external verification.\n\nBuild your master resume at jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#Resume",
+    "#Engineering",
+    "#JobSearch"
+  ],
+  "altText": "Job DNA text graphic showing taxonomy matching.",
+  "factsUsed": [
+    {
+      "factId": "jr-f04",
+      "quote": "One master resume; branches are copies tailored per role; each branch is scored against the posting in Job DNA"
+    },
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "Job DNA scores resume branches.",
+        "seconds": 4
+      },
+      {
+        "text": "Branches are tailored copies.",
+        "seconds": 4
+      },
+      {
+        "text": "Role match uses taxonomy rules.",
+        "seconds": 4
+      },
+      {
+        "text": "No cloud AI used.",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Corrected alt text length and scene text lengths to meet validation limits.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/jr-2026-10-23-job-dna-score-breakdown/reel-57184ee8.mp4",
+      "bytes": 133281,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "57184ee89a7147f64c6d511851749d30120b9b378540969aa9855acbf3381265",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-23-job-dna-score-breakdown/reel-57184ee8.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-23-job-dna-score-breakdown/reel-57184ee8.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 133281,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/jr-2026-10-23-job-dna-score-breakdown/poster-374200ec.jpg",
+      "bytes": 69512,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "374200ecb0cd203025f5adaa29890e7616d67a1ab575bcc3d9d533974aee2b4f",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-23-job-dna-score-breakdown/poster-374200ec.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-23-job-dna-score-breakdown/poster-374200ec.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · violet on cream",
+  "qaRef": "drafts/jr-2026-10-23-job-dna-score-breakdown/qa.json"
+}

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-22T10:23:50+05:30",
+  "updatedAt": "2026-10-22T10:29:16+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -79,6 +79,17 @@
       "qa": true
     },
     {
+      "id": "jr-2026-10-23-job-dna-score-breakdown",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "job_rez-2026-10-23-1230",
+      "slotAt": "2026-10-23T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-22T10:29:16+05:30",
+      "qa": true
+    },
+    {
       "id": "kd-2026-10-15-automated-breach-reaction",
       "page": "kaatdo",
       "status": "expired",
@@ -131,6 +142,17 @@
       "slotAt": "2026-10-22T08:15:00+05:30",
       "revision": 1,
       "updatedAt": "2026-10-19T10:21:16+05:30",
+      "qa": true
+    },
+    {
+      "id": "kd-2026-10-24-supported-broker-coverage",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "kaatdo-2026-10-24-1100",
+      "slotAt": "2026-10-24T11:00:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-22T10:29:16+05:30",
       "qa": true
     },
     {

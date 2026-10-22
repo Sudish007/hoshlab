@@ -1,0 +1,99 @@
+{
+  "draftId": "jr-2026-10-23-job-dna-score-breakdown",
+  "revision": 1,
+  "at": "2026-10-22T10:29:16+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "485/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "47/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "h264 1080x1920 yuv420p 30/1 16 s 133 KB faststart; poster 1080x1920 jpeg 70 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.19 over 7 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Job DNA scores each resume branch against the target posting.",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "JobRez maintains one master resume, where branches are copies tailored per role.",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "Role match is deterministic through a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once, with no cloud AI and no external verification.",
+        "ok": true,
+        "factId": "jr-f05"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone and claims strictly follow product README register without hype."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261022-1029-13008c"
+}
