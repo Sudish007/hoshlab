@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T20:49:52+05:30",
+  "updatedAt": "2026-10-22T10:23:50+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -114,12 +114,12 @@
     {
       "id": "kd-2026-10-20-the-refire-loop-reality",
       "page": "kaatdo",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "kaatdo-2026-10-20-0815",
       "slotAt": "2026-10-20T08:15:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-17T10:07:20+05:30",
+      "updatedAt": "2026-10-22T10:23:50+05:30",
       "qa": true
     },
     {
