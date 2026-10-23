@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-23T15:37:53+05:30",
+  "updatedAt": "2026-10-23T20:38:11+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -202,12 +202,12 @@
     {
       "id": "rp-2026-10-21-three-pillars-from-biodata-to-rishta",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "carousel",
       "slotId": "rishtapatra-2026-10-21-1930",
       "slotAt": "2026-10-21T19:30:00+05:30",
       "revision": 2,
-      "updatedAt": "2026-10-19T10:21:16+05:30",
+      "updatedAt": "2026-10-23T20:38:11+05:30",
       "qa": true
     },
     {
