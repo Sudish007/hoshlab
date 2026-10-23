@@ -1,40 +1,14 @@
 {
-  "generatedAt": "2026-10-22T10:29:16+05:30",
+  "generatedAt": "2026-10-23T10:30:39+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-10-19-1230",
-      "page": "job_rez",
-      "at": "2026-10-19T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-10-19-grounded-rule-based-rewrites expired -2.9 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-10-19-1930",
-      "page": "rishtapatra",
-      "at": "2026-10-19T19:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-10-19-inclusive-do-patra-biodata expired -2.6 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "kaatdo-2026-10-20-0815",
-      "page": "kaatdo",
-      "at": "2026-10-20T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-10-20-the-refire-loop-reality expired -2.1 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-10-20-1230",
       "page": "job_rez",
       "at": "2026-10-20T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0005",
-      "reason": "Image defining the three self-reported evidence states.",
-      "draftId": "jr-2026-10-20-honest-evidence-notes"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-20-honest-evidence-notes expired -2.9 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-10-21-1230",
@@ -111,9 +85,10 @@
       "page": "rishtapatra",
       "at": "2026-10-24T19:30:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0007",
-      "reason": "Matchmaking moderation overview for Saturday reel slot."
+      "reason": "Matchmaking moderation overview for Saturday reel slot.",
+      "draftId": "rp-2026-10-24-safe-matchmaking-on-rishta-connect"
     },
     {
       "slotId": "kaatdo-2026-10-25-1100",
@@ -303,6 +278,15 @@
       "status": "planned",
       "ideaId": "kd-i0001",
       "reason": "Directly targets CEO Priority 1 for automated order cancellation and position square-off."
+    },
+    {
+      "slotId": "job_rez-2026-11-05-1230",
+      "page": "job_rez",
+      "at": "2026-11-05T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0024",
+      "reason": "Directly matches Priority 3 and open slot image format with free watermark-free PDF exports and local tracking."
     }
   ]
 }

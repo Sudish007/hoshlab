@@ -1,0 +1,105 @@
+{
+  "id": "rp-2026-10-24-safe-matchmaking-on-rishta-connect",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0007",
+  "slotId": "rishtapatra-2026-10-24-1930",
+  "slotAt": "2026-10-24T19:30:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-23T10:30:39+05:30",
+  "updatedAt": "2026-10-23T10:30:39+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261023-1030-4aa149",
+  "caption": "Looking for a rishta without intrusive calls or unverified spam? Rishta Connect brings a calm approach to family matchmaking.\n\nEvery profile submitted to Rishta Connect goes through human moderation to help maintain relevant and genuine connections. Along with human review, match cards show a 36-point Guna Milan score to help families evaluate compatibility at a glance.\n\nPlease note: Kundali calculations and Guna Milan scores are indicative; consult your pandit.\n\nExplore Rishta Connect at rishtapatra.com",
+  "hashtags": [
+    "#RishtaPatra",
+    "#RishtaConnect",
+    "#Matchmaking",
+    "#Biodata",
+    "#Rishta",
+    "#Kundali"
+  ],
+  "altText": "Kinetic text clip displaying: Looking for a rishta without intrusive calls? Rishta Connect.",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f11",
+      "quote": "Rishta Connect has human moderation; payments via Razorpay; a refund policy exists; contact info@"
+    },
+    {
+      "factId": "rp-f08",
+      "quote": "36-point Guna Milan score shown on Rishta Connect match cards (\"Guna Milan 22.5/36\")"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\"; no health, money or legal advice"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "Looking for a rishta without intrusive calls?",
+        "seconds": 4
+      },
+      {
+        "text": "Rishta Connect has human moderation.",
+        "seconds": 4
+      },
+      {
+        "text": "Match cards feature a 36-point Guna Milan score.",
+        "seconds": 4
+      },
+      {
+        "text": "Find meaningful connections at rishtapatra.com",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "English kinetic reel focusing on Rishta Connect human moderation and match card Guna Milan scores. Mandatory kundali disclaimer ('indicative' and 'consult your pandit') is included in the caption.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/rp-2026-10-24-safe-matchmaking-on-rishta-connect/reel-3c0580f6.mp4",
+      "bytes": 164447,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "3c0580f634f86a06a786d30a1aeccff4013e689ff1bdd816ad6ef3b15dc4f33c",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-24-safe-matchmaking-on-rishta-connect/reel-3c0580f6.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-24-safe-matchmaking-on-rishta-connect/reel-3c0580f6.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 164447,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/rp-2026-10-24-safe-matchmaking-on-rishta-connect/poster-e1c94a54.jpg",
+      "bytes": 70981,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "e1c94a54f9c449f2b3660f0fe0250af8f3c30b8990171ed3b77e8ce0786bec8b",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-24-safe-matchmaking-on-rishta-connect/poster-e1c94a54.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-24-safe-matchmaking-on-rishta-connect/poster-e1c94a54.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · cream and maroon",
+  "qaRef": "drafts/rp-2026-10-24-safe-matchmaking-on-rishta-connect/qa.json"
+}

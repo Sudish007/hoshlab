@@ -1,0 +1,104 @@
+{
+  "draftId": "rp-2026-10-24-safe-matchmaking-on-rishta-connect",
+  "revision": 1,
+  "at": "2026-10-23T10:30:39+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "577/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "kundali → 2/2 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "8 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "36 → rp-f08"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "91/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (hi+en; Devanagari allowed)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "h264 1080x1920 yuv420p 30/1 16 s 164 KB faststart; poster 1080x1920 jpeg 71 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on rishtapatra.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/2 (sparse)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.05 over 6 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Rishta Connect brings a calm approach to family matchmaking",
+        "ok": true,
+        "factId": "rp-f04"
+      },
+      {
+        "claim": "Every profile submitted to Rishta Connect goes through human moderation",
+        "ok": true,
+        "factId": "rp-f11"
+      },
+      {
+        "claim": "Match cards show a 36-point Guna Milan score",
+        "ok": true,
+        "factId": "rp-f08"
+      },
+      {
+        "claim": "Kundali calculations and Guna Milan scores are indicative; consult your pandit",
+        "ok": true,
+        "factId": "rp-f09"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is warm and family-facing. All claims are correctly sourced and required disclaimers are present verbatim."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261023-1030-4aa149"
+}
