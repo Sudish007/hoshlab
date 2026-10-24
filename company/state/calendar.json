@@ -1,44 +1,32 @@
 {
-  "generatedAt": "2026-10-23T10:30:39+05:30",
+  "generatedAt": "2026-10-24T10:15:33+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-10-20-1230",
-      "page": "job_rez",
-      "at": "2026-10-20T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-10-20-honest-evidence-notes expired -2.9 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-10-21-1230",
       "page": "job_rez",
       "at": "2026-10-21T12:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "jr-i0006",
-      "reason": "Carousel walking through live jobs panel sources and local browser tracking.",
-      "draftId": "jr-2026-10-21-live-jobs-panel-tracking"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-21-live-jobs-panel-tracking expired -2.9 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-10-21-1930",
       "page": "rishtapatra",
       "at": "2026-10-21T19:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "rp-i0005",
-      "reason": "Product overview mapping the three core offerings for Wednesday carousel slot.",
-      "draftId": "rp-2026-10-21-three-pillars-from-biodata-to-rishta"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-10-21-three-pillars-from-biodata-to-rishta expired -2.6 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-10-22-0815",
       "page": "kaatdo",
       "at": "2026-10-22T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0005",
-      "reason": "Focus on locked parameters during market hours on Thursday image slot.",
-      "draftId": "kd-2026-10-22-rules-locked-during-market-hours"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-10-22-rules-locked-during-market-hours expired -2.1 days before the slot (lead 3 days)",
+      "draftId": "kd-2026-10-22-rules-locked-during-market-hours",
+      "ideaId": "kd-i0005"
     },
     {
       "slotId": "job_rez-2026-10-22-1230",
@@ -95,36 +83,40 @@
       "page": "kaatdo",
       "at": "2026-10-25T11:00:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0007",
-      "reason": "Transparent discussion of slippage and illiquid strikes for Sunday reel."
+      "reason": "Transparent discussion of slippage and illiquid strikes for Sunday reel.",
+      "draftId": "kd-2026-10-25-honest-risk-realities"
     },
     {
       "slotId": "job_rez-2026-10-26-1230",
       "page": "job_rez",
       "at": "2026-10-26T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0009",
-      "reason": "Image covering free templates and standard typography options."
+      "reason": "Image covering free templates and standard typography options.",
+      "draftId": "jr-2026-10-26-resume-templates-and-typography"
     },
     {
       "slotId": "rishtapatra-2026-10-26-1930",
       "page": "rishtapatra",
       "at": "2026-10-26T19:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0008",
-      "reason": "Reinforcing freedom of choice around astrological details for Monday image slot."
+      "reason": "Reinforcing freedom of choice around astrological details for Monday image slot.",
+      "draftId": "rp-2026-10-26-optional-kundali-on-rishtapatra"
     },
     {
       "slotId": "kaatdo-2026-10-27-0815",
       "page": "kaatdo",
       "at": "2026-10-27T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0008",
-      "reason": "Technical transparency on audit log entries for Tuesday image slot."
+      "reason": "Technical transparency on audit log entries for Tuesday image slot.",
+      "draftId": "kd-2026-10-27-full-evaluation-audit-log"
     },
     {
       "slotId": "job_rez-2026-10-27-1230",
@@ -287,6 +279,24 @@
       "status": "planned",
       "ideaId": "jr-i0024",
       "reason": "Directly matches Priority 3 and open slot image format with free watermark-free PDF exports and local tracking."
+    },
+    {
+      "slotId": "job_rez-2026-11-06-1230",
+      "page": "job_rez",
+      "at": "2026-11-06T12:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "jr-i0023",
+      "reason": "Assigning open idea jr-i0023 to fill the Friday reel slot covering master resume branching."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-06-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-06T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0025",
+      "reason": "Fulfills the priority for local-first privacy and client-side processing using an open backlog idea."
     }
   ]
 }

@@ -1,0 +1,62 @@
+{
+  "id": "jr-2026-10-26-resume-templates-and-typography",
+  "page": "job_rez",
+  "ideaId": "jr-i0009",
+  "slotId": "job_rez-2026-10-26-1230",
+  "slotAt": "2026-10-26T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-24T10:15:33+05:30",
+  "updatedAt": "2026-10-24T10:15:33+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261024-1015-c2c3c3",
+  "caption": "Typography and structure matter more than decorative graphics.\n\nJobRez offers nine templates, including TeXline, Stack First, and Campus One on the free tier, alongside Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact, and Executive Mono on Pro. Nova features a one-column or two-column layout switch.\n\nTypefaces include Arial and Georgia for free plans, while Calibri, Cambria, and Verdana are available on Pro, with seven accent options and three density levels.\n\nExplore templates and typography options at https://jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#resume",
+    "#typography",
+    "#templates",
+    "#engineer"
+  ],
+  "altText": "Typography and structure matter on JobRez templates.",
+  "factsUsed": [
+    {
+      "factId": "jr-f10",
+      "quote": "Nine templates: TeXline, Stack First, Campus One (free); Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact, Executive Mono (Pro); Nova has a one-column / two-column switch"
+    },
+    {
+      "factId": "jr-f11",
+      "quote": "Typefaces: Arial and Georgia (free), Calibri, Cambria and Verdana (Pro); seven accents; three densities"
+    }
+  ],
+  "artwork": {
+    "headline": "Typography and structure matter",
+    "subline": "Nine templates and selectable typefaces designed for clean structure",
+    "facts": [
+      "TeXline, Stack First, Campus One, Nova, and more",
+      "Arial, Georgia, Calibri, Cambria, and Verdana options",
+      "Seven accents and three density settings"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Corrected altText and headline lengths to meet engine limits.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-26-resume-templates-and-typography/image-1-726fafa5.jpg",
+      "bytes": 127351,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "726fafa561e016988e7d63005b82e159c6b24f5d0e0c4a1f7e42b79a4c5de686",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-26-resume-templates-and-typography/image-1-726fafa5.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-26-resume-templates-and-typography/image-1-726fafa5.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-10-26-resume-templates-and-typography/qa.json"
+}

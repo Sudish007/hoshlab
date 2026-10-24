@@ -1,0 +1,99 @@
+{
+  "draftId": "jr-2026-10-26-resume-templates-and-typography",
+  "revision": 1,
+  "at": "2026-10-24T10:15:33+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "593/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "5/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "52/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 127 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.02 over 8 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "JobRez offers nine templates, including TeXline, Stack First, and Campus One on the free tier, alongside Nova, Product Engineer, Systems Lead, ATS Dense, Staff+ Impact, and Executive Mono on Pro",
+        "ok": true,
+        "factId": "jr-f10"
+      },
+      {
+        "claim": "Nova features a one-column or two-column layout switch",
+        "ok": true,
+        "factId": "jr-f10"
+      },
+      {
+        "claim": "Typefaces include Arial and Georgia for free plans, while Calibri, Cambria, and Verdana are available on Pro, with seven accent options and three density levels",
+        "ok": true,
+        "factId": "jr-f11"
+      }
+    ],
+    "reasons": [],
+    "notes": "Accurate representation of facts regarding templates and typography."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261024-1015-c2c3c3"
+}

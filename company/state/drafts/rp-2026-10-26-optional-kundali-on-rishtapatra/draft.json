@@ -1,0 +1,62 @@
+{
+  "id": "rp-2026-10-26-optional-kundali-on-rishtapatra",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0008",
+  "slotId": "rishtapatra-2026-10-26-1930",
+  "slotAt": "2026-10-26T19:30:00+05:30",
+  "format": "image",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-24T10:15:33+05:30",
+  "updatedAt": "2026-10-24T10:15:33+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261024-1015-c2c3c3",
+  "caption": "बायोडाटा में कुंडली जोड़ना सिर्फ आपकी पसंद पर निर्भर करता है।\n\nRishtaPatra पर अपना विवाह बायोडाटा बनाते समय आप तय करते हैं कि कौन से विवरण साझा करने हैं। हमारा guided 7-step editor (Personal, Kundali, Education & Career, Family, About, Partner, Contact) और Photo step आपको पूरी स्वतंत्रता देते हैं। यदि आप कुंडली विवरण नहीं जोड़ना चाहते, तो इस चरण को छोड़ सकते हैं। साथ ही, live A4 preview आपकी चुनी हुई जानकारी को एक ही पन्ने पर खूबसूरती से auto-fit करता है।\n\nKundali note: Details are indicative; consult your pandit.\n\nअपना बायोडाटा बनाएं rishtapatra.com पर।",
+  "hashtags": [
+    "#बायोडाटा",
+    "#रिश्ता",
+    "#कुंडली",
+    "#biodata",
+    "#rishtapatra"
+  ],
+  "altText": "Graphic titled कुंडली जोड़ना है या नहीं, यह आपकी पसंद है with text on rishtapatra.com",
+  "factsUsed": [
+    {
+      "factId": "rp-f06",
+      "quote": "Guided 7-step editor (Personal, Kundali, Education & Career, Family, About, Partner, Contact) plus a Photo step; live A4 preview that auto-fits to one page"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\"; no health, money or legal advice"
+    }
+  ],
+  "artwork": {
+    "headline": "कुंडली जोड़ना है या नहीं, यह आपकी पसंद है",
+    "subline": "RishtaPatra पर अपने बायोडाटा में वही जानकारी रखें जो आपके लिए जरूरी है",
+    "facts": [
+      "Guided 7-step editor plus a Photo step",
+      "Kundali step is completely optional",
+      "Live A4 preview that auto-fits to one page"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Shortened altText to under 100 characters while continuing to accurately name the graphic and repeat visible words.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-26-optional-kundali-on-rishtapatra/image-1-cbeb0423.jpg",
+      "bytes": 121414,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "cbeb042391cf4d3c6b14063eb05b70d380f47a65a941e7af38d1b95edc84ef77",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-26-optional-kundali-on-rishtapatra/image-1-cbeb0423.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-26-optional-kundali-on-rishtapatra/image-1-cbeb0423.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · cream and maroon",
+  "qaRef": "drafts/rp-2026-10-26-optional-kundali-on-rishtapatra/qa.json"
+}

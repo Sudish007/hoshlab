@@ -1,0 +1,67 @@
+{
+  "id": "kd-2026-10-27-full-evaluation-audit-log",
+  "page": "kaatdo",
+  "ideaId": "kd-i0008",
+  "slotId": "kaatdo-2026-10-27-0815",
+  "slotAt": "2026-10-27T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-24T10:15:33+05:30",
+  "updatedAt": "2026-10-24T10:15:33+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261024-1015-c2c3c3",
+  "caption": "Every broker call and square off is logged to the second.\n\nWhen a limit triggers, KaatDo cancels every pending order and squares off every position at market. The account stays locked until close, and re-fires if trading activity reappears.\n\nYou do not have to guess what executed. KaatDo maintains a full audit log of every evaluation and broker call, alongside Telegram alerts, webhook and email notifications.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#RiskManagement",
+    "#AuditLog",
+    "#TradingDiscipline",
+    "#BrokerAPI",
+    "#FandO"
+  ],
+  "altText": "Branded text graphic: Full Audit Log. Every evaluation and broker call logged to the second.",
+  "factsUsed": [
+    {
+      "factId": "kd-f05",
+      "quote": "cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    },
+    {
+      "factId": "kd-f06",
+      "quote": "full audit log of every evaluation and broker call, Telegram alerts, webhook and email notifications"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "artwork": {
+    "headline": "Full evaluation audit log.",
+    "subline": "Every check, rule breach, and broker call recorded to the second.",
+    "facts": [
+      "Full audit log of every evaluation and broker call",
+      "Cancels pending orders and squares off positions at market",
+      "Telegram alerts, webhook, and email notifications"
+    ],
+    "footer": "kaatdo.com"
+  },
+  "writerNote": "Post focuses strictly on the audit log and trigger execution trail (kd-f05, kd-f06). Includes all mandatory disclaimers and brand sign-off.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-27-full-evaluation-audit-log/image-1-747ea17b.jpg",
+      "bytes": 121504,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "747ea17b711a29d2321cbb48a03dbbc64d94838247ba0b3a61378a17f89fdaf0",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-27-full-evaluation-audit-log/image-1-747ea17b.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-27-full-evaluation-audit-log/image-1-747ea17b.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-10-27-full-evaluation-audit-log/qa.json"
+}
