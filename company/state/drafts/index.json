@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-25T17:08:12+05:30",
+  "updatedAt": "2026-10-25T21:56:58+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -257,12 +257,12 @@
     {
       "id": "rp-2026-10-23-clear-one-page-a4-biodata",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "rishtapatra-2026-10-23-1930",
       "slotAt": "2026-10-23T19:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-21T10:28:32+05:30",
+      "updatedAt": "2026-10-25T21:56:58+05:30",
       "qa": true
     },
     {
