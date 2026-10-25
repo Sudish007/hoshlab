@@ -1,0 +1,109 @@
+{
+  "draftId": "jr-2026-10-27-local-tracker-data-privacy",
+  "revision": 1,
+  "at": "2026-10-25T10:22:33+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "508/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "69/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 104 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.04 over 9 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Keep your application statuses private by default",
+        "ok": true,
+        "factId": "jr-f03"
+      },
+      {
+        "claim": "JobRez maintains application tracker statuses including Saved, Applied, Interviewing, Offer, and Closed",
+        "ok": true,
+        "factId": "jr-f13"
+      },
+      {
+        "claim": "Application tracker statuses are stored locally in the browser",
+        "ok": true,
+        "factId": "jr-f13"
+      },
+      {
+        "claim": "One honest master resume, branched for every role and matched to real postings",
+        "ok": true,
+        "factId": "jr-f03"
+      },
+      {
+        "claim": "Website link https://jobrez.com",
+        "ok": true,
+        "factId": "jr-f01"
+      }
+    ],
+    "reasons": [],
+    "notes": "All claims are strictly backed by confirmed facts jr-f01, jr-f03, and jr-f13. Tone adheres precisely to the calm, technical register without hype or forbidden tokens."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261025-1022-e1428c"
+}

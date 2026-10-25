@@ -1,42 +1,22 @@
 {
-  "generatedAt": "2026-10-24T10:15:33+05:30",
+  "generatedAt": "2026-10-25T10:22:33+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-10-21-1230",
-      "page": "job_rez",
-      "at": "2026-10-21T12:30:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-10-21-live-jobs-panel-tracking expired -2.9 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-10-21-1930",
-      "page": "rishtapatra",
-      "at": "2026-10-21T19:30:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-10-21-three-pillars-from-biodata-to-rishta expired -2.6 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-10-22-0815",
       "page": "kaatdo",
       "at": "2026-10-22T08:15:00+05:30",
       "format": "image",
       "status": "dropped",
-      "reason": "dropped: draft kd-2026-10-22-rules-locked-during-market-hours expired -2.1 days before the slot (lead 3 days)",
-      "draftId": "kd-2026-10-22-rules-locked-during-market-hours",
-      "ideaId": "kd-i0005"
+      "reason": "dropped: draft kd-2026-10-22-rules-locked-during-market-hours expired -3.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-10-22-1230",
       "page": "job_rez",
       "at": "2026-10-22T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0007",
-      "reason": "Image highlighting unlimited watermark-free PDF exports.",
-      "draftId": "jr-2026-10-22-watermark-free-exports"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-22-watermark-free-exports expired -2.9 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-10-23-1230",
@@ -123,9 +103,10 @@
       "page": "job_rez",
       "at": "2026-10-27T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0010",
-      "reason": "Image explaining the five local browser application statuses."
+      "reason": "Image explaining the five local browser application statuses.",
+      "draftId": "jr-2026-10-27-local-tracker-data-privacy"
     },
     {
       "slotId": "job_rez-2026-10-28-1230",
@@ -297,6 +278,24 @@
       "status": "planned",
       "ideaId": "rp-i0025",
       "reason": "Fulfills the priority for local-first privacy and client-side processing using an open backlog idea."
+    },
+    {
+      "slotId": "kaatdo-2026-11-07-1100",
+      "page": "kaatdo",
+      "at": "2026-11-07T11:00:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "kd-i0002",
+      "reason": "Assigning existing open carousel idea covering the six core server-side rules to fill the single open carousel slot."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-07-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-07T19:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "rp-i0003",
+      "reason": "Matches the CEO rank 1 privacy theme and fills the Saturday reel format using client-side Kundali calculations."
     }
   ]
 }

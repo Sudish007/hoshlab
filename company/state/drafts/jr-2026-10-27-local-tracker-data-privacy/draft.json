@@ -1,0 +1,63 @@
+{
+  "id": "jr-2026-10-27-local-tracker-data-privacy",
+  "page": "job_rez",
+  "ideaId": "jr-i0010",
+  "slotId": "job_rez-2026-10-27-1230",
+  "slotAt": "2026-10-27T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-25T10:22:33+05:30",
+  "updatedAt": "2026-10-25T10:22:33+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261025-1022-e1428c",
+  "caption": "Keep your application statuses private by default. JobRez maintains application tracker statuses including Saved, Applied, Interviewing, Offer, and Closed, which are stored locally in the browser. Pair this local storage model with one honest master resume, branched for every role and matched to real postings, keeping your active pipeline secure on your machine. Learn more about application tracking and master resume branching at https://jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#Resume",
+    "#Career",
+    "#Privacy",
+    "#JobSearch",
+    "#Software"
+  ],
+  "altText": "Text graphic titled Keep your application statuses private by default",
+  "factsUsed": [
+    {
+      "factId": "jr-f03",
+      "quote": "One honest master resume, branched for every role and matched to real postings. ATS-safe by structure, private by default, free to export."
+    },
+    {
+      "factId": "jr-f13",
+      "quote": "Tracker statuses: Saved, Applied, Interviewing, Offer, Closed; stored locally in the browser"
+    }
+  ],
+  "artwork": {
+    "headline": "Local application tracker",
+    "subline": "Keep statuses on your machine",
+    "facts": [
+      "Saved, Applied, Interviewing, Offer, and Closed statuses",
+      "Stored locally in the browser for privacy",
+      "Private by default across every resume branch"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Shortened altText to be under 100 characters while retaining visible headline copy.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-27-local-tracker-data-privacy/image-1-6dba87b1.jpg",
+      "bytes": 103778,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "6dba87b120186e226c65d11703648b234b50bb156c0f98aa1766dd0f9308b710",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-27-local-tracker-data-privacy/image-1-6dba87b1.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-27-local-tracker-data-privacy/image-1-6dba87b1.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-10-27-local-tracker-data-privacy/qa.json"
+}
