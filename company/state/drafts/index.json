@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-26T11:52:21+05:30",
+  "updatedAt": "2026-10-26T19:49:31+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -290,12 +290,12 @@
     {
       "id": "rp-2026-10-24-safe-matchmaking-on-rishta-connect",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "reel",
       "slotId": "rishtapatra-2026-10-24-1930",
       "slotAt": "2026-10-24T19:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-23T10:30:39+05:30",
+      "updatedAt": "2026-10-26T19:49:31+05:30",
       "qa": true
     },
     {
