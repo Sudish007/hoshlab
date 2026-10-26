@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-25T21:56:58+05:30",
+  "updatedAt": "2026-10-26T10:26:44+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -112,6 +112,17 @@
       "qa": true
     },
     {
+      "id": "jr-2026-10-28-live-sources-refreshing-daily",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "job_rez-2026-10-28-1230",
+      "slotAt": "2026-10-28T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-26T10:26:44+05:30",
+      "qa": true
+    },
+    {
       "id": "kd-2026-10-15-automated-breach-reaction",
       "page": "kaatdo",
       "status": "expired",
@@ -200,6 +211,17 @@
       "qa": true
     },
     {
+      "id": "kd-2026-10-29-six-broker-integration",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "image",
+      "slotId": "kaatdo-2026-10-29-0815",
+      "slotAt": "2026-10-29T08:15:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-26T10:26:44+05:30",
+      "qa": true
+    },
+    {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
       "status": "expired",
@@ -285,6 +307,17 @@
       "slotAt": "2026-10-26T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-10-24T10:15:33+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-10-28-free-janam-kundali-engine",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "rishtapatra-2026-10-28-1930",
+      "slotAt": "2026-10-28T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-26T10:26:44+05:30",
       "qa": true
     }
   ]

@@ -1,12 +1,102 @@
 {
-  "updatedAt": "2026-10-26T06:44:17+05:30",
+  "updatedAt": "2026-10-26T10:33:51+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261026-0644-69b855",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261026-1026-d1b42b",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-10-26T06:44:17+05:30"
+    "at": "2026-10-26T10:33:51+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261026-1026-d1b42b",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-10-26T10:26:44+05:30",
+      "endedAt": "2026-10-26T10:33:51+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 54948,
+          "calls": 3,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.007956,
+          "note": "6 priorities, 0 paused, no Analyst report to answer, 0 owner questions → memos/2026-W44.md | completed models: Google Gemini · gemini-3.5-flash-lite"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and 2026-09 has no runs or model calls to catch up on (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 54855,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.001942,
+          "note": "rishtapatra: 0 ideas, 10 slots, 1 dropped, model not called (backlog full) | kaatdo: 1 ideas, 10 slots, 1 assigned | job_rez: 0 ideas, 11 slots, 1 dropped, model not called (backlog full) | completed models: Google Gemini · gemini-3.5-flash-lite (@kaatdo)"
+        },
+        {
+          "name": "writer",
+          "ok": true,
+          "ms": 197674,
+          "calls": 7,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.013513,
+          "note": "3 written, 0 reworked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@kaatdo)"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 3439,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "3 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 115363,
+          "calls": 6,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.006583,
+          "note": "3 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/memos/2026-W44.md",
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/drafts/jr-2026-10-28-live-sources-refreshing-daily/draft.json",
+        "company/state/drafts/rp-2026-10-28-free-janam-kundali-engine/draft.json",
+        "company/state/drafts/kd-2026-10-29-six-broker-integration/draft.json",
+        "company/state/drafts/jr-2026-10-28-live-sources-refreshing-daily/qa.json",
+        "company/state/drafts/kd-2026-10-29-six-broker-integration/qa.json",
+        "company/state/drafts/rp-2026-10-28-free-janam-kundali-engine/qa.json",
+        "company/state/drafts/index.json",
+        "company/state/usage/2026-10.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.45618
+    },
     {
       "id": "publisher-hourly-20261026-0644-69b855",
       "workflow": "publisher-hourly",
@@ -1679,97 +1769,12 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.362742
-    },
-    {
-      "id": "engine-daily-20261023-1030-4aa149",
-      "workflow": "engine-daily",
-      "trigger": "schedule",
-      "startedAt": "2026-10-23T10:30:39+05:30",
-      "endedAt": "2026-10-23T10:37:44+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "ceo",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Monday and state/memos/2026-W43.md exists",
-          "skipped": "not_due"
-        },
-        {
-          "name": "hr",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not_due — not the 1st of the month and 2026-09 has no runs or model calls to catch up on (the review runs on the 1st or with `node engine/index.js hr`)",
-          "skipped": "not_due"
-        },
-        {
-          "name": "strategist",
-          "ok": true,
-          "ms": 41153,
-          "calls": 1,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.005054,
-          "note": "rishtapatra: 0 ideas, 9 slots, model not called (backlog full) | kaatdo: 0 ideas, 9 slots, model not called (backlog full) | job_rez: 2 ideas, 13 slots, 1 assigned, 1 dropped | completed models: Google Gemini · gemini-3.8-flash (@job_rez)"
-        },
-        {
-          "name": "writer",
-          "ok": false,
-          "ms": 325603,
-          "calls": 3,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.018587,
-          "note": "kaatdo-2026-10-25-1100: invalid_output after one repair call (gemini/gemini-3.8-flash) | 1 written, 0 reworked, 1 invalid_output | completed models: Google Gemini · gemini-3.8-flash (@rishtapatra)"
-        },
-        {
-          "name": "designer",
-          "ok": true,
-          "ms": 47978,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "1 rendered, 0 refused"
-        },
-        {
-          "name": "qa",
-          "ok": true,
-          "ms": 10711,
-          "calls": 2,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.001917,
-          "note": "1 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
-        },
-        {
-          "name": "analyst",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
-          "skipped": "not_due"
-        }
-      ],
-      "changed": [
-        "company/state/calendar.json",
-        "company/state/ideas.jsonl",
-        "company/state/drafts/rp-2026-10-24-safe-matchmaking-on-rishta-connect/draft.json",
-        "company/state/drafts/rp-2026-10-24-safe-matchmaking-on-rishta-connect/qa.json",
-        "company/state/drafts/index.json",
-        "company/state/usage/2026-10.jsonl",
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "budgetPaidEquivalentUsd": 0.362742
     }
   ],
   "queue": {
-    "rishtapatra": 2,
-    "kaatdo": 3,
-    "job_rez": 2
+    "rishtapatra": 3,
+    "kaatdo": 4,
+    "job_rez": 3
   },
   "blocked": {},
   "budget": {
@@ -1778,7 +1783,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.426186
+    "paidEquivalentUsd": 0.45618
   },
   "pages": {
     "rishtapatra": {

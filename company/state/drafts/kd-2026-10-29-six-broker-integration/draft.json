@@ -1,0 +1,64 @@
+{
+  "id": "kd-2026-10-29-six-broker-integration",
+  "page": "kaatdo",
+  "ideaId": "kd-i0011",
+  "slotId": "kaatdo-2026-10-29-0815",
+  "slotAt": "2026-10-29T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-26T10:26:44+05:30",
+  "updatedAt": "2026-10-26T10:26:44+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261026-1026-d1b42b",
+  "caption": "Connect your broker account to the server-side kill switch.\n\nKaatDo operates across six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww. Monitoring and execution run on official trade APIs.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.\n\n#KaatDo #KillSwitch #TradingTools #BrokerIntegration #APIExecution #TradingDiscipline #RiskManagement #FandO",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#TradingTools",
+    "#BrokerIntegration",
+    "#APIExecution",
+    "#TradingDiscipline",
+    "#RiskManagement",
+    "#FandO"
+  ],
+  "altText": "Text graphic showing six supported brokers and official APIs for the kill switch. kaatdo.com काट दो.",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "artwork": {
+    "headline": "Server-side kill switch",
+    "subline": "Connected across six brokers via official trade APIs.",
+    "facts": [
+      "Supported on Fyers, Upstox, Zerodha, Angel One, Dhan and Groww",
+      "Built directly on official trade APIs"
+    ],
+    "footer": "kaatdo.com"
+  },
+  "writerNote": "Used fact kd-f03 to cover the six brokers and official APIs per the idea instruction. Included mandatory disclaimers and page sign-off without emojis.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-29-six-broker-integration/image-1-a0607b21.jpg",
+      "bytes": 98835,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "a0607b213139022d0ee993ba314fc3f546a62385817611dd40923c16cdb70a32",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-29-six-broker-integration/image-1-a0607b21.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-29-six-broker-integration/image-1-a0607b21.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-10-29-six-broker-integration/qa.json"
+}

@@ -1,42 +1,22 @@
 {
-  "generatedAt": "2026-10-25T10:22:33+05:30",
+  "generatedAt": "2026-10-26T10:26:44+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-10-22-0815",
-      "page": "kaatdo",
-      "at": "2026-10-22T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-10-22-rules-locked-during-market-hours expired -3.1 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "job_rez-2026-10-22-1230",
-      "page": "job_rez",
-      "at": "2026-10-22T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-10-22-watermark-free-exports expired -2.9 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-10-23-1230",
       "page": "job_rez",
       "at": "2026-10-23T12:30:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "jr-i0008",
-      "reason": "Reel breaking down Job DNA scoring against posting requirements.",
-      "draftId": "jr-2026-10-23-job-dna-score-breakdown"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-23-job-dna-score-breakdown expired -2.9 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-10-23-1930",
       "page": "rishtapatra",
       "at": "2026-10-23T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0006",
-      "reason": "Practical utility post emphasizing the live A4 auto-fit layout for Friday image slot.",
-      "draftId": "rp-2026-10-23-clear-one-page-a4-biodata"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-10-23-clear-one-page-a4-biodata expired -2.6 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-10-24-1100",
@@ -113,27 +93,30 @@
       "page": "job_rez",
       "at": "2026-10-28T12:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0012",
-      "reason": "Uses backlog idea focusing on live jobs panel and refreshing sources."
+      "reason": "Uses backlog idea focusing on live jobs panel and refreshing sources.",
+      "draftId": "jr-2026-10-28-live-sources-refreshing-daily"
     },
     {
       "slotId": "rishtapatra-2026-10-28-1930",
       "page": "rishtapatra",
       "at": "2026-10-28T19:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0015",
-      "reason": "Assigning existing open carousel idea focusing on Priority 1: free Janam Kundali computed locally in the browser."
+      "reason": "Assigning existing open carousel idea focusing on Priority 1: free Janam Kundali computed locally in the browser.",
+      "draftId": "rp-2026-10-28-free-janam-kundali-engine"
     },
     {
       "slotId": "kaatdo-2026-10-29-0815",
       "page": "kaatdo",
       "at": "2026-10-29T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0011",
-      "reason": "Aligns with Priority 1 targeting core server-side kill switch execution across the six supported brokers."
+      "reason": "Aligns with Priority 1 targeting core server-side kill switch execution across the six supported brokers.",
+      "draftId": "kd-2026-10-29-six-broker-integration"
     },
     {
       "slotId": "job_rez-2026-10-29-1230",
@@ -296,6 +279,15 @@
       "status": "planned",
       "ideaId": "rp-i0003",
       "reason": "Matches the CEO rank 1 privacy theme and fills the Saturday reel format using client-side Kundali calculations."
+    },
+    {
+      "slotId": "kaatdo-2026-11-08-1100",
+      "page": "kaatdo",
+      "at": "2026-11-08T11:00:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "kd-i0003",
+      "reason": "Assigning open reel idea to fill the weekend slot covering daily morning broker token expirations."
     }
   ]
 }

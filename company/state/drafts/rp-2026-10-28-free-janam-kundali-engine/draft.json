@@ -1,0 +1,96 @@
+{
+  "id": "rp-2026-10-28-free-janam-kundali-engine",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0015",
+  "slotId": "rishtapatra-2026-10-28-1930",
+  "slotAt": "2026-10-28T19:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-26T10:26:44+05:30",
+  "updatedAt": "2026-10-26T10:26:44+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261026-1026-d1b42b",
+  "caption": "Explore the free Janam Kundali tool running securely in your browser.\n\nWhen planning for a rishta, generating a janam kundali should be straightforward and private. RishtaPatra offers three products: biodata maker, Rishta Connect, and Janam Kundali (free). The astrology engine runs directly in the browser; no request carries your birth data.\n\nKundali note: Calculations are indicative; consult your pandit.\n\nVisit rishtapatra.com to get started.",
+  "hashtags": [
+    "#RishtaPatra",
+    "#JanamKundali",
+    "#Kundali"
+  ],
+  "altText": "Slide 1 of carousel graphic showing Janam Kundali details computed client-side in the browser",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f07",
+      "quote": "Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\"; no health, money or legal advice"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Free Janam Kundali Engine",
+      "body": "Compute your janam kundali directly in your browser. No request carries your birth data.",
+      "altText": "Slide 1: Free Janam Kundali Engine heading and body copy about browser calculation"
+    },
+    {
+      "heading": "Client-Side Privacy",
+      "body": "The astrology engine runs entirely on your device. Your birth details stay secure.",
+      "altText": "Slide 2: Client-Side Privacy heading and body copy about device security"
+    },
+    {
+      "heading": "Three Products",
+      "body": "Explore our biodata maker, Rishta Connect, and free Janam Kundali tools.",
+      "altText": "Slide 3: Three Products heading and body copy listing the platform offerings"
+    }
+  ],
+  "altTexts": [
+    "Slide 1: Free Janam Kundali Engine heading and body copy about browser calculation",
+    "Slide 2: Client-Side Privacy heading and body copy about device security",
+    "Slide 3: Three Products heading and body copy listing the platform offerings"
+  ],
+  "writerNote": "Used fact rp-f04 and rp-f07 as specified in the idea, included mandatory kundali disclaimers verbatim, and kept alt texts strictly aligned with slide copy.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-28-free-janam-kundali-engine/slide-1-160d9ba5.jpg",
+      "bytes": 87880,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "160d9ba584cf7ddd73e929b2f2ba302ea22f1283ef28e80d31163aab90d91cf9",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-28-free-janam-kundali-engine/slide-1-160d9ba5.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-28-free-janam-kundali-engine/slide-1-160d9ba5.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-28-free-janam-kundali-engine/slide-2-74aa51e4.jpg",
+      "bytes": 72354,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "74aa51e45b060536a3ef9006c5c7a2d83e873c663fd02cdffd634025e7264514",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-28-free-janam-kundali-engine/slide-2-74aa51e4.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-28-free-janam-kundali-engine/slide-2-74aa51e4.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-28-free-janam-kundali-engine/slide-3-02d6ce3c.jpg",
+      "bytes": 73919,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "02d6ce3c7d48646fbc02223d4f4cf9b43246a7c72c4224bc36c8289ee2f23265",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-28-free-janam-kundali-engine/slide-3-02d6ce3c.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-28-free-janam-kundali-engine/slide-3-02d6ce3c.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "3 slides · variant A · maroon and cream",
+  "qaRef": "drafts/rp-2026-10-28-free-janam-kundali-engine/qa.json"
+}

@@ -1,0 +1,109 @@
+{
+  "draftId": "kd-2026-10-29-six-broker-integration",
+  "revision": 1,
+  "at": "2026-10-26T10:26:44+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "439/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "8/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "always → 3/3 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "10 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "100/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; Devanagari only \"काट दो\")"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 99 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "3 link tokens, all on kaatdo.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.31 over 8 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "KaatDo operates across six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww",
+        "ok": true,
+        "factId": "kd-f03"
+      },
+      {
+        "claim": "Monitoring and execution run on official trade APIs",
+        "ok": true,
+        "factId": "kd-f03"
+      },
+      {
+        "claim": "KaatDo is not investment advice",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "KaatDo is not registered with SEBI",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "Broker API execution is never guaranteed",
+        "ok": true,
+        "factId": "kd-f10"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is console-like, clean, and directly follows brand voice and disclaimers."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261026-1026-d1b42b"
+}

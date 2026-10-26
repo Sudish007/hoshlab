@@ -1,0 +1,104 @@
+{
+  "draftId": "jr-2026-10-28-live-sources-refreshing-daily",
+  "revision": 1,
+  "at": "2026-10-26T10:26:44+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "528/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "5/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "2026-10-03 → jr-f01, 47 → jr-f15, 1,011 → jr-f15, 35 → jr-f15"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "4 alt texts, longest 62/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "4 × 1080x1350 jpeg max 82 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.17 over 10 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "47 career sources refresh about six times every day",
+        "ok": true,
+        "factId": "jr-f15"
+      },
+      {
+        "claim": "The live jobs panel in JobRez lists live roles from company careers pages on Lever, Greenhouse, and Ashby boards, alongside Adzuna and employer posts, with a link to the original posting",
+        "ok": true,
+        "factId": "jr-f12"
+      },
+      {
+        "claim": "No sample or placeholder listings exist",
+        "ok": true,
+        "factId": "jr-f12"
+      },
+      {
+        "claim": "As of 2026-10-03, the first fill on JobRez produced 1,011 live listings from 35 boards, with 47 sources refreshed about six times a day",
+        "ok": true,
+        "factId": "jr-f15"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is precise and matches the technical register of the product README."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261026-1026-d1b42b"
+}

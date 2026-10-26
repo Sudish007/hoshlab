@@ -1,0 +1,110 @@
+{
+  "id": "jr-2026-10-28-live-sources-refreshing-daily",
+  "page": "job_rez",
+  "ideaId": "jr-i0012",
+  "slotId": "job_rez-2026-10-28-1230",
+  "slotAt": "2026-10-28T12:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-26T10:26:44+05:30",
+  "updatedAt": "2026-10-26T10:26:44+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261026-1026-d1b42b",
+  "caption": "47 career sources refresh about six times every day.\n\nThe live jobs panel in JobRez lists live roles from company careers pages on Lever, Greenhouse, and Ashby boards, alongside Adzuna and employer posts, with a link to the original posting. No sample or placeholder listings exist.\n\nAs of 2026-10-03, the first fill on JobRez produced 1,011 live listings from 35 boards, with 47 sources refreshed about six times a day.\n\nExplore the live jobs panel at https://jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#masterresume",
+    "#jobhunt",
+    "#careertools",
+    "#jobsearch"
+  ],
+  "altText": "Slide 1 of carousel: 47 career sources refresh about six times every day on JobRez.",
+  "factsUsed": [
+    {
+      "factId": "jr-f12",
+      "quote": "The Jobs panel lists live roles from company careers pages (Lever, Greenhouse and Ashby boards), Adzuna and employer posts, with a link to the original posting; no sample or placeholder listings exist"
+    },
+    {
+      "factId": "jr-f15",
+      "quote": "the first fill on 2026-10-03 produced 1,011 live listings from 35 boards; 47 sources are refreshed about six times a day"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Live Sources",
+      "body": "47 career sources refresh about six times every day on JobRez.",
+      "altText": "Slide 1: Live Sources. 47 sources refresh six times a day."
+    },
+    {
+      "heading": "Real Postings",
+      "body": "Listings are pulled directly from Lever, Greenhouse, Ashby boards, Adzuna, and direct employer posts with a link to the original posting.",
+      "altText": "Slide 2: Real Postings. Pulls from Lever and Greenhouse."
+    },
+    {
+      "heading": "No Placeholders",
+      "body": "Zero sample or placeholder listings exist in the system.",
+      "altText": "Slide 3: No Placeholders. Zero sample or placeholder listings."
+    },
+    {
+      "heading": "Initial Volume",
+      "body": "As of 2026-10-03, the first fill produced 1,011 live listings from 35 boards.",
+      "altText": "Slide 4: Initial Volume. 1,011 live listings on 2026-10-03."
+    }
+  ],
+  "altTexts": [
+    "Slide 1: Live Sources. 47 sources refresh six times a day.",
+    "Slide 2: Real Postings. Pulls from Lever and Greenhouse.",
+    "Slide 3: No Placeholders. Zero sample or placeholder listings.",
+    "Slide 4: Initial Volume. 1,011 live listings on 2026-10-03."
+  ],
+  "writerNote": "Corrected slide alt text lengths to stay under 100 characters while keeping facts jr-f12 and jr-f15 intact.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-28-live-sources-refreshing-daily/slide-1-323b1972.jpg",
+      "bytes": 56142,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "323b1972801b84608bd8d7635d2f8e9419b2da0ea49b982c097453f64b3476e7",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-28-live-sources-refreshing-daily/slide-1-323b1972.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-28-live-sources-refreshing-daily/slide-1-323b1972.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-28-live-sources-refreshing-daily/slide-2-d5b96d08.jpg",
+      "bytes": 82218,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "d5b96d0833817dbc409e2f6e7a6bacc500e9ca8cbb6868e08f21c360dd082b78",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-28-live-sources-refreshing-daily/slide-2-d5b96d08.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-28-live-sources-refreshing-daily/slide-2-d5b96d08.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-28-live-sources-refreshing-daily/slide-3-ab52ce61.jpg",
+      "bytes": 56358,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "ab52ce61ac6a497475755388ec8d473231c2be6d0354e74c150b56291493642d",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-28-live-sources-refreshing-daily/slide-3-ab52ce61.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-28-live-sources-refreshing-daily/slide-3-ab52ce61.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-28-live-sources-refreshing-daily/slide-4-b0754f4e.jpg",
+      "bytes": 63984,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "b0754f4efc209b476a715805dac742ae70bbc3caea430bb757d99ef47c5faa72",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-28-live-sources-refreshing-daily/slide-4-b0754f4e.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-28-live-sources-refreshing-daily/slide-4-b0754f4e.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "4 slides · variant A · cream on ink",
+  "qaRef": "drafts/jr-2026-10-28-live-sources-refreshing-daily/qa.json"
+}
