@@ -1,12 +1,55 @@
 {
-  "updatedAt": "2026-10-26T11:52:21+05:30",
+  "updatedAt": "2026-10-26T13:16:39+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261026-1152-c68885",
-    "workflow": "publisher-hourly",
+    "id": "token-refresh-20261026-1316-1065e6",
+    "workflow": "token-refresh",
     "ok": true,
-    "at": "2026-10-26T11:52:21+05:30"
+    "at": "2026-10-26T13:16:39+05:30"
   },
   "lastRuns": [
+    {
+      "id": "token-refresh-20261026-1316-1065e6",
+      "workflow": "token-refresh",
+      "trigger": "schedule",
+      "startedAt": "2026-10-26T13:16:39+05:30",
+      "endedAt": "2026-10-26T13:16:39+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 17,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "tokens: 0 refreshed, 0 expiring, 0 expiry not known yet, 3 not configured"
+        }
+      ],
+      "changed": [
+        "company/state/tokens.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "tokens": {
+        "rishtapatra": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        },
+        "kaatdo": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        },
+        "job_rez": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.45618
+    },
     {
       "id": "publisher-hourly-20261026-1152-c68885",
       "workflow": "publisher-hourly",
@@ -1684,89 +1727,6 @@
         ],
         "staleEdits": [],
         "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.362742
-    },
-    {
-      "id": "publisher-hourly-20261023-2038-3a0f3a",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-23T20:38:11+05:30",
-      "endedAt": "2026-10-23T20:38:11+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 24,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 2 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/rp-2026-10-21-three-pillars-from-biodata-to-rishta/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-23-clear-one-page-a4-biodata",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-10-24-safe-matchmaking-on-rishta-connect",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-22-rules-locked-during-market-hours",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-24-supported-broker-coverage",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-22-watermark-free-exports",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-10-23-job-dna-score-breakdown",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "rp-2026-10-21-three-pillars-from-biodata-to-rishta"
-        ],
         "rejected": [],
         "pages": {
           "rishtapatra": {
