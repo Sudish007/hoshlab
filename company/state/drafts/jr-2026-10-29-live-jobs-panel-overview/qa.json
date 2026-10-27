@@ -1,0 +1,104 @@
+{
+  "draftId": "jr-2026-10-29-live-jobs-panel-overview",
+  "revision": 1,
+  "at": "2026-10-27T10:43:50+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "474/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "85/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 91 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.22 over 11 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Browse live listings pulled directly from company careers pages.",
+        "ok": true,
+        "factId": "jr-f12"
+      },
+      {
+        "claim": "The live jobs panel in JobRez lists real roles directly from company careers pages across Lever, Greenhouse, and Ashby boards, alongside Adzuna and employer posts.",
+        "ok": true,
+        "factId": "jr-f12"
+      },
+      {
+        "claim": "Each entry includes a direct link to the original posting.",
+        "ok": true,
+        "factId": "jr-f12"
+      },
+      {
+        "claim": "No sample or placeholder listings exist on the platform.",
+        "ok": true,
+        "factId": "jr-f12"
+      }
+    ],
+    "reasons": [],
+    "notes": "Draft is well-grounded, conforms strictly to all brand rules, and uses precise, specific language appropriate for engineers."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261027-1043-a59c59"
+}

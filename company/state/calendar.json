@@ -1,42 +1,22 @@
 {
-  "generatedAt": "2026-10-26T10:26:44+05:30",
+  "generatedAt": "2026-10-27T10:43:50+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-10-23-1230",
-      "page": "job_rez",
-      "at": "2026-10-23T12:30:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-10-23-job-dna-score-breakdown expired -2.9 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-10-23-1930",
-      "page": "rishtapatra",
-      "at": "2026-10-23T19:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-10-23-clear-one-page-a4-biodata expired -2.6 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-10-24-1100",
       "page": "kaatdo",
       "at": "2026-10-24T11:00:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "kd-i0006",
-      "reason": "Broker API comparison breakdown for Saturday carousel slot.",
-      "draftId": "kd-2026-10-24-supported-broker-coverage"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-10-24-supported-broker-coverage expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-10-24-1930",
       "page": "rishtapatra",
       "at": "2026-10-24T19:30:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "rp-i0007",
-      "reason": "Matchmaking moderation overview for Saturday reel slot.",
-      "draftId": "rp-2026-10-24-safe-matchmaking-on-rishta-connect"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-10-24-safe-matchmaking-on-rishta-connect expired -2.6 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-10-25-1100",
@@ -123,9 +103,10 @@
       "page": "job_rez",
       "at": "2026-10-29T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0014",
-      "reason": "Assigning open idea jr-i0014 to cover the live jobs panel priority."
+      "reason": "Assigning open idea jr-i0014 to cover the live jobs panel priority.",
+      "draftId": "jr-2026-10-29-live-jobs-panel-overview"
     },
     {
       "slotId": "job_rez-2026-10-30-1230",
@@ -288,6 +269,33 @@
       "status": "planned",
       "ideaId": "kd-i0003",
       "reason": "Assigning open reel idea to fill the weekend slot covering daily morning broker token expirations."
+    },
+    {
+      "slotId": "job_rez-2026-11-09-1230",
+      "page": "job_rez",
+      "at": "2026-11-09T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0004",
+      "reason": "Filling slot with an existing open idea matching priority themes on layout and rewriting."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-09-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-09T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0020",
+      "reason": "Filling the open image slot with a core priority idea on free client-side privacy and Janam Kundali."
+    },
+    {
+      "slotId": "kaatdo-2026-11-10-0815",
+      "page": "kaatdo",
+      "at": "2026-11-10T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0017",
+      "reason": "Assigning an existing open idea covering server-side breach mechanics to fill the image slot, fulfilling the current priority."
     }
   ]
 }

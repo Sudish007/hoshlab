@@ -1,0 +1,59 @@
+{
+  "id": "jr-2026-10-29-live-jobs-panel-overview",
+  "page": "job_rez",
+  "ideaId": "jr-i0014",
+  "slotId": "job_rez-2026-10-29-1230",
+  "slotAt": "2026-10-29T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-27T10:43:50+05:30",
+  "updatedAt": "2026-10-27T10:43:50+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261027-1043-a59c59",
+  "caption": "Browse live listings pulled directly from company careers pages.\n\nThe live jobs panel in JobRez lists real roles directly from company careers pages across Lever, Greenhouse, and Ashby boards, alongside Adzuna and employer posts. Each entry includes a direct link to the original posting.\n\nNo sample or placeholder listings exist on the platform.\n\nExplore postings and branch your resume at jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#TechJobs",
+    "#SoftwareEngineering",
+    "#JobSearch",
+    "#ResumeTips",
+    "#Careers"
+  ],
+  "altText": "Text graphic titled Live Jobs Panel showing direct sources from company career pages.",
+  "factsUsed": [
+    {
+      "factId": "jr-f12",
+      "quote": "The Jobs panel lists live roles from company careers pages (Lever, Greenhouse and Ashby boards), Adzuna and employer posts, with a link to the original posting; no sample or placeholder listings exist (write \"live jobs panel\", never a country)"
+    }
+  ],
+  "artwork": {
+    "headline": "Live Jobs Panel",
+    "subline": "Direct roles pulled from company boards.",
+    "facts": [
+      "Company careers pages via Lever, Greenhouse, and Ashby",
+      "Direct links to original postings",
+      "No sample or placeholder listings exist"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Used fact jr-f12 focusing strictly on the live jobs panel without country tokens or exclamation marks.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-10-29-live-jobs-panel-overview/image-1-aac5e44c.jpg",
+      "bytes": 91443,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "aac5e44c7286527b6bf16f05f5959635014cd83f456827f2f0a03a2e30e58c28",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-10-29-live-jobs-panel-overview/image-1-aac5e44c.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-10-29-live-jobs-panel-overview/image-1-aac5e44c.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-10-29-live-jobs-panel-overview/qa.json"
+}
