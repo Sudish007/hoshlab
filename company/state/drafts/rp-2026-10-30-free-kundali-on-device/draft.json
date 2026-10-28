@@ -1,0 +1,63 @@
+{
+  "id": "rp-2026-10-30-free-kundali-on-device",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0011",
+  "slotId": "rishtapatra-2026-10-30-1930",
+  "slotAt": "2026-10-30T19:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-28T11:23:01+05:30",
+  "updatedAt": "2026-10-28T11:23:01+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261028-1123-fd6d35",
+  "caption": "Your birth details never leave your device when you compute your Janam Kundali.\n\nPreparing for a rishta often involves checking birth charts, but sensitive information should stay under your control. RishtaPatra offers three products: biodata maker, Rishta Connect (matchmaking), and Janam Kundali (free).\n\nWith our astrology tool, Janam Kundali is computed client-side: the astrology engine runs in the browser, so no request carries birth data anywhere else.\n\nNote: Kundali calculations are indicative; consult your pandit.\n\nVisit rishtapatra.com to explore Janam Kundali on your device.",
+  "hashtags": [
+    "#RishtaPatra",
+    "#JanamKundali",
+    "#Kundali",
+    "#KundaliMilan",
+    "#Biodata",
+    "#Rishta"
+  ],
+  "altText": "Graphic titled Janam Kundali on Your Device, detailing client-side calculations at rishtapatra.com",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f07",
+      "quote": "Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data"
+    }
+  ],
+  "artwork": {
+    "headline": "Janam Kundali on Your Device",
+    "subline": "Private astrological calculations right in your browser",
+    "facts": [
+      "Janam Kundali is computed client-side",
+      "The astrology engine runs in the browser",
+      "No request carries birth data"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Triggered kundali disclaimer requirements satisfied verbatim with 'indicative' and 'consult your pandit'.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-10-30-free-kundali-on-device/image-1-02b9bec0.jpg",
+      "bytes": 107562,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "02b9bec01c9c9c16dd77bd804967c70ce7e59ab89915d5687822af6b717a153c",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-10-30-free-kundali-on-device/image-1-02b9bec0.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-10-30-free-kundali-on-device/image-1-02b9bec0.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · cream and maroon",
+  "qaRef": "drafts/rp-2026-10-30-free-kundali-on-device/qa.json"
+}

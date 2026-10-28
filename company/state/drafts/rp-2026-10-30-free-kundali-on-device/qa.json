@@ -1,0 +1,104 @@
+{
+  "draftId": "rp-2026-10-30-free-kundali-on-device",
+  "revision": 1,
+  "at": "2026-10-28T11:23:01+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "657/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "kundali → 2/2 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "8 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "98/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (hi+en; Devanagari allowed)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 108 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "3 link tokens, all on rishtapatra.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/2 (sparse)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.17 over 9 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Your birth details never leave your device when you compute your Janam Kundali",
+        "ok": true,
+        "factId": "rp-f07"
+      },
+      {
+        "claim": "RishtaPatra offers three products: biodata maker, Rishta Connect (matchmaking), and Janam Kundali (free)",
+        "ok": true,
+        "factId": "rp-f04"
+      },
+      {
+        "claim": "Janam Kundali is computed client-side: the astrology engine runs in the browser, so no request carries birth data anywhere else",
+        "ok": true,
+        "factId": "rp-f07"
+      },
+      {
+        "claim": "Kundali calculations are indicative; consult your pandit",
+        "ok": true,
+        "factId": "rp-f09"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is warm and accurate, disclaimer fragments correctly included."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261028-1123-fd6d35"
+}

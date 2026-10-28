@@ -1,0 +1,93 @@
+{
+  "id": "kd-2026-10-31-daily-token-reconnection",
+  "page": "kaatdo",
+  "ideaId": "kd-i0013",
+  "slotId": "kaatdo-2026-10-31-1100",
+  "slotAt": "2026-10-31T11:00:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-10-28T11:23:01+05:30",
+  "updatedAt": "2026-10-28T11:23:01+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261028-1123-fd6d35",
+  "caption": "Broker tokens expire every single trading morning. Broker tokens expire every day under SEBI norms, so you must reconnect each trading morning to keep monitoring active. Watch for the 08:45 IST stale-token nudge and the 09:20 IST connected but NOT armed alert. kaatdo.com काट दो. KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed. #KaatDo #KillSwitch #TradingDiscipline #TokenExpiry #SEBINorms #RiskManagement #FandO #TradingTools",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#TradingDiscipline",
+    "#TokenExpiry",
+    "#SEBINorms",
+    "#RiskManagement",
+    "#FandO",
+    "#TradingTools"
+  ],
+  "altText": "Slide 1 of carousel: Broker tokens expire every single trading morning.",
+  "factsUsed": [
+    {
+      "factId": "kd-f07",
+      "quote": "Broker tokens expire every day (SEBI norms), so the trader reconnects each trading morning; 08:45 IST stale-token nudge and 09:20 IST \"connected but NOT armed\" alert"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Broker tokens expire",
+      "body": "Broker tokens expire every single trading morning. SEBI norms require daily reconnection.",
+      "altText": "Slide 1: Broker tokens expire every single trading morning."
+    },
+    {
+      "heading": "Morning reconnection",
+      "body": "Reconnect your broker each trading morning to keep monitoring active.",
+      "altText": "Slide 2: Reconnect your broker each trading morning to keep monitoring active."
+    },
+    {
+      "heading": "Alerts keep you updated",
+      "body": "Watch for the 08:45 IST stale-token nudge and the 09:20 IST connected but NOT armed alert.",
+      "altText": "Slide 3: Watch for the 08:45 IST stale-token nudge and 09:20 IST connected but NOT armed alert."
+    }
+  ],
+  "altTexts": [
+    "Slide 1: Broker tokens expire every single trading morning.",
+    "Slide 2: Reconnect your broker each trading morning to keep monitoring active.",
+    "Slide 3: Watch for the 08:45 IST stale-token nudge and 09:20 IST connected but NOT armed alert."
+  ],
+  "writerNote": "Used fact kd-f07 covering daily broker token expiration under SEBI norms, morning reconnection, and the 08:45/09:20 IST alerts. Followed brand voice, formatting caps, and included mandatory disclaimers.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-31-daily-token-reconnection/slide-1-1beaa2fc.jpg",
+      "bytes": 71921,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "1beaa2fcfb245fc7ee24be1c47bc781c523859ca2329643358ecb7717589b67c",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-31-daily-token-reconnection/slide-1-1beaa2fc.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-31-daily-token-reconnection/slide-1-1beaa2fc.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-31-daily-token-reconnection/slide-2-f4d16058.jpg",
+      "bytes": 64587,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "f4d16058d2e4b95cde6ce9ed0a6f23e45f29ec7db110109116986b2d49dc879f",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-31-daily-token-reconnection/slide-2-f4d16058.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-31-daily-token-reconnection/slide-2-f4d16058.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-10-31-daily-token-reconnection/slide-3-b0c9b9cc.jpg",
+      "bytes": 76660,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "b0c9b9cc82b41dff7186143837a512f34ee9e81c31b7f9614711a137af0568d7",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-10-31-daily-token-reconnection/slide-3-b0c9b9cc.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-10-31-daily-token-reconnection/slide-3-b0c9b9cc.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "3 slides · variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-10-31-daily-token-reconnection/qa.json"
+}

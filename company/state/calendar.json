@@ -1,32 +1,14 @@
 {
-  "generatedAt": "2026-10-27T10:43:50+05:30",
+  "generatedAt": "2026-10-28T11:23:01+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-10-24-1100",
-      "page": "kaatdo",
-      "at": "2026-10-24T11:00:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-10-24-supported-broker-coverage expired -3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-10-24-1930",
-      "page": "rishtapatra",
-      "at": "2026-10-24T19:30:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-10-24-safe-matchmaking-on-rishta-connect expired -2.6 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-10-25-1100",
       "page": "kaatdo",
       "at": "2026-10-25T11:00:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "kd-i0007",
-      "reason": "Transparent discussion of slippage and illiquid strikes for Sunday reel.",
-      "draftId": "kd-2026-10-25-honest-risk-realities"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-10-25-honest-risk-realities expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-10-26-1230",
@@ -122,18 +104,20 @@
       "page": "rishtapatra",
       "at": "2026-10-30T19:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0011",
-      "reason": "Directly addresses Priority 1 (lead with free product and local-first privacy) matching the required image format."
+      "reason": "Directly addresses Priority 1 (lead with free product and local-first privacy) matching the required image format.",
+      "draftId": "rp-2026-10-30-free-kundali-on-device"
     },
     {
       "slotId": "kaatdo-2026-10-31-1100",
       "page": "kaatdo",
       "at": "2026-10-31T11:00:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0013",
-      "reason": "Assigning existing carousel idea focusing on CEO Priority 2 regarding daily broker token reconnection."
+      "reason": "Assigning existing carousel idea focusing on CEO Priority 2 regarding daily broker token reconnection.",
+      "draftId": "kd-2026-10-31-daily-token-reconnection"
     },
     {
       "slotId": "rishtapatra-2026-10-31-1930",
@@ -296,6 +280,15 @@
       "status": "planned",
       "ideaId": "kd-i0017",
       "reason": "Assigning an existing open idea covering server-side breach mechanics to fill the image slot, fulfilling the current priority."
+    },
+    {
+      "slotId": "job_rez-2026-11-10-1230",
+      "page": "job_rez",
+      "at": "2026-11-10T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0007",
+      "reason": "Aligns directly with CEO priority 2 focusing on unwatermarked exports on the free tier."
     }
   ]
 }
