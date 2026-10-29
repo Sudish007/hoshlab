@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-28T22:10:45+05:30",
+  "updatedAt": "2026-10-29T14:03:29+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -103,12 +103,12 @@
     {
       "id": "jr-2026-10-27-local-tracker-data-privacy",
       "page": "job_rez",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "job_rez-2026-10-27-1230",
       "slotAt": "2026-10-27T12:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-25T10:22:33+05:30",
+      "updatedAt": "2026-10-29T14:03:29+05:30",
       "qa": true
     },
     {
@@ -213,12 +213,12 @@
     {
       "id": "kd-2026-10-27-full-evaluation-audit-log",
       "page": "kaatdo",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "kaatdo-2026-10-27-0815",
       "slotAt": "2026-10-27T08:15:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-24T10:15:33+05:30",
+      "updatedAt": "2026-10-29T14:03:29+05:30",
       "qa": true
     },
     {
