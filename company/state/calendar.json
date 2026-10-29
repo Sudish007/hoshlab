@@ -1,44 +1,32 @@
 {
-  "generatedAt": "2026-10-28T11:23:01+05:30",
+  "generatedAt": "2026-10-29T11:26:53+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-10-25-1100",
-      "page": "kaatdo",
-      "at": "2026-10-25T11:00:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-10-25-honest-risk-realities expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-10-26-1230",
       "page": "job_rez",
       "at": "2026-10-26T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0009",
-      "reason": "Image covering free templates and standard typography options.",
-      "draftId": "jr-2026-10-26-resume-templates-and-typography"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-26-resume-templates-and-typography expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-10-26-1930",
       "page": "rishtapatra",
       "at": "2026-10-26T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0008",
-      "reason": "Reinforcing freedom of choice around astrological details for Monday image slot.",
-      "draftId": "rp-2026-10-26-optional-kundali-on-rishtapatra"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-10-26-optional-kundali-on-rishtapatra expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-10-27-0815",
       "page": "kaatdo",
       "at": "2026-10-27T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0008",
-      "reason": "Technical transparency on audit log entries for Tuesday image slot.",
-      "draftId": "kd-2026-10-27-full-evaluation-audit-log"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-10-27-full-evaluation-audit-log expired -2.1 days before the slot (lead 3 days)",
+      "draftId": "kd-2026-10-27-full-evaluation-audit-log",
+      "ideaId": "kd-i0008"
     },
     {
       "slotId": "job_rez-2026-10-27-1230",
@@ -289,6 +277,33 @@
       "status": "planned",
       "ideaId": "jr-i0007",
       "reason": "Aligns directly with CEO priority 2 focusing on unwatermarked exports on the free tier."
+    },
+    {
+      "slotId": "job_rez-2026-11-11-1230",
+      "page": "job_rez",
+      "at": "2026-11-11T12:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "jr-i0001",
+      "reason": "Directly matches Priority 2 by breaking down the six structural layout rules across a carousel format."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-11-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-11T19:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "rp-i0005",
+      "reason": "Filling the carousel slot with an existing open idea covering the core platform features and priorities without repeating any recent content."
+    },
+    {
+      "slotId": "kaatdo-2026-11-12-0815",
+      "page": "kaatdo",
+      "at": "2026-11-12T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0027",
+      "reason": "Assigned open idea kd-i0027 to fill the open image slot with server-side kill switch mechanics."
     }
   ]
 }
