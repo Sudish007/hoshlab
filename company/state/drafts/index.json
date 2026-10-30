@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-30T12:41:40+05:30",
+  "updatedAt": "2026-10-30T19:43:55+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -334,12 +334,12 @@
     {
       "id": "rp-2026-10-28-free-janam-kundali-engine",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "carousel",
       "slotId": "rishtapatra-2026-10-28-1930",
       "slotAt": "2026-10-28T19:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-26T10:26:44+05:30",
+      "updatedAt": "2026-10-30T19:43:55+05:30",
       "qa": true
     },
     {
