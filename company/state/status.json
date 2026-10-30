@@ -1,12 +1,93 @@
 {
-  "updatedAt": "2026-10-30T06:34:01+05:30",
+  "updatedAt": "2026-10-30T11:36:55+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261030-0634-034965",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261030-1128-ff0a2c",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-10-30T06:34:01+05:30"
+    "at": "2026-10-30T11:36:55+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261030-1128-ff0a2c",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-10-30T11:28:46+05:30",
+      "endedAt": "2026-10-30T11:36:55+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W44.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and 2026-09 has no runs or model calls to catch up on (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 128101,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.001937,
+          "note": "rishtapatra: 0 ideas, 9 slots, model not called (backlog full) | kaatdo: 0 ideas, 10 slots, 1 dropped, model not called (backlog full) | job_rez: 0 ideas, 13 slots, 1 assigned, 1 dropped | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 361258,
+          "calls": 4,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.020689,
+          "note": "job_rez-2026-10-30-1230: invalid_output after one repair call (gemini/gemini-3.8-flash) | rishtapatra-2026-10-31-1930: AllProvidersFailedError: writer: no provider answered — gemini: gemini: timeout after 120000 ms | 0 written, 0 reworked, 1 invalid_output"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 queued, 0 rework, 0 blocked"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/usage/2026-10.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.532067
+    },
     {
       "id": "publisher-hourly-20261030-0634-034965",
       "workflow": "publisher-hourly",
@@ -1695,49 +1776,6 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.45618
-    },
-    {
-      "id": "token-refresh-20261026-1316-1065e6",
-      "workflow": "token-refresh",
-      "trigger": "schedule",
-      "startedAt": "2026-10-26T13:16:39+05:30",
-      "endedAt": "2026-10-26T13:16:39+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 17,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "tokens: 0 refreshed, 0 expiring, 0 expiry not known yet, 3 not configured"
-        }
-      ],
-      "changed": [
-        "company/state/tokens.json",
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "tokens": {
-        "rishtapatra": {
-          "outcome": "not_configured",
-          "daysLeft": null,
-          "expiresAt": null
-        },
-        "kaatdo": {
-          "outcome": "not_configured",
-          "daysLeft": null,
-          "expiresAt": null
-        },
-        "job_rez": {
-          "outcome": "not_configured",
-          "daysLeft": null,
-          "expiresAt": null
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.45618
     }
   ],
   "queue": {
@@ -1752,7 +1790,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.509441
+    "paidEquivalentUsd": 0.532067
   },
   "pages": {
     "rishtapatra": {
