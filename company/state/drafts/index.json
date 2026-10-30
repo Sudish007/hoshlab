@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T14:03:29+05:30",
+  "updatedAt": "2026-10-30T12:41:40+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -114,12 +114,12 @@
     {
       "id": "jr-2026-10-28-live-sources-refreshing-daily",
       "page": "job_rez",
-      "status": "queued",
+      "status": "expired",
       "format": "carousel",
       "slotId": "job_rez-2026-10-28-1230",
       "slotAt": "2026-10-28T12:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-10-26T10:26:44+05:30",
+      "updatedAt": "2026-10-30T12:41:40+05:30",
       "qa": true
     },
     {
