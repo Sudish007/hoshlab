@@ -1,12 +1,99 @@
 {
-  "updatedAt": "2026-10-31T11:18:53+05:30",
+  "updatedAt": "2026-10-31T11:42:13+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261031-1118-6c1f1d",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261031-1123-c0eea8",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-10-31T11:18:53+05:30"
+    "at": "2026-10-31T11:42:13+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261031-1123-c0eea8",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-10-31T11:23:40+05:30",
+      "endedAt": "2026-10-31T11:42:13+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W44.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and 2026-09 has no runs or model calls to catch up on (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 231845,
+          "calls": 5,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.007967,
+          "note": "rishtapatra: 0 ideas, 10 slots, 1 assigned, 1 dropped | kaatdo: 0 ideas, 10 slots, 1 assigned, 1 dropped | job_rez: 0 ideas, 12 slots, 1 assigned, 1 dropped | completed models: Google Gemini · gemini-3.8-flash (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 762413,
+          "calls": 12,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.037361,
+          "note": "rishtapatra-2026-10-31-1930: invalid_output after one repair call (gemini/gemini-3.8-flash) | rishtapatra-2026-11-02-1930: AllProvidersFailedError: writer: no provider answered — gemini: gemini: timeout after 120000 ms | 2 written, 0 reworked, 1 invalid_output | kd-2026-11-01-second-level-square-off: AllProvidersFailedError: writer: no provider answered — gemini: gemini: timeout after 120000 ms | rework loop: 0 written, 0 reworked | completed models: Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 44999,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "2 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 73640,
+          "calls": 1,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.005277,
+          "note": "0 queued, 2 rework, 0 blocked | completed models: Google Gemini · gemini-3.8-flash (@job_rez)"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/drafts/kd-2026-11-01-second-level-square-off/draft.json",
+        "company/state/drafts/jr-2026-11-02-master-resume-branching/draft.json",
+        "company/state/drafts/jr-2026-11-02-master-resume-branching/qa.json",
+        "company/state/drafts/kd-2026-11-01-second-level-square-off/qa.json",
+        "company/state/drafts/index.json",
+        "company/state/usage/2026-10.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.582672
+    },
     {
       "id": "publisher-hourly-20261031-1118-6c1f1d",
       "workflow": "publisher-hourly",
@@ -1575,97 +1662,6 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.470809
-    },
-    {
-      "id": "publisher-hourly-20261027-1845-645765",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-27T18:45:30+05:30",
-      "endedAt": "2026-10-27T18:45:30+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 24,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 4 waiting, 0 failed, 0 expired"
-        }
-      ],
-      "changed": [
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-26-optional-kundali-on-rishtapatra",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-10-28-free-janam-kundali-engine",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-27-full-evaluation-audit-log",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-29-six-broker-integration",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-26-resume-templates-and-typography",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-10-27-local-tracker-data-privacy",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-10-28-live-sources-refreshing-daily",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-29-live-jobs-panel-overview",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.470809
     }
   ],
   "queue": {
@@ -1680,7 +1676,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.532067
+    "paidEquivalentUsd": 0.582672
   },
   "pages": {
     "rishtapatra": {

@@ -1,52 +1,30 @@
 {
-  "generatedAt": "2026-10-30T11:28:46+05:30",
+  "generatedAt": "2026-10-31T11:23:40+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-10-27-0815",
-      "page": "kaatdo",
-      "at": "2026-10-27T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-10-27-full-evaluation-audit-log expired -3.1 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "job_rez-2026-10-27-1230",
-      "page": "job_rez",
-      "at": "2026-10-27T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-10-27-local-tracker-data-privacy expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-10-28-1230",
       "page": "job_rez",
       "at": "2026-10-28T12:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "jr-i0012",
-      "reason": "Uses backlog idea focusing on live jobs panel and refreshing sources.",
-      "draftId": "jr-2026-10-28-live-sources-refreshing-daily"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-10-28-live-sources-refreshing-daily expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-10-28-1930",
       "page": "rishtapatra",
       "at": "2026-10-28T19:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "rp-i0015",
-      "reason": "Assigning existing open carousel idea focusing on Priority 1: free Janam Kundali computed locally in the browser.",
-      "draftId": "rp-2026-10-28-free-janam-kundali-engine"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-10-28-free-janam-kundali-engine expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-10-29-0815",
       "page": "kaatdo",
       "at": "2026-10-29T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0011",
-      "reason": "Aligns with Priority 1 targeting core server-side kill switch execution across the six supported brokers.",
-      "draftId": "kd-2026-10-29-six-broker-integration"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-10-29-six-broker-integration expired -2.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-10-29-1230",
@@ -57,15 +35,6 @@
       "ideaId": "jr-i0014",
       "reason": "Assigning open idea jr-i0014 to cover the live jobs panel priority.",
       "draftId": "jr-2026-10-29-live-jobs-panel-overview"
-    },
-    {
-      "slotId": "job_rez-2026-10-30-1230",
-      "page": "job_rez",
-      "at": "2026-10-30T12:30:00+05:30",
-      "format": "reel",
-      "status": "planned",
-      "ideaId": "jr-i0017",
-      "reason": "Assigns existing reel idea directly aligning with CEO priority 1 on the live jobs panel."
     },
     {
       "slotId": "rishtapatra-2026-10-30-1930",
@@ -101,18 +70,20 @@
       "page": "kaatdo",
       "at": "2026-11-01T11:00:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "rework",
       "ideaId": "kd-i0014",
-      "reason": "Assigns existing open reel matching CEO priority 3 on honest execution boundaries and the seconds-level locked loop."
+      "reason": "Assigns existing open reel matching CEO priority 3 on honest execution boundaries and the seconds-level locked loop.",
+      "draftId": "kd-2026-11-01-second-level-square-off"
     },
     {
       "slotId": "job_rez-2026-11-02-1230",
       "page": "job_rez",
       "at": "2026-11-02T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "rework",
       "ideaId": "jr-i0013",
-      "reason": "Assigning existing open idea on master resume branching to the first open image slot, aligning with priority 1."
+      "reason": "Assigning existing open idea on master resume branching to the first open image slot, aligning with priority 1.",
+      "draftId": "jr-2026-11-02-master-resume-branching"
     },
     {
       "slotId": "rishtapatra-2026-11-02-1930",
@@ -293,6 +264,33 @@
       "status": "planned",
       "ideaId": "jr-i0028",
       "reason": "Matches the first CEO priority on master resume branching and role-specific copies."
+    },
+    {
+      "slotId": "job_rez-2026-11-13-1230",
+      "page": "job_rez",
+      "at": "2026-11-13T12:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "jr-i0003",
+      "reason": "Filling the Thursday slot with an existing open reel idea focusing on master resume branching and role-specific copies."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-13-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-13T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0031",
+      "reason": "Assigning existing open idea rp-i0031 to align with CEO Priority 1 focusing on free client-side kundali calculation and local privacy."
+    },
+    {
+      "slotId": "kaatdo-2026-11-14-1100",
+      "page": "kaatdo",
+      "at": "2026-11-14T11:00:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "kd-i0006",
+      "reason": "Assigning open carousel idea covering supported broker coverage and six official trade APIs."
     }
   ]
 }

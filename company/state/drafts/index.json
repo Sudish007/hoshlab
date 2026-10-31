@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-31T11:18:53+05:30",
+  "updatedAt": "2026-10-31T11:23:40+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -134,6 +134,17 @@
       "qa": true
     },
     {
+      "id": "jr-2026-11-02-master-resume-branching",
+      "page": "job_rez",
+      "status": "rework",
+      "format": "image",
+      "slotId": "job_rez-2026-11-02-1230",
+      "slotAt": "2026-11-02T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-31T11:23:40+05:30",
+      "qa": true
+    },
+    {
       "id": "kd-2026-10-15-automated-breach-reaction",
       "page": "kaatdo",
       "status": "expired",
@@ -241,6 +252,17 @@
       "slotAt": "2026-10-31T11:00:00+05:30",
       "revision": 1,
       "updatedAt": "2026-10-28T11:23:01+05:30",
+      "qa": true
+    },
+    {
+      "id": "kd-2026-11-01-second-level-square-off",
+      "page": "kaatdo",
+      "status": "rework",
+      "format": "reel",
+      "slotId": "kaatdo-2026-11-01-1100",
+      "slotAt": "2026-11-01T11:00:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-10-31T11:23:40+05:30",
       "qa": true
     },
     {

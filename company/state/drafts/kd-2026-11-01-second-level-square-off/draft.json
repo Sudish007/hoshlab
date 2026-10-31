@@ -1,0 +1,104 @@
+{
+  "id": "kd-2026-11-01-second-level-square-off",
+  "page": "kaatdo",
+  "ideaId": "kd-i0014",
+  "slotId": "kaatdo-2026-11-01-1100",
+  "slotAt": "2026-11-01T11:00:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "rework",
+  "revision": 1,
+  "reworkCount": 1,
+  "mock": false,
+  "createdAt": "2026-10-31T11:23:40+05:30",
+  "updatedAt": "2026-10-31T11:23:40+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261031-1123-c0eea8",
+  "caption": "Trades are squared off within seconds, not prevented outright. No broker-level block trading API exists except at Dhan. When your account enters a locked state, enforcement relies on a server-side re-fire loop that cuts positions after execution rather than blocking them at entry. kaatdo.com काट दो. KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#RiskManagement",
+    "#TradingTools",
+    "#FandO",
+    "#TradingDiscipline",
+    "#KillSwitch"
+  ],
+  "altText": "Kinetic text slide showing Trades are squared off within seconds.",
+  "factsUsed": [
+    {
+      "factId": "kd-f08",
+      "quote": "Honest limitation: no broker-level \"block trading\" API exists except at Dhan; the LOCKED state is enforced by a re-fire loop, so trades are squared off within seconds, not prevented outright"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    },
+    {
+      "factId": "kd-f13",
+      "quote": "The hero headline ends with the sign-off \"काट दो.\""
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "Trades are squared off within seconds, not prevented.",
+        "seconds": 4
+      },
+      {
+        "text": "No broker-level block trading API exists except at Dhan.",
+        "seconds": 4
+      },
+      {
+        "text": "Enforcement relies on a server-side re-fire loop.",
+        "seconds": 4
+      },
+      {
+        "text": "kaatdo.com काट दो.",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Corrected the first scene text length to be under 60 characters.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/kd-2026-11-01-second-level-square-off/reel-4209f089.mp4",
+      "bytes": 149178,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "4209f089b33b78732f6d71085fcdac89fbed05c28981ef9ef9659c12ddc8c461",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-01-second-level-square-off/reel-4209f089.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-01-second-level-square-off/reel-4209f089.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 149178,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/kd-2026-11-01-second-level-square-off/poster-24096132.jpg",
+      "bytes": 76818,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "24096132d3843f2c596f5adfafcdf76449a87af002e9f76026491e11c430866d",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-01-second-level-square-off/poster-24096132.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-01-second-level-square-off/poster-24096132.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · dark console palette",
+  "qaRef": "drafts/kd-2026-11-01-second-level-square-off/qa.json",
+  "qaReasons": [
+    "duplicate: max jaccard 0.60 over 10 recent captions"
+  ]
+}

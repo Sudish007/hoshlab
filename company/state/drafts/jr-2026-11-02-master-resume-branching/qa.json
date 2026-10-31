@@ -1,0 +1,114 @@
+{
+  "draftId": "jr-2026-11-02-master-resume-branching",
+  "revision": 1,
+  "at": "2026-10-31T11:23:40+05:30",
+  "passed": false,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "412/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "5/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "31/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 131 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.17 over 12 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.8-flash",
+    "verdict": "fail",
+    "toneScore": 4,
+    "claims": [
+      {
+        "claim": "One honest master resume, branched for every role",
+        "ok": true,
+        "factId": "jr-f03"
+      },
+      {
+        "claim": "Branches are copies tailored per role",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "Each branch is scored against the posting in Job DNA",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "Private by default and free to export",
+        "ok": true,
+        "factId": "jr-f03"
+      },
+      {
+        "claim": "One master resume maintained securely",
+        "ok": false
+      }
+    ],
+    "reasons": [
+      "Remove 'maintained securely' from artwork facts as security or secure storage is not an established fact in brand.facts.",
+      "claim without a fact id: \"One master resume maintained securely\""
+    ],
+    "notes": "Draft adheres closely to tone and factual rules aside from the unsourced 'maintained securely' claim on the artwork slide."
+  },
+  "reasons": [
+    "Remove 'maintained securely' from artwork facts as security or secure storage is not an established fact in brand.facts.",
+    "claim without a fact id: \"One master resume maintained securely\""
+  ],
+  "mock": false,
+  "runId": "engine-daily-20261031-1123-c0eea8"
+}
