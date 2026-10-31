@@ -1,12 +1,71 @@
 {
-  "updatedAt": "2026-10-31T11:42:13+05:30",
+  "updatedAt": "2026-10-31T18:08:24+05:30",
   "lastRun": {
-    "id": "engine-daily-20261031-1123-c0eea8",
-    "workflow": "engine-daily",
+    "id": "publisher-hourly-20261031-1808-c93bcb",
+    "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-10-31T11:42:13+05:30"
+    "at": "2026-10-31T18:08:24+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261031-1808-c93bcb",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-10-31T18:08:24+05:30",
+      "endedAt": "2026-10-31T18:08:24+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 15,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 0 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/jr-2026-10-29-live-jobs-panel-overview/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-10.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-10-30-free-kundali-on-device",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-10-31-daily-token-reconnection",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "jr-2026-10-29-live-jobs-panel-overview"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "idle"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.582672
+    },
     {
       "id": "engine-daily-20261031-1123-c0eea8",
       "workflow": "engine-daily",
@@ -1571,103 +1630,12 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.470809
-    },
-    {
-      "id": "publisher-hourly-20261028-0016-1b29d8",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-28T00:16:02+05:30",
-      "endedAt": "2026-10-28T00:16:02+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 25,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 4 waiting, 0 failed, 0 expired"
-        }
-      ],
-      "changed": [
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-26-optional-kundali-on-rishtapatra",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-10-28-free-janam-kundali-engine",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-27-full-evaluation-audit-log",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-29-six-broker-integration",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-26-resume-templates-and-typography",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-10-27-local-tracker-data-privacy",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-10-28-live-sources-refreshing-daily",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-29-live-jobs-panel-overview",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.470809
     }
   ],
   "queue": {
     "rishtapatra": 1,
     "kaatdo": 1,
-    "job_rez": 1
+    "job_rez": 0
   },
   "blocked": {},
   "budget": {
