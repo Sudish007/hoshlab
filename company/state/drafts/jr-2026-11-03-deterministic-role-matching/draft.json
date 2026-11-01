@@ -1,0 +1,56 @@
+{
+  "id": "jr-2026-11-03-deterministic-role-matching",
+  "page": "job_rez",
+  "ideaId": "jr-i0002",
+  "slotId": "job_rez-2026-11-03-1230",
+  "slotAt": "2026-11-03T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-01T11:49:26+05:30",
+  "updatedAt": "2026-11-01T11:49:26+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261101-1149-8b00df",
+  "caption": "How JobRez calculates role fit without external verification.\n\nRole match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once, with no cloud AI and no external verification.\n\nLearn more at jobrez.com.\n\n#JobRez #Resume #JobSearch #Career",
+  "hashtags": [
+    "#JobRez",
+    "#Resume",
+    "#JobSearch",
+    "#Career"
+  ],
+  "altText": "Deterministic Role Matching artwork with curated taxonomy and whole-word matching.",
+  "factsUsed": [
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "artwork": {
+    "headline": "Deterministic Role Matching",
+    "subline": "Curated technology taxonomy with whole-word matching.",
+    "facts": [
+      "Required terms weighted double and preferred terms once",
+      "No cloud AI and no external verification"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Corrected alt text length to stay under 100 characters while keeping visible headline words.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-03-deterministic-role-matching/image-1-f70aa628.jpg",
+      "bytes": 105352,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "f70aa628d8818ef042584a2a31c51d5b51aee9d5056ff90b8440afc9131b2611",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-03-deterministic-role-matching/image-1-f70aa628.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-03-deterministic-role-matching/image-1-f70aa628.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-11-03-deterministic-role-matching/qa.json"
+}

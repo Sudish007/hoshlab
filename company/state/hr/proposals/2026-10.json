@@ -1,0 +1,90 @@
+{
+  "month": "2026-10",
+  "at": "2026-11-01T11:49:26+05:30",
+  "runId": "engine-daily-20261101-1149-8b00df",
+  "status": "proposed",
+  "reviewPath": "hr/2026-10-review.md",
+  "review": [
+    {
+      "agent": "ceo",
+      "verdict": "keep",
+      "evidence": {
+        "calls": 4,
+        "failedCalls": 1,
+        "failedRuns": 6,
+        "runs": 9
+      },
+      "proposal": "Maintain current roster configuration. Monitor failure rate in upcoming cycles."
+    },
+    {
+      "agent": "hr",
+      "verdict": "keep",
+      "evidence": {},
+      "proposal": "no runs this month"
+    },
+    {
+      "agent": "strategist",
+      "verdict": "keep",
+      "evidence": {
+        "calls": 50,
+        "failedCalls": 17,
+        "failedRuns": 5,
+        "runs": 27
+      },
+      "proposal": "Maintain current roster configuration. Provider failures accounted for model retries."
+    },
+    {
+      "agent": "writer",
+      "verdict": "keep",
+      "evidence": {
+        "calls": 97,
+        "failedCalls": 25,
+        "failedRuns": 13,
+        "qaRejectionRate": 0.1765,
+        "reworkLoops": 6,
+        "runs": 27
+      },
+      "proposal": "Maintain current roster configuration. Rejection rate is acceptable given absence of negative owner feedback."
+    },
+    {
+      "agent": "designer",
+      "verdict": "keep",
+      "evidence": {
+        "calls": 0,
+        "failedCalls": 0,
+        "failedRuns": 0,
+        "runs": 27
+      },
+      "proposal": "Deterministic agent operating as expected with zero failed runs."
+    },
+    {
+      "agent": "qa",
+      "verdict": "keep",
+      "evidence": {
+        "calls": 49,
+        "failedCalls": 15,
+        "failedRuns": 0,
+        "runs": 27
+      },
+      "proposal": "Protected agent operating with zero failed runs."
+    },
+    {
+      "agent": "publisher",
+      "verdict": "keep",
+      "evidence": {
+        "calls": 0,
+        "failedCalls": 0,
+        "failedRuns": 0,
+        "runs": 103
+      },
+      "proposal": "Protected deterministic agent operating with zero failed runs across 103 runs."
+    },
+    {
+      "agent": "analyst",
+      "verdict": "keep",
+      "evidence": {},
+      "proposal": "no runs this month"
+    }
+  ],
+  "changes": []
+}

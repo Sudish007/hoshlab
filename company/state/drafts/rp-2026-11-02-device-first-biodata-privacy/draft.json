@@ -1,0 +1,61 @@
+{
+  "id": "rp-2026-11-02-device-first-biodata-privacy",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0002",
+  "slotId": "rishtapatra-2026-11-02-1930",
+  "slotAt": "2026-11-02T19:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-01T11:49:26+05:30",
+  "updatedAt": "2026-11-01T11:49:26+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261101-1149-8b00df",
+  "caption": "Your family biodata should stay private to your own phone or computer.\n\nWhen writing a marriage biodata, you share personal history, family background, and photographs. You shouldn't have to upload those files or register an account just to format a single document.\n\nRishtaPatra is built local-first: every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional.\n\nKeep your personal details right where they belong while preparing for a rishta.\n\nBuild your biodata at rishtapatra.com",
+  "hashtags": [
+    "#RishtaPatra",
+    "#BiodataMaker",
+    "#PrivacyFirst",
+    "#Rishta"
+  ],
+  "altText": "Text graphic reading: Your biodata stays on your device. Processed in the browser. rishtapatra.com",
+  "factsUsed": [
+    {
+      "factId": "rp-f05",
+      "quote": "Local-first: every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    },
+    {
+      "factId": "rp-f01",
+      "quote": "site rishtapatra.com"
+    }
+  ],
+  "artwork": {
+    "headline": "Your biodata stays on your device.",
+    "subline": "Create your marriage biodata with complete privacy.",
+    "facts": [
+      "Processed entirely in your browser",
+      "Saved only on your device",
+      "Creating an account is completely optional"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "No kundali trigger words were used in this copy, so kundali disclaimers were omitted cleanly according to policy.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-02-device-first-biodata-privacy/image-1-0ff96e29.jpg",
+      "bytes": 110313,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "0ff96e29aa1e7858e0c721d91a9ff23be22844fd2d2da0386fce6e080cec518a",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-02-device-first-biodata-privacy/image-1-0ff96e29.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-02-device-first-biodata-privacy/image-1-0ff96e29.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-02-device-first-biodata-privacy/qa.json"
+}

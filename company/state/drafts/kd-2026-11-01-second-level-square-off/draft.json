@@ -6,15 +6,15 @@
   "slotAt": "2026-11-01T11:00:00+05:30",
   "format": "reel",
   "language": "en",
-  "status": "rework",
-  "revision": 1,
+  "status": "queued",
+  "revision": 2,
   "reworkCount": 1,
   "mock": false,
   "createdAt": "2026-10-31T11:23:40+05:30",
-  "updatedAt": "2026-10-31T11:23:40+05:30",
+  "updatedAt": "2026-11-01T11:49:26+05:30",
   "by": "writer",
-  "runId": "engine-daily-20261031-1123-c0eea8",
-  "caption": "Trades are squared off within seconds, not prevented outright. No broker-level block trading API exists except at Dhan. When your account enters a locked state, enforcement relies on a server-side re-fire loop that cuts positions after execution rather than blocking them at entry. kaatdo.com काट दो. KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "runId": "engine-daily-20261101-1149-8b00df",
+  "caption": "Your rule breaches. The server loop executes. No broker-level block API exists except at Dhan, so enforcement relies on a re-fire loop that cuts exposure within seconds rather than blocking orders at the gateway. kaatdo.com काट दो. KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed. #KaatDo #RiskManagement #TradingTools #FandO #TradingDiscipline #KillSwitch",
   "hashtags": [
     "#KaatDo",
     "#RiskManagement",
@@ -47,11 +47,11 @@
         "seconds": 4
       },
       {
-        "text": "No broker-level block trading API exists except at Dhan.",
+        "text": "Except at Dhan, no broker-level block API exists.",
         "seconds": 4
       },
       {
-        "text": "Enforcement relies on a server-side re-fire loop.",
+        "text": "A server-side re-fire loop enforces the locked state.",
         "seconds": 4
       },
       {
@@ -60,17 +60,17 @@
       }
     ]
   },
-  "writerNote": "Corrected the first scene text length to be under 60 characters.",
+  "writerNote": "Rewrote the caption and middle scenes to avoid high Jaccard overlap with recent captions while keeping fact kd-f08 intact.",
   "media": [
     {
       "kind": "video",
-      "path": "media/kd-2026-11-01-second-level-square-off/reel-4209f089.mp4",
-      "bytes": 149178,
+      "path": "media/kd-2026-11-01-second-level-square-off/reel-94343247.mp4",
+      "bytes": 151682,
       "width": 1080,
       "height": 1920,
-      "sha256": "4209f089b33b78732f6d71085fcdac89fbed05c28981ef9ef9659c12ddc8c461",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-01-second-level-square-off/reel-4209f089.mp4",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-01-second-level-square-off/reel-4209f089.mp4",
+      "sha256": "94343247da32a761254ebd892e0f2ce3536ddf24b338f2a57277619639636acc",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-01-second-level-square-off/reel-94343247.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-01-second-level-square-off/reel-94343247.mp4",
       "durationSec": 16,
       "probe": {
         "ok": true,
@@ -80,7 +80,7 @@
         "pixFmt": "yuv420p",
         "frameRate": "30/1",
         "durationSec": 16,
-        "bytes": 149178,
+        "bytes": 151682,
         "faststart": true
       }
     },
@@ -96,9 +96,6 @@
     }
   ],
   "publishAttempts": [],
-  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · dark console palette",
   "qaRef": "drafts/kd-2026-11-01-second-level-square-off/qa.json",
-  "qaReasons": [
-    "duplicate: max jaccard 0.60 over 10 recent captions"
-  ]
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · dark console palette"
 }

@@ -1,15 +1,15 @@
 {
   "draftId": "kd-2026-11-01-second-level-square-off",
-  "revision": 1,
-  "at": "2026-10-31T11:23:40+05:30",
-  "passed": false,
+  "revision": 2,
+  "at": "2026-11-01T11:49:26+05:30",
+  "passed": true,
   "deterministic": {
-    "passed": false,
+    "passed": true,
     "checks": [
       {
         "id": "caption_length",
         "ok": true,
-        "detail": "484/2200"
+        "detail": "414/2200"
       },
       {
         "id": "hashtags",
@@ -44,7 +44,7 @@
       {
         "id": "media_spec",
         "ok": true,
-        "detail": "h264 1080x1920 yuv420p 30/1 16 s 149 KB faststart; poster 1080x1920 jpeg 77 KB"
+        "detail": "h264 1080x1920 yuv420p 30/1 16 s 152 KB faststart; poster 1080x1920 jpeg 77 KB"
       },
       {
         "id": "links",
@@ -58,8 +58,8 @@
       },
       {
         "id": "duplicate",
-        "ok": false,
-        "detail": "max jaccard 0.60 over 10 recent captions"
+        "ok": true,
+        "detail": "max jaccard 0.40 over 11 recent captions"
       },
       {
         "id": "brand_lint",
@@ -68,10 +68,37 @@
       }
     ]
   },
-  "model": null,
-  "reasons": [
-    "duplicate: max jaccard 0.60 over 10 recent captions"
-  ],
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "No broker-level block API exists except at Dhan, so enforcement relies on a re-fire loop that cuts exposure within seconds rather than blocking orders at the gateway.",
+        "ok": true,
+        "factId": "kd-f08"
+      },
+      {
+        "claim": "KaatDo is not investment advice and is not registered with SEBI.",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "Broker API execution is never guaranteed.",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "Trades are squared off within seconds, not prevented.",
+        "ok": true,
+        "factId": "kd-f08"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is console-like and risk-first. Disclaimers are fully verbatim and correct. No emojis present."
+  },
+  "reasons": [],
   "mock": false,
-  "runId": "engine-daily-20261031-1123-c0eea8"
+  "runId": "engine-daily-20261101-1149-8b00df"
 }

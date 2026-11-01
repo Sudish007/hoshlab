@@ -1,8 +1,8 @@
 {
   "draftId": "jr-2026-11-02-master-resume-branching",
-  "revision": 1,
-  "at": "2026-10-31T11:23:40+05:30",
-  "passed": false,
+  "revision": 2,
+  "at": "2026-11-01T11:49:26+05:30",
+  "passed": true,
   "deterministic": {
     "passed": true,
     "checks": [
@@ -44,7 +44,7 @@
       {
         "id": "media_spec",
         "ok": true,
-        "detail": "1080x1350 jpeg 131 KB"
+        "detail": "1080x1350 jpeg 130 KB"
       },
       {
         "id": "links",
@@ -59,7 +59,7 @@
       {
         "id": "duplicate",
         "ok": true,
-        "detail": "max jaccard 0.17 over 12 recent captions"
+        "detail": "max jaccard 0.17 over 13 recent captions"
       },
       {
         "id": "brand_lint",
@@ -71,16 +71,16 @@
   "model": {
     "provider": "gemini",
     "model": "gemini-3.8-flash",
-    "verdict": "fail",
-    "toneScore": 4,
+    "verdict": "pass",
+    "toneScore": 5,
     "claims": [
       {
-        "claim": "One honest master resume, branched for every role",
+        "claim": "Keep one honest master resume and branch it for every role",
         "ok": true,
         "factId": "jr-f03"
       },
       {
-        "claim": "Branches are copies tailored per role",
+        "claim": "JobRez maintains one master resume, where branches are copies tailored per role",
         "ok": true,
         "factId": "jr-f04"
       },
@@ -90,25 +90,45 @@
         "factId": "jr-f04"
       },
       {
+        "claim": "Build the resume and land the role",
+        "ok": true,
+        "factId": "jr-f02"
+      },
+      {
         "claim": "Private by default and free to export",
         "ok": true,
         "factId": "jr-f03"
       },
       {
-        "claim": "One master resume maintained securely",
-        "ok": false
+        "claim": "Artwork headline: Keep one honest master resume and branch it for every role.",
+        "ok": true,
+        "factId": "jr-f03"
+      },
+      {
+        "claim": "Artwork subline: Branches are copies tailored per role and scored in Job DNA",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "Artwork facts: One master resume for all target roles",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "Artwork facts: Branches scored against each posting",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "Artwork facts: Private by default and free to export",
+        "ok": true,
+        "factId": "jr-f03"
       }
     ],
-    "reasons": [
-      "Remove 'maintained securely' from artwork facts as security or secure storage is not an established fact in brand.facts.",
-      "claim without a fact id: \"One master resume maintained securely\""
-    ],
-    "notes": "Draft adheres closely to tone and factual rules aside from the unsourced 'maintained securely' claim on the artwork slide."
+    "reasons": [],
+    "notes": "All claims are strictly sourced from confirmed facts jr-f02, jr-f03, and jr-f04. Tone is concrete, honest, and aligns directly with the brand guidelines."
   },
-  "reasons": [
-    "Remove 'maintained securely' from artwork facts as security or secure storage is not an established fact in brand.facts.",
-    "claim without a fact id: \"One master resume maintained securely\""
-  ],
+  "reasons": [],
   "mock": false,
-  "runId": "engine-daily-20261031-1123-c0eea8"
+  "runId": "engine-daily-20261101-1149-8b00df"
 }

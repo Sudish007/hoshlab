@@ -6,14 +6,14 @@
   "slotAt": "2026-11-02T12:30:00+05:30",
   "format": "image",
   "language": "en",
-  "status": "rework",
-  "revision": 1,
+  "status": "queued",
+  "revision": 2,
   "reworkCount": 1,
   "mock": false,
   "createdAt": "2026-10-31T11:23:40+05:30",
-  "updatedAt": "2026-10-31T11:23:40+05:30",
+  "updatedAt": "2026-11-01T11:49:26+05:30",
   "by": "writer",
-  "runId": "engine-daily-20261031-1123-c0eea8",
+  "runId": "engine-daily-20261101-1149-8b00df",
   "caption": "Keep one honest master resume and branch it for every role. JobRez maintains one master resume, where branches are copies tailored per role, and each branch is scored against the posting in Job DNA. Build the resume and land the role with a clean structure that remains private by default and free to export. Visit https://jobrez.com for more details.",
   "hashtags": [
     "#JobRez",
@@ -37,30 +37,26 @@
     "headline": "Keep one honest master resume and branch it for every role.",
     "subline": "Branches are copies tailored per role and scored in Job DNA",
     "facts": [
-      "One master resume maintained securely",
+      "One master resume for all target roles",
       "Branches scored against each posting",
       "Private by default and free to export"
     ],
     "footer": "jobrez.com"
   },
-  "writerNote": "Corrected altText length to be under 100 characters while maintaining the required descriptive terms.",
+  "writerNote": "Removed the unverified security claim from artwork facts and replaced it with a plain statement about having one master resume for all roles.",
   "media": [
     {
       "kind": "image",
-      "path": "media/jr-2026-11-02-master-resume-branching/image-1-890f1f5c.jpg",
-      "bytes": 131046,
+      "path": "media/jr-2026-11-02-master-resume-branching/image-1-88ceb161.jpg",
+      "bytes": 130120,
       "width": 1080,
       "height": 1350,
-      "sha256": "890f1f5c57e7cfe12b09107e4627787e8cb9f242e0678c0dac4518ccce8ba262",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-02-master-resume-branching/image-1-890f1f5c.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-02-master-resume-branching/image-1-890f1f5c.jpg"
+      "sha256": "88ceb1612dd42b4e3110845ac72c6cd38045d178a6dd9b94ab5f416719d29c56",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-02-master-resume-branching/image-1-88ceb161.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-02-master-resume-branching/image-1-88ceb161.jpg"
     }
   ],
   "publishAttempts": [],
-  "designNote": "variant B · violet on cream",
   "qaRef": "drafts/jr-2026-11-02-master-resume-branching/qa.json",
-  "qaReasons": [
-    "Remove 'maintained securely' from artwork facts as security or secure storage is not an established fact in brand.facts.",
-    "claim without a fact id: \"One master resume maintained securely\""
-  ]
+  "designNote": "variant B · violet on cream"
 }
