@@ -1,0 +1,90 @@
+{
+  "id": "jr-2026-11-04-deterministic-role-match",
+  "page": "job_rez",
+  "ideaId": "jr-i0015",
+  "slotId": "job_rez-2026-11-04-1230",
+  "slotAt": "2026-11-04T12:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-02T11:51:00+05:30",
+  "updatedAt": "2026-11-02T11:51:00+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261102-1151-6568c0",
+  "caption": "Role matching runs on a deterministic technology taxonomy.\n\nRole match uses a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once. There is no cloud AI and no external verification.\n\nBuild your master resume at https://jobrez.com.\n\n#JobRez #ResumeTaxonomy #JobDNA #CareerTools #MasterResume",
+  "hashtags": [
+    "#JobRez",
+    "#ResumeTaxonomy",
+    "#JobDNA",
+    "#CareerTools",
+    "#MasterResume"
+  ],
+  "altText": "Slide 1. Role matching runs on a deterministic technology taxonomy.",
+  "factsUsed": [
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Deterministic Matching",
+      "body": "Role match uses a curated technology taxonomy with aliases and whole-word matching.",
+      "altText": "Slide 1: Deterministic Matching."
+    },
+    {
+      "heading": "Weighted Terms",
+      "body": "Required terms are weighted double and preferred terms once.",
+      "altText": "Slide 2: Weighted Terms."
+    },
+    {
+      "heading": "No Cloud AI",
+      "body": "No cloud AI and no external verification are used in matching.",
+      "altText": "Slide 3: No Cloud AI."
+    }
+  ],
+  "altTexts": [
+    "Slide 1: Deterministic Matching.",
+    "Slide 2: Weighted Terms.",
+    "Slide 3: No Cloud AI."
+  ],
+  "writerNote": "Corrected altText lengths to be under the 100 character cap.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-04-deterministic-role-match/slide-1-636506b8.jpg",
+      "bytes": 77551,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "636506b8336c930304878eb4776739ed302f35c40337ef1c8827856608c656d7",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-04-deterministic-role-match/slide-1-636506b8.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-04-deterministic-role-match/slide-1-636506b8.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-04-deterministic-role-match/slide-2-0c958ff8.jpg",
+      "bytes": 59717,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "0c958ff8dc95da8ab20743c3a950e10d72899596fd2cbd6fc5b12e7500bc6566",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-04-deterministic-role-match/slide-2-0c958ff8.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-04-deterministic-role-match/slide-2-0c958ff8.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-04-deterministic-role-match/slide-3-b4318501.jpg",
+      "bytes": 57694,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "b4318501d15a5183b0f1bcbde59265dca44c44757925e37cae22d16f400dfce3",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-04-deterministic-role-match/slide-3-b4318501.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-04-deterministic-role-match/slide-3-b4318501.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "3 slides · variant A · cream on ink",
+  "qaRef": "drafts/jr-2026-11-04-deterministic-role-match/qa.json"
+}

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-02T11:43:14+05:30",
+  "updatedAt": "2026-11-02T11:51:00+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -156,6 +156,17 @@
       "qa": true
     },
     {
+      "id": "jr-2026-11-04-deterministic-role-match",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "job_rez-2026-11-04-1230",
+      "slotAt": "2026-11-04T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-02T11:51:00+05:30",
+      "qa": true
+    },
+    {
       "id": "kd-2026-10-15-automated-breach-reaction",
       "page": "kaatdo",
       "status": "expired",
@@ -285,6 +296,17 @@
       "slotAt": "2026-11-03T08:15:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-01T11:49:26+05:30",
+      "qa": true
+    },
+    {
+      "id": "kd-2026-11-05-automated-breach-reaction",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "image",
+      "slotId": "kaatdo-2026-11-05-0815",
+      "slotAt": "2026-11-05T08:15:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-02T11:51:00+05:30",
       "qa": true
     },
     {

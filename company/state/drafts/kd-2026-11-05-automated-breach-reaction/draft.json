@@ -1,0 +1,63 @@
+{
+  "id": "kd-2026-11-05-automated-breach-reaction",
+  "page": "kaatdo",
+  "ideaId": "kd-i0001",
+  "slotId": "kaatdo-2026-11-05-0815",
+  "slotAt": "2026-11-05T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-02T11:51:00+05:30",
+  "updatedAt": "2026-11-02T11:51:00+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261102-1151-6568c0",
+  "caption": "Your risk limit triggers. The kill switch takes over immediately.\n\nOn breach, KaatDo cancels every pending order, squares off every position at market, and keeps the account locked until close. If trading activity reappears, the switch re-fires.\n\nThe kill switch for Indian F&O traders.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#RiskManagement",
+    "#TradingDiscipline",
+    "#FnO",
+    "#TradingTools"
+  ],
+  "altText": "Text graphic stating breach reaction: cancels pending orders and squares off positions at market.",
+  "factsUsed": [
+    {
+      "factId": "kd-f02",
+      "quote": "The kill switch for Indian F&O traders"
+    },
+    {
+      "factId": "kd-f05",
+      "quote": "cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    }
+  ],
+  "artwork": {
+    "headline": "When a rule breaches, KaatDo cuts it.",
+    "subline": "The server-side kill switch takes over to clear open exposure.",
+    "facts": [
+      "Cancels every pending order instantly",
+      "Squares off every position at market",
+      "Account stays locked until close"
+    ],
+    "footer": "kaatdo.com"
+  },
+  "writerNote": "Terse voice with mandatory sign-off 'काट दो.'. Opening modified slightly from recent captions to avoid duplicate structure while maintaining hook intent.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-05-automated-breach-reaction/image-1-2d6c4eea.jpg",
+      "bytes": 111675,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "2d6c4eea1fff993e42b7e829491bd0923b489067c9ad3362c86e7e0bc85d5d86",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-05-automated-breach-reaction/image-1-2d6c4eea.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-05-automated-breach-reaction/image-1-2d6c4eea.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · dark console palette",
+  "qaRef": "drafts/kd-2026-11-05-automated-breach-reaction/qa.json"
+}
