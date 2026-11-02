@@ -1,12 +1,55 @@
 {
-  "updatedAt": "2026-11-02T11:59:44+05:30",
+  "updatedAt": "2026-11-02T14:57:44+05:30",
   "lastRun": {
-    "id": "engine-daily-20261102-1151-6568c0",
-    "workflow": "engine-daily",
+    "id": "token-refresh-20261102-1457-9f7ae5",
+    "workflow": "token-refresh",
     "ok": true,
-    "at": "2026-11-02T11:59:44+05:30"
+    "at": "2026-11-02T14:57:44+05:30"
   },
   "lastRuns": [
+    {
+      "id": "token-refresh-20261102-1457-9f7ae5",
+      "workflow": "token-refresh",
+      "trigger": "schedule",
+      "startedAt": "2026-11-02T14:57:44+05:30",
+      "endedAt": "2026-11-02T14:57:44+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 17,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "tokens: 0 refreshed, 0 expiring, 0 expiry not known yet, 3 not configured"
+        }
+      ],
+      "changed": [
+        "company/state/tokens.json",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "tokens": {
+        "rishtapatra": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        },
+        "kaatdo": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        },
+        "job_rez": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.084181
+    },
     {
       "id": "engine-daily-20261102-1151-6568c0",
       "workflow": "engine-daily",
@@ -1341,85 +1384,6 @@
           "name": "publisher",
           "ok": true,
           "ms": 18,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 2 waiting, 0 failed, 0 expired"
-        }
-      ],
-      "changed": [
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-28-free-janam-kundali-engine",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-10-30-free-kundali-on-device",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-10-29-six-broker-integration",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-31-daily-token-reconnection",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-28-live-sources-refreshing-daily",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-10-29-live-jobs-panel-overview",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.509441
-    },
-    {
-      "id": "publisher-hourly-20261030-0240-4d7be0",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-30T02:40:29+05:30",
-      "endedAt": "2026-10-30T02:40:29+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 26,
           "calls": 0,
           "costUsd": 0,
           "note": "0 published, 2 waiting, 0 failed, 0 expired"
