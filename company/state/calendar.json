@@ -1,32 +1,14 @@
 {
-  "generatedAt": "2026-11-02T11:51:00+05:30",
+  "generatedAt": "2026-11-03T12:26:30+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "rishtapatra-2026-10-30-1930",
-      "page": "rishtapatra",
-      "at": "2026-10-30T19:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-10-30-free-kundali-on-device expired -2.7 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "kaatdo-2026-10-31-1100",
-      "page": "kaatdo",
-      "at": "2026-10-31T11:00:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-10-31-daily-token-reconnection expired -2 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-11-01-1100",
       "page": "kaatdo",
       "at": "2026-11-01T11:00:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "kd-i0014",
-      "reason": "Assigns existing open reel matching CEO priority 3 on honest execution boundaries and the seconds-level locked loop.",
-      "draftId": "kd-2026-11-01-second-level-square-off"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-01-second-level-square-off expired -2.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-02-1230",
@@ -102,9 +84,10 @@
       "page": "job_rez",
       "at": "2026-11-05T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0024",
-      "reason": "Directly matches Priority 3 and open slot image format with free watermark-free PDF exports and local tracking."
+      "reason": "Directly matches Priority 3 and open slot image format with free watermark-free PDF exports and local tracking.",
+      "draftId": "jr-2026-11-05-watermark-free-pdf-export"
     },
     {
       "slotId": "job_rez-2026-11-06-1230",
@@ -267,6 +250,33 @@
       "status": "planned",
       "ideaId": "kd-i0026",
       "reason": "Assigns existing open idea focusing on priority 2 token expiry mechanics directly matching the reel slot."
+    },
+    {
+      "slotId": "job_rez-2026-11-16-1230",
+      "page": "job_rez",
+      "at": "2026-11-16T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0026",
+      "reason": "Aligns with CEO priority 1 on master resume branching and deterministic role matching."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-16-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-16T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0013",
+      "reason": "Aligns with priority 1 focusing on local-first privacy and browser processing without an account."
+    },
+    {
+      "slotId": "kaatdo-2026-11-17-0815",
+      "page": "kaatdo",
+      "at": "2026-11-17T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0023",
+      "reason": "Assigned existing open idea covering priority one rule suite and execution across six broker APIs."
     }
   ]
 }

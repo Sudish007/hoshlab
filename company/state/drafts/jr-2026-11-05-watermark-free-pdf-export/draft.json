@@ -1,0 +1,59 @@
+{
+  "id": "jr-2026-11-05-watermark-free-pdf-export",
+  "page": "job_rez",
+  "ideaId": "jr-i0024",
+  "slotId": "job_rez-2026-11-05-1230",
+  "slotAt": "2026-11-05T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-03T12:26:30+05:30",
+  "updatedAt": "2026-11-03T12:26:30+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261103-1226-9eb839",
+  "caption": "PDF exports remain unlimited and watermark-free on the free tier.\n\nJobRez exports to PDF, Word and plain text. PDF and plain-text export are unlimited and watermark-free on the free plan, while Word document export is Pro.\n\nAlongside clean document generation, application tracker statuses including Saved, Applied, Interviewing, Offer, and Closed are stored locally in the browser.\n\nBuild your master resume and export at https://jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#masterresume",
+    "#resume"
+  ],
+  "altText": "Text artwork featuring headline Free PDF Export and subline Watermark-free on the free tier.",
+  "factsUsed": [
+    {
+      "factId": "jr-f09",
+      "quote": "Exports to PDF, Word and plain text; PDF and plain-text export are unlimited and watermark-free on the free plan; Word (.docx) export is Pro"
+    },
+    {
+      "factId": "jr-f13",
+      "quote": "Tracker statuses: Saved, Applied, Interviewing, Offer, Closed; stored locally in the browser"
+    }
+  ],
+  "artwork": {
+    "headline": "Free PDF Export",
+    "subline": "Watermark-free on the free tier",
+    "facts": [
+      "Exports to PDF, Word and plain text",
+      "Unlimited and watermark-free on the free plan",
+      "Tracker statuses stored locally in the browser"
+    ],
+    "footer": "jobrez.com"
+  },
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-05-watermark-free-pdf-export/image-1-fafc5038.jpg",
+      "bytes": 86835,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "fafc50387ba84d495b3d3d3c127e4e6214088d9e6ac0d338340f66fe8c9e63ca",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-05-watermark-free-pdf-export/image-1-fafc5038.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-05-watermark-free-pdf-export/image-1-fafc5038.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-11-05-watermark-free-pdf-export/qa.json"
+}

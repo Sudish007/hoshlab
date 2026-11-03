@@ -1,12 +1,97 @@
 {
-  "updatedAt": "2026-11-03T12:22:45+05:30",
+  "updatedAt": "2026-11-03T12:35:06+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261103-1222-5a12ef",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261103-1226-9eb839",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-11-03T12:22:45+05:30"
+    "at": "2026-11-03T12:35:06+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261103-1226-9eb839",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-11-03T12:26:30+05:30",
+      "endedAt": "2026-11-03T12:35:06+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W45.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 333866,
+          "calls": 6,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.005704,
+          "note": "rishtapatra: 1 ideas, 9 slots, 1 assigned | kaatdo: 0 ideas, 10 slots, 1 assigned, 1 dropped | job_rez: 0 ideas, 11 slots, 1 assigned | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 46388,
+          "calls": 5,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.010064,
+          "note": "rishtapatra-2026-11-04-1930: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | 1 written, 0 reworked, 1 invalid_output | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 762,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "1 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 134393,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.002195,
+          "note": "1 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/drafts/jr-2026-11-05-watermark-free-pdf-export/draft.json",
+        "company/state/drafts/jr-2026-11-05-watermark-free-pdf-export/qa.json",
+        "company/state/drafts/index.json",
+        "company/state/usage/2026-11.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.102144
+    },
     {
       "id": "publisher-hourly-20261103-1222-5a12ef",
       "workflow": "publisher-hourly",
@@ -1395,83 +1480,12 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.532067
-    },
-    {
-      "id": "publisher-hourly-20261030-1943-cbc609",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-10-30T19:43:55+05:30",
-      "endedAt": "2026-10-30T19:43:55+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 17,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 1 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/rp-2026-10-28-free-janam-kundali-engine/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-10.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-30-free-kundali-on-device",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-29-six-broker-integration",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-31-daily-token-reconnection",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-10-29-live-jobs-panel-overview",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "rp-2026-10-28-free-janam-kundali-engine"
-        ],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.532067
     }
   ],
   "queue": {
     "rishtapatra": 1,
     "kaatdo": 2,
-    "job_rez": 3
+    "job_rez": 4
   },
   "blocked": {},
   "budget": {
@@ -1480,7 +1494,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.084181
+    "paidEquivalentUsd": 0.102144
   },
   "pages": {
     "rishtapatra": {
