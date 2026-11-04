@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-04T14:49:52+05:30",
+  "updatedAt": "2026-11-04T23:30:13+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -455,12 +455,12 @@
     {
       "id": "rp-2026-11-02-device-first-biodata-privacy",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "rishtapatra-2026-11-02-1930",
       "slotAt": "2026-11-02T19:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-01T11:49:26+05:30",
+      "updatedAt": "2026-11-04T23:30:13+05:30",
       "qa": true
     }
   ]
