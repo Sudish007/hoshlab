@@ -1,15 +1,7 @@
 {
-  "generatedAt": "2026-11-03T12:26:30+05:30",
+  "generatedAt": "2026-11-04T12:07:35+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-11-01-1100",
-      "page": "kaatdo",
-      "at": "2026-11-01T11:00:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-01-second-level-square-off expired -2.1 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-02-1230",
       "page": "job_rez",
@@ -94,9 +86,10 @@
       "page": "job_rez",
       "at": "2026-11-06T12:30:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0023",
-      "reason": "Assigning open idea jr-i0023 to fill the Friday reel slot covering master resume branching."
+      "reason": "Assigning open idea jr-i0023 to fill the Friday reel slot covering master resume branching.",
+      "draftId": "jr-2026-11-06-master-branch-workflow"
     },
     {
       "slotId": "rishtapatra-2026-11-06-1930",
@@ -112,9 +105,10 @@
       "page": "kaatdo",
       "at": "2026-11-07T11:00:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0002",
-      "reason": "Assigning existing open carousel idea covering the six core server-side rules to fill the single open carousel slot."
+      "reason": "Assigning existing open carousel idea covering the six core server-side rules to fill the single open carousel slot.",
+      "draftId": "kd-2026-11-07-six-risk-rules-explained"
     },
     {
       "slotId": "rishtapatra-2026-11-07-1930",
@@ -277,6 +271,15 @@
       "status": "planned",
       "ideaId": "kd-i0023",
       "reason": "Assigned existing open idea covering priority one rule suite and execution across six broker APIs."
+    },
+    {
+      "slotId": "job_rez-2026-11-17-1230",
+      "page": "job_rez",
+      "at": "2026-11-17T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0032",
+      "reason": "Assigning priority one theme on master resume branching and role matching to the first open image slot."
     }
   ]
 }

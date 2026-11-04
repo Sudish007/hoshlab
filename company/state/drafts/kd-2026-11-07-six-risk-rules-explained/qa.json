@@ -1,0 +1,104 @@
+{
+  "draftId": "kd-2026-11-07-six-risk-rules-explained",
+  "revision": 1,
+  "at": "2026-11-04T12:07:35+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "776/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "always → 3/3 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "10 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "4 alt texts, longest 97/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; Devanagari only \"काट दो\")"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "4 × 1080x1350 jpeg max 86 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on kaatdo.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.36 over 13 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "KaatDo runs server-side evaluations against six specific rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, and kill_dates.",
+        "ok": true,
+        "factId": "kd-f04"
+      },
+      {
+        "claim": "On breach, KaatDo cancels every pending order, squares off every position at market, and keeps the account locked until close, and re-fires if trading activity reappears.",
+        "ok": true,
+        "factId": "kd-f05"
+      },
+      {
+        "claim": "Rules are locked during market hours, override PIN, full audit log of every evaluation and broker call, Telegram alerts, webhook and email notifications.",
+        "ok": true,
+        "factId": "kd-f06"
+      },
+      {
+        "claim": "KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.",
+        "ok": true,
+        "factId": "kd-f10"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is sharp, console-like, and aligns precisely with brand voice rules. All required disclaimers present verbatim."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261104-1207-1d25a9"
+}

@@ -1,0 +1,95 @@
+{
+  "id": "jr-2026-11-06-master-branch-workflow",
+  "page": "job_rez",
+  "ideaId": "jr-i0023",
+  "slotId": "job_rez-2026-11-06-1230",
+  "slotAt": "2026-11-06T12:30:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-04T12:07:35+05:30",
+  "updatedAt": "2026-11-04T12:07:35+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261104-1207-1d25a9",
+  "caption": "Branch tailored copies from one master resume for every role. JobRez maintains one master resume, where branches are copies tailored per role, and each branch is scored against the posting in Job DNA. This workflow keeps your experience structured while letting you target specific postings precisely. Visit jobrez.com to build your master resume.",
+  "hashtags": [
+    "#jobrez",
+    "#resumebuilder",
+    "#masterresume",
+    "#softwareengineering"
+  ],
+  "altText": "Master branch workflow graphic on jobrez.com",
+  "factsUsed": [
+    {
+      "factId": "jr-f03",
+      "quote": "One honest master resume, branched for every role and matched to real postings."
+    },
+    {
+      "factId": "jr-f04",
+      "quote": "One master resume; branches are copies tailored per role; each branch is scored against the posting in Job DNA"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "Branch tailored copies from one master resume.",
+        "seconds": 4
+      },
+      {
+        "text": "Keep one honest master resume for all roles.",
+        "seconds": 4
+      },
+      {
+        "text": "Score each branch against posting in Job DNA.",
+        "seconds": 4
+      },
+      {
+        "text": "Export clean files free at jobrez.com.",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Corrected altText length to stay under 100 characters.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/jr-2026-11-06-master-branch-workflow/reel-244b02a6.mp4",
+      "bytes": 146439,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "244b02a68c59c0b7d38bf0411800b5e904d015bfb089154418482ad4a39516fd",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-06-master-branch-workflow/reel-244b02a6.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-06-master-branch-workflow/reel-244b02a6.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 146439,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/jr-2026-11-06-master-branch-workflow/poster-423f2501.jpg",
+      "bytes": 75672,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "423f2501a257b8779fdb4762a9237d2b35855393719d1834513043ad30958e42",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-06-master-branch-workflow/poster-423f2501.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-06-master-branch-workflow/poster-423f2501.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · violet on cream",
+  "qaRef": "drafts/jr-2026-11-06-master-branch-workflow/qa.json"
+}
