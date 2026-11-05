@@ -1,12 +1,95 @@
 {
-  "updatedAt": "2026-11-05T05:12:39+05:30",
+  "updatedAt": "2026-11-05T12:23:01+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261105-0512-4fde69",
+    "id": "publisher-hourly-20261105-1223-e80c66",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-11-05T05:12:39+05:30"
+    "at": "2026-11-05T12:23:01+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261105-1223-e80c66",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-11-05T12:23:01+05:30",
+      "endedAt": "2026-11-05T12:23:01+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 21,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 3 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/kd-2026-11-03-re-fire-loop-discipline/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "kd-2026-11-05-automated-breach-reaction",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-07-six-risk-rules-explained",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-11-03-deterministic-role-matching",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-04-deterministic-role-match",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-05-watermark-free-pdf-export",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-11-06-master-branch-workflow",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "kd-2026-11-03-re-fire-loop-discipline"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "idle"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.136022
+    },
     {
       "id": "publisher-hourly-20261105-0512-4fde69",
       "workflow": "publisher-hourly",
@@ -1583,65 +1666,11 @@
       "errors": [],
       "budgetUsedUsd": 0,
       "budgetPaidEquivalentUsd": 0.055424
-    },
-    {
-      "id": "publisher-hourly-20261101-0644-1a6540",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-11-01T06:44:19+05:30",
-      "endedAt": "2026-11-01T06:44:19+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 24,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 0 waiting, 0 failed, 0 expired"
-        }
-      ],
-      "changed": [
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-10-30-free-kundali-on-device",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-10-31-daily-token-reconnection",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "idle"
-          }
-        }
-      }
     }
   ],
   "queue": {
     "rishtapatra": 0,
-    "kaatdo": 3,
+    "kaatdo": 2,
     "job_rez": 4
   },
   "blocked": {},

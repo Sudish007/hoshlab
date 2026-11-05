@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-04T23:30:13+05:30",
+  "updatedAt": "2026-11-05T12:23:01+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -312,12 +312,12 @@
     {
       "id": "kd-2026-11-03-re-fire-loop-discipline",
       "page": "kaatdo",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "kaatdo-2026-11-03-0815",
       "slotAt": "2026-11-03T08:15:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-01T11:49:26+05:30",
+      "updatedAt": "2026-11-05T12:23:01+05:30",
       "qa": true
     },
     {
