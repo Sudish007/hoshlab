@@ -1,12 +1,99 @@
 {
-  "updatedAt": "2026-11-05T12:23:01+05:30",
+  "updatedAt": "2026-11-05T12:31:54+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261105-1223-e80c66",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261105-1227-bf2fb6",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-11-05T12:23:01+05:30"
+    "at": "2026-11-05T12:31:54+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261105-1227-bf2fb6",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-11-05T12:27:25+05:30",
+      "endedAt": "2026-11-05T12:31:54+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W45.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 87759,
+          "calls": 6,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.00584,
+          "note": "rishtapatra: 0 ideas, 9 slots, 1 assigned, 1 dropped | kaatdo: 0 ideas, 10 slots, 1 assigned, 1 dropped | job_rez: 1 ideas, 13 slots, 1 assigned, 1 dropped | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 93158,
+          "calls": 8,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.010774,
+          "note": "rishtapatra-2026-11-07-1930: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | 2 written, 0 reworked, 1 invalid_output | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.1-flash-lite (@kaatdo)"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 49928,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "2 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 38779,
+          "calls": 4,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.003731,
+          "note": "2 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/drafts/rp-2026-11-06-local-first-browser-security/draft.json",
+        "company/state/drafts/kd-2026-11-08-morning-token-routine/draft.json",
+        "company/state/drafts/kd-2026-11-08-morning-token-routine/qa.json",
+        "company/state/drafts/rp-2026-11-06-local-first-browser-security/qa.json",
+        "company/state/drafts/index.json",
+        "company/state/usage/2026-11.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.156367
+    },
     {
       "id": "publisher-hourly-20261105-1223-e80c66",
       "workflow": "publisher-hourly",
@@ -1571,106 +1658,11 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.055424
-    },
-    {
-      "id": "engine-daily-20261101-1149-8b00df",
-      "workflow": "engine-daily",
-      "trigger": "schedule",
-      "startedAt": "2026-11-01T11:49:26+05:30",
-      "endedAt": "2026-11-01T12:08:49+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "ceo",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Monday and state/memos/2026-W44.md exists",
-          "skipped": "not_due"
-        },
-        {
-          "name": "hr",
-          "ok": true,
-          "ms": 90596,
-          "calls": 1,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.005619,
-          "note": "8 agents reviewed, 0 changes proposed → hr/proposals/2026-10.json | completed models: Google Gemini · gemini-3.8-flash"
-        },
-        {
-          "name": "strategist",
-          "ok": true,
-          "ms": 90990,
-          "calls": 3,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.00649,
-          "note": "rishtapatra: 0 ideas, 9 slots, 1 assigned | kaatdo: 2 ideas, 10 slots, 1 assigned | job_rez: 0 ideas, 11 slots, 1 dropped, model not called (backlog full) | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.8-flash (@kaatdo)"
-        },
-        {
-          "name": "writer",
-          "ok": true,
-          "ms": 414587,
-          "calls": 11,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.024094,
-          "note": "3 written, 2 reworked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.8-flash (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@kaatdo)"
-        },
-        {
-          "name": "designer",
-          "ok": true,
-          "ms": 46863,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "5 rendered, 0 refused"
-        },
-        {
-          "name": "qa",
-          "ok": true,
-          "ms": 520568,
-          "calls": 7,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.019221,
-          "note": "5 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.8-flash (@job_rez); Google Gemini · gemini-3.8-flash (@job_rez); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.8-flash (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
-        },
-        {
-          "name": "analyst",
-          "ok": true,
-          "ms": 1,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "insights: 0 posts measured (0 records) | skipped: no_metrics — no insights yet for the 0 posts of the last 28 days — no report written (the first report needs a post that has been live for 48 hours)",
-          "skipped": "no_metrics"
-        }
-      ],
-      "changed": [
-        "company/state/hr/2026-10-review.md",
-        "company/state/hr/proposals/2026-10.json",
-        "company/state/calendar.json",
-        "company/state/ideas.jsonl",
-        "company/state/drafts/jr-2026-11-02-master-resume-branching/draft.json",
-        "company/state/drafts/kd-2026-11-01-second-level-square-off/draft.json",
-        "company/state/drafts/jr-2026-11-03-deterministic-role-matching/draft.json",
-        "company/state/drafts/rp-2026-11-02-device-first-biodata-privacy/draft.json",
-        "company/state/drafts/kd-2026-11-03-re-fire-loop-discipline/draft.json",
-        "company/state/drafts/jr-2026-11-02-master-resume-branching/qa.json",
-        "company/state/drafts/jr-2026-11-03-deterministic-role-matching/qa.json",
-        "company/state/drafts/kd-2026-11-01-second-level-square-off/qa.json",
-        "company/state/drafts/kd-2026-11-03-re-fire-loop-discipline/qa.json",
-        "company/state/drafts/rp-2026-11-02-device-first-biodata-privacy/qa.json",
-        "company/state/drafts/index.json",
-        "company/state/usage/2026-11.jsonl",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "budgetPaidEquivalentUsd": 0.055424
     }
   ],
   "queue": {
-    "rishtapatra": 0,
-    "kaatdo": 2,
+    "rishtapatra": 1,
+    "kaatdo": 3,
     "job_rez": 4
   },
   "blocked": {},
@@ -1680,7 +1672,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.136022
+    "paidEquivalentUsd": 0.156367
   },
   "pages": {
     "rishtapatra": {

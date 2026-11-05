@@ -1,0 +1,98 @@
+{
+  "id": "kd-2026-11-08-morning-token-routine",
+  "page": "kaatdo",
+  "ideaId": "kd-i0003",
+  "slotId": "kaatdo-2026-11-08-1100",
+  "slotAt": "2026-11-08T11:00:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-05T12:27:25+05:30",
+  "updatedAt": "2026-11-05T12:27:25+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261105-1227-bf2fb6",
+  "caption": "08:45 IST: your broker token is expired. SEBI norms require daily token renewal, so you must reconnect your broker every trading morning to keep monitoring active. Watch for the 08:45 IST stale-token nudge and the 09:20 IST connected but NOT armed alert. KaatDo runs a server-side kill switch on Fyers, Upstox, Zerodha, Angel One, Dhan and Groww using official trade APIs. kaatdo.com काट दो. KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#TradingDiscipline",
+    "#BrokerToken",
+    "#TradingTools",
+    "#FandO",
+    "#RiskManagement",
+    "#SEBINorms"
+  ],
+  "altText": "08:45 IST: your broker token is expired. Reconnect daily to keep monitoring active. kaatdo.com",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f07",
+      "quote": "Broker tokens expire every day (SEBI norms), so the trader reconnects each trading morning; 08:45 IST stale-token nudge and 09:20 IST \"connected but NOT armed\" alert"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 15,
+    "scenes": [
+      {
+        "text": "08:45 IST: your broker token is expired.",
+        "seconds": 4
+      },
+      {
+        "text": "SEBI norms mandate daily token renewal.",
+        "seconds": 4
+      },
+      {
+        "text": "Reconnect every morning for active monitoring.",
+        "seconds": 4
+      },
+      {
+        "text": "kaatdo.com काट दो.",
+        "seconds": 3
+      }
+    ]
+  },
+  "writerNote": "The reel follows the kinetic style, using the hook provided. All mandatory disclaimers are present in the caption. No forbidden patterns used. Pricing and counts are strictly from the tables.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/kd-2026-11-08-morning-token-routine/reel-21fe3857.mp4",
+      "bytes": 134181,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "21fe38577cc97351fb5b0e77a7ddf0e9e1c6270b8230d2b39433de5575b1e3cf",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-08-morning-token-routine/reel-21fe3857.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-08-morning-token-routine/reel-21fe3857.mp4",
+      "durationSec": 15,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 15,
+        "bytes": 134181,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/kd-2026-11-08-morning-token-routine/poster-c27c7307.jpg",
+      "bytes": 65821,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "c27c73079911a877220ad43c2a25e10214e8f8eb8ed7310dc82576e7ae0e62ea",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-08-morning-token-routine/poster-c27c7307.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-08-morning-token-routine/poster-c27c7307.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 15 s · 450 frames · dark console palette",
+  "qaRef": "drafts/kd-2026-11-08-morning-token-routine/qa.json"
+}

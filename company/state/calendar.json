@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T12:07:35+05:30",
+  "generatedAt": "2026-11-05T12:27:25+05:30",
   "horizonDays": 14,
   "slots": [
     {
@@ -7,30 +7,24 @@
       "page": "job_rez",
       "at": "2026-11-02T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0013",
-      "reason": "Assigning existing open idea on master resume branching to the first open image slot, aligning with priority 1.",
-      "draftId": "jr-2026-11-02-master-resume-branching"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-02-master-resume-branching expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-02-1930",
       "page": "rishtapatra",
       "at": "2026-11-02T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0002",
-      "reason": "Directly addresses Priority 1 (local-first privacy and device-only data storage) for the single open image slot.",
-      "draftId": "rp-2026-11-02-device-first-biodata-privacy"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-02-device-first-biodata-privacy expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-03-0815",
       "page": "kaatdo",
       "at": "2026-11-03T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0018",
-      "reason": "Fills the image slot addressing Priority 3 on honest execution boundaries and locked states.",
-      "draftId": "kd-2026-11-03-re-fire-loop-discipline"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-03-re-fire-loop-discipline expired -2.2 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-03-1230",
@@ -51,15 +45,6 @@
       "ideaId": "jr-i0015",
       "reason": "Filling carousel slot using an existing open idea matching priority 1 on deterministic role matching.",
       "draftId": "jr-2026-11-04-deterministic-role-match"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-04-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-04T19:30:00+05:30",
-      "format": "carousel",
-      "status": "planned",
-      "ideaId": "rp-i0017",
-      "reason": "Assigns CEO Priority 1 (Local-first privacy and client-side processing) using existing carousel idea rp-i0017."
     },
     {
       "slotId": "kaatdo-2026-11-05-0815",
@@ -96,9 +81,10 @@
       "page": "rishtapatra",
       "at": "2026-11-06T19:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0025",
-      "reason": "Fulfills the priority for local-first privacy and client-side processing using an open backlog idea."
+      "reason": "Fulfills the priority for local-first privacy and client-side processing using an open backlog idea.",
+      "draftId": "rp-2026-11-06-local-first-browser-security"
     },
     {
       "slotId": "kaatdo-2026-11-07-1100",
@@ -124,9 +110,10 @@
       "page": "kaatdo",
       "at": "2026-11-08T11:00:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0003",
-      "reason": "Assigning open reel idea to fill the weekend slot covering daily morning broker token expirations."
+      "reason": "Assigning open reel idea to fill the weekend slot covering daily morning broker token expirations.",
+      "draftId": "kd-2026-11-08-morning-token-routine"
     },
     {
       "slotId": "job_rez-2026-11-09-1230",
@@ -280,6 +267,33 @@
       "status": "planned",
       "ideaId": "jr-i0032",
       "reason": "Assigning priority one theme on master resume branching and role matching to the first open image slot."
+    },
+    {
+      "slotId": "job_rez-2026-11-18-1230",
+      "page": "job_rez",
+      "at": "2026-11-18T12:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "jr-i0030",
+      "reason": "Aligns with CEO priority one covering master resume branching and deterministic role matching."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-18-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-18T19:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "rp-i0017",
+      "reason": "Assigning an existing open idea from the backlog matching the CEO priority on local-first privacy and client-side kundali computation."
+    },
+    {
+      "slotId": "kaatdo-2026-11-19-0815",
+      "page": "kaatdo",
+      "at": "2026-11-19T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0011",
+      "reason": "Assigning existing open idea covering broker kill switch integration as requested by the CEO priority."
     }
   ]
 }

@@ -1,0 +1,56 @@
+{
+  "id": "rp-2026-11-06-local-first-browser-security",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0025",
+  "slotId": "rishtapatra-2026-11-06-1930",
+  "slotAt": "2026-11-06T19:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-05T12:27:25+05:30",
+  "updatedAt": "2026-11-05T12:27:25+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261105-1227-bf2fb6",
+  "caption": "Your personal details and photos never touch a remote server while creating your biodata.\n\nWhen preparing a marriage biodata, keeping your personal information private is essential. With RishtaPatra, local-first design means every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional.\n\nVisit rishtapatra.com to create your biodata safely.",
+  "hashtags": [
+    "#RishtaPatra",
+    "#BiodataMaker",
+    "#FamilyBiodata"
+  ],
+  "altText": "Text graphic titled Local First Privacy stating every detail and photo stays on your device.",
+  "factsUsed": [
+    {
+      "factId": "rp-f05",
+      "quote": "Local-first: every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    }
+  ],
+  "artwork": {
+    "headline": "Local First Browser Security",
+    "subline": "Every detail and photo stays strictly inside your browser and saves directly to your device.",
+    "facts": [
+      "Every detail, photo and imported resume is processed in the browser",
+      "Saved only on your device without needing an account",
+      "Your personal information stays strictly under your own control"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Used fact rp-f05 strictly adhering to local-first browser data processing rules and avoiding matchmaking or remote profile claims.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-06-local-first-browser-security/image-1-f12d06b5.jpg",
+      "bytes": 138685,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "f12d06b54fa2f6374f614f750bb60c74f4d8c000e54726d8f08aa6ee939b3112",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-06-local-first-browser-security/image-1-f12d06b5.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-06-local-first-browser-security/image-1-f12d06b5.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-06-local-first-browser-security/qa.json"
+}
