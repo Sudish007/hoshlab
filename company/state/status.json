@@ -1,12 +1,91 @@
 {
-  "updatedAt": "2026-11-06T23:30:14+05:30",
+  "updatedAt": "2026-11-07T04:42:32+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261106-2330-f98506",
+    "id": "publisher-hourly-20261107-0442-1f8944",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-11-06T23:30:14+05:30"
+    "at": "2026-11-07T04:42:32+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261107-0442-1f8944",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-11-07T04:42:32+05:30",
+      "endedAt": "2026-11-07T04:42:32+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 15,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 2 waiting, 0 failed, 0 expired"
+        }
+      ],
+      "changed": [
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-11-06-local-first-browser-security",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-05-automated-breach-reaction",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-07-six-risk-rules-explained",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-11-08-morning-token-routine",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-11-05-watermark-free-pdf-export",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-06-master-branch-workflow",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.164062
+    },
     {
       "id": "publisher-hourly-20261106-2330-f98506",
       "workflow": "publisher-hourly",
@@ -1624,49 +1703,6 @@
           "job_rez": {
             "outcome": "page_not_configured"
           }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.084181
-    },
-    {
-      "id": "token-refresh-20261102-1457-9f7ae5",
-      "workflow": "token-refresh",
-      "trigger": "schedule",
-      "startedAt": "2026-11-02T14:57:44+05:30",
-      "endedAt": "2026-11-02T14:57:44+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 17,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "tokens: 0 refreshed, 0 expiring, 0 expiry not known yet, 3 not configured"
-        }
-      ],
-      "changed": [
-        "company/state/tokens.json",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "tokens": {
-        "rishtapatra": {
-          "outcome": "not_configured",
-          "daysLeft": null,
-          "expiresAt": null
-        },
-        "kaatdo": {
-          "outcome": "not_configured",
-          "daysLeft": null,
-          "expiresAt": null
-        },
-        "job_rez": {
-          "outcome": "not_configured",
-          "daysLeft": null,
-          "expiresAt": null
         }
       },
       "budgetPaidEquivalentUsd": 0.084181
