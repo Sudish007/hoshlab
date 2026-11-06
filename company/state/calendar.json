@@ -1,40 +1,14 @@
 {
-  "generatedAt": "2026-11-05T12:27:25+05:30",
+  "generatedAt": "2026-11-06T12:27:22+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-02-1230",
-      "page": "job_rez",
-      "at": "2026-11-02T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-02-master-resume-branching expired -3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-02-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-02T19:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-02-device-first-biodata-privacy expired -2.7 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "kaatdo-2026-11-03-0815",
-      "page": "kaatdo",
-      "at": "2026-11-03T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-03-re-fire-loop-discipline expired -2.2 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-03-1230",
       "page": "job_rez",
       "at": "2026-11-03T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0002",
-      "reason": "Fulfills rank 1 CEO priority on deterministic matching using an existing verified image idea.",
-      "draftId": "jr-2026-11-03-deterministic-role-matching"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-03-deterministic-role-matching expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-04-1230",
@@ -294,6 +268,15 @@
       "status": "planned",
       "ideaId": "kd-i0011",
       "reason": "Assigning existing open idea covering broker kill switch integration as requested by the CEO priority."
+    },
+    {
+      "slotId": "job_rez-2026-11-19-1230",
+      "page": "job_rez",
+      "at": "2026-11-19T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0033",
+      "reason": "Assigned existing backlog idea focusing on priority two, covering layout rules and watermark-free free exports."
     }
   ]
 }
