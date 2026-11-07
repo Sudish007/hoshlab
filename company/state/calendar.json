@@ -1,34 +1,22 @@
 {
-  "generatedAt": "2026-11-06T12:27:22+05:30",
+  "generatedAt": "2026-11-07T11:38:53+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-03-1230",
-      "page": "job_rez",
-      "at": "2026-11-03T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-03-deterministic-role-matching expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-04-1230",
       "page": "job_rez",
       "at": "2026-11-04T12:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "jr-i0015",
-      "reason": "Filling carousel slot using an existing open idea matching priority 1 on deterministic role matching.",
-      "draftId": "jr-2026-11-04-deterministic-role-match"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-04-deterministic-role-match expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-05-0815",
       "page": "kaatdo",
       "at": "2026-11-05T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0001",
-      "reason": "Directly targets CEO Priority 1 for automated order cancellation and position square-off.",
-      "draftId": "kd-2026-11-05-automated-breach-reaction"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-05-automated-breach-reaction expired -2.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-05-1230",
@@ -75,9 +63,10 @@
       "page": "rishtapatra",
       "at": "2026-11-07T19:30:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0003",
-      "reason": "Matches the CEO rank 1 privacy theme and fills the Saturday reel format using client-side Kundali calculations."
+      "reason": "Matches the CEO rank 1 privacy theme and fills the Saturday reel format using client-side Kundali calculations.",
+      "draftId": "rp-2026-11-07-private-kundali-calculation-in-browser"
     },
     {
       "slotId": "kaatdo-2026-11-08-1100",
@@ -277,6 +266,33 @@
       "status": "planned",
       "ideaId": "jr-i0033",
       "reason": "Assigned existing backlog idea focusing on priority two, covering layout rules and watermark-free free exports."
+    },
+    {
+      "slotId": "job_rez-2026-11-20-1230",
+      "page": "job_rez",
+      "at": "2026-11-20T12:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "jr-i0037",
+      "reason": "Assigning new reel idea covering master resume branching and deterministic role matching per CEO priority 1."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-20-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-20T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0032",
+      "reason": "Aligns directly with CEO priority 1 on local-first biodata privacy and browser processing."
+    },
+    {
+      "slotId": "kaatdo-2026-11-21-1100",
+      "page": "kaatdo",
+      "at": "2026-11-21T11:00:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "kd-i0022",
+      "reason": "Assigning existing open carousel idea focusing on locked state mechanics and re-fire loop execution under priority two."
     }
   ]
 }

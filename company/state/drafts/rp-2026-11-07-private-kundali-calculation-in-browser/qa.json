@@ -1,0 +1,99 @@
+{
+  "draftId": "rp-2026-11-07-private-kundali-calculation-in-browser",
+  "revision": 1,
+  "at": "2026-11-07T11:38:53+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "519/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "3/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "kundali → 2/2 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "8 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "38/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (hi+en; Devanagari allowed)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "h264 1080x1920 yuv420p 30/1 16 s 162 KB faststart; poster 1080x1920 jpeg 65 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on rishtapatra.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/2 (sparse)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.41 over 12 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 4,
+    "claims": [
+      {
+        "claim": "RishtaPatra offers three products: biodata maker, Rishta Connect (matchmaking), and Janam Kundali (free)",
+        "ok": true,
+        "factId": "rp-f04"
+      },
+      {
+        "claim": "Janam Kundali is computed client-side in your browser and no request carries birth data",
+        "ok": true,
+        "factId": "rp-f07"
+      },
+      {
+        "claim": "Kundali calculations are indicative; consult your pandit",
+        "ok": true,
+        "factId": "rp-f09"
+      }
+    ],
+    "reasons": [],
+    "notes": "The draft adheres to all tone guidelines, includes required disclaimers verbatim, and properly attributes claims to valid facts."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261107-1138-b0f092"
+}

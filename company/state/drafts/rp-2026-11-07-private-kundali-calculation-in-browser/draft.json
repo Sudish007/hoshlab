@@ -1,0 +1,98 @@
+{
+  "id": "rp-2026-11-07-private-kundali-calculation-in-browser",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0003",
+  "slotId": "rishtapatra-2026-11-07-1930",
+  "slotAt": "2026-11-07T19:30:00+05:30",
+  "format": "reel",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-07T11:38:53+05:30",
+  "updatedAt": "2026-11-07T11:38:53+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261107-1138-b0f092",
+  "caption": "जन्म कुंडली निकालते समय क्या आपकी जन्म तिथि सुरक्षित रहती है? RishtaPatra पर Janam Kundali पूरी तरह आपके ब्राउज़र में तैयार होती है। कोई भी रिक्वेस्ट आपका जन्म विवरण सर्वर पर नहीं भेजती।\n\nRishtaPatra offers three products: biodata maker, Rishta Connect (matchmaking), and Janam Kundali (free). The astrology engine runs in the browser so no request carries birth data.\n\nNote: Kundali calculations are indicative; consult your pandit.\n\nVisit rishtapatra.com to explore Janam Kundali.\n\n#RishtaPatra #JanamKundali #Kundali",
+  "hashtags": [
+    "#RishtaPatra",
+    "#JanamKundali",
+    "#Kundali"
+  ],
+  "altText": "Branded text card titled Janam Kundali",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f07",
+      "quote": "Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\"; no health, money or legal advice"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "क्या जन्म तिथि सुरक्षित रहती है?",
+        "seconds": 4
+      },
+      {
+        "text": "Janam Kundali is computed client-side in your browser",
+        "seconds": 4
+      },
+      {
+        "text": "No request carries birth data to any server",
+        "seconds": 4
+      },
+      {
+        "text": "Kundali calculations are indicative; consult your pandit",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Corrected altText length to be under 100 characters and shortened scene 0 text to be under 60 characters.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/rp-2026-11-07-private-kundali-calculation-in-browser/reel-7cbae04b.mp4",
+      "bytes": 162033,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "7cbae04be272a2e95760d86808ac1de1cbd74e47b01dff9733554e1f27a69926",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-07-private-kundali-calculation-in-browser/reel-7cbae04b.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-07-private-kundali-calculation-in-browser/reel-7cbae04b.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 162033,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/rp-2026-11-07-private-kundali-calculation-in-browser/poster-6e802e55.jpg",
+      "bytes": 65466,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "6e802e559095cc3b64f8981ded89ff96417ebaeeef63054dd08dc51c81ce5285",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-07-private-kundali-calculation-in-browser/poster-6e802e55.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-07-private-kundali-calculation-in-browser/poster-6e802e55.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-07-private-kundali-calculation-in-browser/qa.json"
+}

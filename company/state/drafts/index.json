@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T08:21:52+05:30",
+  "updatedAt": "2026-11-07T11:38:53+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -483,6 +483,17 @@
       "slotAt": "2026-11-06T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-05T12:27:25+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-11-07-private-kundali-calculation-in-browser",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "rishtapatra-2026-11-07-1930",
+      "slotAt": "2026-11-07T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-07T11:38:53+05:30",
       "qa": true
     }
   ]
