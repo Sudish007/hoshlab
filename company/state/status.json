@@ -1,12 +1,89 @@
 {
-  "updatedAt": "2026-11-07T11:50:05+05:30",
+  "updatedAt": "2026-11-07T15:46:58+05:30",
   "lastRun": {
-    "id": "engine-daily-20261107-1138-b0f092",
-    "workflow": "engine-daily",
+    "id": "publisher-hourly-20261107-1546-9f8786",
+    "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-11-07T11:50:05+05:30"
+    "at": "2026-11-07T15:46:58+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261107-1546-9f8786",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-11-07T15:46:58+05:30",
+      "endedAt": "2026-11-07T15:46:58+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 23,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 2 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/jr-2026-11-05-watermark-free-pdf-export/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-11-06-local-first-browser-security",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-11-07-private-kundali-calculation-in-browser",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-11-07-six-risk-rules-explained",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-08-morning-token-routine",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-11-06-master-branch-workflow",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "jr-2026-11-05-watermark-free-pdf-export"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.185624
+    },
     {
       "id": "engine-daily-20261107-1138-b0f092",
       "workflow": "engine-daily",
@@ -1615,95 +1692,12 @@
       "errors": [],
       "budgetUsedUsd": 0,
       "budgetPaidEquivalentUsd": 0.102144
-    },
-    {
-      "id": "publisher-hourly-20261103-1222-5a12ef",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-11-03T12:22:45+05:30",
-      "endedAt": "2026-11-03T12:22:45+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 26,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 3 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/kd-2026-11-01-second-level-square-off/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-11-02-device-first-biodata-privacy",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-03-re-fire-loop-discipline",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-05-automated-breach-reaction",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-02-master-resume-branching",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-03-deterministic-role-matching",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-04-deterministic-role-match",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "kd-2026-11-01-second-level-square-off"
-        ],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.084181
     }
   ],
   "queue": {
     "rishtapatra": 2,
     "kaatdo": 2,
-    "job_rez": 2
+    "job_rez": 1
   },
   "blocked": {},
   "budget": {
