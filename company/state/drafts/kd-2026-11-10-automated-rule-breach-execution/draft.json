@@ -1,0 +1,66 @@
+{
+  "id": "kd-2026-11-10-automated-rule-breach-execution",
+  "page": "kaatdo",
+  "ideaId": "kd-i0017",
+  "slotId": "kaatdo-2026-11-10-0815",
+  "slotAt": "2026-11-10T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-08T11:44:45+05:30",
+  "updatedAt": "2026-11-08T11:44:45+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261108-1144-b6f445",
+  "caption": "Your rule breaches. Every pending order cancels immediately.\n\nWhen a preset threshold triggers, KaatDo cancels every pending order and squares off every position at market. The account stays locked until close. If trading activity reappears, the system re-fires.\n\nExecution runs server-side on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, using official trade APIs.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI. Broker API execution is never guaranteed.\n\n#KaatDo #KillSwitch #TradingDiscipline #RiskManagement #FandO #TradeAPIs",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#TradingDiscipline",
+    "#RiskManagement",
+    "#FandO",
+    "#TradeAPIs"
+  ],
+  "altText": "Text graphic stating rule breach execution, market square off, and locked state until close.",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f05",
+      "quote": "On breach: cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "artwork": {
+    "headline": "Rule breached. Execution armed.",
+    "subline": "Automatic square off across your broker positions at market.",
+    "facts": [
+      "Cancels every pending order immediately",
+      "Squares off open positions at market",
+      "Account remains locked until close"
+    ],
+    "footer": "kaatdo.com"
+  },
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-10-automated-rule-breach-execution/image-1-63e21ad2.jpg",
+      "bytes": 114555,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "63e21ad27d5b835475e44d4e4db5d61041c6cee88102b810f009ab972944c269",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-10-automated-rule-breach-execution/image-1-63e21ad2.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-10-automated-rule-breach-execution/image-1-63e21ad2.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-11-10-automated-rule-breach-execution/qa.json"
+}

@@ -1,32 +1,14 @@
 {
-  "generatedAt": "2026-11-07T11:38:53+05:30",
+  "generatedAt": "2026-11-08T11:44:45+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-04-1230",
-      "page": "job_rez",
-      "at": "2026-11-04T12:30:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-04-deterministic-role-match expired -3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "kaatdo-2026-11-05-0815",
-      "page": "kaatdo",
-      "at": "2026-11-05T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-05-automated-breach-reaction expired -2.1 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-05-1230",
       "page": "job_rez",
       "at": "2026-11-05T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0024",
-      "reason": "Directly matches Priority 3 and open slot image format with free watermark-free PDF exports and local tracking.",
-      "draftId": "jr-2026-11-05-watermark-free-pdf-export"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-05-watermark-free-pdf-export expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-06-1230",
@@ -83,9 +65,10 @@
       "page": "job_rez",
       "at": "2026-11-09T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0004",
-      "reason": "Filling slot with an existing open idea matching priority themes on layout and rewriting."
+      "reason": "Filling slot with an existing open idea matching priority themes on layout and rewriting.",
+      "draftId": "jr-2026-11-09-grounded-rule-based-rewrites"
     },
     {
       "slotId": "rishtapatra-2026-11-09-1930",
@@ -101,18 +84,20 @@
       "page": "kaatdo",
       "at": "2026-11-10T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0017",
-      "reason": "Assigning an existing open idea covering server-side breach mechanics to fill the image slot, fulfilling the current priority."
+      "reason": "Assigning an existing open idea covering server-side breach mechanics to fill the image slot, fulfilling the current priority.",
+      "draftId": "kd-2026-11-10-automated-rule-breach-execution"
     },
     {
       "slotId": "job_rez-2026-11-10-1230",
       "page": "job_rez",
       "at": "2026-11-10T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0007",
-      "reason": "Aligns directly with CEO priority 2 focusing on unwatermarked exports on the free tier."
+      "reason": "Aligns directly with CEO priority 2 focusing on unwatermarked exports on the free tier.",
+      "draftId": "jr-2026-11-10-watermark-free-exports"
     },
     {
       "slotId": "job_rez-2026-11-11-1230",
@@ -293,6 +278,24 @@
       "status": "planned",
       "ideaId": "kd-i0022",
       "reason": "Assigning existing open carousel idea focusing on locked state mechanics and re-fire loop execution under priority two."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-21-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-21T19:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "rp-i0014",
+      "reason": "Existing open reel idea fits Priority 1 cleanly by showcasing the live A4 auto-fit editor experience."
+    },
+    {
+      "slotId": "kaatdo-2026-11-22-1100",
+      "page": "kaatdo",
+      "at": "2026-11-22T11:00:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "kd-i0028",
+      "reason": "Assigns Priority 1 kill switch rule execution across official broker trade APIs for the open reel slot."
     }
   ]
 }

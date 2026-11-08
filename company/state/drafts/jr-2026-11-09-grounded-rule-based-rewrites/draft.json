@@ -1,0 +1,58 @@
+{
+  "id": "jr-2026-11-09-grounded-rule-based-rewrites",
+  "page": "job_rez",
+  "ideaId": "jr-i0004",
+  "slotId": "job_rez-2026-11-09-1230",
+  "slotAt": "2026-11-09T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-08T11:44:45+05:30",
+  "updatedAt": "2026-11-08T11:44:45+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261108-1144-b6f445",
+  "caption": "Rewriting should fix weak phrasing without inventing metrics. In JobRez, grounded rewrites are rule-based. They replace weak openers, remove filler, fix capitalisation and punctuation, list every change, and never add numbers, tools, or employers. Learn more at https://jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#masterresume",
+    "#resumebuilder",
+    "#careertools",
+    "#engineering"
+  ],
+  "altText": "Graphic titled Grounded rule-based rewrites on jobrez.com",
+  "factsUsed": [
+    {
+      "factId": "jr-f08",
+      "quote": "Grounded rewrites are rule-based: they replace weak openers, remove filler, fix capitalisation and punctuation, list every change, and never add numbers, tools or employers"
+    }
+  ],
+  "artwork": {
+    "headline": "Grounded rule-based rewrites",
+    "subline": "Fix weak phrasing without inventing metrics or experience.",
+    "facts": [
+      "Rule-based edits replace weak openers and remove filler",
+      "Capitalisation and punctuation are fixed automatically",
+      "No numbers, tools, or employers are ever added"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Corrected altText length to stay under the 100 character cap.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-09-grounded-rule-based-rewrites/image-1-cfd54471.jpg",
+      "bytes": 124197,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "cfd54471d02a7fe4a4f42b5450dbf8b596c45b11bd799c3bca31a1bb21163208",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-09-grounded-rule-based-rewrites/image-1-cfd54471.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-09-grounded-rule-based-rewrites/image-1-cfd54471.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-11-09-grounded-rule-based-rewrites/qa.json"
+}
