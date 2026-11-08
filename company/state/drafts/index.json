@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-08T11:44:45+05:30",
+  "updatedAt": "2026-11-08T12:55:11+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -180,12 +180,12 @@
     {
       "id": "jr-2026-11-06-master-branch-workflow",
       "page": "job_rez",
-      "status": "queued",
+      "status": "expired",
       "format": "reel",
       "slotId": "job_rez-2026-11-06-1230",
       "slotAt": "2026-11-06T12:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-04T12:07:35+05:30",
+      "updatedAt": "2026-11-08T12:55:11+05:30",
       "qa": true
     },
     {
