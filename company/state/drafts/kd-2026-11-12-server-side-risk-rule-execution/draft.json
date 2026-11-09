@@ -1,0 +1,72 @@
+{
+  "id": "kd-2026-11-12-server-side-risk-rule-execution",
+  "page": "kaatdo",
+  "ideaId": "kd-i0027",
+  "slotId": "kaatdo-2026-11-12-0815",
+  "slotAt": "2026-11-12T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-09T12:17:25+05:30",
+  "updatedAt": "2026-11-09T12:17:25+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261109-1217-6561db",
+  "caption": "Your rule breaches. Every pending order cancels and positions square off.\n\nKaatDo runs a server-side kill switch across six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on official trade APIs.\n\nYou configure six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, and kill_dates. On breach, KaatDo cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#TradingDiscipline",
+    "#RiskManagement",
+    "#TradeExecution",
+    "#OfficialAPIs",
+    "#TradingRules"
+  ],
+  "altText": "Graphic card stating: Server-side execution on breach. Cancels pending orders, squares off market.",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f04",
+      "quote": "Six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates"
+    },
+    {
+      "factId": "kd-f05",
+      "quote": "On breach: cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "artwork": {
+    "headline": "Server-side execution on breach",
+    "subline": "Official trade APIs monitor rules and trigger immediate actions",
+    "facts": [
+      "Cancels every pending order immediately",
+      "Squares off every open position at market",
+      "Locks account until close and re-fires on activity"
+    ],
+    "footer": "kaatdo.com"
+  },
+  "writerNote": "All mandatory disclaimers included verbatim. Terse console voice preserved with sign-off काट दो. No forbidden terms or emoji used.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-12-server-side-risk-rule-execution/image-1-43c1525b.jpg",
+      "bytes": 122252,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "43c1525b8624aea086143c9f51457fc7644027e954859a6369900b5a5e3a927d",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-12-server-side-risk-rule-execution/image-1-43c1525b.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-12-server-side-risk-rule-execution/image-1-43c1525b.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-11-12-server-side-risk-rule-execution/qa.json"
+}

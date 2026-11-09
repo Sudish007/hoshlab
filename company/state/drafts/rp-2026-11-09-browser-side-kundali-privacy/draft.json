@@ -1,0 +1,66 @@
+{
+  "id": "rp-2026-11-09-browser-side-kundali-privacy",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0020",
+  "slotId": "rishtapatra-2026-11-09-1930",
+  "slotAt": "2026-11-09T19:30:00+05:30",
+  "format": "image",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-09T12:17:25+05:30",
+  "updatedAt": "2026-11-09T12:17:25+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261109-1217-6561db",
+  "caption": "जन्म कुंडली बनाते समय आपकी जानकारी आपके फोन से बाहर नहीं जाती।\n\nRishtaPatra brings three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free).\n\nWhen you use our astrology tool, Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data.\n\nAlso in the biodata maker, every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional.\n\nDisclaimer: Kundali details are indicative; consult your pandit.\n\nVisit rishtapatra.com to build your biodata or calculate your free Janam Kundali.",
+  "hashtags": [
+    "#RishtaPatra",
+    "#JanamKundali",
+    "#Kundali",
+    "#BiodataMaker",
+    "#Rishta"
+  ],
+  "altText": "Text artwork stating Janam Kundali on your device without sending birth data, by RishtaPatra.",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f07",
+      "quote": "Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data"
+    },
+    {
+      "factId": "rp-f05",
+      "quote": "Local-first: every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    }
+  ],
+  "artwork": {
+    "headline": "जन्म कुंडली: आपकी जानकारी आपके डिवाइस पर",
+    "subline": "The astrology engine runs in your browser without sending birth details to servers.",
+    "facts": [
+      "Janam Kundali is computed client-side in the browser",
+      "No request carries birth data",
+      "Free to calculate directly on your device"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Used the Strategist hook directly. Mandatory kundali disclaimer fragments ('indicative' and 'consult your pandit') are included verbatim in the caption.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-09-browser-side-kundali-privacy/image-1-e33a70ab.jpg",
+      "bytes": 127749,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "e33a70ab93af39cfcb8a14567db9ff2ab9af870bde0e5d0df8481ad584a823ec",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-09-browser-side-kundali-privacy/image-1-e33a70ab.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-09-browser-side-kundali-privacy/image-1-e33a70ab.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-09-browser-side-kundali-privacy/qa.json"
+}

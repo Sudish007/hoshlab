@@ -1,44 +1,30 @@
 {
-  "generatedAt": "2026-11-08T11:44:45+05:30",
+  "generatedAt": "2026-11-09T12:17:25+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-05-1230",
-      "page": "job_rez",
-      "at": "2026-11-05T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-05-watermark-free-pdf-export expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-06-1230",
       "page": "job_rez",
       "at": "2026-11-06T12:30:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "jr-i0023",
-      "reason": "Assigning open idea jr-i0023 to fill the Friday reel slot covering master resume branching.",
-      "draftId": "jr-2026-11-06-master-branch-workflow"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-06-master-branch-workflow expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-06-1930",
       "page": "rishtapatra",
       "at": "2026-11-06T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0025",
-      "reason": "Fulfills the priority for local-first privacy and client-side processing using an open backlog idea.",
-      "draftId": "rp-2026-11-06-local-first-browser-security"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-06-local-first-browser-security expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-07-1100",
       "page": "kaatdo",
       "at": "2026-11-07T11:00:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "kd-i0002",
-      "reason": "Assigning existing open carousel idea covering the six core server-side rules to fill the single open carousel slot.",
-      "draftId": "kd-2026-11-07-six-risk-rules-explained"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-07-six-risk-rules-explained expired -2.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-07-1930",
@@ -75,9 +61,10 @@
       "page": "rishtapatra",
       "at": "2026-11-09T19:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0020",
-      "reason": "Filling the open image slot with a core priority idea on free client-side privacy and Janam Kundali."
+      "reason": "Filling the open image slot with a core priority idea on free client-side privacy and Janam Kundali.",
+      "draftId": "rp-2026-11-09-browser-side-kundali-privacy"
     },
     {
       "slotId": "kaatdo-2026-11-10-0815",
@@ -104,27 +91,30 @@
       "page": "job_rez",
       "at": "2026-11-11T12:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0001",
-      "reason": "Directly matches Priority 2 by breaking down the six structural layout rules across a carousel format."
+      "reason": "Directly matches Priority 2 by breaking down the six structural layout rules across a carousel format.",
+      "draftId": "jr-2026-11-11-six-layout-rules-measured-live"
     },
     {
       "slotId": "rishtapatra-2026-11-11-1930",
       "page": "rishtapatra",
       "at": "2026-11-11T19:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0005",
-      "reason": "Filling the carousel slot with an existing open idea covering the core platform features and priorities without repeating any recent content."
+      "reason": "Filling the carousel slot with an existing open idea covering the core platform features and priorities without repeating any recent content.",
+      "draftId": "rp-2026-11-11-three-pillars-from-biodata-to-rishta"
     },
     {
       "slotId": "kaatdo-2026-11-12-0815",
       "page": "kaatdo",
       "at": "2026-11-12T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0027",
-      "reason": "Assigned open idea kd-i0027 to fill the open image slot with server-side kill switch mechanics."
+      "reason": "Assigned open idea kd-i0027 to fill the open image slot with server-side kill switch mechanics.",
+      "draftId": "kd-2026-11-12-server-side-risk-rule-execution"
     },
     {
       "slotId": "job_rez-2026-11-12-1230",

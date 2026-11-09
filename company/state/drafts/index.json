@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T12:10:43+05:30",
+  "updatedAt": "2026-11-09T12:17:25+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -211,6 +211,17 @@
       "qa": true
     },
     {
+      "id": "jr-2026-11-11-six-layout-rules-measured-live",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "job_rez-2026-11-11-1230",
+      "slotAt": "2026-11-11T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-09T12:17:25+05:30",
+      "qa": true
+    },
+    {
       "id": "kd-2026-10-15-automated-breach-reaction",
       "page": "kaatdo",
       "status": "expired",
@@ -387,6 +398,17 @@
       "qa": true
     },
     {
+      "id": "kd-2026-11-12-server-side-risk-rule-execution",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "image",
+      "slotId": "kaatdo-2026-11-12-0815",
+      "slotAt": "2026-11-12T08:15:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-09T12:17:25+05:30",
+      "qa": true
+    },
+    {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
       "status": "expired",
@@ -527,6 +549,28 @@
       "slotAt": "2026-11-07T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-07T11:38:53+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-11-09-browser-side-kundali-privacy",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "image",
+      "slotId": "rishtapatra-2026-11-09-1930",
+      "slotAt": "2026-11-09T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-09T12:17:25+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-11-11-three-pillars-from-biodata-to-rishta",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "rishtapatra-2026-11-11-1930",
+      "slotAt": "2026-11-11T19:30:00+05:30",
+      "revision": 2,
+      "updatedAt": "2026-11-09T12:17:25+05:30",
       "qa": true
     }
   ]
