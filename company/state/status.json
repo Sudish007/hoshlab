@@ -1,12 +1,55 @@
 {
-  "updatedAt": "2026-11-09T12:26:38+05:30",
+  "updatedAt": "2026-11-09T15:16:20+05:30",
   "lastRun": {
-    "id": "engine-daily-20261109-1217-6561db",
-    "workflow": "engine-daily",
+    "id": "token-refresh-20261109-1516-912c81",
+    "workflow": "token-refresh",
     "ok": true,
-    "at": "2026-11-09T12:26:38+05:30"
+    "at": "2026-11-09T15:16:20+05:30"
   },
   "lastRuns": [
+    {
+      "id": "token-refresh-20261109-1516-912c81",
+      "workflow": "token-refresh",
+      "trigger": "schedule",
+      "startedAt": "2026-11-09T15:16:20+05:30",
+      "endedAt": "2026-11-09T15:16:20+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 10,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "tokens: 0 refreshed, 0 expiring, 0 expiry not known yet, 3 not configured"
+        }
+      ],
+      "changed": [
+        "company/state/tokens.json",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "tokens": {
+        "rishtapatra": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        },
+        "kaatdo": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        },
+        "job_rez": {
+          "outcome": "not_configured",
+          "daysLeft": null,
+          "expiresAt": null
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.285255
+    },
     {
       "id": "engine-daily-20261109-1217-6561db",
       "workflow": "engine-daily",
@@ -1529,95 +1572,6 @@
         ],
         "staleEdits": [],
         "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "idle"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.156367
-    },
-    {
-      "id": "publisher-hourly-20261105-2100-00c70b",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-11-05T21:00:36+05:30",
-      "endedAt": "2026-11-05T21:00:36+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 27,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 4 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/jr-2026-11-03-deterministic-role-matching/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-11-06-local-first-browser-security",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-05-automated-breach-reaction",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-07-six-risk-rules-explained",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-08-morning-token-routine",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-04-deterministic-role-match",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-05-watermark-free-pdf-export",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-06-master-branch-workflow",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "jr-2026-11-03-deterministic-role-matching"
-        ],
         "rejected": [],
         "pages": {
           "rishtapatra": {
