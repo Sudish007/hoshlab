@@ -70,6 +70,13 @@
   "jr-2026-11-10-watermark-free-exports": [
     "image-1-165fb4c1.jpg"
   ],
+  "jr-2026-11-11-six-layout-rules-measured-live": [
+    "slide-1-2f2c439b.jpg",
+    "slide-2-ff7139d6.jpg",
+    "slide-3-113b7d57.jpg",
+    "slide-4-c206ce26.jpg",
+    "slide-5-595a4283.jpg"
+  ],
   "kd-2026-10-15-automated-breach-reaction": [
     "image-1-ed668018.jpg"
   ],
@@ -133,6 +140,9 @@
   "kd-2026-11-10-automated-rule-breach-execution": [
     "image-1-63e21ad2.jpg"
   ],
+  "kd-2026-11-12-server-side-risk-rule-execution": [
+    "image-1-43c1525b.jpg"
+  ],
   "rp-2026-10-14-guided-7-step-biodata-flow": [
     "slide-1-e07bec87.jpg",
     "slide-2-6237ab03.jpg",
@@ -182,6 +192,15 @@
   "rp-2026-11-07-private-kundali-calculation-in-browser": [
     "reel-7cbae04b.mp4",
     "poster-6e802e55.jpg"
+  ],
+  "rp-2026-11-09-browser-side-kundali-privacy": [
+    "image-1-e33a70ab.jpg"
+  ],
+  "rp-2026-11-11-three-pillars-from-biodata-to-rishta": [
+    "slide-1-090ac93c.jpg",
+    "slide-2-7d7bec90.jpg",
+    "slide-3-9d839874.jpg",
+    "slide-4-2ae21465.jpg"
   ],
   "sample-job_rez": {
     "sample": true,
