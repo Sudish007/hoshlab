@@ -1,50 +1,24 @@
 {
-  "generatedAt": "2026-11-09T12:17:25+05:30",
+  "generatedAt": "2026-11-10T12:57:25+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-06-1230",
-      "page": "job_rez",
-      "at": "2026-11-06T12:30:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-06-master-branch-workflow expired -3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-06-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-06T19:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-06-local-first-browser-security expired -2.7 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "kaatdo-2026-11-07-1100",
-      "page": "kaatdo",
-      "at": "2026-11-07T11:00:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-07-six-risk-rules-explained expired -2.1 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "rishtapatra-2026-11-07-1930",
       "page": "rishtapatra",
       "at": "2026-11-07T19:30:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "rp-i0003",
-      "reason": "Matches the CEO rank 1 privacy theme and fills the Saturday reel format using client-side Kundali calculations.",
-      "draftId": "rp-2026-11-07-private-kundali-calculation-in-browser"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-07-private-kundali-calculation-in-browser expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-08-1100",
       "page": "kaatdo",
       "at": "2026-11-08T11:00:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "kd-i0003",
-      "reason": "Assigning open reel idea to fill the weekend slot covering daily morning broker token expirations.",
-      "draftId": "kd-2026-11-08-morning-token-routine"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-08-morning-token-routine expired -2.1 days before the slot (lead 3 days)",
+      "draftId": "kd-2026-11-08-morning-token-routine",
+      "ideaId": "kd-i0003"
     },
     {
       "slotId": "job_rez-2026-11-09-1230",
@@ -286,6 +260,42 @@
       "status": "planned",
       "ideaId": "kd-i0028",
       "reason": "Assigns Priority 1 kill switch rule execution across official broker trade APIs for the open reel slot."
+    },
+    {
+      "slotId": "job_rez-2026-11-23-1230",
+      "page": "job_rez",
+      "at": "2026-11-23T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0034",
+      "reason": "Addresses priority 1: master resume branching and role matching."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-23-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-23T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0028",
+      "reason": "Assigning existing open idea rp-i0028 which perfectly addresses the CEO priority of local-first processing and privacy."
+    },
+    {
+      "slotId": "kaatdo-2026-11-24-0815",
+      "page": "kaatdo",
+      "at": "2026-11-24T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0004",
+      "reason": "backlog idea kd-i0004 (The Refire Loop Reality)"
+    },
+    {
+      "slotId": "job_rez-2026-11-24-1230",
+      "page": "job_rez",
+      "at": "2026-11-24T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0016",
+      "reason": "Addresses priority 2: structural layout rules."
     }
   ]
 }
