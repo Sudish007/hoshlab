@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-10T15:25:01+05:30",
+  "updatedAt": "2026-11-11T12:08:58+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -219,6 +219,28 @@
       "slotAt": "2026-11-11T12:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-09T12:17:25+05:30",
+      "qa": true
+    },
+    {
+      "id": "jr-2026-11-12-master-resume-branching-workflow",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "image",
+      "slotId": "job_rez-2026-11-12-1230",
+      "slotAt": "2026-11-12T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-11T12:08:58+05:30",
+      "qa": true
+    },
+    {
+      "id": "jr-2026-11-13-branching-from-a-master-resume",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "job_rez-2026-11-13-1230",
+      "slotAt": "2026-11-13T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-11T12:08:58+05:30",
       "qa": true
     },
     {
@@ -571,6 +593,17 @@
       "slotAt": "2026-11-11T19:30:00+05:30",
       "revision": 2,
       "updatedAt": "2026-11-09T12:17:25+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-11-13-browser-side-kundali-privacy-new",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "image",
+      "slotId": "rishtapatra-2026-11-13-1930",
+      "slotAt": "2026-11-13T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-11T12:08:58+05:30",
       "qa": true
     }
   ]

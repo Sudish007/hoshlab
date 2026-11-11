@@ -1,12 +1,100 @@
 {
-  "updatedAt": "2026-11-11T12:00:52+05:30",
+  "updatedAt": "2026-11-11T12:25:48+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261111-1200-f9aba0",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261111-1208-424067",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-11-11T12:00:52+05:30"
+    "at": "2026-11-11T12:25:48+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261111-1208-424067",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-11-11T12:08:58+05:30",
+      "endedAt": "2026-11-11T12:25:48+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W46.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 24,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "rishtapatra: 0 ideas, 9 slots, model not called (backlog full) | kaatdo: 0 ideas, 10 slots, 1 dropped, model not called (backlog full) | job_rez: 0 ideas, 12 slots, model not called (backlog full)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 558996,
+          "calls": 10,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.018756,
+          "note": "kaatdo-2026-11-14-1100: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | 3 written, 0 reworked, 1 invalid_output | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 51619,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "3 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 399196,
+          "calls": 6,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.006132,
+          "note": "3 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/drafts/rp-2026-11-13-browser-side-kundali-privacy-new/draft.json",
+        "company/state/drafts/jr-2026-11-12-master-resume-branching-workflow/draft.json",
+        "company/state/drafts/jr-2026-11-13-branching-from-a-master-resume/draft.json",
+        "company/state/drafts/jr-2026-11-12-master-resume-branching-workflow/qa.json",
+        "company/state/drafts/jr-2026-11-13-branching-from-a-master-resume/qa.json",
+        "company/state/drafts/rp-2026-11-13-browser-side-kundali-privacy-new/qa.json",
+        "company/state/drafts/index.json",
+        "company/state/usage/2026-11.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.318014
+    },
     {
       "id": "publisher-hourly-20261111-1200-f9aba0",
       "workflow": "publisher-hourly",
@@ -1543,97 +1631,12 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.185624
-    },
-    {
-      "id": "engine-daily-20261107-1138-b0f092",
-      "workflow": "engine-daily",
-      "trigger": "schedule",
-      "startedAt": "2026-11-07T11:38:53+05:30",
-      "endedAt": "2026-11-07T11:50:05+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "ceo",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Monday and state/memos/2026-W45.md exists",
-          "skipped": "not_due"
-        },
-        {
-          "name": "hr",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
-          "skipped": "not_due"
-        },
-        {
-          "name": "strategist",
-          "ok": true,
-          "ms": 281985,
-          "calls": 6,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.006041,
-          "note": "rishtapatra: 1 ideas, 9 slots, 1 assigned | kaatdo: 0 ideas, 10 slots, 1 assigned, 1 dropped | job_rez: 1 ideas, 13 slots, 1 assigned, 1 dropped | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
-        },
-        {
-          "name": "writer",
-          "ok": false,
-          "ms": 207748,
-          "calls": 10,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.013686,
-          "note": "job_rez-2026-11-09-1230: invalid_output after one repair call (gemini/gemini-3.1-flash-lite) | kaatdo-2026-11-10-0815: AllProvidersFailedError: writer: no provider answered — gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | 1 written, 0 reworked, 1 invalid_output | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
-        },
-        {
-          "name": "designer",
-          "ok": true,
-          "ms": 53963,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "1 rendered, 0 refused"
-        },
-        {
-          "name": "qa",
-          "ok": true,
-          "ms": 128171,
-          "calls": 2,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.001835,
-          "note": "1 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
-        },
-        {
-          "name": "analyst",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
-          "skipped": "not_due"
-        }
-      ],
-      "changed": [
-        "company/state/calendar.json",
-        "company/state/ideas.jsonl",
-        "company/state/drafts/rp-2026-11-07-private-kundali-calculation-in-browser/draft.json",
-        "company/state/drafts/rp-2026-11-07-private-kundali-calculation-in-browser/qa.json",
-        "company/state/drafts/index.json",
-        "company/state/usage/2026-11.jsonl",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "budgetPaidEquivalentUsd": 0.185624
     }
   ],
   "queue": {
-    "rishtapatra": 2,
+    "rishtapatra": 3,
     "kaatdo": 2,
-    "job_rez": 3
+    "job_rez": 5
   },
   "blocked": {},
   "budget": {
@@ -1642,7 +1645,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.293126
+    "paidEquivalentUsd": 0.318014
   },
   "pages": {
     "rishtapatra": {
@@ -1664,7 +1667,5 @@
       "lastPublishedAt": null
     }
   },
-  "flags": [
-    "provider_down:gemini"
-  ]
+  "flags": []
 }

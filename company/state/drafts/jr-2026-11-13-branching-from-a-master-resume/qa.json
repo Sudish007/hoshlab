@@ -1,0 +1,94 @@
+{
+  "draftId": "jr-2026-11-13-branching-from-a-master-resume",
+  "revision": 1,
+  "at": "2026-11-11T12:08:58+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "275/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "78/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "h264 1080x1920 yuv420p 30/1 16 s 139 KB faststart; poster 1080x1920 jpeg 84 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.28 over 21 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "JobRez provides one master resume, where branches are copies tailored per role",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "Each branch is scored against the posting in Job DNA",
+        "ok": true,
+        "factId": "jr-f04"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is direct and technical, aligned with engineering voice."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261111-1208-424067"
+}

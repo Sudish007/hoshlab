@@ -1,0 +1,68 @@
+{
+  "id": "rp-2026-11-13-browser-side-kundali-privacy-new",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0031",
+  "slotId": "rishtapatra-2026-11-13-1930",
+  "slotAt": "2026-11-13T19:30:00+05:30",
+  "format": "image",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-11T12:08:58+05:30",
+  "updatedAt": "2026-11-11T12:08:58+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261111-1208-424067",
+  "caption": "जन्म कुंडली बनाते समय आपकी जानकारी आपके फोन से बाहर नहीं जाती।\n\nRishtaPatra के तीन उत्पाद हैं: बायोडाटा मेकर, रिश्ता कनेक्ट (मैचमेकिंग) और मुफ्त जन्म कुंडली। जब आप अपनी जन्म कुंडली बनाते हैं, तो ज्योतिष इंजन सीधे आपके ब्राउज़र में चलता है; कोई भी अनुरोध आपकी जन्म जानकारी को बाहर नहीं भेजता।\n\nनोट: कुंडली गणना indicative है; अपने पंडित से सलाह लें।\n\nrishtapatra.com पर अपनी कुंडली बनाएं।\n\n#RishtaPatra #JanamKundali #Kundali",
+  "hashtags": [
+    "#RishtaPatra",
+    "#JanamKundali",
+    "#Kundali"
+  ],
+  "altText": "Branded text artwork titled जन्म कुंडली with subtitle ब्राउज़र में सुरक्षित and fact lines",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f05",
+      "quote": "Local-first: every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    },
+    {
+      "factId": "rp-f07",
+      "quote": "Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\""
+    }
+  ],
+  "artwork": {
+    "headline": "जन्म कुंडली",
+    "subline": "ब्राउज़र में सुरक्षित",
+    "facts": [
+      "मुफ्त जन्म कुंडली सुविधा",
+      "कोई अनुरोध जन्म डेटा नहीं भेजता",
+      "कुंडली गणना indicative; अपने पंडित से सलाह लें"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Used rp-f04, rp-f05, rp-f07 and rp-f09. Included mandatory disclaimer fragments (indicative and अपने पंडित से सलाह लें) in Hindi as required by the language and disclaimer trigger.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-13-browser-side-kundali-privacy-new/image-1-d8186aaf.jpg",
+      "bytes": 73356,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "d8186aaf1466c99e42adefbcdcb9b69c973c7dfeaa3f0146899bea918efc67bd",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-13-browser-side-kundali-privacy-new/image-1-d8186aaf.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-13-browser-side-kundali-privacy-new/image-1-d8186aaf.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-13-browser-side-kundali-privacy-new/qa.json"
+}
