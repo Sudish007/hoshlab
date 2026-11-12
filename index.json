@@ -150,6 +150,15 @@
   "kd-2026-11-12-server-side-risk-rule-execution": [
     "image-1-43c1525b.jpg"
   ],
+  "kd-2026-11-14-supported-broker-coverage": [
+    "slide-1-f1f1f1f2.jpg",
+    "slide-2-46edb1f2.jpg",
+    "slide-3-25f164d7.jpg"
+  ],
+  "kd-2026-11-15-token-expiry-protocol": [
+    "reel-14feecda.mp4",
+    "poster-e7fc24b3.jpg"
+  ],
   "rp-2026-10-14-guided-7-step-biodata-flow": [
     "slide-1-e07bec87.jpg",
     "slide-2-6237ab03.jpg",
@@ -211,6 +220,10 @@
   ],
   "rp-2026-11-13-browser-side-kundali-privacy-new": [
     "image-1-d8186aaf.jpg"
+  ],
+  "rp-2026-11-14-in-browser-astrology-calculation": [
+    "reel-5938e203.mp4",
+    "poster-1217a090.jpg"
   ],
   "sample-job_rez": {
     "sample": true,
