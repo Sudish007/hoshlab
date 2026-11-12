@@ -1,12 +1,113 @@
 {
-  "updatedAt": "2026-11-12T13:02:16+05:30",
+  "updatedAt": "2026-11-12T16:50:35+05:30",
   "lastRun": {
-    "id": "engine-daily-20261112-1251-3ad33c",
-    "workflow": "engine-daily",
+    "id": "publisher-hourly-20261112-1650-2e35c2",
+    "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-11-12T13:02:16+05:30"
+    "at": "2026-11-12T16:50:35+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261112-1650-2e35c2",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-11-12T16:50:35+05:30",
+      "endedAt": "2026-11-12T16:50:35+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 22,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 5 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/jr-2026-11-10-watermark-free-exports/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-11-11-three-pillars-from-biodata-to-rishta",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-11-13-browser-side-kundali-privacy-new",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "rp-2026-11-14-in-browser-astrology-calculation",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-11-12-server-side-risk-rule-execution",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-14-supported-broker-coverage",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-11-15-token-expiry-protocol",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-11-11-six-layout-rules-measured-live",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-12-master-resume-branching-workflow",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-13-branching-from-a-master-resume",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "jr-2026-11-10-watermark-free-exports"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.346291
+    },
     {
       "id": "engine-daily-20261112-1251-3ad33c",
       "workflow": "engine-daily",
@@ -1612,101 +1713,12 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.233216
-    },
-    {
-      "id": "engine-daily-20261108-1144-b6f445",
-      "workflow": "engine-daily",
-      "trigger": "schedule",
-      "startedAt": "2026-11-08T11:44:45+05:30",
-      "endedAt": "2026-11-08T12:01:47+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "ceo",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Monday and state/memos/2026-W45.md exists",
-          "skipped": "not_due"
-        },
-        {
-          "name": "hr",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
-          "skipped": "not_due"
-        },
-        {
-          "name": "strategist",
-          "ok": true,
-          "ms": 217470,
-          "calls": 2,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.01026,
-          "note": "rishtapatra: 3 ideas, 10 slots, 1 assigned | kaatdo: 2 ideas, 10 slots, 1 assigned | job_rez: 0 ideas, 12 slots, 1 dropped, model not called (backlog full) | completed models: Google Gemini · gemini-3.8-flash (@rishtapatra); Google Gemini · gemini-3.8-flash (@kaatdo)"
-        },
-        {
-          "name": "writer",
-          "ok": false,
-          "ms": 611313,
-          "calls": 10,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.027615,
-          "note": "rishtapatra-2026-11-09-1930: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | 3 written, 0 reworked, 1 invalid_output | rework loop: 0 written, 1 reworked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.8-flash (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.8-flash (@job_rez)"
-        },
-        {
-          "name": "designer",
-          "ok": true,
-          "ms": 1124,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "3 rendered, 0 refused | rework loop: 1 rendered, 0 refused"
-        },
-        {
-          "name": "qa",
-          "ok": true,
-          "ms": 191331,
-          "calls": 5,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.009717,
-          "note": "2 queued, 1 rework, 0 blocked | rework loop: 1 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.8-flash (@job_rez)"
-        },
-        {
-          "name": "analyst",
-          "ok": true,
-          "ms": 1,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "insights: 0 posts measured (0 records) | skipped: no_metrics — no insights yet for the 0 posts of the last 28 days — no report written (the first report needs a post that has been live for 48 hours)",
-          "skipped": "no_metrics"
-        }
-      ],
-      "changed": [
-        "company/state/calendar.json",
-        "company/state/ideas.jsonl",
-        "company/state/drafts/jr-2026-11-09-grounded-rule-based-rewrites/draft.json",
-        "company/state/drafts/kd-2026-11-10-automated-rule-breach-execution/draft.json",
-        "company/state/drafts/jr-2026-11-10-watermark-free-exports/draft.json",
-        "company/state/drafts/jr-2026-11-09-grounded-rule-based-rewrites/qa.json",
-        "company/state/drafts/jr-2026-11-10-watermark-free-exports/qa.json",
-        "company/state/drafts/kd-2026-11-10-automated-rule-breach-execution/qa.json",
-        "company/state/drafts/index.json",
-        "company/state/usage/2026-11.jsonl",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "budgetPaidEquivalentUsd": 0.233216
     }
   ],
   "queue": {
     "rishtapatra": 3,
     "kaatdo": 3,
-    "job_rez": 4
+    "job_rez": 3
   },
   "blocked": {},
   "budget": {
