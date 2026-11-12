@@ -1,0 +1,103 @@
+{
+  "id": "kd-2026-11-15-token-expiry-protocol",
+  "page": "kaatdo",
+  "ideaId": "kd-i0026",
+  "slotId": "kaatdo-2026-11-15-1100",
+  "slotAt": "2026-11-15T11:00:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 2,
+  "reworkCount": 1,
+  "mock": false,
+  "createdAt": "2026-11-12T12:51:27+05:30",
+  "updatedAt": "2026-11-12T12:51:27+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261112-1251-3ad33c",
+  "caption": "SEBI norms mandate daily broker token expiry. Reconnect your account every trading morning. The server dispatches an 08:45 IST stale-token nudge and a 09:20 IST connected but NOT armed alert. kaatdo.com काट दो. KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed. #KaatDo #TokenExpiry #SEBINorms #BrokerAPI #TradingDiscipline #RiskManagement #FandO #TradingTools",
+  "hashtags": [
+    "#KaatDo",
+    "#TokenExpiry",
+    "#SEBINorms",
+    "#BrokerAPI",
+    "#TradingDiscipline",
+    "#RiskManagement",
+    "#FandO",
+    "#TradingTools"
+  ],
+  "altText": "Kinetic text slide displaying daily broker token expiry and monitoring alerts",
+  "factsUsed": [
+    {
+      "factId": "kd-f07",
+      "quote": "Broker tokens expire every day (SEBI norms), so the trader reconnects each trading morning; 08:45 IST stale-token nudge and 09:20 IST \"connected but NOT armed\" alert"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 20,
+    "scenes": [
+      {
+        "text": "Broker tokens expire daily under SEBI norms.",
+        "seconds": 4
+      },
+      {
+        "text": "Reconnect your broker each trading morning.",
+        "seconds": 4
+      },
+      {
+        "text": "Watch for the 08:45 IST stale-token nudge.",
+        "seconds": 4
+      },
+      {
+        "text": "Watch for the 09:20 IST connected but NOT armed alert.",
+        "seconds": 4
+      },
+      {
+        "text": "Keep monitoring active before open.",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Adjusted caption opening and scene structure to resolve the Jaccard similarity issue from the previous revision while maintaining strict compliance with facts and negative constraints.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/kd-2026-11-15-token-expiry-protocol/reel-14feecda.mp4",
+      "bytes": 192061,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "14feecda4e53a38afce5efd94ebdc5d177467edac794822b29e2c76125f06873",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-15-token-expiry-protocol/reel-14feecda.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-15-token-expiry-protocol/reel-14feecda.mp4",
+      "durationSec": 20,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 20,
+        "bytes": 192061,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/kd-2026-11-15-token-expiry-protocol/poster-e7fc24b3.jpg",
+      "bytes": 69016,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "e7fc24b397239935641b6e756975a01574c1b9ddf68d69e1458abce613582940",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-15-token-expiry-protocol/poster-e7fc24b3.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-15-token-expiry-protocol/poster-e7fc24b3.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "qaRef": "drafts/kd-2026-11-15-token-expiry-protocol/qa.json",
+  "designNote": "reel kinetic · 5 scenes · 20 s · 600 frames · dark console palette"
+}

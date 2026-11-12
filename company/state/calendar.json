@@ -1,54 +1,40 @@
 {
-  "generatedAt": "2026-11-11T12:08:58+05:30",
+  "generatedAt": "2026-11-12T12:51:27+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-11-08-1100",
-      "page": "kaatdo",
-      "at": "2026-11-08T11:00:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-08-morning-token-routine expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-09-1230",
       "page": "job_rez",
       "at": "2026-11-09T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0004",
-      "reason": "Filling slot with an existing open idea matching priority themes on layout and rewriting.",
-      "draftId": "jr-2026-11-09-grounded-rule-based-rewrites"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-09-grounded-rule-based-rewrites expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-09-1930",
       "page": "rishtapatra",
       "at": "2026-11-09T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0020",
-      "reason": "Filling the open image slot with a core priority idea on free client-side privacy and Janam Kundali.",
-      "draftId": "rp-2026-11-09-browser-side-kundali-privacy"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-09-browser-side-kundali-privacy expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-10-0815",
       "page": "kaatdo",
       "at": "2026-11-10T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0017",
-      "reason": "Assigning an existing open idea covering server-side breach mechanics to fill the image slot, fulfilling the current priority.",
-      "draftId": "kd-2026-11-10-automated-rule-breach-execution"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-10-automated-rule-breach-execution expired -2.2 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-10-1230",
       "page": "job_rez",
       "at": "2026-11-10T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0007",
-      "reason": "Aligns directly with CEO priority 2 focusing on unwatermarked exports on the free tier.",
-      "draftId": "jr-2026-11-10-watermark-free-exports"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-10-watermark-free-exports expired -2 days before the slot (lead 3 days)",
+      "draftId": "jr-2026-11-10-watermark-free-exports",
+      "ideaId": "jr-i0007"
     },
     {
       "slotId": "job_rez-2026-11-11-1230",
@@ -115,27 +101,30 @@
       "page": "kaatdo",
       "at": "2026-11-14T11:00:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0006",
-      "reason": "Assigning open carousel idea covering supported broker coverage and six official trade APIs."
+      "reason": "Assigning open carousel idea covering supported broker coverage and six official trade APIs.",
+      "draftId": "kd-2026-11-14-supported-broker-coverage"
     },
     {
       "slotId": "rishtapatra-2026-11-14-1930",
       "page": "rishtapatra",
       "at": "2026-11-14T19:30:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0027",
-      "reason": "Filling the scheduled Friday/Saturday reel slot using an existing open backlog idea covering priority 1 (local-first browser astrology privacy)."
+      "reason": "Filling the scheduled Friday/Saturday reel slot using an existing open backlog idea covering priority 1 (local-first browser astrology privacy).",
+      "draftId": "rp-2026-11-14-in-browser-astrology-calculation"
     },
     {
       "slotId": "kaatdo-2026-11-15-1100",
       "page": "kaatdo",
       "at": "2026-11-15T11:00:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0026",
-      "reason": "Assigns existing open idea focusing on priority 2 token expiry mechanics directly matching the reel slot."
+      "reason": "Assigns existing open idea focusing on priority 2 token expiry mechanics directly matching the reel slot.",
+      "draftId": "kd-2026-11-15-token-expiry-protocol"
     },
     {
       "slotId": "job_rez-2026-11-16-1230",
@@ -289,6 +278,42 @@
       "status": "planned",
       "ideaId": "jr-i0016",
       "reason": "Addresses priority 2: structural layout rules."
+    },
+    {
+      "slotId": "job_rez-2026-11-25-1230",
+      "page": "job_rez",
+      "at": "2026-11-25T12:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "jr-i0036",
+      "reason": "Covering CEO priority 1 on master resume branching and deterministic taxonomy role matching using an existing open carousel idea."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-25-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-25T19:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "rp-i0024",
+      "reason": "Assigning existing open idea rp-i0024 to cover the carousel slot and align with CEO priority two on core products and free Janam Kundali."
+    },
+    {
+      "slotId": "kaatdo-2026-11-26-0815",
+      "page": "kaatdo",
+      "at": "2026-11-26T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0017",
+      "reason": "Assigned open idea kd-i0017 covering server-side kill switch and rule breach execution as prioritized by the CEO memo."
+    },
+    {
+      "slotId": "job_rez-2026-11-26-1230",
+      "page": "job_rez",
+      "at": "2026-11-26T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0019",
+      "reason": "Covering CEO priority 2 on layout rule checks using an existing open image idea."
     }
   ]
 }

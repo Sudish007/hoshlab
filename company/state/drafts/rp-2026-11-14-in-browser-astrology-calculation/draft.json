@@ -1,0 +1,97 @@
+{
+  "id": "rp-2026-11-14-in-browser-astrology-calculation",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0027",
+  "slotId": "rishtapatra-2026-11-14-1930",
+  "slotAt": "2026-11-14T19:30:00+05:30",
+  "format": "reel",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-12T12:51:27+05:30",
+  "updatedAt": "2026-11-12T12:51:27+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261112-1251-3ad33c",
+  "caption": "क्या आप जानते हैं कि आपकी जन्म कुंडली आपके फोन के ब्राउज़र में ही सुरक्षित तैयार होती है? जब आप RishtaPatra पर अपनी Janam Kundali देखते हैं, तो एस्ट्रोलॉजी इंजन सीधे आपके ब्राउज़र में काम करता है। कोई भी रिक्वेस्ट आपका जन्म डेटा इंटरनेट पर नहीं भेजती है। RishtaPatra के पास तीन उत्पाद हैं: बायोडाटा मेकर, Rishta Connect और Janam Kundali (free)। सभी कैलकुलेशन indicative हैं; अपने पंडित से सलाह लें। अपनी कुंडली आज ही सुरक्षित तरीके से देखें: rishtapatra.com",
+  "hashtags": [
+    "#RishtaPatra",
+    "#JanamKundali",
+    "#Kundali",
+    "#Biodata",
+    "#Rishta",
+    "#Privacy"
+  ],
+  "altText": "क्या आप जानते हैं कि आपकी जन्म कुंडली आपके फोन के ब्राउज़र में ही सुरक्षित तैयार होती है?",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f07",
+      "quote": "Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\"; no health, money or legal advice"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 15,
+    "scenes": [
+      {
+        "text": "क्या जन्म कुंडली आपके फोन में सुरक्षित तैयार होती है?",
+        "seconds": 5
+      },
+      {
+        "text": "एस्ट्रोलॉजी इंजन सीधे आपके ब्राउज़र में काम करता है।",
+        "seconds": 5
+      },
+      {
+        "text": "कोई भी रिक्वेस्ट जन्म डेटा इंटरनेट पर नहीं भेजती है।",
+        "seconds": 5
+      }
+    ]
+  },
+  "writerNote": "Corrected alt text length and scene text length to meet constraints.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/rp-2026-11-14-in-browser-astrology-calculation/reel-5938e203.mp4",
+      "bytes": 156681,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "5938e203820574ae83cdd3d398e58e2550e18b8feb1e7d0086fd576f16f9a8eb",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-14-in-browser-astrology-calculation/reel-5938e203.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-14-in-browser-astrology-calculation/reel-5938e203.mp4",
+      "durationSec": 15,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 15,
+        "bytes": 156681,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/rp-2026-11-14-in-browser-astrology-calculation/poster-1217a090.jpg",
+      "bytes": 82842,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "1217a090eb93b9c049db36e5c7d37e1fc2366fba7855d13482737c604462bd9f",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-14-in-browser-astrology-calculation/poster-1217a090.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-14-in-browser-astrology-calculation/poster-1217a090.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 3 scenes · 15 s · 450 frames · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-14-in-browser-astrology-calculation/qa.json"
+}

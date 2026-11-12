@@ -1,0 +1,124 @@
+{
+  "draftId": "kd-2026-11-14-supported-broker-coverage",
+  "revision": 1,
+  "at": "2026-11-12T12:51:27+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "678/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "8/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "always → 3/3 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "10 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "3 alt texts, longest 55/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; Devanagari only \"काट दो\")"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "3 × 1080x1350 jpeg max 83 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on kaatdo.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.49 over 18 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "KaatDo operates as a server-side kill switch across six supported brokers: Fyers, Upstox, Zerodha, Angel One, Dhan, and Groww",
+        "ok": true,
+        "factId": "kd-f03"
+      },
+      {
+        "claim": "Monitoring and execution run entirely through official trade APIs",
+        "ok": true,
+        "factId": "kd-f03"
+      },
+      {
+        "claim": "MCX commodity monitoring is beta on Fyers and Upstox",
+        "ok": true,
+        "factId": "kd-f11"
+      },
+      {
+        "claim": "Zerodha, Angel One, Dhan, and Groww are equity-only",
+        "ok": true,
+        "factId": "kd-f11"
+      },
+      {
+        "claim": "Groww provides no live unrealised P&L",
+        "ok": true,
+        "factId": "kd-f11"
+      },
+      {
+        "claim": "KaatDo is not investment advice",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "KaatDo is not registered with SEBI",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "Broker API execution is never guaranteed",
+        "ok": true,
+        "factId": "kd-f10"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone matches the requested console-like risk-first voice, all claims are securely backed by the cited facts, and mandatory disclaimers are present verbatim."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261112-1251-3ad33c"
+}

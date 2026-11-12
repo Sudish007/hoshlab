@@ -1,0 +1,97 @@
+{
+  "id": "kd-2026-11-14-supported-broker-coverage",
+  "page": "kaatdo",
+  "ideaId": "kd-i0006",
+  "slotId": "kaatdo-2026-11-14-1100",
+  "slotAt": "2026-11-14T11:00:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-12T12:51:27+05:30",
+  "updatedAt": "2026-11-12T12:51:27+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261112-1251-3ad33c",
+  "caption": "Six brokers, official APIs, zero browser scripts.\n\nKaatDo operates as a server-side kill switch across six supported brokers: Fyers, Upstox, Zerodha, Angel One, Dhan, and Groww. Monitoring and execution run entirely through official trade APIs.\n\nKeep your broker scope in mind. MCX commodity monitoring is beta on Fyers and Upstox, while Zerodha, Angel One, Dhan, and Groww are equity-only. Note that Groww provides no live unrealised P&L.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#TradingTools",
+    "#BrokerIntegration",
+    "#APIExecution",
+    "#TradingDiscipline",
+    "#RiskManagement",
+    "#FandO"
+  ],
+  "altText": "Slide 1 of carousel: Six brokers, official APIs, zero browser scripts.",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f11",
+      "quote": "MCX commodity scope is beta on Fyers and Upstox; Zerodha, Angel One, Dhan and Groww are equity-only; Groww has no live unrealised P&L"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Six Supported Brokers",
+      "body": "KaatDo runs a server-side kill switch across Fyers, Upstox, Zerodha, Angel One, Dhan, and Groww using official trade APIs.",
+      "altText": "Slide 1: Six Supported Brokers and official trade APIs."
+    },
+    {
+      "heading": "API Scope and Limits",
+      "body": "MCX commodity is beta on Fyers and Upstox. Zerodha, Angel One, Dhan, and Groww are equity-only. Groww has no live unrealised P&L.",
+      "altText": "Slide 2: API Scope and Limits across brokers."
+    },
+    {
+      "heading": "Zero Browser Scripts",
+      "body": "Execution runs directly through official trade APIs without relying on browser extensions or fragile UI automation.",
+      "altText": "Slide 3: Zero Browser Scripts and direct API execution."
+    }
+  ],
+  "altTexts": [
+    "Slide 1: Six Supported Brokers and official trade APIs.",
+    "Slide 2: API Scope and Limits across brokers.",
+    "Slide 3: Zero Browser Scripts and direct API execution."
+  ],
+  "writerNote": "Carried out the carousel format addressing supported broker coverage using kd-f03 and kd-f11, maintaining the terse second-person console voice and mandatory disclaimers.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-14-supported-broker-coverage/slide-1-f1f1f1f2.jpg",
+      "bytes": 83365,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "f1f1f1f240f5b7b94913934ddc30d9562133bd1981cee57ea7fd98b5dda7d6f1",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-14-supported-broker-coverage/slide-1-f1f1f1f2.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-14-supported-broker-coverage/slide-1-f1f1f1f2.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-14-supported-broker-coverage/slide-2-46edb1f2.jpg",
+      "bytes": 82457,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "46edb1f2ae16b55643e5c76496656f87736467b90eedf91444a99b8caca1415e",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-14-supported-broker-coverage/slide-2-46edb1f2.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-14-supported-broker-coverage/slide-2-46edb1f2.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-14-supported-broker-coverage/slide-3-25f164d7.jpg",
+      "bytes": 82965,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "25f164d73c008243e89c9800c7fec4b8bd32141fe6ea653e73051a3c1857b477",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-14-supported-broker-coverage/slide-3-25f164d7.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-14-supported-broker-coverage/slide-3-25f164d7.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "3 slides · variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-11-14-supported-broker-coverage/qa.json"
+}

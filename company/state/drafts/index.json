@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-12T08:33:53+05:30",
+  "updatedAt": "2026-11-12T12:51:27+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -431,6 +431,28 @@
       "qa": true
     },
     {
+      "id": "kd-2026-11-14-supported-broker-coverage",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "kaatdo-2026-11-14-1100",
+      "slotAt": "2026-11-14T11:00:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-12T12:51:27+05:30",
+      "qa": true
+    },
+    {
+      "id": "kd-2026-11-15-token-expiry-protocol",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "kaatdo-2026-11-15-1100",
+      "slotAt": "2026-11-15T11:00:00+05:30",
+      "revision": 2,
+      "updatedAt": "2026-11-12T12:51:27+05:30",
+      "qa": true
+    },
+    {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
       "status": "expired",
@@ -604,6 +626,17 @@
       "slotAt": "2026-11-13T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-11T12:08:58+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-11-14-in-browser-astrology-calculation",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "rishtapatra-2026-11-14-1930",
+      "slotAt": "2026-11-14T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-12T12:51:27+05:30",
       "qa": true
     }
   ]
