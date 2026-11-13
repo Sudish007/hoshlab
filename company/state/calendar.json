@@ -1,40 +1,14 @@
 {
-  "generatedAt": "2026-11-12T12:51:27+05:30",
+  "generatedAt": "2026-11-13T12:24:34+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-09-1230",
-      "page": "job_rez",
-      "at": "2026-11-09T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-09-grounded-rule-based-rewrites expired -3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-09-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-09T19:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-09-browser-side-kundali-privacy expired -2.7 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "kaatdo-2026-11-10-0815",
-      "page": "kaatdo",
-      "at": "2026-11-10T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-10-automated-rule-breach-execution expired -2.2 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-10-1230",
       "page": "job_rez",
       "at": "2026-11-10T12:30:00+05:30",
       "format": "image",
       "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-10-watermark-free-exports expired -2 days before the slot (lead 3 days)",
-      "draftId": "jr-2026-11-10-watermark-free-exports",
-      "ideaId": "jr-i0007"
+      "reason": "dropped: draft jr-2026-11-10-watermark-free-exports expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-11-1230",
