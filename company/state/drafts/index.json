@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-13T21:59:02+05:30",
+  "updatedAt": "2026-11-14T08:50:46+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -422,12 +422,12 @@
     {
       "id": "kd-2026-11-12-server-side-risk-rule-execution",
       "page": "kaatdo",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "kaatdo-2026-11-12-0815",
       "slotAt": "2026-11-12T08:15:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-09T12:17:25+05:30",
+      "updatedAt": "2026-11-14T08:50:46+05:30",
       "qa": true
     },
     {
