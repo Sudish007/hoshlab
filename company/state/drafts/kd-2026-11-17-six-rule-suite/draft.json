@@ -1,0 +1,69 @@
+{
+  "id": "kd-2026-11-17-six-rule-suite",
+  "page": "kaatdo",
+  "ideaId": "kd-i0023",
+  "slotId": "kaatdo-2026-11-17-0815",
+  "slotAt": "2026-11-17T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-14T12:08:00+05:30",
+  "updatedAt": "2026-11-14T12:08:00+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261114-1208-73dd86",
+  "caption": "Six rules monitor your trading account on official broker APIs. Configure max_daily_loss, profit_target, max_trades, kill_time, kill_days, and kill_dates to enforce discipline before manual control slips. When any limit breaches, KaatDo cancels every pending order and squares off every position at market, keeping your account locked until close while re-firing if trading activity reappears.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.\n\n#KaatDo #KillSwitch #RiskManagement #TradingDiscipline #FandO #TradingTools #ServerSide #TradeExecution",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#RiskManagement",
+    "#TradingDiscipline",
+    "#FandO",
+    "#TradingTools",
+    "#ServerSide",
+    "#TradeExecution"
+  ],
+  "altText": "Artwork for Six Rule Suite with kaatdo.com footer",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f04",
+      "quote": "Six rules: max_daily_loss, profit_target, max_trades, kill_time, kill_days, kill_dates"
+    },
+    {
+      "factId": "kd-f05",
+      "quote": "On breach: cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    }
+  ],
+  "artwork": {
+    "headline": "Six Rule Suite",
+    "subline": "Configure six rules on official broker APIs.",
+    "facts": [
+      "max_daily_loss, profit_target, max_trades",
+      "kill_time, kill_days, kill_dates",
+      "Cancels orders and squares off on breach"
+    ],
+    "footer": "kaatdo.com"
+  },
+  "writerNote": "Shortened altText to under 100 characters to comply with validation rules.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-17-six-rule-suite/image-1-d12e118c.jpg",
+      "bytes": 92173,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "d12e118cac94aecfb213e916f78d6292a0e0bd47ea8344547d8de70e91835d7d",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-17-six-rule-suite/image-1-d12e118c.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-17-six-rule-suite/image-1-d12e118c.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-11-17-six-rule-suite/qa.json"
+}

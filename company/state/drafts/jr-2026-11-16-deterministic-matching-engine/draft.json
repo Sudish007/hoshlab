@@ -1,0 +1,63 @@
+{
+  "id": "jr-2026-11-16-deterministic-matching-engine",
+  "page": "job_rez",
+  "ideaId": "jr-i0026",
+  "slotId": "job_rez-2026-11-16-1230",
+  "slotAt": "2026-11-16T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-14T12:08:00+05:30",
+  "updatedAt": "2026-11-14T12:08:00+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261114-1208-73dd86",
+  "caption": "Deterministic matching weights required terms double and preferred terms once.\n\nIn JobRez, role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once, with no cloud AI and no external verification.\n\nYou keep one master resume; branches are copies tailored per role, and each branch is scored against the posting in Job DNA.\n\nRead more at jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#resumebuilder",
+    "#softwareengineer",
+    "#techjobs",
+    "#jobsearch",
+    "#resume"
+  ],
+  "altText": "Graphic card stating deterministic role match with weighted terms and branches scored in Job DNA",
+  "factsUsed": [
+    {
+      "factId": "jr-f04",
+      "quote": "One master resume; branches are copies tailored per role; each branch is scored against the posting in Job DNA"
+    },
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "artwork": {
+    "headline": "Deterministic matching engine",
+    "subline": "Role match uses a curated taxonomy, not cloud models.",
+    "facts": [
+      "Curated technology taxonomy with aliases and whole-word match",
+      "Required terms weighted double, preferred terms once",
+      "One master resume; branches scored against postings in Job DNA"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Plain English copy strictly adhering to no exclamation marks, no AI tokens, and verified facts jr-f04 and jr-f05.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-16-deterministic-matching-engine/image-1-df016dfe.jpg",
+      "bytes": 130551,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "df016dfec25c9fedc6ef3eb34a5ccacb4b41e58b269973822009628699f0ba00",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-16-deterministic-matching-engine/image-1-df016dfe.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-16-deterministic-matching-engine/image-1-df016dfe.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-11-16-deterministic-matching-engine/qa.json"
+}

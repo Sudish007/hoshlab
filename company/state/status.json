@@ -1,12 +1,99 @@
 {
-  "updatedAt": "2026-11-14T08:50:46+05:30",
+  "updatedAt": "2026-11-14T12:19:27+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261114-0850-aab668",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261114-1208-73dd86",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-11-14T08:50:46+05:30"
+    "at": "2026-11-14T12:19:27+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261114-1208-73dd86",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-11-14T12:08:00+05:30",
+      "endedAt": "2026-11-14T12:19:27+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W46.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 282418,
+          "calls": 6,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.005574,
+          "note": "rishtapatra: 0 ideas, 10 slots, 1 assigned, 1 dropped | kaatdo: 0 ideas, 10 slots, 1 assigned, 1 dropped | job_rez: 0 ideas, 13 slots, 1 assigned, 1 dropped | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 247990,
+          "calls": 7,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.018275,
+          "note": "rishtapatra-2026-11-16-1930: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | 2 written, 0 reworked, 1 invalid_output | completed models: Google Gemini · gemini-3.8-flash (@job_rez); Google Gemini · gemini-3.5-flash-lite (@kaatdo)"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 2008,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "2 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 154436,
+          "calls": 4,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.004049,
+          "note": "2 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@kaatdo)"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/drafts/jr-2026-11-16-deterministic-matching-engine/draft.json",
+        "company/state/drafts/kd-2026-11-17-six-rule-suite/draft.json",
+        "company/state/drafts/jr-2026-11-16-deterministic-matching-engine/qa.json",
+        "company/state/drafts/kd-2026-11-17-six-rule-suite/qa.json",
+        "company/state/drafts/index.json",
+        "company/state/usage/2026-11.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.374189
+    },
     {
       "id": "publisher-hourly-20261114-0850-aab668",
       "workflow": "publisher-hourly",
@@ -1701,107 +1788,12 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.285255
-    },
-    {
-      "id": "publisher-hourly-20261109-2303-0f7cf3",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-11-09T23:03:52+05:30",
-      "endedAt": "2026-11-09T23:03:52+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 23,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 5 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/rp-2026-11-07-private-kundali-calculation-in-browser/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-11-09-browser-side-kundali-privacy",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-11-11-three-pillars-from-biodata-to-rishta",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-08-morning-token-routine",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-10-automated-rule-breach-execution",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-12-server-side-risk-rule-execution",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-09-grounded-rule-based-rewrites",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-10-watermark-free-exports",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-11-six-layout-rules-measured-live",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "rp-2026-11-07-private-kundali-calculation-in-browser"
-        ],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.285255
     }
   ],
   "queue": {
     "rishtapatra": 2,
-    "kaatdo": 2,
-    "job_rez": 2
+    "kaatdo": 3,
+    "job_rez": 3
   },
   "blocked": {},
   "budget": {
@@ -1810,7 +1802,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.346291
+    "paidEquivalentUsd": 0.374189
   },
   "pages": {
     "rishtapatra": {

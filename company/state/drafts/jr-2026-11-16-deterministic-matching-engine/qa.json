@@ -1,0 +1,94 @@
+{
+  "draftId": "jr-2026-11-16-deterministic-matching-engine",
+  "revision": 1,
+  "at": "2026-11-14T12:08:00+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "511/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "96/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 131 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.43 over 22 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Role match is deterministic with a curated technology taxonomy, aliases, whole-word matching, required terms weighted double and preferred terms once, and no cloud AI or external verification",
+        "ok": true,
+        "factId": "jr-f05"
+      },
+      {
+        "claim": "One master resume with branches tailored per role, scored against postings in Job DNA",
+        "ok": true,
+        "factId": "jr-f04"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is clean, factual, and strictly aligned with the product README."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261114-1208-73dd86"
+}

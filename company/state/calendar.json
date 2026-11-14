@@ -1,44 +1,30 @@
 {
-  "generatedAt": "2026-11-13T12:24:34+05:30",
+  "generatedAt": "2026-11-14T12:08:00+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-10-1230",
-      "page": "job_rez",
-      "at": "2026-11-10T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-10-watermark-free-exports expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-11-1230",
       "page": "job_rez",
       "at": "2026-11-11T12:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "jr-i0001",
-      "reason": "Directly matches Priority 2 by breaking down the six structural layout rules across a carousel format.",
-      "draftId": "jr-2026-11-11-six-layout-rules-measured-live"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-11-six-layout-rules-measured-live expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-11-1930",
       "page": "rishtapatra",
       "at": "2026-11-11T19:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "rp-i0005",
-      "reason": "Filling the carousel slot with an existing open idea covering the core platform features and priorities without repeating any recent content.",
-      "draftId": "rp-2026-11-11-three-pillars-from-biodata-to-rishta"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-11-three-pillars-from-biodata-to-rishta expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-12-0815",
       "page": "kaatdo",
       "at": "2026-11-12T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0027",
-      "reason": "Assigned open idea kd-i0027 to fill the open image slot with server-side kill switch mechanics.",
-      "draftId": "kd-2026-11-12-server-side-risk-rule-execution"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-12-server-side-risk-rule-execution expired -2.2 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-12-1230",
@@ -105,9 +91,10 @@
       "page": "job_rez",
       "at": "2026-11-16T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0026",
-      "reason": "Aligns with CEO priority 1 on master resume branching and deterministic role matching."
+      "reason": "Aligns with CEO priority 1 on master resume branching and deterministic role matching.",
+      "draftId": "jr-2026-11-16-deterministic-matching-engine"
     },
     {
       "slotId": "rishtapatra-2026-11-16-1930",
@@ -123,9 +110,10 @@
       "page": "kaatdo",
       "at": "2026-11-17T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0023",
-      "reason": "Assigned existing open idea covering priority one rule suite and execution across six broker APIs."
+      "reason": "Assigned existing open idea covering priority one rule suite and execution across six broker APIs.",
+      "draftId": "kd-2026-11-17-six-rule-suite"
     },
     {
       "slotId": "job_rez-2026-11-17-1230",
@@ -288,6 +276,33 @@
       "status": "planned",
       "ideaId": "jr-i0019",
       "reason": "Covering CEO priority 2 on layout rule checks using an existing open image idea."
+    },
+    {
+      "slotId": "job_rez-2026-11-27-1230",
+      "page": "job_rez",
+      "at": "2026-11-27T12:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "jr-i0022",
+      "reason": "Filling the scheduled reel slot with an open idea matching the first priority on deterministic taxonomy scoring."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-27-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-27T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0022",
+      "reason": "Assigning an existing open idea matching the first CEO priority on local-first processing and privacy."
+    },
+    {
+      "slotId": "kaatdo-2026-11-28-1100",
+      "page": "kaatdo",
+      "at": "2026-11-28T11:00:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "kd-i0019",
+      "reason": "Assigned open idea addressing the server-side kill switch coverage across supported brokers."
     }
   ]
 }
