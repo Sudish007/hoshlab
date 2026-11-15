@@ -1,12 +1,101 @@
 {
-  "updatedAt": "2026-11-15T16:29:40+05:30",
+  "updatedAt": "2026-11-15T23:15:05+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261115-1629-317bfa",
+    "id": "publisher-hourly-20261115-2315-4c4fdb",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-11-15T16:29:40+05:30"
+    "at": "2026-11-15T23:15:05+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261115-2315-4c4fdb",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-11-15T23:15:05+05:30",
+      "endedAt": "2026-11-15T23:15:05+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 32,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 4 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/rp-2026-11-13-browser-side-kundali-privacy-new/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-11-14-in-browser-astrology-calculation",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-11-16-local-first-privacy",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-11-14-supported-broker-coverage",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-15-token-expiry-protocol",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-17-six-rule-suite",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-11-16-deterministic-matching-engine",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-11-17-deterministic-taxonomy-matching",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "rp-2026-11-13-browser-side-kundali-privacy-new"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "idle"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.39275
+    },
     {
       "id": "publisher-hourly-20261115-1629-317bfa",
       "workflow": "publisher-hourly",
@@ -1710,98 +1799,10 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.318014
-    },
-    {
-      "id": "engine-daily-20261111-1208-424067",
-      "workflow": "engine-daily",
-      "trigger": "schedule",
-      "startedAt": "2026-11-11T12:08:58+05:30",
-      "endedAt": "2026-11-11T12:25:48+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "ceo",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Monday and state/memos/2026-W46.md exists",
-          "skipped": "not_due"
-        },
-        {
-          "name": "hr",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
-          "skipped": "not_due"
-        },
-        {
-          "name": "strategist",
-          "ok": true,
-          "ms": 24,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "rishtapatra: 0 ideas, 9 slots, model not called (backlog full) | kaatdo: 0 ideas, 10 slots, 1 dropped, model not called (backlog full) | job_rez: 0 ideas, 12 slots, model not called (backlog full)"
-        },
-        {
-          "name": "writer",
-          "ok": false,
-          "ms": 558996,
-          "calls": 10,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.018756,
-          "note": "kaatdo-2026-11-14-1100: invalid_output after one repair call (gemini/gemini-3.5-flash-lite) | 3 written, 0 reworked, 1 invalid_output | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
-        },
-        {
-          "name": "designer",
-          "ok": true,
-          "ms": 51619,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "3 rendered, 0 refused"
-        },
-        {
-          "name": "qa",
-          "ok": true,
-          "ms": 399196,
-          "calls": 6,
-          "costUsd": 0,
-          "paidEquivalentUsd": 0.006132,
-          "note": "3 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@job_rez); Google Gemini · gemini-3.5-flash-lite (@rishtapatra)"
-        },
-        {
-          "name": "analyst",
-          "ok": true,
-          "ms": 0,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
-          "skipped": "not_due"
-        }
-      ],
-      "changed": [
-        "company/state/calendar.json",
-        "company/state/ideas.jsonl",
-        "company/state/drafts/rp-2026-11-13-browser-side-kundali-privacy-new/draft.json",
-        "company/state/drafts/jr-2026-11-12-master-resume-branching-workflow/draft.json",
-        "company/state/drafts/jr-2026-11-13-branching-from-a-master-resume/draft.json",
-        "company/state/drafts/jr-2026-11-12-master-resume-branching-workflow/qa.json",
-        "company/state/drafts/jr-2026-11-13-branching-from-a-master-resume/qa.json",
-        "company/state/drafts/rp-2026-11-13-browser-side-kundali-privacy-new/qa.json",
-        "company/state/drafts/index.json",
-        "company/state/usage/2026-11.jsonl",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "budgetPaidEquivalentUsd": 0.318014
     }
   ],
   "queue": {
-    "rishtapatra": 3,
+    "rishtapatra": 2,
     "kaatdo": 3,
     "job_rez": 2
   },

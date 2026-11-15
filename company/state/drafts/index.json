@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-15T16:29:40+05:30",
+  "updatedAt": "2026-11-15T23:15:05+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -653,12 +653,12 @@
     {
       "id": "rp-2026-11-13-browser-side-kundali-privacy-new",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "rishtapatra-2026-11-13-1930",
       "slotAt": "2026-11-13T19:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-11T12:08:58+05:30",
+      "updatedAt": "2026-11-15T23:15:05+05:30",
       "qa": true
     },
     {
