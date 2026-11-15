@@ -1,40 +1,14 @@
 {
-  "generatedAt": "2026-11-14T12:08:00+05:30",
+  "generatedAt": "2026-11-15T12:14:26+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-11-1230",
-      "page": "job_rez",
-      "at": "2026-11-11T12:30:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-11-six-layout-rules-measured-live expired -3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-11-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-11T19:30:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-11-three-pillars-from-biodata-to-rishta expired -2.7 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "kaatdo-2026-11-12-0815",
-      "page": "kaatdo",
-      "at": "2026-11-12T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-12-server-side-risk-rule-execution expired -2.2 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-12-1230",
       "page": "job_rez",
       "at": "2026-11-12T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0028",
-      "reason": "Matches the first CEO priority on master resume branching and role-specific copies.",
-      "draftId": "jr-2026-11-12-master-resume-branching-workflow"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-12-master-resume-branching-workflow expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-13-1230",
@@ -101,9 +75,10 @@
       "page": "rishtapatra",
       "at": "2026-11-16T19:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0013",
-      "reason": "Aligns with priority 1 focusing on local-first privacy and browser processing without an account."
+      "reason": "Aligns with priority 1 focusing on local-first privacy and browser processing without an account.",
+      "draftId": "rp-2026-11-16-local-first-privacy"
     },
     {
       "slotId": "kaatdo-2026-11-17-0815",
@@ -120,9 +95,10 @@
       "page": "job_rez",
       "at": "2026-11-17T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0032",
-      "reason": "Assigning priority one theme on master resume branching and role matching to the first open image slot."
+      "reason": "Assigning priority one theme on master resume branching and role matching to the first open image slot.",
+      "draftId": "jr-2026-11-17-deterministic-taxonomy-matching"
     },
     {
       "slotId": "job_rez-2026-11-18-1230",
@@ -303,6 +279,24 @@
       "status": "planned",
       "ideaId": "kd-i0019",
       "reason": "Assigned open idea addressing the server-side kill switch coverage across supported brokers."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-28-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-28T19:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "rp-i0034",
+      "reason": "Assigning existing reel open idea rp-i0034 which covers local-first browser computation for Janam Kundali matching the CEO priority and allowed reel format for the slot."
+    },
+    {
+      "slotId": "kaatdo-2026-11-29-1100",
+      "page": "kaatdo",
+      "at": "2026-11-29T11:00:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "kd-i0007",
+      "reason": "Assigning existing open idea kd-i0007 covering broker limits and execution reality to fill the open reel slot."
     }
   ]
 }

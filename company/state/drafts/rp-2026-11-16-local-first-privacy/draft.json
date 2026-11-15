@@ -1,0 +1,54 @@
+{
+  "id": "rp-2026-11-16-local-first-privacy",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0013",
+  "slotId": "rishtapatra-2026-11-16-1930",
+  "slotAt": "2026-11-16T19:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-15T12:14:26+05:30",
+  "updatedAt": "2026-11-15T12:14:26+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261115-1214-4625d3",
+  "caption": "No account is needed to keep your biodata details safely on your device.\n\nWhen preparing a marriage biodata for your family, privacy matters. Every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional.\n\nVisit rishtapatra.com to create your biodata safely on your device.\n\n#RishtaPatra #Biodata",
+  "hashtags": [
+    "#RishtaPatra",
+    "#Biodata"
+  ],
+  "altText": "Text artwork graphic titled Keep Your Biodata Private with device processing and no account needed",
+  "factsUsed": [
+    {
+      "factId": "rp-f05",
+      "quote": "Local-first: every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    }
+  ],
+  "artwork": {
+    "headline": "Keep your biodata private",
+    "subline": "Saved only on your device without an account",
+    "facts": [
+      "Every detail, photo and imported resume is processed in the browser",
+      "Saved only on your device; an account is optional"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Corrected altText length to fit within the 100-character limit while retaining the required visible headline words and description.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-16-local-first-privacy/image-1-3c8c5fe9.jpg",
+      "bytes": 103650,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "3c8c5fe98e76c1fad6b69f2141cee70350cbafc151fe7f37bb2f1b8a65824c86",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-16-local-first-privacy/image-1-3c8c5fe9.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-16-local-first-privacy/image-1-3c8c5fe9.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-16-local-first-privacy/qa.json"
+}

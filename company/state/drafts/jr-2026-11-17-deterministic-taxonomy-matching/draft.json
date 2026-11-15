@@ -1,0 +1,62 @@
+{
+  "id": "jr-2026-11-17-deterministic-taxonomy-matching",
+  "page": "job_rez",
+  "ideaId": "jr-i0032",
+  "slotId": "job_rez-2026-11-17-1230",
+  "slotAt": "2026-11-17T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-15T12:14:26+05:30",
+  "updatedAt": "2026-11-15T12:14:26+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261115-1214-4625d3",
+  "caption": "Score every resume branch against target postings using a curated taxonomy.\n\nJobRez uses deterministic role matching through a curated technology taxonomy with aliases and whole-word matching. Required terms are weighted double and preferred terms once, with no cloud AI and no external verification.\n\nOne master resume serves as your baseline, where branches are copies tailored per role and each branch is scored against the posting in Job DNA.\n\nBuild your master resume and match roles at https://jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#masterresume",
+    "#resumebuilder",
+    "#jobsearch",
+    "#career"
+  ],
+  "altText": "Graphic titled Deterministic taxonomy matching on jobrez.com",
+  "factsUsed": [
+    {
+      "factId": "jr-f04",
+      "quote": "One master resume; branches are copies tailored per role; each branch is scored against the posting in Job DNA"
+    },
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "artwork": {
+    "headline": "Deterministic taxonomy matching",
+    "subline": "Role match is deterministic for every branch",
+    "facts": [
+      "Curated technology taxonomy with aliases and whole-word matching",
+      "Required terms weighted double and preferred terms once",
+      "No cloud AI and no external verification"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Corrected altText length to be under 100 characters while keeping facts jr-f04 and jr-f05.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-17-deterministic-taxonomy-matching/image-1-aed5dc9c.jpg",
+      "bytes": 123842,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "aed5dc9ce85f64989957c4f910b0d8df853317da0808449f86d63436ead54f5f",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-17-deterministic-taxonomy-matching/image-1-aed5dc9c.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-17-deterministic-taxonomy-matching/image-1-aed5dc9c.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-11-17-deterministic-taxonomy-matching/qa.json"
+}
