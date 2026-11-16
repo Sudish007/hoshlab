@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-16T16:58:30+05:30",
+  "updatedAt": "2026-11-17T03:39:33+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -686,12 +686,12 @@
     {
       "id": "rp-2026-11-14-in-browser-astrology-calculation",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "reel",
       "slotId": "rishtapatra-2026-11-14-1930",
       "slotAt": "2026-11-14T19:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-12T12:51:27+05:30",
+      "updatedAt": "2026-11-17T03:39:33+05:30",
       "qa": true
     },
     {
