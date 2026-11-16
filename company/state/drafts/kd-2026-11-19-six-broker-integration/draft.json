@@ -1,0 +1,68 @@
+{
+  "id": "kd-2026-11-19-six-broker-integration",
+  "page": "kaatdo",
+  "ideaId": "kd-i0011",
+  "slotId": "kaatdo-2026-11-19-0815",
+  "slotAt": "2026-11-19T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "rework",
+  "revision": 2,
+  "reworkCount": 2,
+  "mock": false,
+  "createdAt": "2026-11-16T12:13:07+05:30",
+  "updatedAt": "2026-11-16T12:13:07+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261116-1213-e6faf4",
+  "caption": "Your broker connection feeds the server-side kill switch. Integration spans six supported brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww. Execution relies on official trade APIs.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#Brokers",
+    "#Trading",
+    "#Risk",
+    "#APIs",
+    "#FandO",
+    "#Discipline"
+  ],
+  "altText": "Artwork titled Six Broker Integration listing Fyers, Upstox, Zerodha, Angel One, Dhan and Groww.",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "artwork": {
+    "headline": "Six Broker Integration",
+    "subline": "Server-side kill switch across six supported brokers.",
+    "facts": [
+      "Fyers, Upstox, Zerodha, Angel One, Dhan and Groww",
+      "Built on official trade APIs",
+      "Direct server-side monitoring"
+    ],
+    "footer": "kaatdo.com"
+  },
+  "writerNote": "Rewrote the caption structure to lower the Jaccard similarity against recent captions while maintaining exact voice and mandatory disclaimers.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-19-six-broker-integration/image-1-6a40e328.jpg",
+      "bytes": 103460,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "6a40e328803b38c38762c625226c7018303a12a54d05cd8cdbd0495cdbacfdd3",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-19-six-broker-integration/image-1-6a40e328.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-19-six-broker-integration/image-1-6a40e328.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "qaRef": "drafts/kd-2026-11-19-six-broker-integration/qa.json",
+  "designNote": "variant A · dark console palette",
+  "qaReasons": [
+    "duplicate: max jaccard 0.52 over 20 recent captions"
+  ]
+}

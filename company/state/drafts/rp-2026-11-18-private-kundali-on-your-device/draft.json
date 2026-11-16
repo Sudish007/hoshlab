@@ -1,0 +1,117 @@
+{
+  "id": "rp-2026-11-18-private-kundali-on-your-device",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0017",
+  "slotId": "rishtapatra-2026-11-18-1930",
+  "slotAt": "2026-11-18T19:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-16T12:13:07+05:30",
+  "updatedAt": "2026-11-16T12:13:07+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261116-1213-e6faf4",
+  "caption": "Your birth details never leave your phone or computer when creating your Janam Kundali.\n\nWhen exploring a rishta, keeping sensitive information private is essential. RishtaPatra offers three products: biodata maker, Rishta Connect (matchmaking), and Janam Kundali (free).\n\nWith our client-side astrology engine running entirely in your browser, no request carries your birth data anywhere else. Calculations are indicative; consult your pandit.\n\nVisit rishtapatra.com to compute your kundali safely on your device.\n\n#RishtaPatra #JanamKundali #Kundali #BrowserPrivacy #Rishta #Astrology #FamilyFirst #BiodataMaker",
+  "hashtags": [
+    "#RishtaPatra",
+    "#JanamKundali",
+    "#Kundali",
+    "#BrowserPrivacy",
+    "#Rishta",
+    "#Astrology",
+    "#FamilyFirst",
+    "#BiodataMaker"
+  ],
+  "altText": "Slide 1 of carousel: Your birth details never leave your phone or computer.",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f07",
+      "quote": "Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\""
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Private Janam Kundali",
+      "body": "Your birth details never leave your phone or computer when computing your Janam Kundali.",
+      "altText": "Slide 1: Private Janam Kundali - Your birth details never leave your phone or computer."
+    },
+    {
+      "heading": "Client-Side Astrology",
+      "body": "The astrology engine runs directly in your browser so no request carries your birth data.",
+      "altText": "Slide 2: Client-Side Astrology - The astrology engine runs directly in your browser."
+    },
+    {
+      "heading": "Three Products",
+      "body": "Explore our biodata maker, Rishta Connect, and the free Janam Kundali tool.",
+      "altText": "Slide 3: Three Products - Explore our biodata maker, Rishta Connect, and Janam Kundali."
+    },
+    {
+      "heading": "Indicative & Private",
+      "body": "Calculations are indicative; consult your pandit. Visit rishtapatra.com.",
+      "altText": "Slide 4: Indicative and Private - Calculations are indicative; consult your pandit."
+    }
+  ],
+  "altTexts": [
+    "Slide 1: Private Janam Kundali - Your birth details never leave your phone or computer.",
+    "Slide 2: Client-Side Astrology - The astrology engine runs directly in your browser.",
+    "Slide 3: Three Products - Explore our biodata maker, Rishta Connect, and Janam Kundali.",
+    "Slide 4: Indicative and Private - Calculations are indicative; consult your pandit."
+  ],
+  "writerNote": "Carousel focuses on client-side Janam Kundali privacy without mentioning servers or cloud storage, adhering strictly to rp-f07 and disclaimer rules.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-18-private-kundali-on-your-device/slide-1-7f7e88f4.jpg",
+      "bytes": 84203,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "7f7e88f4c25dfb7e35c19dce7c4897846b230954c055661f90fb84967458cbd3",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-18-private-kundali-on-your-device/slide-1-7f7e88f4.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-18-private-kundali-on-your-device/slide-1-7f7e88f4.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-18-private-kundali-on-your-device/slide-2-4cd9ec9d.jpg",
+      "bytes": 78791,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "4cd9ec9de90955e2c8e07178a9c4a8d764dce0368ed3cdb42a34338c7e8ec198",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-18-private-kundali-on-your-device/slide-2-4cd9ec9d.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-18-private-kundali-on-your-device/slide-2-4cd9ec9d.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-18-private-kundali-on-your-device/slide-3-38a41711.jpg",
+      "bytes": 65653,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "38a41711c718a24e1d8a95681827b0d121e9dcae0197f692dc4ea860e3f69c85",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-18-private-kundali-on-your-device/slide-3-38a41711.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-18-private-kundali-on-your-device/slide-3-38a41711.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-18-private-kundali-on-your-device/slide-4-bb25c1ff.jpg",
+      "bytes": 77865,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "bb25c1ff5656cf0d8a607f5f2bd5af6c1ba3f151491a2220d504ffed93874d3e",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-18-private-kundali-on-your-device/slide-4-bb25c1ff.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-18-private-kundali-on-your-device/slide-4-bb25c1ff.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "4 slides · variant A · maroon and cream",
+  "qaRef": "drafts/rp-2026-11-18-private-kundali-on-your-device/qa.json"
+}

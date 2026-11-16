@@ -1,44 +1,32 @@
 {
-  "generatedAt": "2026-11-15T12:14:26+05:30",
+  "generatedAt": "2026-11-16T12:13:07+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-12-1230",
-      "page": "job_rez",
-      "at": "2026-11-12T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-12-master-resume-branching-workflow expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-13-1230",
       "page": "job_rez",
       "at": "2026-11-13T12:30:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "jr-i0003",
-      "reason": "Filling the Thursday slot with an existing open reel idea focusing on master resume branching and role-specific copies.",
-      "draftId": "jr-2026-11-13-branching-from-a-master-resume"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-13-branching-from-a-master-resume expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-13-1930",
       "page": "rishtapatra",
       "at": "2026-11-13T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0031",
-      "reason": "Assigning existing open idea rp-i0031 to align with CEO Priority 1 focusing on free client-side kundali calculation and local privacy.",
-      "draftId": "rp-2026-11-13-browser-side-kundali-privacy-new"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-13-browser-side-kundali-privacy-new expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-14-1100",
       "page": "kaatdo",
       "at": "2026-11-14T11:00:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "kd-i0006",
-      "reason": "Assigning open carousel idea covering supported broker coverage and six official trade APIs.",
-      "draftId": "kd-2026-11-14-supported-broker-coverage"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-14-supported-broker-coverage expired -2.1 days before the slot (lead 3 days)",
+      "draftId": "kd-2026-11-14-supported-broker-coverage",
+      "ideaId": "kd-i0006"
     },
     {
       "slotId": "rishtapatra-2026-11-14-1930",
@@ -105,27 +93,30 @@
       "page": "job_rez",
       "at": "2026-11-18T12:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0030",
-      "reason": "Aligns with CEO priority one covering master resume branching and deterministic role matching."
+      "reason": "Aligns with CEO priority one covering master resume branching and deterministic role matching.",
+      "draftId": "jr-2026-11-18-deterministic-taxonomy-matching-steps"
     },
     {
       "slotId": "rishtapatra-2026-11-18-1930",
       "page": "rishtapatra",
       "at": "2026-11-18T19:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0017",
-      "reason": "Assigning an existing open idea from the backlog matching the CEO priority on local-first privacy and client-side kundali computation."
+      "reason": "Assigning an existing open idea from the backlog matching the CEO priority on local-first privacy and client-side kundali computation.",
+      "draftId": "rp-2026-11-18-private-kundali-on-your-device"
     },
     {
       "slotId": "kaatdo-2026-11-19-0815",
       "page": "kaatdo",
       "at": "2026-11-19T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "rework",
       "ideaId": "kd-i0011",
-      "reason": "Assigning existing open idea covering broker kill switch integration as requested by the CEO priority."
+      "reason": "Assigning existing open idea covering broker kill switch integration as requested by the CEO priority.",
+      "draftId": "kd-2026-11-19-six-broker-integration"
     },
     {
       "slotId": "job_rez-2026-11-19-1230",

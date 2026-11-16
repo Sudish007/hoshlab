@@ -1,0 +1,94 @@
+{
+  "id": "jr-2026-11-18-deterministic-taxonomy-matching-steps",
+  "page": "job_rez",
+  "ideaId": "jr-i0030",
+  "slotId": "job_rez-2026-11-18-1230",
+  "slotAt": "2026-11-18T12:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-16T12:13:07+05:30",
+  "updatedAt": "2026-11-16T12:13:07+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261116-1213-e6faf4",
+  "caption": "See how deterministic taxonomy scoring weights required terms double.\n\nJobRez uses a deterministic role match engine. It evaluates your tailored resume branch against the target posting using a curated technology taxonomy with aliases and whole-word matching.\n\nRequired terms are weighted double and preferred terms once. There is no cloud AI and no external verification involved.\n\nLearn more at https://jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#resumebuilder",
+    "#softwareengineering",
+    "#careertools",
+    "#techhiring"
+  ],
+  "altText": "Slide 1: Deterministic taxonomy scoring in JobRez with whole-word matching and weighted terms.",
+  "factsUsed": [
+    {
+      "factId": "jr-f04",
+      "quote": "One master resume; branches are copies tailored per role; each branch is scored against the posting in Job DNA"
+    },
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Deterministic Role Match",
+      "body": "Role match is entirely deterministic using a curated technology taxonomy with aliases and whole-word matching.",
+      "altText": "Slide 1: Deterministic Role Match heading with taxonomy and whole-word matching body."
+    },
+    {
+      "heading": "Weighted Terms",
+      "body": "Required terms are weighted double in the scoring model while preferred terms are weighted once.",
+      "altText": "Slide 2: Weighted Terms heading with required terms weighted double and preferred terms once."
+    },
+    {
+      "heading": "No Cloud AI",
+      "body": "The matching process relies on deterministic taxonomy rules without cloud AI or external verification.",
+      "altText": "Slide 3: No Cloud AI heading with rule-based deterministic matching explanation."
+    }
+  ],
+  "altTexts": [
+    "Slide 1: Deterministic Role Match heading with taxonomy and whole-word matching body.",
+    "Slide 2: Weighted Terms heading with required terms weighted double and preferred terms once.",
+    "Slide 3: No Cloud AI heading with rule-based deterministic matching explanation."
+  ],
+  "writerNote": "Carried out the deterministic taxonomy matching angle for the carousel format without emojis, exclamation marks, or restricted terms.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-18-deterministic-taxonomy-matching-steps/slide-1-5271022f.jpg",
+      "bytes": 86052,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "5271022f4e89f4f32e8559dcbccb718b1d9370a035ce02073751a1b5cc747368",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-18-deterministic-taxonomy-matching-steps/slide-1-5271022f.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-18-deterministic-taxonomy-matching-steps/slide-1-5271022f.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-18-deterministic-taxonomy-matching-steps/slide-2-c6022f8a.jpg",
+      "bytes": 72639,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "c6022f8a5ad5716f0124099d509ca88a56b661b982c927bd2a010fb7bc73ac94",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-18-deterministic-taxonomy-matching-steps/slide-2-c6022f8a.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-18-deterministic-taxonomy-matching-steps/slide-2-c6022f8a.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-18-deterministic-taxonomy-matching-steps/slide-3-80c38dbd.jpg",
+      "bytes": 72160,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "80c38dbda2110a718ca91cb1ac672e7f4c104e6d3952b688d3398da8fc9fb4d1",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-18-deterministic-taxonomy-matching-steps/slide-3-80c38dbd.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-18-deterministic-taxonomy-matching-steps/slide-3-80c38dbd.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "3 slides · variant A · cream on ink",
+  "qaRef": "drafts/jr-2026-11-18-deterministic-taxonomy-matching-steps/qa.json"
+}
