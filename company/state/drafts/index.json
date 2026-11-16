@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-16T12:13:07+05:30",
+  "updatedAt": "2026-11-16T16:58:30+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -466,12 +466,12 @@
     {
       "id": "kd-2026-11-14-supported-broker-coverage",
       "page": "kaatdo",
-      "status": "queued",
+      "status": "expired",
       "format": "carousel",
       "slotId": "kaatdo-2026-11-14-1100",
       "slotAt": "2026-11-14T11:00:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-12T12:51:27+05:30",
+      "updatedAt": "2026-11-16T16:58:30+05:30",
       "qa": true
     },
     {
