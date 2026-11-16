@@ -90,6 +90,11 @@
   "jr-2026-11-17-deterministic-taxonomy-matching": [
     "image-1-aed5dc9c.jpg"
   ],
+  "jr-2026-11-18-deterministic-taxonomy-matching-steps": [
+    "slide-1-5271022f.jpg",
+    "slide-2-c6022f8a.jpg",
+    "slide-3-80c38dbd.jpg"
+  ],
   "kd-2026-10-15-automated-breach-reaction": [
     "image-1-ed668018.jpg"
   ],
@@ -168,6 +173,9 @@
   "kd-2026-11-17-six-rule-suite": [
     "image-1-d12e118c.jpg"
   ],
+  "kd-2026-11-19-six-broker-integration": [
+    "image-1-6a40e328.jpg"
+  ],
   "rp-2026-10-14-guided-7-step-biodata-flow": [
     "slide-1-e07bec87.jpg",
     "slide-2-6237ab03.jpg",
@@ -236,6 +244,12 @@
   ],
   "rp-2026-11-16-local-first-privacy": [
     "image-1-3c8c5fe9.jpg"
+  ],
+  "rp-2026-11-18-private-kundali-on-your-device": [
+    "slide-1-7f7e88f4.jpg",
+    "slide-2-4cd9ec9d.jpg",
+    "slide-3-38a41711.jpg",
+    "slide-4-bb25c1ff.jpg"
   ],
   "sample-job_rez": {
     "sample": true,
