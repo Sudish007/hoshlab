@@ -1,52 +1,32 @@
 {
-  "generatedAt": "2026-11-16T12:13:07+05:30",
+  "generatedAt": "2026-11-17T13:32:48+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-13-1230",
-      "page": "job_rez",
-      "at": "2026-11-13T12:30:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-13-branching-from-a-master-resume expired -3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-13-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-13T19:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-13-browser-side-kundali-privacy-new expired -2.7 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-11-14-1100",
       "page": "kaatdo",
       "at": "2026-11-14T11:00:00+05:30",
       "format": "carousel",
       "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-14-supported-broker-coverage expired -2.1 days before the slot (lead 3 days)",
-      "draftId": "kd-2026-11-14-supported-broker-coverage",
-      "ideaId": "kd-i0006"
+      "reason": "dropped: draft kd-2026-11-14-supported-broker-coverage expired -3.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-14-1930",
       "page": "rishtapatra",
       "at": "2026-11-14T19:30:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "rp-i0027",
-      "reason": "Filling the scheduled Friday/Saturday reel slot using an existing open backlog idea covering priority 1 (local-first browser astrology privacy).",
-      "draftId": "rp-2026-11-14-in-browser-astrology-calculation"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-14-in-browser-astrology-calculation expired -2.8 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-15-1100",
       "page": "kaatdo",
       "at": "2026-11-15T11:00:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "kd-i0026",
-      "reason": "Assigns existing open idea focusing on priority 2 token expiry mechanics directly matching the reel slot.",
-      "draftId": "kd-2026-11-15-token-expiry-protocol"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-15-token-expiry-protocol expired -2.1 days before the slot (lead 3 days)",
+      "draftId": "kd-2026-11-15-token-expiry-protocol",
+      "ideaId": "kd-i0026"
     },
     {
       "slotId": "job_rez-2026-11-16-1230",
@@ -113,7 +93,7 @@
       "page": "kaatdo",
       "at": "2026-11-19T08:15:00+05:30",
       "format": "image",
-      "status": "rework",
+      "status": "queued",
       "ideaId": "kd-i0011",
       "reason": "Assigning existing open idea covering broker kill switch integration as requested by the CEO priority.",
       "draftId": "kd-2026-11-19-six-broker-integration"
@@ -123,9 +103,10 @@
       "page": "job_rez",
       "at": "2026-11-19T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0033",
-      "reason": "Assigned existing backlog idea focusing on priority two, covering layout rules and watermark-free free exports."
+      "reason": "Assigned existing backlog idea focusing on priority two, covering layout rules and watermark-free free exports.",
+      "draftId": "jr-2026-11-19-structural-layout-and-free-export"
     },
     {
       "slotId": "job_rez-2026-11-20-1230",
@@ -288,6 +269,42 @@
       "status": "planned",
       "ideaId": "kd-i0007",
       "reason": "Assigning existing open idea kd-i0007 covering broker limits and execution reality to fill the open reel slot."
+    },
+    {
+      "slotId": "job_rez-2026-11-30-1230",
+      "page": "job_rez",
+      "at": "2026-11-30T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0013",
+      "reason": "Aligns with Priority 1: master resume concept and branching structure."
+    },
+    {
+      "slotId": "rishtapatra-2026-11-30-1930",
+      "page": "rishtapatra",
+      "at": "2026-11-30T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0033",
+      "reason": "Assigning an existing open idea covering local-first browser security and device storage without an account dependency."
+    },
+    {
+      "slotId": "kaatdo-2026-12-01-0815",
+      "page": "kaatdo",
+      "at": "2026-12-01T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0027",
+      "reason": "Directly targets CEO Priority 1 by covering the six rules and immediate order cancellation actions in an image format."
+    },
+    {
+      "slotId": "job_rez-2026-12-01-1230",
+      "page": "job_rez",
+      "at": "2026-12-01T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0024",
+      "reason": "Aligns with Priority 2: detailing watermark-free export options and flexibility."
     }
   ]
 }

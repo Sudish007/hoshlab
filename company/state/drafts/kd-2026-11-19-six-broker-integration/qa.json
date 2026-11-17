@@ -1,20 +1,20 @@
 {
   "draftId": "kd-2026-11-19-six-broker-integration",
-  "revision": 2,
-  "at": "2026-11-16T12:13:07+05:30",
-  "passed": false,
+  "revision": 3,
+  "at": "2026-11-17T13:32:48+05:30",
+  "passed": true,
   "deterministic": {
-    "passed": false,
+    "passed": true,
     "checks": [
       {
         "id": "caption_length",
         "ok": true,
-        "detail": "389/2200"
+        "detail": "496/2200"
       },
       {
         "id": "hashtags",
         "ok": true,
-        "detail": "8/8"
+        "detail": "6/8"
       },
       {
         "id": "disclaimer",
@@ -34,7 +34,7 @@
       {
         "id": "alt_text",
         "ok": true,
-        "detail": "96/100"
+        "detail": "93/100"
       },
       {
         "id": "language",
@@ -44,7 +44,7 @@
       {
         "id": "media_spec",
         "ok": true,
-        "detail": "1080x1350 jpeg 103 KB"
+        "detail": "1080x1350 jpeg 101 KB"
       },
       {
         "id": "links",
@@ -58,8 +58,8 @@
       },
       {
         "id": "duplicate",
-        "ok": false,
-        "detail": "max jaccard 0.52 over 20 recent captions"
+        "ok": true,
+        "detail": "max jaccard 0.33 over 20 recent captions"
       },
       {
         "id": "brand_lint",
@@ -68,10 +68,27 @@
       }
     ]
   },
-  "model": null,
-  "reasons": [
-    "duplicate: max jaccard 0.52 over 20 recent captions"
-  ],
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on official trade APIs",
+        "ok": true,
+        "factId": "kd-f03"
+      },
+      {
+        "claim": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed",
+        "ok": true,
+        "factId": "kd-f10"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is console-like and direct. All required disclaimers are present verbatim. Zero emojis found."
+  },
+  "reasons": [],
   "mock": false,
-  "runId": "engine-daily-20261116-1213-e6faf4"
+  "runId": "engine-daily-20261117-1332-016e21"
 }

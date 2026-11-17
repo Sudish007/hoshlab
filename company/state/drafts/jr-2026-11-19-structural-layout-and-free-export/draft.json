@@ -1,0 +1,62 @@
+{
+  "id": "jr-2026-11-19-structural-layout-and-free-export",
+  "page": "job_rez",
+  "ideaId": "jr-i0033",
+  "slotId": "job_rez-2026-11-19-1230",
+  "slotAt": "2026-11-19T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-17T13:32:48+05:30",
+  "updatedAt": "2026-11-17T13:32:48+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261117-1332-016e21",
+  "caption": "Six layout rules are measured on the rendered page after every edit.\n\nThese rules check single-column order, standard headings, real bullet lists, selectable text, no tables or floats, and body text of at least 9.5pt. This is not a certification against any ATS vendor.\n\nJobRez exports to PDF, Word and plain text. PDF and plain-text export are unlimited and watermark-free on the free plan, while Word (.docx) export is Pro.\n\nRead more at jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#resumebuilder",
+    "#softwareengineer",
+    "#techcareers",
+    "#resumetips"
+  ],
+  "altText": "Graphic card showing six layout rules measured after every edit and unlimited free exports.",
+  "factsUsed": [
+    {
+      "factId": "jr-f07",
+      "quote": "Six layout rules measured on the rendered page after every edit (single-column order, standard headings, real bullet lists, selectable text, no tables or floats, body text of at least 9.5pt); \"not a certification against any ATS vendor\""
+    },
+    {
+      "factId": "jr-f09",
+      "quote": "Exports to PDF, Word and plain text; PDF and plain-text export are unlimited and watermark-free on the free plan; Word (.docx) export is Pro"
+    }
+  ],
+  "artwork": {
+    "headline": "Six measured layout rules",
+    "subline": "Enforced on the rendered page after every edit",
+    "facts": [
+      "Single-column, selectable text, no tables or floats",
+      "Body text of at least 9.5pt and standard headings",
+      "PDF and plain-text export are unlimited and free"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Adheres strictly to the plain engineering tone with zero exclamation marks, disclaims certification against any ATS vendor, and quotes jr-f07 and jr-f09 verbatim.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-19-structural-layout-and-free-export/image-1-2425cc22.jpg",
+      "bytes": 112958,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "2425cc22eec7305da4f5a7b505983e2ed4d432b2162d3cc9e2819fed76080503",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-19-structural-layout-and-free-export/image-1-2425cc22.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-19-structural-layout-and-free-export/image-1-2425cc22.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-11-19-structural-layout-and-free-export/qa.json"
+}

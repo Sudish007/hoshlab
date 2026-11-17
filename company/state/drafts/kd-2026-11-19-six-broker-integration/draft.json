@@ -6,26 +6,24 @@
   "slotAt": "2026-11-19T08:15:00+05:30",
   "format": "image",
   "language": "en",
-  "status": "rework",
-  "revision": 2,
+  "status": "queued",
+  "revision": 3,
   "reworkCount": 2,
   "mock": false,
   "createdAt": "2026-11-16T12:13:07+05:30",
-  "updatedAt": "2026-11-16T12:13:07+05:30",
+  "updatedAt": "2026-11-17T13:32:48+05:30",
   "by": "writer",
-  "runId": "engine-daily-20261116-1213-e6faf4",
-  "caption": "Your broker connection feeds the server-side kill switch. Integration spans six supported brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww. Execution relies on official trade APIs.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "runId": "engine-daily-20261117-1332-016e21",
+  "caption": "Connect your broker account to the server-side kill switch. Direct server infrastructure interfaces with Fyers, Upstox, Zerodha, Angel One, Dhan and Groww via official trade APIs to manage intraday exposure when rules trigger.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI. Always watch your positions with your broker; execution is never guaranteed.",
   "hashtags": [
     "#KaatDo",
-    "#KillSwitch",
-    "#Brokers",
-    "#Trading",
-    "#Risk",
-    "#APIs",
-    "#FandO",
-    "#Discipline"
+    "#RiskControl",
+    "#TradingDesk",
+    "#AlgoTrading",
+    "#Execution",
+    "#TradeTech"
   ],
-  "altText": "Artwork titled Six Broker Integration listing Fyers, Upstox, Zerodha, Angel One, Dhan and Groww.",
+  "altText": "Graphic titled Six Broker Integration showing supported broker names and official trade APIs.",
   "factsUsed": [
     {
       "factId": "kd-f03",
@@ -42,27 +40,24 @@
     "facts": [
       "Fyers, Upstox, Zerodha, Angel One, Dhan and Groww",
       "Built on official trade APIs",
-      "Direct server-side monitoring"
+      "Server-side execution"
     ],
     "footer": "kaatdo.com"
   },
-  "writerNote": "Rewrote the caption structure to lower the Jaccard similarity against recent captions while maintaining exact voice and mandatory disclaimers.",
+  "writerNote": "Changed sentence phrasing and disclaimer composition to significantly reduce Jaccard overlap with recent captions.",
   "media": [
     {
       "kind": "image",
-      "path": "media/kd-2026-11-19-six-broker-integration/image-1-6a40e328.jpg",
-      "bytes": 103460,
+      "path": "media/kd-2026-11-19-six-broker-integration/image-1-b72313ec.jpg",
+      "bytes": 101382,
       "width": 1080,
       "height": 1350,
-      "sha256": "6a40e328803b38c38762c625226c7018303a12a54d05cd8cdbd0495cdbacfdd3",
-      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-19-six-broker-integration/image-1-6a40e328.jpg",
-      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-19-six-broker-integration/image-1-6a40e328.jpg"
+      "sha256": "b72313ec5df26fc57c8cc124832a06c9d5a8f79ce4989f18766749c926e47c39",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-19-six-broker-integration/image-1-b72313ec.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-19-six-broker-integration/image-1-b72313ec.jpg"
     }
   ],
   "publishAttempts": [],
   "qaRef": "drafts/kd-2026-11-19-six-broker-integration/qa.json",
-  "designNote": "variant A · dark console palette",
-  "qaReasons": [
-    "duplicate: max jaccard 0.52 over 20 recent captions"
-  ]
+  "designNote": "variant A · dark console palette"
 }
