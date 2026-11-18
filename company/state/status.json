@@ -1,12 +1,93 @@
 {
-  "updatedAt": "2026-11-18T09:55:51+05:30",
+  "updatedAt": "2026-11-18T13:10:32+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261118-0955-e85d21",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261118-1309-624183",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-11-18T09:55:51+05:30"
+    "at": "2026-11-18T13:10:32+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261118-1309-624183",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-11-18T13:09:36+05:30",
+      "endedAt": "2026-11-18T13:10:32+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W47.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 12932,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.001986,
+          "note": "rishtapatra: 0 ideas, 9 slots, model not called (backlog full) | kaatdo: 0 ideas, 10 slots, 1 dropped, model not called (backlog full) | job_rez: 0 ideas, 13 slots, 1 assigned, 1 dropped | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 43240,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.005949,
+          "note": "rishtapatra-2026-11-20-1930: AllProvidersFailedError: writer: no provider answered — gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | 0 written, 0 reworked"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 1,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 queued, 0 rework, 0 blocked"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/usage/2026-11.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.460999
+    },
     {
       "id": "publisher-hourly-20261118-0955-e85d21",
       "workflow": "publisher-hourly",
@@ -1643,89 +1724,6 @@
       "errors": [],
       "budgetUsedUsd": 0,
       "budgetPaidEquivalentUsd": 0.374189
-    },
-    {
-      "id": "publisher-hourly-20261114-0850-aab668",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-11-14T08:50:46+05:30",
-      "endedAt": "2026-11-14T08:50:46+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 29,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 3 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/kd-2026-11-12-server-side-risk-rule-execution/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-11-13-browser-side-kundali-privacy-new",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-11-14-in-browser-astrology-calculation",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-14-supported-broker-coverage",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-15-token-expiry-protocol",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-12-master-resume-branching-workflow",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-13-branching-from-a-master-resume",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "kd-2026-11-12-server-side-risk-rule-execution"
-        ],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "idle"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.346291
     }
   ],
   "queue": {
@@ -1740,7 +1738,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.453064
+    "paidEquivalentUsd": 0.460999
   },
   "pages": {
     "rishtapatra": {

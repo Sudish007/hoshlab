@@ -1,42 +1,24 @@
 {
-  "generatedAt": "2026-11-17T13:32:48+05:30",
+  "generatedAt": "2026-11-18T13:09:36+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-11-14-1100",
-      "page": "kaatdo",
-      "at": "2026-11-14T11:00:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-14-supported-broker-coverage expired -3.1 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-14-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-14T19:30:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-14-in-browser-astrology-calculation expired -2.8 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-11-15-1100",
       "page": "kaatdo",
       "at": "2026-11-15T11:00:00+05:30",
       "format": "reel",
       "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-15-token-expiry-protocol expired -2.1 days before the slot (lead 3 days)",
-      "draftId": "kd-2026-11-15-token-expiry-protocol",
-      "ideaId": "kd-i0026"
+      "reason": "dropped: draft kd-2026-11-15-token-expiry-protocol expired -3.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-16-1230",
       "page": "job_rez",
       "at": "2026-11-16T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0026",
-      "reason": "Aligns with CEO priority 1 on master resume branching and deterministic role matching.",
-      "draftId": "jr-2026-11-16-deterministic-matching-engine"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-16-deterministic-matching-engine expired -2 days before the slot (lead 3 days)",
+      "draftId": "jr-2026-11-16-deterministic-matching-engine",
+      "ideaId": "jr-i0026"
     },
     {
       "slotId": "rishtapatra-2026-11-16-1930",
@@ -305,6 +287,15 @@
       "status": "planned",
       "ideaId": "jr-i0024",
       "reason": "Aligns with Priority 2: detailing watermark-free export options and flexibility."
+    },
+    {
+      "slotId": "job_rez-2026-12-02-1230",
+      "page": "job_rez",
+      "at": "2026-12-02T12:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "jr-i0006",
+      "reason": "Filling open carousel slot matching the live jobs panel priority."
     }
   ]
 }
