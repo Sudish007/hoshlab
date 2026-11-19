@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-19T09:03:01+05:30",
+  "updatedAt": "2026-11-19T13:05:46+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -288,6 +288,17 @@
       "qa": true
     },
     {
+      "id": "jr-2026-11-20-deterministic-role-match-walkthrough",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "job_rez-2026-11-20-1230",
+      "slotAt": "2026-11-20T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-19T13:05:46+05:30",
+      "qa": true
+    },
+    {
       "id": "kd-2026-10-15-automated-breach-reaction",
       "page": "kaatdo",
       "status": "expired",
@@ -519,6 +530,17 @@
       "qa": true
     },
     {
+      "id": "kd-2026-11-21-locked-state-mechanics",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "kaatdo-2026-11-21-1100",
+      "slotAt": "2026-11-21T11:00:00+05:30",
+      "revision": 2,
+      "updatedAt": "2026-11-19T13:05:46+05:30",
+      "qa": true
+    },
+    {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
       "status": "expired",
@@ -725,6 +747,17 @@
       "slotAt": "2026-11-18T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-16T12:13:07+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-11-21-a4-page-auto-fit",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "rishtapatra-2026-11-21-1930",
+      "slotAt": "2026-11-21T19:30:00+05:30",
+      "revision": 2,
+      "updatedAt": "2026-11-19T13:05:46+05:30",
       "qa": true
     }
   ]

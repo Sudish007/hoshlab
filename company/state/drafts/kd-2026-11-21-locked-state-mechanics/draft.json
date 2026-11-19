@@ -1,0 +1,100 @@
+{
+  "id": "kd-2026-11-21-locked-state-mechanics",
+  "page": "kaatdo",
+  "ideaId": "kd-i0022",
+  "slotId": "kaatdo-2026-11-21-1100",
+  "slotAt": "2026-11-21T11:00:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 2,
+  "reworkCount": 1,
+  "mock": false,
+  "createdAt": "2026-11-19T13:05:46+05:30",
+  "updatedAt": "2026-11-19T13:05:46+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261119-1305-d2c47e",
+  "caption": "Understanding how the locked state operates requires knowing broker API limitations. Except at Dhan, no broker-level block trading API exists. When your account enters a LOCKED state, enforcement relies on a server-side re-fire loop that squares off trades within seconds rather than preventing them outright. When a breach happens, KaatDo cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears. kaatdo.com काट दो. KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed. #KaatDo #KillSwitch #ServerSide #TradingDiscipline #RiskManagement #FandO #TradingTools",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#ServerSide",
+    "#TradingDiscipline",
+    "#RiskManagement",
+    "#FandO",
+    "#TradingTools"
+  ],
+  "altText": "Carousel explaining locked state mechanics and re-fire loop behavior across broker APIs.",
+  "factsUsed": [
+    {
+      "factId": "kd-f05",
+      "quote": "On breach: cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    },
+    {
+      "factId": "kd-f08",
+      "quote": "Honest limitation: no broker-level \"block trading\" API exists except at Dhan; the LOCKED state is enforced by a re-fire loop, so trades are squared off within seconds, not prevented outright"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Locked State Mechanics",
+      "body": "Locked does not mean blocked at the broker level.",
+      "altText": "Slide 1 heading Locked State Mechanics and body Locked does not mean blocked at the broker level."
+    },
+    {
+      "heading": "No Block API",
+      "body": "No broker-level block trading API exists except at Dhan.",
+      "altText": "Slide 2 heading No Block API and body No broker-level block trading API exists except at Dhan."
+    },
+    {
+      "heading": "Re-fire Loop",
+      "body": "Trades are squared off within seconds, not prevented outright.",
+      "altText": "Slide 3 heading Re-fire Loop and body Trades are squared off within seconds, not prevented outright."
+    }
+  ],
+  "altTexts": [
+    "Slide 1 heading Locked State Mechanics and body Locked does not mean blocked at the broker level.",
+    "Slide 2 heading No Block API and body No broker-level block trading API exists except at Dhan.",
+    "Slide 3 heading Re-fire Loop and body Trades are squared off within seconds, not prevented outright."
+  ],
+  "writerNote": "Restructured caption opening completely to avoid Jaccard overlap with recent posts while addressing QA rework on duplicate similarity.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-21-locked-state-mechanics/slide-1-750b6adc.jpg",
+      "bytes": 65521,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "750b6adca690804c0ea1f1a0be266a70ad3f5ebd1da44dc7c993331193c73d9c",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-21-locked-state-mechanics/slide-1-750b6adc.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-21-locked-state-mechanics/slide-1-750b6adc.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-21-locked-state-mechanics/slide-2-4fafe6aa.jpg",
+      "bytes": 50822,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "4fafe6aacda7022d05da1c031298cc8b2841a7b27c355df8bc8f91edc3b23aa8",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-21-locked-state-mechanics/slide-2-4fafe6aa.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-21-locked-state-mechanics/slide-2-4fafe6aa.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-21-locked-state-mechanics/slide-3-ca70e159.jpg",
+      "bytes": 56673,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "ca70e1595d6a9bd5873e81ca8387efda2e319504b764a2212004f564f81df2ca",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-21-locked-state-mechanics/slide-3-ca70e159.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-21-locked-state-mechanics/slide-3-ca70e159.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "qaRef": "drafts/kd-2026-11-21-locked-state-mechanics/qa.json",
+  "designNote": "3 slides · variant A · dark console palette"
+}

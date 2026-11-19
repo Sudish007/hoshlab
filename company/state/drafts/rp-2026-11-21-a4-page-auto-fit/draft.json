@@ -1,0 +1,99 @@
+{
+  "id": "rp-2026-11-21-a4-page-auto-fit",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0014",
+  "slotId": "rishtapatra-2026-11-21-1930",
+  "slotAt": "2026-11-21T19:30:00+05:30",
+  "format": "reel",
+  "language": "hi",
+  "status": "queued",
+  "revision": 2,
+  "reworkCount": 1,
+  "mock": false,
+  "createdAt": "2026-11-19T13:05:46+05:30",
+  "updatedAt": "2026-11-19T13:05:46+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261119-1305-d2c47e",
+  "caption": "एक ही पेज पर फिट होने वाला सुंदर बायोडाटा प्रीव्यू देखिए। जब आप विवाह बायोडाटा बनाते हैं, तो जानकारी का सही आकार में रहना बहुत जरूरी है। RishtaPatra का guided 7-step editor (Personal, Kundali, Education & Career, Family, About, Partner, Contact) और Photo step आपकी जानकारी को live A4 preview में एक ही पेज पर auto-fit करते हैं। Your biodata details, photo and imported resume are processed in the browser and saved only on the device; an account is optional. Note: Kundali calculations are indicative; consult your pandit. Visit rishtapatra.com to create your biodata.",
+  "hashtags": [
+    "#RishtaPatra",
+    "#BiodataMaker",
+    "#Vivah",
+    "#Family"
+  ],
+  "altText": "A branded text artwork graphic showing the headline A4 page auto-fit and the footer rishtapatra.com.",
+  "factsUsed": [
+    {
+      "factId": "rp-f06",
+      "quote": "Guided 7-step editor (Personal, Kundali, Education & Career, Family, About, Partner, Contact) plus a Photo step; live A4 preview that auto-fits to one page"
+    },
+    {
+      "factId": "rp-f05",
+      "quote": "Local-first: every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\"; no health, money or legal advice"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "एक ही पेज पर फिट होने वाला बायोडाटा",
+        "seconds": 4
+      },
+      {
+        "text": "Guided 7-step editor with live A4 preview",
+        "seconds": 4
+      },
+      {
+        "text": "Details auto-fit to one page seamlessly",
+        "seconds": 4
+      },
+      {
+        "text": "rishtapatra.com",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Added the required kundali disclaimer fragments ('indicative' and 'consult your pandit') into the caption as requested by QA to satisfy trigger conditions.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/rp-2026-11-21-a4-page-auto-fit/reel-a3d5352f.mp4",
+      "bytes": 133653,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "a3d5352f2a9f57ae10a550d603674fffeee93044314be3d810ce4f87192910ff",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-21-a4-page-auto-fit/reel-a3d5352f.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-21-a4-page-auto-fit/reel-a3d5352f.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 133653,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/rp-2026-11-21-a4-page-auto-fit/poster-ea7de7f5.jpg",
+      "bytes": 69329,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "ea7de7f5f66d5c9211b0bda9882c5b9c87b8fc1bccfd35e18ca79fbb5e1a35c7",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-21-a4-page-auto-fit/poster-ea7de7f5.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-21-a4-page-auto-fit/poster-ea7de7f5.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "qaRef": "drafts/rp-2026-11-21-a4-page-auto-fit/qa.json",
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · cream and maroon"
+}

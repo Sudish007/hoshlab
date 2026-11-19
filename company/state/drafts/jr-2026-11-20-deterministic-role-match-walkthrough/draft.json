@@ -1,0 +1,97 @@
+{
+  "id": "jr-2026-11-20-deterministic-role-match-walkthrough",
+  "page": "job_rez",
+  "ideaId": "jr-i0037",
+  "slotId": "job_rez-2026-11-20-1230",
+  "slotAt": "2026-11-20T12:30:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-19T13:05:46+05:30",
+  "updatedAt": "2026-11-19T13:05:46+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261119-1305-d2c47e",
+  "caption": "See how deterministic taxonomy scoring weights required terms double. Role match in JobRez is fully deterministic, using a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once, with no cloud AI and no external verification. Each branch is copied and tailored per role, then scored against the posting in Job DNA. Build your master resume at jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#ResumeBranch",
+    "#JobDNA",
+    "#Engineering",
+    "#Career",
+    "#JobSearch"
+  ],
+  "altText": "Kinetic reel showing deterministic taxonomy scoring.",
+  "factsUsed": [
+    {
+      "factId": "jr-f04",
+      "quote": "One master resume; branches are copies tailored per role; each branch is scored against the posting in Job DNA"
+    },
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "Deterministic taxonomy weights required terms double",
+        "seconds": 4
+      },
+      {
+        "text": "Curated technology taxonomy with whole-word matching",
+        "seconds": 4
+      },
+      {
+        "text": "Required terms weighted double and preferred terms once",
+        "seconds": 4
+      },
+      {
+        "text": "No cloud AI and no external verification",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Corrected alt text length to under 100 characters and first scene text to under 60 characters.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/jr-2026-11-20-deterministic-role-match-walkthrough/reel-6aa81845.mp4",
+      "bytes": 167740,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "6aa81845a498f9dcaf0fd29af35ec3a2ed89c88a14c20ce227aa381a7e410037",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-20-deterministic-role-match-walkthrough/reel-6aa81845.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-20-deterministic-role-match-walkthrough/reel-6aa81845.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 167740,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/jr-2026-11-20-deterministic-role-match-walkthrough/poster-8655f9be.jpg",
+      "bytes": 83143,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "8655f9be6568e29cd780b75b9477aed5a53402f5d3af046364e5daf01a7f69aa",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-20-deterministic-role-match-walkthrough/poster-8655f9be.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-20-deterministic-role-match-walkthrough/poster-8655f9be.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · violet on cream",
+  "qaRef": "drafts/jr-2026-11-20-deterministic-role-match-walkthrough/qa.json"
+}
