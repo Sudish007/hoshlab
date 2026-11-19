@@ -1,12 +1,89 @@
 {
-  "updatedAt": "2026-11-19T03:29:30+05:30",
+  "updatedAt": "2026-11-19T09:03:01+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261119-0329-775a6d",
+    "id": "publisher-hourly-20261119-0903-28a95f",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-11-19T03:29:30+05:30"
+    "at": "2026-11-19T09:03:01+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261119-0903-28a95f",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-11-19T09:03:01+05:30",
+      "endedAt": "2026-11-19T09:03:01+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 19,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 1 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/kd-2026-11-17-six-rule-suite/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-11-18-private-kundali-on-your-device",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-19-six-broker-integration",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-17-deterministic-taxonomy-matching",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-18-deterministic-taxonomy-matching-steps",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-19-structural-layout-and-free-export",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "kd-2026-11-17-six-rule-suite"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.460999
+    },
     {
       "id": "publisher-hourly-20261119-0329-775a6d",
       "workflow": "publisher-hourly",
@@ -1627,96 +1704,11 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.374189
-    },
-    {
-      "id": "publisher-hourly-20261114-2339-1c90e6",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-11-14T23:39:11+05:30",
-      "endedAt": "2026-11-14T23:39:11+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 23,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 3 waiting, 0 failed, 0 expired"
-        }
-      ],
-      "changed": [
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-11-13-browser-side-kundali-privacy-new",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-11-14-in-browser-astrology-calculation",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-14-supported-broker-coverage",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-15-token-expiry-protocol",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-17-six-rule-suite",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-13-branching-from-a-master-resume",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-16-deterministic-matching-engine",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.374189
     }
   ],
   "queue": {
     "rishtapatra": 1,
-    "kaatdo": 2,
+    "kaatdo": 1,
     "job_rez": 3
   },
   "blocked": {},
