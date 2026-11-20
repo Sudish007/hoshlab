@@ -1,0 +1,109 @@
+{
+  "draftId": "kd-2026-11-22-api-kill-switch-mechanics",
+  "revision": 1,
+  "at": "2026-11-20T12:57:22+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "503/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "7/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "always → 3/3 groups"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "10 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "87/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; Devanagari only \"काट दो\")"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "h264 1080x1920 yuv420p 30/1 20 s 171 KB faststart; poster 1080x1920 jpeg 65 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on kaatdo.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.37 over 22 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "OF-2 applies to @job_rez only; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Six brokers, official trade APIs, and an immediate server-side kill switch",
+        "ok": true,
+        "factId": "kd-f03"
+      },
+      {
+        "claim": "KaatDo runs on official trade APIs across six supported brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww",
+        "ok": true,
+        "factId": "kd-f03"
+      },
+      {
+        "claim": "When a rule breaches, it cancels every pending order and squares off every position at market",
+        "ok": true,
+        "factId": "kd-f05"
+      },
+      {
+        "claim": "KaatDo is not investment advice and is not registered with SEBI",
+        "ok": true,
+        "factId": "kd-f10"
+      },
+      {
+        "claim": "Broker API execution is never guaranteed",
+        "ok": true,
+        "factId": "kd-f10"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is sharp, console-like, and aligns fully with brand voice. Disclaimers are present and verbatim."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261120-1257-438de5"
+}

@@ -1,0 +1,61 @@
+{
+  "id": "jr-2026-11-23-branch-scoring-mechanics",
+  "page": "job_rez",
+  "ideaId": "jr-i0034",
+  "slotId": "job_rez-2026-11-23-1230",
+  "slotAt": "2026-11-23T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-20T12:57:22+05:30",
+  "updatedAt": "2026-11-20T12:57:22+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261120-1257-438de5",
+  "caption": "Branch your master resume and measure relevance against real postings. JobRez maintains one master resume, where branches are copies tailored per role, and each branch is scored against the posting in Job DNA. Role match is deterministic using a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once, without cloud AI or external verification. Build your branched resume at https://jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#ResumeBranch",
+    "#JobDNA",
+    "#Engineering"
+  ],
+  "altText": "JobRez graphic: Branch your master resume",
+  "factsUsed": [
+    {
+      "factId": "jr-f04",
+      "quote": "One master resume; branches are copies tailored per role; each branch is scored against the posting in Job DNA"
+    },
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "artwork": {
+    "headline": "Branch your master resume",
+    "subline": "Score role relevance deterministically in Job DNA",
+    "facts": [
+      "Branches are copies tailored per role",
+      "Taxonomy matching with weighted terms",
+      "No cloud AI and no external verification"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Shortened altText to meet the 100 character maximum cap.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-23-branch-scoring-mechanics/image-1-8c00c3c8.jpg",
+      "bytes": 106434,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "8c00c3c890f091104da20b393ad609bf727aea16e7f423d9bf43ac1524a8b376",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-23-branch-scoring-mechanics/image-1-8c00c3c8.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-23-branch-scoring-mechanics/image-1-8c00c3c8.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-11-23-branch-scoring-mechanics/qa.json"
+}

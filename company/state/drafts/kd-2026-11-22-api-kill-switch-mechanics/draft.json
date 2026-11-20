@@ -1,0 +1,102 @@
+{
+  "id": "kd-2026-11-22-api-kill-switch-mechanics",
+  "page": "kaatdo",
+  "ideaId": "kd-i0028",
+  "slotId": "kaatdo-2026-11-22-1100",
+  "slotAt": "2026-11-22T11:00:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-20T12:57:22+05:30",
+  "updatedAt": "2026-11-20T12:57:22+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261120-1257-438de5",
+  "caption": "Six brokers, official trade APIs, and an immediate server-side kill switch. KaatDo runs on official trade APIs across six supported brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww. When a rule breaches, it cancels every pending order and squares off every position at market. kaatdo.com काट दो. KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.\n\n#KaatDo #KillSwitch #APIExecution #TradingDiscipline #RiskManagement #FandO #TradingTools",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#APIExecution",
+    "#TradingDiscipline",
+    "#RiskManagement",
+    "#FandO",
+    "#TradingTools"
+  ],
+  "altText": "Reel titled API Kill Switch Mechanics showing server-side execution across six brokers.",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f05",
+      "quote": "On breach: cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 20,
+    "scenes": [
+      {
+        "text": "Six brokers, official trade APIs.",
+        "seconds": 4
+      },
+      {
+        "text": "Server-side kill switch active.",
+        "seconds": 4
+      },
+      {
+        "text": "Pending orders cancelled.",
+        "seconds": 4
+      },
+      {
+        "text": "Positions squared off at market.",
+        "seconds": 4
+      },
+      {
+        "text": "kaatdo.com काट दो.",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Followed kinetic reel style with 5 scenes totaling 20 seconds. Included required mandatory disclaimers and brand sign-off.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/kd-2026-11-22-api-kill-switch-mechanics/reel-9f4d7943.mp4",
+      "bytes": 170879,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "9f4d7943608307019c5bcf0bfcceb19b4f3fa771bd82be45f7eb2caa2de5dbf6",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-22-api-kill-switch-mechanics/reel-9f4d7943.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-22-api-kill-switch-mechanics/reel-9f4d7943.mp4",
+      "durationSec": 20,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 20,
+        "bytes": 170879,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/kd-2026-11-22-api-kill-switch-mechanics/poster-9e0ea3a6.jpg",
+      "bytes": 65107,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "9e0ea3a602fdebaf3c2f6793e53c2452118850b2f2d245196a560046807cfeef",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-22-api-kill-switch-mechanics/poster-9e0ea3a6.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-22-api-kill-switch-mechanics/poster-9e0ea3a6.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 5 scenes · 20 s · 600 frames · dark console palette",
+  "qaRef": "drafts/kd-2026-11-22-api-kill-switch-mechanics/qa.json"
+}

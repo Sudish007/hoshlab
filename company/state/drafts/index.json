@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-19T18:46:08+05:30",
+  "updatedAt": "2026-11-20T12:57:22+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -299,6 +299,17 @@
       "qa": true
     },
     {
+      "id": "jr-2026-11-23-branch-scoring-mechanics",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "image",
+      "slotId": "job_rez-2026-11-23-1230",
+      "slotAt": "2026-11-23T12:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-20T12:57:22+05:30",
+      "qa": true
+    },
+    {
       "id": "kd-2026-10-15-automated-breach-reaction",
       "page": "kaatdo",
       "status": "expired",
@@ -541,6 +552,17 @@
       "qa": true
     },
     {
+      "id": "kd-2026-11-22-api-kill-switch-mechanics",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "kaatdo-2026-11-22-1100",
+      "slotAt": "2026-11-22T11:00:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-20T12:57:22+05:30",
+      "qa": true
+    },
+    {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
       "status": "expired",
@@ -747,6 +769,17 @@
       "slotAt": "2026-11-18T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-16T12:13:07+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-11-20-browser-local-privacy",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "image",
+      "slotId": "rishtapatra-2026-11-20-1930",
+      "slotAt": "2026-11-20T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-20T12:57:22+05:30",
       "qa": true
     },
     {

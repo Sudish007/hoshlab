@@ -1,0 +1,55 @@
+{
+  "id": "rp-2026-11-20-browser-local-privacy",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0032",
+  "slotId": "rishtapatra-2026-11-20-1930",
+  "slotAt": "2026-11-20T19:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-20T12:57:22+05:30",
+  "updatedAt": "2026-11-20T12:57:22+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261120-1257-438de5",
+  "caption": "Your personal details stay securely on your device. Every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional. Create your biodata at rishtapatra.com.\n\n#RishtaPatra #Biodata",
+  "hashtags": [
+    "#RishtaPatra",
+    "#Biodata"
+  ],
+  "altText": "Text graphic titled Your personal details stay securely on your device.",
+  "factsUsed": [
+    {
+      "factId": "rp-f05",
+      "quote": "Local-first: every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    }
+  ],
+  "artwork": {
+    "headline": "Your personal details stay securely on your device",
+    "subline": "Every detail, photo and imported resume stays local",
+    "facts": [
+      "Processed in the browser",
+      "Saved only on the device",
+      "An account is optional"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Corrected altText length to be under 100 characters.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-20-browser-local-privacy/image-1-4ad43252.jpg",
+      "bytes": 105952,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "4ad43252fa15e069c8b689daac87d3880c22676e0550ff2720b2ea413e205bfd",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-20-browser-local-privacy/image-1-4ad43252.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-20-browser-local-privacy/image-1-4ad43252.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-20-browser-local-privacy/qa.json"
+}
