@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-20T12:57:22+05:30",
+  "updatedAt": "2026-11-20T18:28:21+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -268,12 +268,12 @@
     {
       "id": "jr-2026-11-18-deterministic-taxonomy-matching-steps",
       "page": "job_rez",
-      "status": "queued",
+      "status": "expired",
       "format": "carousel",
       "slotId": "job_rez-2026-11-18-1230",
       "slotAt": "2026-11-18T12:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-16T12:13:07+05:30",
+      "updatedAt": "2026-11-20T18:28:21+05:30",
       "qa": true
     },
     {
