@@ -1,54 +1,42 @@
 {
-  "generatedAt": "2026-11-20T12:57:22+05:30",
+  "generatedAt": "2026-11-21T12:50:39+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-17-1230",
-      "page": "job_rez",
-      "at": "2026-11-17T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-17-deterministic-taxonomy-matching expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-18-1230",
       "page": "job_rez",
       "at": "2026-11-18T12:30:00+05:30",
       "format": "carousel",
       "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-18-deterministic-taxonomy-matching-steps expired -2 days before the slot (lead 3 days)",
-      "draftId": "jr-2026-11-18-deterministic-taxonomy-matching-steps",
-      "ideaId": "jr-i0030"
+      "reason": "dropped: draft jr-2026-11-18-deterministic-taxonomy-matching-steps expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-18-1930",
       "page": "rishtapatra",
       "at": "2026-11-18T19:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "rp-i0017",
-      "reason": "Assigning an existing open idea from the backlog matching the CEO priority on local-first privacy and client-side kundali computation.",
-      "draftId": "rp-2026-11-18-private-kundali-on-your-device"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-18-private-kundali-on-your-device expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-19-0815",
       "page": "kaatdo",
       "at": "2026-11-19T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0011",
-      "reason": "Assigning existing open idea covering broker kill switch integration as requested by the CEO priority.",
-      "draftId": "kd-2026-11-19-six-broker-integration"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-19-six-broker-integration expired -2.2 days before the slot (lead 3 days)",
+      "draftId": "kd-2026-11-19-six-broker-integration",
+      "ideaId": "kd-i0011"
     },
     {
       "slotId": "job_rez-2026-11-19-1230",
       "page": "job_rez",
       "at": "2026-11-19T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0033",
-      "reason": "Assigned existing backlog idea focusing on priority two, covering layout rules and watermark-free free exports.",
-      "draftId": "jr-2026-11-19-structural-layout-and-free-export"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-19-structural-layout-and-free-export expired -2 days before the slot (lead 3 days)",
+      "draftId": "jr-2026-11-19-structural-layout-and-free-export",
+      "ideaId": "jr-i0033"
     },
     {
       "slotId": "job_rez-2026-11-20-1230",
@@ -115,27 +103,30 @@
       "page": "rishtapatra",
       "at": "2026-11-23T19:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0028",
-      "reason": "Assigning existing open idea rp-i0028 which perfectly addresses the CEO priority of local-first processing and privacy."
+      "reason": "Assigning existing open idea rp-i0028 which perfectly addresses the CEO priority of local-first processing and privacy.",
+      "draftId": "rp-2026-11-23-on-device-biodata-privacy"
     },
     {
       "slotId": "kaatdo-2026-11-24-0815",
       "page": "kaatdo",
       "at": "2026-11-24T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0004",
-      "reason": "backlog idea kd-i0004 (The Refire Loop Reality)"
+      "reason": "backlog idea kd-i0004 (The Refire Loop Reality)",
+      "draftId": "kd-2026-11-24-the-refire-loop-reality"
     },
     {
       "slotId": "job_rez-2026-11-24-1230",
       "page": "job_rez",
       "at": "2026-11-24T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0016",
-      "reason": "Addresses priority 2: structural layout rules."
+      "reason": "Addresses priority 2: structural layout rules.",
+      "draftId": "jr-2026-11-24-measurable-layout-rules"
     },
     {
       "slotId": "job_rez-2026-11-25-1230",
@@ -298,6 +289,24 @@
       "status": "planned",
       "ideaId": "jr-i0023",
       "reason": "Assigning open reel idea covering master resume and branching structure priority."
+    },
+    {
+      "slotId": "rishtapatra-2026-12-04-1930",
+      "page": "rishtapatra",
+      "at": "2026-12-04T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0013",
+      "reason": "Assigning open idea emphasizing local-first privacy and account-free usage matching CEO priority 1."
+    },
+    {
+      "slotId": "kaatdo-2026-12-05-1100",
+      "page": "kaatdo",
+      "at": "2026-12-05T11:00:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "kd-i0030",
+      "reason": "Uses open carousel idea covering the six core rules and execution mechanics."
     }
   ]
 }

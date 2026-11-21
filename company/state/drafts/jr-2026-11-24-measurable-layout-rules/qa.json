@@ -1,0 +1,99 @@
+{
+  "draftId": "jr-2026-11-24-measurable-layout-rules",
+  "revision": 1,
+  "at": "2026-11-21T12:50:39+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "409/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "5/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "9.5 → jr-f07"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "81/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 117 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "3 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.39 over 28 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "JobRez measures six layout rules on the rendered page after every edit, including single-column order, standard headings, real bullet lists, selectable text, no tables or floats, and body text of at least 9.5pt",
+        "ok": true,
+        "factId": "jr-f07"
+      },
+      {
+        "claim": "This is not a certification against any ATS vendor",
+        "ok": true,
+        "factId": "jr-f07"
+      },
+      {
+        "claim": "Build your master resume at jobrez.com",
+        "ok": true,
+        "factId": "jr-f03"
+      }
+    ],
+    "reasons": [],
+    "notes": "Accurate claims strictly grounded in facts and aligned with the brand's plain technical voice."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261121-1250-40ba59"
+}

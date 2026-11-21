@@ -1,0 +1,58 @@
+{
+  "id": "jr-2026-11-24-measurable-layout-rules",
+  "page": "job_rez",
+  "ideaId": "jr-i0016",
+  "slotId": "job_rez-2026-11-24-1230",
+  "slotAt": "2026-11-24T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-21T12:50:39+05:30",
+  "updatedAt": "2026-11-21T12:50:39+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261121-1250-40ba59",
+  "caption": "Measure six structural layout rules after every edit. JobRez measures six layout rules on the rendered page after every edit, including single-column order, standard headings, real bullet lists, selectable text, no tables or floats, and body text of at least 9.5pt. This is not a certification against any ATS vendor. Build your master resume at jobrez.com.",
+  "hashtags": [
+    "#jobrez",
+    "#masterresume",
+    "#layout",
+    "#resume",
+    "#engineering"
+  ],
+  "altText": "Rendered graphic with headline Six structural layout rules and footer jobrez.com.",
+  "factsUsed": [
+    {
+      "factId": "jr-f07",
+      "quote": "Six layout rules measured on the rendered page after every edit (single-column order, standard headings, real bullet lists, selectable text, no tables or floats, body text of at least 9.5pt); \"not a certification against any ATS vendor\""
+    }
+  ],
+  "artwork": {
+    "headline": "Six structural layout rules",
+    "subline": "Measured on the rendered page after every edit",
+    "facts": [
+      "Single-column order, standard headings and real bullet lists",
+      "Selectable text, no tables or floats, body text of at least 9.5pt",
+      "Not a certification against any ATS vendor"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Shortened alt text to under 100 characters while maintaining required description elements.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-24-measurable-layout-rules/image-1-34da0b0f.jpg",
+      "bytes": 116716,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "34da0b0f32dbafa1c1e03ffd05dd50e4c4b7ed46218d7e298bb89a651740c212",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-24-measurable-layout-rules/image-1-34da0b0f.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-24-measurable-layout-rules/image-1-34da0b0f.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · violet on cream",
+  "qaRef": "drafts/jr-2026-11-24-measurable-layout-rules/qa.json"
+}

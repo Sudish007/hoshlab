@@ -1,0 +1,65 @@
+{
+  "id": "kd-2026-11-24-the-refire-loop-reality",
+  "page": "kaatdo",
+  "ideaId": "kd-i0004",
+  "slotId": "kaatdo-2026-11-24-0815",
+  "slotAt": "2026-11-24T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 2,
+  "reworkCount": 1,
+  "mock": false,
+  "createdAt": "2026-11-21T12:50:39+05:30",
+  "updatedAt": "2026-11-21T12:50:39+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261121-1250-40ba59",
+  "caption": "Squared off within seconds, not prevented outright. Except at Dhan, no broker provides a native block-trading API. When your account enters a locked state, enforcement relies entirely on a server-side re-fire loop. Any new order is detected and squared off immediately after placement rather than blocked at entry. kaatdo.com काट दो. KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#ServerSide",
+    "#RiskManagement",
+    "#TradingDiscipline",
+    "#TradeExecution",
+    "#FandO",
+    "#TradingTools"
+  ],
+  "altText": "Text graphic showing the headline Squared off within seconds, not prevented outright.",
+  "factsUsed": [
+    {
+      "factId": "kd-f08",
+      "quote": "Honest limitation: no broker-level \"block trading\" API exists except at Dhan; the LOCKED state is enforced by a re-fire loop, so trades are squared off within seconds, not prevented outright"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "artwork": {
+    "headline": "Squared off within seconds, not prevented outright.",
+    "subline": "How the re-fire loop enforces locked states without block APIs.",
+    "facts": [
+      "No broker-level block API exists except at Dhan.",
+      "Locked states are enforced by a re-fire loop.",
+      "Trades are squared off within seconds on breach."
+    ],
+    "footer": "kaatdo.com"
+  },
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-24-the-refire-loop-reality/image-1-8662d7e5.jpg",
+      "bytes": 133730,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "8662d7e5686f9c184c9edf27e744263c5eebae01da2fff824893d6258bc8c816",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-24-the-refire-loop-reality/image-1-8662d7e5.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-24-the-refire-loop-reality/image-1-8662d7e5.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "qaRef": "drafts/kd-2026-11-24-the-refire-loop-reality/qa.json",
+  "writerNote": "Restructured caption to avoid high Jaccard similarity with recent captions covering the re-fire loop limitation.",
+  "designNote": "variant B · dark console palette"
+}

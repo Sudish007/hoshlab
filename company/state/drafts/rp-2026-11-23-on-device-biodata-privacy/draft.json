@@ -1,0 +1,57 @@
+{
+  "id": "rp-2026-11-23-on-device-biodata-privacy",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0028",
+  "slotId": "rishtapatra-2026-11-23-1930",
+  "slotAt": "2026-11-23T19:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-21T12:50:39+05:30",
+  "updatedAt": "2026-11-21T12:50:39+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261121-1250-40ba59",
+  "caption": "Your personal details stay on your phone, not on external servers.\n\nWhen you build your biodata, privacy matters for every family. RishtaPatra ensures that every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional.\n\nCreate your biodata safely at rishtapatra.com.\n\n#RishtaPatra #BiodataMaker #Biodata #Family",
+  "hashtags": [
+    "#RishtaPatra",
+    "#BiodataMaker",
+    "#Biodata",
+    "#Family"
+  ],
+  "altText": "Branded text artwork titled Your personal details stay on your phone",
+  "factsUsed": [
+    {
+      "factId": "rp-f05",
+      "quote": "every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    }
+  ],
+  "artwork": {
+    "headline": "Your personal details stay on your phone",
+    "subline": "Processed in the browser and saved only on the device",
+    "facts": [
+      "Every detail is handled locally",
+      "Your imported resume stays private",
+      "An account is entirely optional"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Corrected altText length to be under 100 characters.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-23-on-device-biodata-privacy/image-1-3f20f799.jpg",
+      "bytes": 106961,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "3f20f799a16258c6fcdc14d7dcb6c52772a4b661c1cf07cb979b12a4351e0c77",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-23-on-device-biodata-privacy/image-1-3f20f799.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-23-on-device-biodata-privacy/image-1-3f20f799.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-23-on-device-biodata-privacy/qa.json"
+}
