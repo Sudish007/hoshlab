@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-21T12:50:39+05:30",
+  "updatedAt": "2026-11-21T16:40:55+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -279,12 +279,12 @@
     {
       "id": "jr-2026-11-19-structural-layout-and-free-export",
       "page": "job_rez",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "job_rez-2026-11-19-1230",
       "slotAt": "2026-11-19T12:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-17T13:32:48+05:30",
+      "updatedAt": "2026-11-21T16:40:55+05:30",
       "qa": true
     },
     {
@@ -543,12 +543,12 @@
     {
       "id": "kd-2026-11-19-six-broker-integration",
       "page": "kaatdo",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "kaatdo-2026-11-19-0815",
       "slotAt": "2026-11-19T08:15:00+05:30",
       "revision": 3,
-      "updatedAt": "2026-11-17T13:32:48+05:30",
+      "updatedAt": "2026-11-21T16:40:55+05:30",
       "qa": true
     },
     {
