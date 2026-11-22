@@ -1,0 +1,109 @@
+{
+  "draftId": "jr-2026-11-25-taxonomy-taxonomy-and-branching",
+  "revision": 1,
+  "at": "2026-11-22T12:30:42+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "570/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "6/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "3 alt texts, longest 77/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "3 × 1080x1350 jpeg max 82 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.20 over 29 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Deterministic role matching uses curated technology taxonomies and whole word matching",
+        "ok": true,
+        "factId": "jr-f05"
+      },
+      {
+        "claim": "JobRez relies on a deterministic model for matching your resume branches to live job postings",
+        "ok": true,
+        "factId": "jr-f05"
+      },
+      {
+        "claim": "Each master resume branch is scored against the posting in Job DNA, which uses a curated technology taxonomy with aliases and whole-word matching",
+        "ok": true,
+        "factId": "jr-f05"
+      },
+      {
+        "claim": "Required terms carry double weight while preferred terms count once",
+        "ok": true,
+        "factId": "jr-f05"
+      },
+      {
+        "claim": "This process involves no cloud AI and no external verification",
+        "ok": true,
+        "factId": "jr-f05"
+      }
+    ],
+    "reasons": [],
+    "notes": "Accurate and well-aligned with brand facts and voice guidelines."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261122-1230-8ff2bd"
+}

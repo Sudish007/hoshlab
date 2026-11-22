@@ -1,0 +1,95 @@
+{
+  "id": "jr-2026-11-25-taxonomy-taxonomy-and-branching",
+  "page": "job_rez",
+  "ideaId": "jr-i0036",
+  "slotId": "job_rez-2026-11-25-1230",
+  "slotAt": "2026-11-25T12:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-22T12:30:42+05:30",
+  "updatedAt": "2026-11-22T12:30:42+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261122-1230-8ff2bd",
+  "caption": "Deterministic role matching uses curated technology taxonomies and whole word matching. JobRez relies on a deterministic model for matching your resume branches to live job postings. Each master resume branch is scored against the posting in Job DNA, which uses a curated technology taxonomy with aliases and whole-word matching. Required terms carry double weight while preferred terms count once. This process involves no cloud AI and no external verification. Learn more at https://jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#MasterResume",
+    "#JobSearch",
+    "#EngineeringCareers",
+    "#JobDNA",
+    "#ResumeTips"
+  ],
+  "altText": "Slide 1, 2, and 3 showing deterministic matching logic, taxonomy, and weighted scoring.",
+  "factsUsed": [
+    {
+      "factId": "jr-f04",
+      "quote": "One master resume; branches are copies tailored per role; each branch is scored against the posting in Job DNA"
+    },
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Deterministic Role Matching",
+      "body": "JobRez uses a deterministic model to match your resume branches to real job postings.",
+      "altText": "Slide 1: Deterministic Role Matching. JobRez matches branches to postings."
+    },
+    {
+      "heading": "Curated Taxonomy",
+      "body": "We use a curated technology taxonomy with aliases and whole-word matching.",
+      "altText": "Slide 2: Curated Taxonomy. We use a curated technology taxonomy with aliases."
+    },
+    {
+      "heading": "Weighted Scoring",
+      "body": "Required terms are weighted double, while preferred terms count once. No cloud AI is used.",
+      "altText": "Slide 3: Weighted Scoring. Required terms are weighted double."
+    }
+  ],
+  "altTexts": [
+    "Slide 1: Deterministic Role Matching. JobRez matches branches to postings.",
+    "Slide 2: Curated Taxonomy. We use a curated technology taxonomy with aliases.",
+    "Slide 3: Weighted Scoring. Required terms are weighted double."
+  ],
+  "writerNote": "Corrected alt text length.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-25-taxonomy-taxonomy-and-branching/slide-1-ab7c8f73.jpg",
+      "bytes": 82279,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "ab7c8f7352a942daf86ce0697b8ac92df1214a323be382bfb055144e340ce545",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-25-taxonomy-taxonomy-and-branching/slide-1-ab7c8f73.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-25-taxonomy-taxonomy-and-branching/slide-1-ab7c8f73.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-25-taxonomy-taxonomy-and-branching/slide-2-71b58e57.jpg",
+      "bytes": 68581,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "71b58e573467041b899ab078068a361a2421e3b113b4cbf1883e1ba01baea27c",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-25-taxonomy-taxonomy-and-branching/slide-2-71b58e57.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-25-taxonomy-taxonomy-and-branching/slide-2-71b58e57.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-25-taxonomy-taxonomy-and-branching/slide-3-293d0708.jpg",
+      "bytes": 78507,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "293d0708e787eb16536209c56e48009e544303015abf60fb332516d4bf0513ec",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-25-taxonomy-taxonomy-and-branching/slide-3-293d0708.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-25-taxonomy-taxonomy-and-branching/slide-3-293d0708.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "3 slides · variant A · cream on ink",
+  "qaRef": "drafts/jr-2026-11-25-taxonomy-taxonomy-and-branching/qa.json"
+}

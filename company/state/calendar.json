@@ -1,32 +1,14 @@
 {
-  "generatedAt": "2026-11-21T12:50:39+05:30",
+  "generatedAt": "2026-11-22T12:30:42+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-18-1230",
-      "page": "job_rez",
-      "at": "2026-11-18T12:30:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-18-deterministic-taxonomy-matching-steps expired -3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-18-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-18T19:30:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-18-private-kundali-on-your-device expired -2.7 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-11-19-0815",
       "page": "kaatdo",
       "at": "2026-11-19T08:15:00+05:30",
       "format": "image",
       "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-19-six-broker-integration expired -2.2 days before the slot (lead 3 days)",
-      "draftId": "kd-2026-11-19-six-broker-integration",
-      "ideaId": "kd-i0011"
+      "reason": "dropped: draft kd-2026-11-19-six-broker-integration expired -3.2 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-19-1230",
@@ -34,19 +16,17 @@
       "at": "2026-11-19T12:30:00+05:30",
       "format": "image",
       "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-19-structural-layout-and-free-export expired -2 days before the slot (lead 3 days)",
-      "draftId": "jr-2026-11-19-structural-layout-and-free-export",
-      "ideaId": "jr-i0033"
+      "reason": "dropped: draft jr-2026-11-19-structural-layout-and-free-export expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-20-1230",
       "page": "job_rez",
       "at": "2026-11-20T12:30:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "jr-i0037",
-      "reason": "Assigning new reel idea covering master resume branching and deterministic role matching per CEO priority 1.",
-      "draftId": "jr-2026-11-20-deterministic-role-match-walkthrough"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-20-deterministic-role-match-walkthrough expired -2 days before the slot (lead 3 days)",
+      "draftId": "jr-2026-11-20-deterministic-role-match-walkthrough",
+      "ideaId": "jr-i0037"
     },
     {
       "slotId": "rishtapatra-2026-11-20-1930",
@@ -133,9 +113,10 @@
       "page": "job_rez",
       "at": "2026-11-25T12:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0036",
-      "reason": "Covering CEO priority 1 on master resume branching and deterministic taxonomy role matching using an existing open carousel idea."
+      "reason": "Covering CEO priority 1 on master resume branching and deterministic taxonomy role matching using an existing open carousel idea.",
+      "draftId": "jr-2026-11-25-taxonomy-taxonomy-and-branching"
     },
     {
       "slotId": "rishtapatra-2026-11-25-1930",
@@ -307,6 +288,24 @@
       "status": "planned",
       "ideaId": "kd-i0030",
       "reason": "Uses open carousel idea covering the six core rules and execution mechanics."
+    },
+    {
+      "slotId": "rishtapatra-2026-12-05-1930",
+      "page": "rishtapatra",
+      "at": "2026-12-05T19:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "rp-i0007",
+      "reason": "backlog idea rp-i0007 (Safe Matchmaking On Rishta Connect)"
+    },
+    {
+      "slotId": "kaatdo-2026-12-06-1100",
+      "page": "kaatdo",
+      "at": "2026-12-06T11:00:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "kd-i0014",
+      "reason": "This idea directly addresses the re-fire loop mechanism and limitations of the kill switch, matching the priority on kill switch execution."
     }
   ]
 }
