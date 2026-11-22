@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-22T12:30:42+05:30",
+  "updatedAt": "2026-11-22T20:52:24+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -290,12 +290,12 @@
     {
       "id": "jr-2026-11-20-deterministic-role-match-walkthrough",
       "page": "job_rez",
-      "status": "queued",
+      "status": "expired",
       "format": "reel",
       "slotId": "job_rez-2026-11-20-1230",
       "slotAt": "2026-11-20T12:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-19T13:05:46+05:30",
+      "updatedAt": "2026-11-22T20:52:24+05:30",
       "qa": true
     },
     {
@@ -807,12 +807,12 @@
     {
       "id": "rp-2026-11-20-browser-local-privacy",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "rishtapatra-2026-11-20-1930",
       "slotAt": "2026-11-20T19:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-20T12:57:22+05:30",
+      "updatedAt": "2026-11-22T20:52:24+05:30",
       "qa": true
     },
     {
