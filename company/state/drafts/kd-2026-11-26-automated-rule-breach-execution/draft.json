@@ -1,0 +1,68 @@
+{
+  "id": "kd-2026-11-26-automated-rule-breach-execution",
+  "page": "kaatdo",
+  "ideaId": "kd-i0017",
+  "slotId": "kaatdo-2026-11-26-0815",
+  "slotAt": "2026-11-26T08:15:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-23T13:20:12+05:30",
+  "updatedAt": "2026-11-23T13:20:12+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261123-1320-234e07",
+  "caption": "Your rule breaches. Every pending order cancels immediately. When a threshold is hit, the server-side kill switch cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears.\n\nKaatDo operates as a server-side kill switch on six supported brokers using official trade APIs. kaatdo.com काट दो.\n\nKaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.\n\n#KaatDo #KillSwitch #TradingDiscipline #RiskManagement #FandO #TradingTools #ServerSide #TradeExecution",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#TradingDiscipline",
+    "#RiskManagement",
+    "#FandO",
+    "#TradingTools",
+    "#ServerSide",
+    "#TradeExecution"
+  ],
+  "altText": "Artwork: Your rule breaches and orders cancel.",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f05",
+      "quote": "On breach: cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "artwork": {
+    "headline": "Your rule breaches. Every pending order cancels immediately.",
+    "subline": "Server-side kill switch execution across supported brokers.",
+    "facts": [
+      "Cancels pending orders and squares off positions at market",
+      "Keeps account locked until close and re-fires if needed"
+    ],
+    "footer": "kaatdo.com"
+  },
+  "writerNote": "Shortened altText to be strictly under 100 characters per requirements.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-26-automated-rule-breach-execution/image-1-2d7f03c6.jpg",
+      "bytes": 130411,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "2d7f03c68b915067e9942d0a80762ea6774cd51f35abf1dee7c8a2f609776b36",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-26-automated-rule-breach-execution/image-1-2d7f03c6.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-26-automated-rule-breach-execution/image-1-2d7f03c6.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant B · dark console palette",
+  "qaRef": "drafts/kd-2026-11-26-automated-rule-breach-execution/qa.json"
+}

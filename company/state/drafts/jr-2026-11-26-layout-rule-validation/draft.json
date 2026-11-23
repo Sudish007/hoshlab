@@ -1,0 +1,59 @@
+{
+  "id": "jr-2026-11-26-layout-rule-validation",
+  "page": "job_rez",
+  "ideaId": "jr-i0019",
+  "slotId": "job_rez-2026-11-26-1230",
+  "slotAt": "2026-11-26T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 2,
+  "reworkCount": 1,
+  "mock": false,
+  "createdAt": "2026-11-23T13:20:12+05:30",
+  "updatedAt": "2026-11-23T13:20:12+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261123-1320-234e07",
+  "caption": "Document structure directly affects how cleanly an exported file reads. JobRez measures six layout rules on the rendered page after every edit, covering single-column order, standard headings, real bullet lists, selectable text, the absence of tables or floats, and a body text size of at least 9.5pt. This structural check is noted as not a certification against any ATS vendor. Maintain your master resume at jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#Resume",
+    "#Engineering",
+    "#Career",
+    "#Tech",
+    "#Hiring"
+  ],
+  "altText": "Layout Rule Validation artwork showing single-column order and selectable text.",
+  "factsUsed": [
+    {
+      "factId": "jr-f07",
+      "quote": "Six layout rules measured on the rendered page after every edit (single-column order, standard headings, real bullet lists, selectable text, no tables or floats, body text of at least 9.5pt); \"not a certification against any ATS vendor\""
+    }
+  ],
+  "artwork": {
+    "headline": "Layout Rule Validation",
+    "subline": "Six layout rules measured after every edit",
+    "facts": [
+      "Single-column order, standard headings, real bullet lists",
+      "Selectable text, no tables or floats, body text >= 9.5pt",
+      "Not a certification against any vendor"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Adjusted caption opening structure to avoid high Jaccard similarity with recent captions while keeping fact jr-f07 fully intact.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-11-26-layout-rule-validation/image-1-c2009186.jpg",
+      "bytes": 105223,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "c2009186748317fdbfdf079122e2eea40f29a0e97f6a78dd0f5b5858fd3b3a41",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-26-layout-rule-validation/image-1-c2009186.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-26-layout-rule-validation/image-1-c2009186.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "qaRef": "drafts/jr-2026-11-26-layout-rule-validation/qa.json",
+  "designNote": "variant A · violet on cream"
+}

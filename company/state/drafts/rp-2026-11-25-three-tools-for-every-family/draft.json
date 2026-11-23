@@ -1,0 +1,111 @@
+{
+  "id": "rp-2026-11-25-three-tools-for-every-family",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0024",
+  "slotId": "rishtapatra-2026-11-25-1930",
+  "slotAt": "2026-11-25T19:30:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-23T13:20:12+05:30",
+  "updatedAt": "2026-11-23T13:20:12+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261123-1320-234e07",
+  "caption": "Three practical tools designed to help families navigate the marriage journey with ease.\n\nMake your biodata. Match your kundali. Find your rishta.\n\nRishtaPatra brings three products together: a biodata maker, Janam Kundali (free), and Rishta Connect for matchmaking. Whether you are drafting a biodata, checking compatibility, or exploring rishtas, each tool supports your family step by step.\n\nNote: Kundali calculations are indicative; consult your pandit.\n\nVisit rishtapatra.com to explore.\n\n#RishtaPatra #Biodata #Kundali #Rishta #Family #Marriage",
+  "hashtags": [
+    "#RishtaPatra",
+    "#Biodata",
+    "#Kundali",
+    "#Rishta",
+    "#Family",
+    "#Marriage"
+  ],
+  "altText": "Slide graphic showing three tools for every family.",
+  "factsUsed": [
+    {
+      "factId": "rp-f03",
+      "quote": "Make your biodata. Match your kundali. Find your rishta."
+    },
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Three Tools for Every Family",
+      "body": "Make your biodata. Match your kundali. Find your rishta.",
+      "altText": "Slide one: Three tools for every family."
+    },
+    {
+      "heading": "Biodata Maker",
+      "body": "Create your family biodata easily and keep your details private on your device.",
+      "altText": "Slide two: Biodata maker."
+    },
+    {
+      "heading": "Janam Kundali",
+      "body": "Compute birth charts securely in your browser. Calculations are indicative; consult your pandit.",
+      "altText": "Slide three: Janam Kundali."
+    },
+    {
+      "heading": "Rishta Connect",
+      "body": "Explore matchmaking support designed for families seeking meaningful connections.",
+      "altText": "Slide four: Rishta Connect."
+    }
+  ],
+  "altTexts": [
+    "Slide one: Three tools for every family.",
+    "Slide two: Biodata maker.",
+    "Slide three: Janam Kundali.",
+    "Slide four: Rishta Connect."
+  ],
+  "writerNote": "Corrected alt text lengths to stay under 100 characters per slide and main alt text.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-25-three-tools-for-every-family/slide-1-e8008fa3.jpg",
+      "bytes": 75283,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "e8008fa3321fa159f00816a1a45c05197e43a7d3650c5298d78870ec128d44f9",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-25-three-tools-for-every-family/slide-1-e8008fa3.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-25-three-tools-for-every-family/slide-1-e8008fa3.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-25-three-tools-for-every-family/slide-2-4e5cebab.jpg",
+      "bytes": 68621,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "4e5cebab6028674b687ff8a9f9a6657d524665cc7990d3b937e36ef6b4a0856f",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-25-three-tools-for-every-family/slide-2-4e5cebab.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-25-three-tools-for-every-family/slide-2-4e5cebab.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-25-three-tools-for-every-family/slide-3-52726461.jpg",
+      "bytes": 73791,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "52726461495c125bb3ecfa0a1619e6b8830ae7cb1eff0697a1774538f0829277",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-25-three-tools-for-every-family/slide-3-52726461.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-25-three-tools-for-every-family/slide-3-52726461.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-25-three-tools-for-every-family/slide-4-b49f0094.jpg",
+      "bytes": 80497,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "b49f0094e267d059fc2105377746dac67b139e7e0698adb687f320ca32cd15e6",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-25-three-tools-for-every-family/slide-4-b49f0094.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-25-three-tools-for-every-family/slide-4-b49f0094.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "4 slides · variant A · maroon and cream",
+  "qaRef": "drafts/rp-2026-11-25-three-tools-for-every-family/qa.json"
+}

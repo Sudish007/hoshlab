@@ -1,52 +1,32 @@
 {
-  "generatedAt": "2026-11-22T12:30:42+05:30",
+  "generatedAt": "2026-11-23T13:20:12+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-11-19-0815",
-      "page": "kaatdo",
-      "at": "2026-11-19T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-19-six-broker-integration expired -3.2 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "job_rez-2026-11-19-1230",
-      "page": "job_rez",
-      "at": "2026-11-19T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-19-structural-layout-and-free-export expired -3 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-20-1230",
       "page": "job_rez",
       "at": "2026-11-20T12:30:00+05:30",
       "format": "reel",
       "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-20-deterministic-role-match-walkthrough expired -2 days before the slot (lead 3 days)",
-      "draftId": "jr-2026-11-20-deterministic-role-match-walkthrough",
-      "ideaId": "jr-i0037"
+      "reason": "dropped: draft jr-2026-11-20-deterministic-role-match-walkthrough expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-20-1930",
       "page": "rishtapatra",
       "at": "2026-11-20T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0032",
-      "reason": "Aligns directly with CEO priority 1 on local-first biodata privacy and browser processing.",
-      "draftId": "rp-2026-11-20-browser-local-privacy"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-20-browser-local-privacy expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-21-1100",
       "page": "kaatdo",
       "at": "2026-11-21T11:00:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "kd-i0022",
-      "reason": "Assigning existing open carousel idea focusing on locked state mechanics and re-fire loop execution under priority two.",
-      "draftId": "kd-2026-11-21-locked-state-mechanics"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-21-locked-state-mechanics expired -2.1 days before the slot (lead 3 days)",
+      "draftId": "kd-2026-11-21-locked-state-mechanics",
+      "ideaId": "kd-i0022"
     },
     {
       "slotId": "rishtapatra-2026-11-21-1930",
@@ -123,27 +103,30 @@
       "page": "rishtapatra",
       "at": "2026-11-25T19:30:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0024",
-      "reason": "Assigning existing open idea rp-i0024 to cover the carousel slot and align with CEO priority two on core products and free Janam Kundali."
+      "reason": "Assigning existing open idea rp-i0024 to cover the carousel slot and align with CEO priority two on core products and free Janam Kundali.",
+      "draftId": "rp-2026-11-25-three-tools-for-every-family"
     },
     {
       "slotId": "kaatdo-2026-11-26-0815",
       "page": "kaatdo",
       "at": "2026-11-26T08:15:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0017",
-      "reason": "Assigned open idea kd-i0017 covering server-side kill switch and rule breach execution as prioritized by the CEO memo."
+      "reason": "Assigned open idea kd-i0017 covering server-side kill switch and rule breach execution as prioritized by the CEO memo.",
+      "draftId": "kd-2026-11-26-automated-rule-breach-execution"
     },
     {
       "slotId": "job_rez-2026-11-26-1230",
       "page": "job_rez",
       "at": "2026-11-26T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0019",
-      "reason": "Covering CEO priority 2 on layout rule checks using an existing open image idea."
+      "reason": "Covering CEO priority 2 on layout rule checks using an existing open image idea.",
+      "draftId": "jr-2026-11-26-layout-rule-validation"
     },
     {
       "slotId": "job_rez-2026-11-27-1230",
@@ -306,6 +289,15 @@
       "status": "planned",
       "ideaId": "kd-i0014",
       "reason": "This idea directly addresses the re-fire loop mechanism and limitations of the kill switch, matching the priority on kill switch execution."
+    },
+    {
+      "slotId": "job_rez-2026-12-07-1230",
+      "page": "job_rez",
+      "at": "2026-12-07T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0035",
+      "reason": "Assigning open idea jr-i0035 to fulfill the Sunday image slot focusing on layout rule validation and export."
     }
   ]
 }
