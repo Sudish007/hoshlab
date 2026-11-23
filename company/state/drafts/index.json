@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-23T13:20:12+05:30",
+  "updatedAt": "2026-11-23T18:24:14+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -576,12 +576,12 @@
     {
       "id": "kd-2026-11-21-locked-state-mechanics",
       "page": "kaatdo",
-      "status": "queued",
+      "status": "expired",
       "format": "carousel",
       "slotId": "kaatdo-2026-11-21-1100",
       "slotAt": "2026-11-21T11:00:00+05:30",
       "revision": 2,
-      "updatedAt": "2026-11-19T13:05:46+05:30",
+      "updatedAt": "2026-11-23T18:24:14+05:30",
       "qa": true
     },
     {
