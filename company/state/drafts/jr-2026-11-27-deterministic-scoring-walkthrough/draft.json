@@ -1,0 +1,91 @@
+{
+  "id": "jr-2026-11-27-deterministic-scoring-walkthrough",
+  "page": "job_rez",
+  "ideaId": "jr-i0022",
+  "slotId": "job_rez-2026-11-27-1230",
+  "slotAt": "2026-11-27T12:30:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-24T15:32:00+05:30",
+  "updatedAt": "2026-11-24T15:32:00+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261124-1532-46e24d",
+  "caption": "See how deterministic taxonomy scoring weights required terms double. Role match in JobRez is deterministic, utilizing a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once, with no cloud AI and no external verification. Explore role matching at https://jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#Resume",
+    "#Career",
+    "#JobSearch"
+  ],
+  "altText": "Reel titled See how taxonomy scoring works showing technology matching details.",
+  "factsUsed": [
+    {
+      "factId": "jr-f05",
+      "quote": "Role match is deterministic: a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once; no cloud AI, no external verification"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "See how taxonomy scoring works",
+        "seconds": 4
+      },
+      {
+        "text": "Role match is deterministic",
+        "seconds": 4
+      },
+      {
+        "text": "Curated technology taxonomy with aliases",
+        "seconds": 4
+      },
+      {
+        "text": "Required terms weighted double",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Corrected scene lengths and text limits under 60 characters and alt text under 100 characters.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/jr-2026-11-27-deterministic-scoring-walkthrough/reel-df48ddbb.mp4",
+      "bytes": 135679,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "df48ddbba3dedc29945b89a19eaa37f589b2c2d9792f418fa71beab6890846b3",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-27-deterministic-scoring-walkthrough/reel-df48ddbb.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-27-deterministic-scoring-walkthrough/reel-df48ddbb.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 135679,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/jr-2026-11-27-deterministic-scoring-walkthrough/poster-8f333d3c.jpg",
+      "bytes": 61426,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "8f333d3cfc7a812aceb41586bbcba5fbc81206c1f837efbcd619965c58d1b9da",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-11-27-deterministic-scoring-walkthrough/poster-8f333d3c.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-11-27-deterministic-scoring-walkthrough/poster-8f333d3c.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · violet on cream",
+  "qaRef": "drafts/jr-2026-11-27-deterministic-scoring-walkthrough/qa.json"
+}

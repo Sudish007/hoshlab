@@ -1,52 +1,32 @@
 {
-  "generatedAt": "2026-11-23T13:20:12+05:30",
+  "generatedAt": "2026-11-24T15:32:00+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-20-1230",
-      "page": "job_rez",
-      "at": "2026-11-20T12:30:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-20-deterministic-role-match-walkthrough expired -3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-20-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-20T19:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-20-browser-local-privacy expired -2.7 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-11-21-1100",
       "page": "kaatdo",
       "at": "2026-11-21T11:00:00+05:30",
       "format": "carousel",
       "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-21-locked-state-mechanics expired -2.1 days before the slot (lead 3 days)",
-      "draftId": "kd-2026-11-21-locked-state-mechanics",
-      "ideaId": "kd-i0022"
+      "reason": "dropped: draft kd-2026-11-21-locked-state-mechanics expired -3.2 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-21-1930",
       "page": "rishtapatra",
       "at": "2026-11-21T19:30:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "rp-i0014",
-      "reason": "Existing open reel idea fits Priority 1 cleanly by showcasing the live A4 auto-fit editor experience.",
-      "draftId": "rp-2026-11-21-a4-page-auto-fit"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-21-a4-page-auto-fit expired -2.8 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-22-1100",
       "page": "kaatdo",
       "at": "2026-11-22T11:00:00+05:30",
       "format": "reel",
-      "status": "queued",
-      "ideaId": "kd-i0028",
-      "reason": "Assigns Priority 1 kill switch rule execution across official broker trade APIs for the open reel slot.",
-      "draftId": "kd-2026-11-22-api-kill-switch-mechanics"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-22-api-kill-switch-mechanics expired -2.2 days before the slot (lead 3 days)",
+      "draftId": "kd-2026-11-22-api-kill-switch-mechanics",
+      "ideaId": "kd-i0028"
     },
     {
       "slotId": "job_rez-2026-11-23-1230",
@@ -133,9 +113,10 @@
       "page": "job_rez",
       "at": "2026-11-27T12:30:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0022",
-      "reason": "Filling the scheduled reel slot with an open idea matching the first priority on deterministic taxonomy scoring."
+      "reason": "Filling the scheduled reel slot with an open idea matching the first priority on deterministic taxonomy scoring.",
+      "draftId": "jr-2026-11-27-deterministic-scoring-walkthrough"
     },
     {
       "slotId": "rishtapatra-2026-11-27-1930",
@@ -298,6 +279,33 @@
       "status": "planned",
       "ideaId": "jr-i0035",
       "reason": "Assigning open idea jr-i0035 to fulfill the Sunday image slot focusing on layout rule validation and export."
+    },
+    {
+      "slotId": "rishtapatra-2026-12-07-1930",
+      "page": "rishtapatra",
+      "at": "2026-12-07T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0020",
+      "reason": "Assigning existing open idea rp-i0020 which addresses the priority of local-first processing and free browser-side kundali privacy."
+    },
+    {
+      "slotId": "kaatdo-2026-12-08-0815",
+      "page": "kaatdo",
+      "at": "2026-12-08T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0032",
+      "reason": "Assigning open idea on breach mechanics to fulfill priority one on automated breach response."
+    },
+    {
+      "slotId": "job_rez-2026-12-08-1230",
+      "page": "job_rez",
+      "at": "2026-12-08T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0038",
+      "reason": "Assigning existing open idea focusing on deterministic role matching and taxonomy scoring in accordance with priority one."
     }
   ]
 }

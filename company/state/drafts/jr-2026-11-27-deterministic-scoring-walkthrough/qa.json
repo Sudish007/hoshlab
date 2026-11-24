@@ -1,0 +1,89 @@
+{
+  "draftId": "jr-2026-11-27-deterministic-scoring-walkthrough",
+  "revision": 1,
+  "at": "2026-11-24T15:32:00+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "368/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "79/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "h264 1080x1920 yuv420p 30/1 16 s 136 KB faststart; poster 1080x1920 jpeg 61 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "1 link token, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.47 over 30 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "Role match in JobRez is deterministic, utilizing a curated technology taxonomy with aliases, whole-word matching, required terms weighted double and preferred terms once, with no cloud AI and no external verification.",
+        "ok": true,
+        "factId": "jr-f05"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is clean, specific, and adheres strictly to the product README register."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261124-1532-46e24d"
+}

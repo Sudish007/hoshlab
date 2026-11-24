@@ -1,12 +1,97 @@
 {
-  "updatedAt": "2026-11-24T06:25:44+05:30",
+  "updatedAt": "2026-11-24T15:40:12+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261124-0625-d54abb",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261124-1532-46e24d",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-11-24T06:25:44+05:30"
+    "at": "2026-11-24T15:40:12+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261124-1532-46e24d",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-11-24T15:32:00+05:30",
+      "endedAt": "2026-11-24T15:40:12+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W48.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 283336,
+          "calls": 6,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.005554,
+          "note": "rishtapatra: 0 ideas, 10 slots, 1 assigned, 1 dropped | kaatdo: 0 ideas, 11 slots, 1 assigned, 2 dropped | job_rez: 0 ideas, 12 slots, 1 assigned | completed models: Google Gemini · gemini-3.5-flash-lite (@rishtapatra); Google Gemini · gemini-3.5-flash-lite (@kaatdo); Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "writer",
+          "ok": true,
+          "ms": 143929,
+          "calls": 3,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.006015,
+          "note": "1 written, 0 reworked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 55459,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "1 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 8801,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.002038,
+          "note": "1 queued, 0 rework, 0 blocked | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/drafts/jr-2026-11-27-deterministic-scoring-walkthrough/draft.json",
+        "company/state/drafts/jr-2026-11-27-deterministic-scoring-walkthrough/qa.json",
+        "company/state/drafts/index.json",
+        "company/state/usage/2026-11.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.620208
+    },
     {
       "id": "publisher-hourly-20261124-0625-d54abb",
       "workflow": "publisher-hourly",
@@ -1740,101 +1825,12 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.507576
-    },
-    {
-      "id": "publisher-hourly-20261119-1846-e9cd63",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-11-19T18:46:08+05:30",
-      "endedAt": "2026-11-19T18:46:08+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 29,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 3 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/jr-2026-11-17-deterministic-taxonomy-matching/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-11-18-private-kundali-on-your-device",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-11-21-a4-page-auto-fit",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-19-six-broker-integration",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-21-locked-state-mechanics",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-18-deterministic-taxonomy-matching-steps",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-19-structural-layout-and-free-export",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-20-deterministic-role-match-walkthrough",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "jr-2026-11-17-deterministic-taxonomy-matching"
-        ],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.507576
     }
   ],
   "queue": {
     "rishtapatra": 2,
     "kaatdo": 3,
-    "job_rez": 4
+    "job_rez": 5
   },
   "blocked": {},
   "budget": {
@@ -1843,7 +1839,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.606601
+    "paidEquivalentUsd": 0.620208
   },
   "pages": {
     "rishtapatra": {
