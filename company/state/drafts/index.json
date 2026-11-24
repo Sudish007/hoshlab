@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-23T18:24:14+05:30",
+  "updatedAt": "2026-11-24T06:25:44+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -840,12 +840,12 @@
     {
       "id": "rp-2026-11-21-a4-page-auto-fit",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "reel",
       "slotId": "rishtapatra-2026-11-21-1930",
       "slotAt": "2026-11-21T19:30:00+05:30",
       "revision": 2,
-      "updatedAt": "2026-11-19T13:05:46+05:30",
+      "updatedAt": "2026-11-24T06:25:44+05:30",
       "qa": true
     },
     {
