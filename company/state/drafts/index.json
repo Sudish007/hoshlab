@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T16:29:00+05:30",
+  "updatedAt": "2026-11-25T21:09:25+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -301,12 +301,12 @@
     {
       "id": "jr-2026-11-23-branch-scoring-mechanics",
       "page": "job_rez",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "job_rez-2026-11-23-1230",
       "slotAt": "2026-11-23T12:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-20T12:57:22+05:30",
+      "updatedAt": "2026-11-25T21:09:25+05:30",
       "qa": true
     },
     {
@@ -862,12 +862,12 @@
     {
       "id": "rp-2026-11-23-on-device-biodata-privacy",
       "page": "rishtapatra",
-      "status": "queued",
+      "status": "expired",
       "format": "image",
       "slotId": "rishtapatra-2026-11-23-1930",
       "slotAt": "2026-11-23T19:30:00+05:30",
       "revision": 1,
-      "updatedAt": "2026-11-21T12:50:39+05:30",
+      "updatedAt": "2026-11-25T21:09:25+05:30",
       "qa": true
     },
     {
