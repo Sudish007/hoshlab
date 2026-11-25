@@ -1,42 +1,24 @@
 {
-  "generatedAt": "2026-11-24T15:32:00+05:30",
+  "generatedAt": "2026-11-25T14:16:27+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-11-21-1100",
-      "page": "kaatdo",
-      "at": "2026-11-21T11:00:00+05:30",
-      "format": "carousel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-21-locked-state-mechanics expired -3.2 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-21-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-21T19:30:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-21-a4-page-auto-fit expired -2.8 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-11-22-1100",
       "page": "kaatdo",
       "at": "2026-11-22T11:00:00+05:30",
       "format": "reel",
       "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-22-api-kill-switch-mechanics expired -2.2 days before the slot (lead 3 days)",
-      "draftId": "kd-2026-11-22-api-kill-switch-mechanics",
-      "ideaId": "kd-i0028"
+      "reason": "dropped: draft kd-2026-11-22-api-kill-switch-mechanics expired -3.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-23-1230",
       "page": "job_rez",
       "at": "2026-11-23T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0034",
-      "reason": "Addresses priority 1: master resume branching and role matching.",
-      "draftId": "jr-2026-11-23-branch-scoring-mechanics"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-23-branch-scoring-mechanics expired -2.1 days before the slot (lead 3 days)",
+      "draftId": "jr-2026-11-23-branch-scoring-mechanics",
+      "ideaId": "jr-i0034"
     },
     {
       "slotId": "rishtapatra-2026-11-23-1930",
@@ -306,6 +288,15 @@
       "status": "planned",
       "ideaId": "jr-i0038",
       "reason": "Assigning existing open idea focusing on deterministic role matching and taxonomy scoring in accordance with priority one."
+    },
+    {
+      "slotId": "job_rez-2026-12-09-1230",
+      "page": "job_rez",
+      "at": "2026-12-09T12:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "jr-i0031",
+      "reason": "Matches priority 2 on layout rules and unwatermarked exports."
     }
   ]
 }

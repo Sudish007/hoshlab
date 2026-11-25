@@ -1,12 +1,93 @@
 {
-  "updatedAt": "2026-11-25T09:48:48+05:30",
+  "updatedAt": "2026-11-25T14:20:04+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261125-0948-3915d5",
-    "workflow": "publisher-hourly",
+    "id": "engine-daily-20261125-1416-f4fdf0",
+    "workflow": "engine-daily",
     "ok": true,
-    "at": "2026-11-25T09:48:48+05:30"
+    "at": "2026-11-25T14:20:04+05:30"
   },
   "lastRuns": [
+    {
+      "id": "engine-daily-20261125-1416-f4fdf0",
+      "workflow": "engine-daily",
+      "trigger": "schedule",
+      "startedAt": "2026-11-25T14:16:27+05:30",
+      "endedAt": "2026-11-25T14:20:04+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "ceo",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Monday and state/memos/2026-W48.md exists",
+          "skipped": "not_due"
+        },
+        {
+          "name": "hr",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not_due — not the 1st of the month and hr/proposals/2026-10.json exists (the review runs on the 1st or with `node engine/index.js hr`)",
+          "skipped": "not_due"
+        },
+        {
+          "name": "strategist",
+          "ok": true,
+          "ms": 128123,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.001898,
+          "note": "rishtapatra: 0 ideas, 9 slots, model not called (backlog full) | kaatdo: 0 ideas, 10 slots, 1 dropped, model not called (backlog full) | job_rez: 0 ideas, 13 slots, 1 assigned, 1 dropped | completed models: Google Gemini · gemini-3.5-flash-lite (@job_rez)"
+        },
+        {
+          "name": "writer",
+          "ok": false,
+          "ms": 89237,
+          "calls": 2,
+          "costUsd": 0,
+          "paidEquivalentUsd": 0.005531,
+          "note": "rishtapatra-2026-11-27-1930: AllProvidersFailedError: writer: no provider answered — gemini: gemini: HTTP 503 UNAVAILABLE: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | 0 written, 0 reworked"
+        },
+        {
+          "name": "designer",
+          "ok": true,
+          "ms": 1,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 rendered, 0 refused"
+        },
+        {
+          "name": "qa",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 queued, 0 rework, 0 blocked"
+        },
+        {
+          "name": "analyst",
+          "ok": true,
+          "ms": 0,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "skipped: not Sunday (the Analyst runs on Sundays or with --agents analyst)",
+          "skipped": "not_due"
+        }
+      ],
+      "changed": [
+        "company/state/calendar.json",
+        "company/state/ideas.jsonl",
+        "company/state/usage/2026-11.jsonl",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "budgetPaidEquivalentUsd": 0.627637
+    },
     {
       "id": "publisher-hourly-20261125-0948-3915d5",
       "workflow": "publisher-hourly",
@@ -1760,107 +1841,6 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.529687
-    },
-    {
-      "id": "publisher-hourly-20261120-1828-88cab0",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-11-20T18:28:21+05:30",
-      "endedAt": "2026-11-20T18:28:21+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 19,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 5 waiting, 0 failed, 1 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/jr-2026-11-18-deterministic-taxonomy-matching-steps/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-11-18-private-kundali-on-your-device",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-11-20-browser-local-privacy",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "rp-2026-11-21-a4-page-auto-fit",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-19-six-broker-integration",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-21-locked-state-mechanics",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-22-api-kill-switch-mechanics",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-19-structural-layout-and-free-export",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-20-deterministic-role-match-walkthrough",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "jr-2026-11-23-branch-scoring-mechanics",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "jr-2026-11-18-deterministic-taxonomy-matching-steps"
-        ],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "page_not_configured"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.529687
     }
   ],
   "queue": {
@@ -1875,7 +1855,7 @@
     "limitUsd": 25,
     "exhausted": false,
     "warn": false,
-    "paidEquivalentUsd": 0.620208
+    "paidEquivalentUsd": 0.627637
   },
   "pages": {
     "rishtapatra": {
@@ -1897,5 +1877,7 @@
       "lastPublishedAt": null
     }
   },
-  "flags": []
+  "flags": [
+    "provider_down:gemini"
+  ]
 }
