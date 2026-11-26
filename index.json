@@ -216,6 +216,11 @@
   "kd-2026-11-26-automated-rule-breach-execution": [
     "image-1-2d7f03c6.jpg"
   ],
+  "kd-2026-11-28-six-supported-trade-apis": [
+    "slide-1-6e8b5e33.jpg",
+    "slide-2-0ac11a98.jpg",
+    "slide-3-1a7926b8.jpg"
+  ],
   "rp-2026-10-14-guided-7-step-biodata-flow": [
     "slide-1-e07bec87.jpg",
     "slide-2-6237ab03.jpg",
@@ -306,6 +311,9 @@
     "slide-2-4e5cebab.jpg",
     "slide-3-52726461.jpg",
     "slide-4-b49f0094.jpg"
+  ],
+  "rp-2026-11-27-private-device-only-biodata": [
+    "image-1-a260eed8.jpg"
   ],
   "sample-job_rez": {
     "sample": true,
