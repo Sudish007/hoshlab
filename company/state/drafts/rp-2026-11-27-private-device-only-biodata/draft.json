@@ -1,0 +1,55 @@
+{
+  "id": "rp-2026-11-27-private-device-only-biodata",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0022",
+  "slotId": "rishtapatra-2026-11-27-1930",
+  "slotAt": "2026-11-27T19:30:00+05:30",
+  "format": "image",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-26T14:01:57+05:30",
+  "updatedAt": "2026-11-26T14:01:57+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261126-1401-62bc14",
+  "caption": "बिना अकाउंट बनाए अपने डिवाइस पर सुरक्षित तरीके से बायोडाटा तैयार करें।\n\nजब आप अपने परिवार के लिए विवाह बायोडाटा बनाते हैं, तो आपकी गोपनीयता सबसे महत्वपूर्ण होती है। RishtaPatra पर every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional.\n\nबायोडाटा से रिश्ते तक। Visit rishtapatra.com to create your biodata.\n\n#RishtaPatra #Biodata",
+  "hashtags": [
+    "#RishtaPatra",
+    "#Biodata"
+  ],
+  "altText": "सुरक्षित बायोडाटा artwork with headline बिना अकाउंट बनाए अपने डिवाइस पर",
+  "factsUsed": [
+    {
+      "factId": "rp-f05",
+      "quote": "every detail, photo and imported resume is processed in the browser and saved only on the device; an account is optional"
+    }
+  ],
+  "artwork": {
+    "headline": "बिना अकाउंट बनाए बायोडाटा बनाएं",
+    "subline": "Your details stay secure on your own device.",
+    "facts": [
+      "Processed right in your browser",
+      "Saved only on your device",
+      "An account is optional"
+    ],
+    "footer": "rishtapatra.com"
+  },
+  "writerNote": "Corrected altText length to be under 100 characters while retaining visible words and strict adherence to local-first browser processing facts for rp-f05.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/rp-2026-11-27-private-device-only-biodata/image-1-a260eed8.jpg",
+      "bytes": 101941,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "a260eed86f385e461ad74c36f1cc5c12c87b5a9c609b4b2a905b3ade4986e61f",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-27-private-device-only-biodata/image-1-a260eed8.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-27-private-device-only-biodata/image-1-a260eed8.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "variant A · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-27-private-device-only-biodata/qa.json"
+}

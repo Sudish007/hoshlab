@@ -1,0 +1,101 @@
+{
+  "id": "kd-2026-11-28-six-supported-trade-apis",
+  "page": "kaatdo",
+  "ideaId": "kd-i0019",
+  "slotId": "kaatdo-2026-11-28-1100",
+  "slotAt": "2026-11-28T11:00:00+05:30",
+  "format": "carousel",
+  "language": "en",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-26T14:01:57+05:30",
+  "updatedAt": "2026-11-26T14:01:57+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261126-1401-62bc14",
+  "caption": "Six brokers. Official trade APIs. One server-side kill switch.\n\nKaatDo operates as a server-side kill switch across six supported brokers: Fyers, Upstox, Zerodha, Angel One, Dhan, and Groww. Monitoring and execution run on official trade APIs.\n\nWhen a rule breaches, KaatDo cancels every pending order, squares off every position at market, and locks the account until close, re-firing if trading activity reappears.\n\nkaatdo.com\n\nकाट दो.\n\nKaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed.\n\n#KaatDo #KillSwitch #TradingTools #BrokerIntegration #APIExecution #TradingDiscipline #RiskManagement #FandO",
+  "hashtags": [
+    "#KaatDo",
+    "#KillSwitch",
+    "#TradingTools",
+    "#BrokerIntegration",
+    "#APIExecution",
+    "#TradingDiscipline",
+    "#RiskManagement",
+    "#FandO"
+  ],
+  "altText": "Slide 1 of carousel: Six brokers, official trade APIs, and a server-side kill switch.",
+  "factsUsed": [
+    {
+      "factId": "kd-f03",
+      "quote": "Server-side kill switch on six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan and Groww, built on their official trade APIs"
+    },
+    {
+      "factId": "kd-f05",
+      "quote": "On breach: cancels every pending order, squares off every position at market, keeps the account locked until close, and re-fires if trading activity reappears"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "slides": [
+    {
+      "heading": "Six Supported Brokers",
+      "body": "KaatDo runs a server-side kill switch across six brokers: Fyers, Upstox, Zerodha, Angel One, Dhan, and Groww.",
+      "altText": "Slide 1: Six Supported Brokers"
+    },
+    {
+      "heading": "Official Trade APIs",
+      "body": "Monitoring and execution are built directly on official trade APIs from each supported broker.",
+      "altText": "Slide 2: Official Trade APIs"
+    },
+    {
+      "heading": "Action on Breach",
+      "body": "When a rule breaches, KaatDo cancels every pending order and squares off every position at market.",
+      "altText": "Slide 3: Action on Breach"
+    }
+  ],
+  "altTexts": [
+    "Slide 1: Six Supported Brokers",
+    "Slide 2: Official Trade APIs",
+    "Slide 3: Action on Breach"
+  ],
+  "writerNote": "Corrected slide alt text lengths to be under 100 characters as required.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-28-six-supported-trade-apis/slide-1-6e8b5e33.jpg",
+      "bytes": 80462,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "6e8b5e332faaef0ed21b305a7a3de74673fe7de69884ba7ad531d1183b5bd5bf",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-28-six-supported-trade-apis/slide-1-6e8b5e33.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-28-six-supported-trade-apis/slide-1-6e8b5e33.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-28-six-supported-trade-apis/slide-2-0ac11a98.jpg",
+      "bytes": 70971,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "0ac11a981213d57683eb2ee43eb94eb7a75e4d3ca101df13cd90cefa770a461c",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-28-six-supported-trade-apis/slide-2-0ac11a98.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-28-six-supported-trade-apis/slide-2-0ac11a98.jpg"
+    },
+    {
+      "kind": "image",
+      "path": "media/kd-2026-11-28-six-supported-trade-apis/slide-3-1a7926b8.jpg",
+      "bytes": 74544,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "1a7926b8d148098a8871818b1e647ee68318d36e4fba9cc7857ec5671c85d2f9",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-28-six-supported-trade-apis/slide-3-1a7926b8.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-28-six-supported-trade-apis/slide-3-1a7926b8.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "3 slides · variant A · dark console palette",
+  "qaRef": "drafts/kd-2026-11-28-six-supported-trade-apis/qa.json"
+}

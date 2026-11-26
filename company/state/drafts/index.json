@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-25T21:09:25+05:30",
+  "updatedAt": "2026-11-26T14:01:57+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -629,6 +629,17 @@
       "qa": true
     },
     {
+      "id": "kd-2026-11-28-six-supported-trade-apis",
+      "page": "kaatdo",
+      "status": "queued",
+      "format": "carousel",
+      "slotId": "kaatdo-2026-11-28-1100",
+      "slotAt": "2026-11-28T11:00:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-26T14:01:57+05:30",
+      "qa": true
+    },
+    {
       "id": "rp-2026-10-14-guided-7-step-biodata-flow",
       "page": "rishtapatra",
       "status": "expired",
@@ -879,6 +890,17 @@
       "slotAt": "2026-11-25T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-23T13:20:12+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-11-27-private-device-only-biodata",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "image",
+      "slotId": "rishtapatra-2026-11-27-1930",
+      "slotAt": "2026-11-27T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-26T14:01:57+05:30",
       "qa": true
     }
   ]

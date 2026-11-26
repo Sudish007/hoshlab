@@ -1,54 +1,42 @@
 {
-  "generatedAt": "2026-11-25T14:16:27+05:30",
+  "generatedAt": "2026-11-26T14:01:57+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-11-22-1100",
-      "page": "kaatdo",
-      "at": "2026-11-22T11:00:00+05:30",
-      "format": "reel",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-22-api-kill-switch-mechanics expired -3.1 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-23-1230",
       "page": "job_rez",
       "at": "2026-11-23T12:30:00+05:30",
       "format": "image",
       "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-23-branch-scoring-mechanics expired -2.1 days before the slot (lead 3 days)",
-      "draftId": "jr-2026-11-23-branch-scoring-mechanics",
-      "ideaId": "jr-i0034"
+      "reason": "dropped: draft jr-2026-11-23-branch-scoring-mechanics expired -3.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-23-1930",
       "page": "rishtapatra",
       "at": "2026-11-23T19:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "rp-i0028",
-      "reason": "Assigning existing open idea rp-i0028 which perfectly addresses the CEO priority of local-first processing and privacy.",
-      "draftId": "rp-2026-11-23-on-device-biodata-privacy"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-23-on-device-biodata-privacy expired -2.8 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-24-0815",
       "page": "kaatdo",
       "at": "2026-11-24T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0004",
-      "reason": "backlog idea kd-i0004 (The Refire Loop Reality)",
-      "draftId": "kd-2026-11-24-the-refire-loop-reality"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-24-the-refire-loop-reality expired -2.2 days before the slot (lead 3 days)",
+      "draftId": "kd-2026-11-24-the-refire-loop-reality",
+      "ideaId": "kd-i0004"
     },
     {
       "slotId": "job_rez-2026-11-24-1230",
       "page": "job_rez",
       "at": "2026-11-24T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0016",
-      "reason": "Addresses priority 2: structural layout rules.",
-      "draftId": "jr-2026-11-24-measurable-layout-rules"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-24-measurable-layout-rules expired -2.1 days before the slot (lead 3 days)",
+      "draftId": "jr-2026-11-24-measurable-layout-rules",
+      "ideaId": "jr-i0016"
     },
     {
       "slotId": "job_rez-2026-11-25-1230",
@@ -105,18 +93,20 @@
       "page": "rishtapatra",
       "at": "2026-11-27T19:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0022",
-      "reason": "Assigning an existing open idea matching the first CEO priority on local-first processing and privacy."
+      "reason": "Assigning an existing open idea matching the first CEO priority on local-first processing and privacy.",
+      "draftId": "rp-2026-11-27-private-device-only-biodata"
     },
     {
       "slotId": "kaatdo-2026-11-28-1100",
       "page": "kaatdo",
       "at": "2026-11-28T11:00:00+05:30",
       "format": "carousel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0019",
-      "reason": "Assigned open idea addressing the server-side kill switch coverage across supported brokers."
+      "reason": "Assigned open idea addressing the server-side kill switch coverage across supported brokers.",
+      "draftId": "kd-2026-11-28-six-supported-trade-apis"
     },
     {
       "slotId": "rishtapatra-2026-11-28-1930",
@@ -297,6 +287,33 @@
       "status": "planned",
       "ideaId": "jr-i0031",
       "reason": "Matches priority 2 on layout rules and unwatermarked exports."
+    },
+    {
+      "slotId": "rishtapatra-2026-12-09-1930",
+      "page": "rishtapatra",
+      "at": "2026-12-09T19:30:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "rp-i0001",
+      "reason": "Assigned an existing carousel idea matching the priority for the guided 7-step editor and one-page live preview."
+    },
+    {
+      "slotId": "kaatdo-2026-12-10-0815",
+      "page": "kaatdo",
+      "at": "2026-12-10T08:15:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "kd-i0035",
+      "reason": "Filling slot with priority 1 server-side breach response mechanics."
+    },
+    {
+      "slotId": "job_rez-2026-12-10-1230",
+      "page": "job_rez",
+      "at": "2026-12-10T12:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "jr-i0016",
+      "reason": "Assigning an open idea covering structural layout rules, aligning with CEO priority 2."
     }
   ]
 }
