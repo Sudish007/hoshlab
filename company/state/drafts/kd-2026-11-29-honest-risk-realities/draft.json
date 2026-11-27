@@ -1,0 +1,103 @@
+{
+  "id": "kd-2026-11-29-honest-risk-realities",
+  "page": "kaatdo",
+  "ideaId": "kd-i0007",
+  "slotId": "kaatdo-2026-11-29-1100",
+  "slotAt": "2026-11-29T11:00:00+05:30",
+  "format": "reel",
+  "language": "en",
+  "status": "queued",
+  "revision": 2,
+  "reworkCount": 1,
+  "mock": false,
+  "createdAt": "2026-11-27T14:15:02+05:30",
+  "updatedAt": "2026-11-27T14:15:02+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261127-1415-3395e4",
+  "caption": "Operational limits dictate every automated execution. Except at Dhan, no broker provides a block trading API, meaning the locked state uses a re-fire loop that leaves positions squared off within seconds rather than prevented outright. Illiquid strikes carry slippage on market orders, and server downtime halts monitoring entirely. kaatdo.com काट दो. KaatDo is not investment advice and is not registered with SEBI. Broker API execution is never guaranteed. #KaatDo #RiskLimits #ExecutionRisk #TradingReality #ServerDown #Slippage #TradingTools #FandO",
+  "hashtags": [
+    "#KaatDo",
+    "#RiskLimits",
+    "#ExecutionRisk",
+    "#TradingReality",
+    "#ServerDown",
+    "#Slippage",
+    "#TradingTools",
+    "#FandO"
+  ],
+  "altText": "Kinetic text scene showing operational limits of automated kill switches.",
+  "factsUsed": [
+    {
+      "factId": "kd-f08",
+      "quote": "Honest limitation: no broker-level \"block trading\" API exists except at Dhan; the LOCKED state is enforced by a re-fire loop, so trades are squared off within seconds, not prevented outright"
+    },
+    {
+      "factId": "kd-f09",
+      "quote": "Honest limitation: market orders on illiquid strikes can slip; if the server is down, monitoring is down"
+    },
+    {
+      "factId": "kd-f10",
+      "quote": "KaatDo is a risk-management technology tool, not investment advice, and is not registered with SEBI; broker API execution is never guaranteed"
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "Every automated kill switch has strict operational limits.",
+        "seconds": 4
+      },
+      {
+        "text": "Trades are squared off within seconds, not prevented.",
+        "seconds": 4
+      },
+      {
+        "text": "Market orders on illiquid strikes can slip.",
+        "seconds": 4
+      },
+      {
+        "text": "If the server is down, monitoring is down.",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Rewrote the caption opening and sentence structures to ensure low Jaccard similarity against recent captions while strictly retaining factual quotes and disclaimers.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/kd-2026-11-29-honest-risk-realities/reel-7d5ceaab.mp4",
+      "bytes": 152430,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "7d5ceaab9a9feebbef30cb8416e50697f5c5c1acd235ca99f8dce622a60fbdd8",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-29-honest-risk-realities/reel-7d5ceaab.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-29-honest-risk-realities/reel-7d5ceaab.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 152430,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/kd-2026-11-29-honest-risk-realities/poster-5e4530e3.jpg",
+      "bytes": 78384,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "5e4530e31cdbe0bed4391ce9519a7eca53f1f97e960aed78ddbd29e85447345e",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/kd-2026-11-29-honest-risk-realities/poster-5e4530e3.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/kd-2026-11-29-honest-risk-realities/poster-5e4530e3.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "qaRef": "drafts/kd-2026-11-29-honest-risk-realities/qa.json",
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · dark console palette"
+}

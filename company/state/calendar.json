@@ -1,32 +1,14 @@
 {
-  "generatedAt": "2026-11-26T14:01:57+05:30",
+  "generatedAt": "2026-11-27T14:15:02+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "job_rez-2026-11-23-1230",
-      "page": "job_rez",
-      "at": "2026-11-23T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-23-branch-scoring-mechanics expired -3.1 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "rishtapatra-2026-11-23-1930",
-      "page": "rishtapatra",
-      "at": "2026-11-23T19:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft rp-2026-11-23-on-device-biodata-privacy expired -2.8 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "kaatdo-2026-11-24-0815",
       "page": "kaatdo",
       "at": "2026-11-24T08:15:00+05:30",
       "format": "image",
       "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-24-the-refire-loop-reality expired -2.2 days before the slot (lead 3 days)",
-      "draftId": "kd-2026-11-24-the-refire-loop-reality",
-      "ideaId": "kd-i0004"
+      "reason": "dropped: draft kd-2026-11-24-the-refire-loop-reality expired -3.3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-24-1230",
@@ -34,19 +16,17 @@
       "at": "2026-11-24T12:30:00+05:30",
       "format": "image",
       "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-24-measurable-layout-rules expired -2.1 days before the slot (lead 3 days)",
-      "draftId": "jr-2026-11-24-measurable-layout-rules",
-      "ideaId": "jr-i0016"
+      "reason": "dropped: draft jr-2026-11-24-measurable-layout-rules expired -3.1 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-25-1230",
       "page": "job_rez",
       "at": "2026-11-25T12:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "jr-i0036",
-      "reason": "Covering CEO priority 1 on master resume branching and deterministic taxonomy role matching using an existing open carousel idea.",
-      "draftId": "jr-2026-11-25-taxonomy-taxonomy-and-branching"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-25-taxonomy-taxonomy-and-branching expired -2.1 days before the slot (lead 3 days)",
+      "draftId": "jr-2026-11-25-taxonomy-taxonomy-and-branching",
+      "ideaId": "jr-i0036"
     },
     {
       "slotId": "rishtapatra-2026-11-25-1930",
@@ -122,18 +102,20 @@
       "page": "kaatdo",
       "at": "2026-11-29T11:00:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "kd-i0007",
-      "reason": "Assigning existing open idea kd-i0007 covering broker limits and execution reality to fill the open reel slot."
+      "reason": "Assigning existing open idea kd-i0007 covering broker limits and execution reality to fill the open reel slot.",
+      "draftId": "kd-2026-11-29-honest-risk-realities"
     },
     {
       "slotId": "job_rez-2026-11-30-1230",
       "page": "job_rez",
       "at": "2026-11-30T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0013",
-      "reason": "Aligns with Priority 1: master resume concept and branching structure."
+      "reason": "Aligns with Priority 1: master resume concept and branching structure.",
+      "draftId": "jr-2026-11-30-master-resume-branching"
     },
     {
       "slotId": "rishtapatra-2026-11-30-1930",
@@ -314,6 +296,15 @@
       "status": "planned",
       "ideaId": "jr-i0016",
       "reason": "Assigning an open idea covering structural layout rules, aligning with CEO priority 2."
+    },
+    {
+      "slotId": "job_rez-2026-12-11-1230",
+      "page": "job_rez",
+      "at": "2026-12-11T12:30:00+05:30",
+      "format": "reel",
+      "status": "planned",
+      "ideaId": "jr-i0008",
+      "reason": "Assigning an open reel idea covering Job DNA scores and deterministic taxonomy matching to fill the open reel slot."
     }
   ]
 }

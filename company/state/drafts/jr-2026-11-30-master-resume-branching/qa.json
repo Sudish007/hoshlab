@@ -1,0 +1,94 @@
+{
+  "draftId": "jr-2026-11-30-master-resume-branching",
+  "revision": 1,
+  "at": "2026-11-27T14:15:02+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "335/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "5/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "62/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 105 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "2 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.44 over 30 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "JobRez maintains one master resume, where branches are copies tailored per role.",
+        "ok": true,
+        "factId": "jr-f04"
+      },
+      {
+        "claim": "Each branch is scored against the posting in Job DNA.",
+        "ok": true,
+        "factId": "jr-f04"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone fits the technical and honest voice requirements with no hype or forbidden patterns."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261127-1415-3395e4"
+}
