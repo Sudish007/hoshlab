@@ -1,12 +1,101 @@
 {
-  "updatedAt": "2026-11-27T18:00:06+05:30",
+  "updatedAt": "2026-11-28T03:29:31+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261127-1800-86aa94",
+    "id": "publisher-hourly-20261128-0329-fbccd8",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-11-27T18:00:06+05:30"
+    "at": "2026-11-28T03:29:31+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261128-0329-fbccd8",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-11-28T03:29:31+05:30",
+      "endedAt": "2026-11-28T03:29:31+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 30,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 3 waiting, 0 failed, 1 expired"
+        }
+      ],
+      "changed": [
+        "company/state/drafts/rp-2026-11-25-three-tools-for-every-family/draft.json",
+        "company/state/drafts/index.json",
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-11-27-private-device-only-biodata",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-26-automated-rule-breach-execution",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-28-six-supported-trade-apis",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "kd-2026-11-29-honest-risk-realities",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-11-26-layout-rule-validation",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-27-deterministic-scoring-walkthrough",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-30-master-resume-branching",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [
+          "rp-2026-11-25-three-tools-for-every-family"
+        ],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.685692
+    },
     {
       "id": "publisher-hourly-20261127-1800-86aa94",
       "workflow": "publisher-hourly",
@@ -1696,107 +1785,10 @@
         }
       },
       "budgetPaidEquivalentUsd": 0.567256
-    },
-    {
-      "id": "publisher-hourly-20261122-2052-f983d3",
-      "workflow": "publisher-hourly",
-      "trigger": "schedule",
-      "startedAt": "2026-11-22T20:52:24+05:30",
-      "endedAt": "2026-11-22T20:52:24+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 33,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "0 published, 5 waiting, 0 failed, 2 expired"
-        }
-      ],
-      "changed": [
-        "company/state/drafts/jr-2026-11-20-deterministic-role-match-walkthrough/draft.json",
-        "company/state/drafts/rp-2026-11-20-browser-local-privacy/draft.json",
-        "company/state/drafts/index.json",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "publisher": {
-        "decisions": [
-          {
-            "draftId": "rp-2026-11-21-a4-page-auto-fit",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "rp-2026-11-23-on-device-biodata-privacy",
-            "page": "rishtapatra",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "kd-2026-11-21-locked-state-mechanics",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-22-api-kill-switch-mechanics",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "page_not_configured"
-          },
-          {
-            "draftId": "kd-2026-11-24-the-refire-loop-reality",
-            "page": "kaatdo",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-23-branch-scoring-mechanics",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-24-measurable-layout-rules",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          },
-          {
-            "draftId": "jr-2026-11-25-taxonomy-taxonomy-and-branching",
-            "page": "job_rez",
-            "publish": false,
-            "reason": "not_due"
-          }
-        ],
-        "staleEdits": [],
-        "expired": [
-          "jr-2026-11-20-deterministic-role-match-walkthrough",
-          "rp-2026-11-20-browser-local-privacy"
-        ],
-        "rejected": [],
-        "pages": {
-          "rishtapatra": {
-            "outcome": "page_not_configured"
-          },
-          "kaatdo": {
-            "outcome": "page_not_configured"
-          },
-          "job_rez": {
-            "outcome": "idle"
-          }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.567256
     }
   ],
   "queue": {
-    "rishtapatra": 2,
+    "rishtapatra": 1,
     "kaatdo": 3,
     "job_rez": 3
   },
