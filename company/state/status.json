@@ -1,12 +1,97 @@
 {
-  "updatedAt": "2026-11-28T18:34:22+05:30",
+  "updatedAt": "2026-11-29T02:27:38+05:30",
   "lastRun": {
-    "id": "publisher-hourly-20261128-1834-238003",
+    "id": "publisher-hourly-20261129-0227-0c38cc",
     "workflow": "publisher-hourly",
     "ok": true,
-    "at": "2026-11-28T18:34:22+05:30"
+    "at": "2026-11-29T02:27:38+05:30"
   },
   "lastRuns": [
+    {
+      "id": "publisher-hourly-20261129-0227-0c38cc",
+      "workflow": "publisher-hourly",
+      "trigger": "schedule",
+      "startedAt": "2026-11-29T02:27:38+05:30",
+      "endedAt": "2026-11-29T02:27:38+05:30",
+      "ok": true,
+      "agents": [
+        {
+          "name": "publisher",
+          "ok": true,
+          "ms": 20,
+          "calls": 0,
+          "costUsd": 0,
+          "note": "0 published, 3 waiting, 0 failed, 0 expired"
+        }
+      ],
+      "changed": [
+        "company/state/status.json",
+        "company/state/runs/2026-11.jsonl"
+      ],
+      "errors": [],
+      "budgetUsedUsd": 0,
+      "publisher": {
+        "decisions": [
+          {
+            "draftId": "rp-2026-11-27-private-device-only-biodata",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "rp-2026-11-28-browser-kundali-engine-reel",
+            "page": "rishtapatra",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-28-six-supported-trade-apis",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "kd-2026-11-29-honest-risk-realities",
+            "page": "kaatdo",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-11-27-deterministic-scoring-walkthrough",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "page_not_configured"
+          },
+          {
+            "draftId": "jr-2026-11-30-master-resume-branching",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          },
+          {
+            "draftId": "jr-2026-12-01-watermark-free-pdf-export",
+            "page": "job_rez",
+            "publish": false,
+            "reason": "not_due"
+          }
+        ],
+        "staleEdits": [],
+        "expired": [],
+        "rejected": [],
+        "pages": {
+          "rishtapatra": {
+            "outcome": "page_not_configured"
+          },
+          "kaatdo": {
+            "outcome": "page_not_configured"
+          },
+          "job_rez": {
+            "outcome": "page_not_configured"
+          }
+        }
+      },
+      "budgetPaidEquivalentUsd": 0.715189
+    },
     {
       "id": "publisher-hourly-20261128-1834-238003",
       "workflow": "publisher-hourly",
@@ -1726,49 +1811,6 @@
           "job_rez": {
             "outcome": "page_not_configured"
           }
-        }
-      },
-      "budgetPaidEquivalentUsd": 0.606601
-    },
-    {
-      "id": "token-refresh-20261123-1613-222b29",
-      "workflow": "token-refresh",
-      "trigger": "schedule",
-      "startedAt": "2026-11-23T16:13:38+05:30",
-      "endedAt": "2026-11-23T16:13:38+05:30",
-      "ok": true,
-      "agents": [
-        {
-          "name": "publisher",
-          "ok": true,
-          "ms": 20,
-          "calls": 0,
-          "costUsd": 0,
-          "note": "tokens: 0 refreshed, 0 expiring, 0 expiry not known yet, 3 not configured"
-        }
-      ],
-      "changed": [
-        "company/state/tokens.json",
-        "company/state/status.json",
-        "company/state/runs/2026-11.jsonl"
-      ],
-      "errors": [],
-      "budgetUsedUsd": 0,
-      "tokens": {
-        "rishtapatra": {
-          "outcome": "not_configured",
-          "daysLeft": null,
-          "expiresAt": null
-        },
-        "kaatdo": {
-          "outcome": "not_configured",
-          "daysLeft": null,
-          "expiresAt": null
-        },
-        "job_rez": {
-          "outcome": "not_configured",
-          "daysLeft": null,
-          "expiresAt": null
         }
       },
       "budgetPaidEquivalentUsd": 0.606601
