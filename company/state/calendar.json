@@ -1,62 +1,40 @@
 {
-  "generatedAt": "2026-11-27T14:15:02+05:30",
+  "generatedAt": "2026-11-28T13:28:49+05:30",
   "horizonDays": 14,
   "slots": [
-    {
-      "slotId": "kaatdo-2026-11-24-0815",
-      "page": "kaatdo",
-      "at": "2026-11-24T08:15:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft kd-2026-11-24-the-refire-loop-reality expired -3.3 days before the slot (lead 3 days)"
-    },
-    {
-      "slotId": "job_rez-2026-11-24-1230",
-      "page": "job_rez",
-      "at": "2026-11-24T12:30:00+05:30",
-      "format": "image",
-      "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-24-measurable-layout-rules expired -3.1 days before the slot (lead 3 days)"
-    },
     {
       "slotId": "job_rez-2026-11-25-1230",
       "page": "job_rez",
       "at": "2026-11-25T12:30:00+05:30",
       "format": "carousel",
       "status": "dropped",
-      "reason": "dropped: draft jr-2026-11-25-taxonomy-taxonomy-and-branching expired -2.1 days before the slot (lead 3 days)",
-      "draftId": "jr-2026-11-25-taxonomy-taxonomy-and-branching",
-      "ideaId": "jr-i0036"
+      "reason": "dropped: draft jr-2026-11-25-taxonomy-taxonomy-and-branching expired -3 days before the slot (lead 3 days)"
     },
     {
       "slotId": "rishtapatra-2026-11-25-1930",
       "page": "rishtapatra",
       "at": "2026-11-25T19:30:00+05:30",
       "format": "carousel",
-      "status": "queued",
-      "ideaId": "rp-i0024",
-      "reason": "Assigning existing open idea rp-i0024 to cover the carousel slot and align with CEO priority two on core products and free Janam Kundali.",
-      "draftId": "rp-2026-11-25-three-tools-for-every-family"
+      "status": "dropped",
+      "reason": "dropped: draft rp-2026-11-25-three-tools-for-every-family expired -2.7 days before the slot (lead 3 days)"
     },
     {
       "slotId": "kaatdo-2026-11-26-0815",
       "page": "kaatdo",
       "at": "2026-11-26T08:15:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "kd-i0017",
-      "reason": "Assigned open idea kd-i0017 covering server-side kill switch and rule breach execution as prioritized by the CEO memo.",
-      "draftId": "kd-2026-11-26-automated-rule-breach-execution"
+      "status": "dropped",
+      "reason": "dropped: draft kd-2026-11-26-automated-rule-breach-execution expired -2.2 days before the slot (lead 3 days)"
     },
     {
       "slotId": "job_rez-2026-11-26-1230",
       "page": "job_rez",
       "at": "2026-11-26T12:30:00+05:30",
       "format": "image",
-      "status": "queued",
-      "ideaId": "jr-i0019",
-      "reason": "Covering CEO priority 2 on layout rule checks using an existing open image idea.",
-      "draftId": "jr-2026-11-26-layout-rule-validation"
+      "status": "dropped",
+      "reason": "dropped: draft jr-2026-11-26-layout-rule-validation expired -2 days before the slot (lead 3 days)",
+      "draftId": "jr-2026-11-26-layout-rule-validation",
+      "ideaId": "jr-i0019"
     },
     {
       "slotId": "job_rez-2026-11-27-1230",
@@ -93,9 +71,10 @@
       "page": "rishtapatra",
       "at": "2026-11-28T19:30:00+05:30",
       "format": "reel",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "rp-i0034",
-      "reason": "Assigning existing reel open idea rp-i0034 which covers local-first browser computation for Janam Kundali matching the CEO priority and allowed reel format for the slot."
+      "reason": "Assigning existing reel open idea rp-i0034 which covers local-first browser computation for Janam Kundali matching the CEO priority and allowed reel format for the slot.",
+      "draftId": "rp-2026-11-28-browser-kundali-engine-reel"
     },
     {
       "slotId": "kaatdo-2026-11-29-1100",
@@ -140,9 +119,10 @@
       "page": "job_rez",
       "at": "2026-12-01T12:30:00+05:30",
       "format": "image",
-      "status": "planned",
+      "status": "queued",
       "ideaId": "jr-i0024",
-      "reason": "Aligns with Priority 2: detailing watermark-free export options and flexibility."
+      "reason": "Aligns with Priority 2: detailing watermark-free export options and flexibility.",
+      "draftId": "jr-2026-12-01-watermark-free-pdf-export"
     },
     {
       "slotId": "job_rez-2026-12-02-1230",
@@ -305,6 +285,24 @@
       "status": "planned",
       "ideaId": "jr-i0008",
       "reason": "Assigning an open reel idea covering Job DNA scores and deterministic taxonomy matching to fill the open reel slot."
+    },
+    {
+      "slotId": "rishtapatra-2026-12-11-1930",
+      "page": "rishtapatra",
+      "at": "2026-12-11T19:30:00+05:30",
+      "format": "image",
+      "status": "planned",
+      "ideaId": "rp-i0031",
+      "reason": "Assigning an existing open idea focusing on local-first browser privacy and free Janam Kundali matching the first CEO priority."
+    },
+    {
+      "slotId": "kaatdo-2026-12-12-1100",
+      "page": "kaatdo",
+      "at": "2026-12-12T11:00:00+05:30",
+      "format": "carousel",
+      "status": "planned",
+      "ideaId": "kd-i0036",
+      "reason": "Filling carousel slot with server-side breach response mechanics prioritizing automated order cancellation and position squaring off."
     }
   ]
 }

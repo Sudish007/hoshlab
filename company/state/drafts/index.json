@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-28T09:25:37+05:30",
+  "updatedAt": "2026-11-28T13:28:49+05:30",
   "drafts": [
     {
       "id": "jr-2026-10-14-six-layout-rules-measured-live",
@@ -362,6 +362,17 @@
       "slotAt": "2026-11-30T12:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-27T14:15:02+05:30",
+      "qa": true
+    },
+    {
+      "id": "jr-2026-12-01-watermark-free-pdf-export",
+      "page": "job_rez",
+      "status": "queued",
+      "format": "image",
+      "slotId": "job_rez-2026-12-01-1230",
+      "slotAt": "2026-12-01T12:30:00+05:30",
+      "revision": 2,
+      "updatedAt": "2026-11-28T13:28:49+05:30",
       "qa": true
     },
     {
@@ -923,6 +934,17 @@
       "slotAt": "2026-11-27T19:30:00+05:30",
       "revision": 1,
       "updatedAt": "2026-11-26T14:01:57+05:30",
+      "qa": true
+    },
+    {
+      "id": "rp-2026-11-28-browser-kundali-engine-reel",
+      "page": "rishtapatra",
+      "status": "queued",
+      "format": "reel",
+      "slotId": "rishtapatra-2026-11-28-1930",
+      "slotAt": "2026-11-28T19:30:00+05:30",
+      "revision": 1,
+      "updatedAt": "2026-11-28T13:28:49+05:30",
       "qa": true
     }
   ]

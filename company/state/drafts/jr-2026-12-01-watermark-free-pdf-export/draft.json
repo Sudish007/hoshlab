@@ -1,0 +1,61 @@
+{
+  "id": "jr-2026-12-01-watermark-free-pdf-export",
+  "page": "job_rez",
+  "ideaId": "jr-i0024",
+  "slotId": "job_rez-2026-12-01-1230",
+  "slotAt": "2026-12-01T12:30:00+05:30",
+  "format": "image",
+  "language": "en",
+  "status": "queued",
+  "revision": 2,
+  "reworkCount": 1,
+  "mock": false,
+  "createdAt": "2026-11-28T13:28:49+05:30",
+  "updatedAt": "2026-11-28T13:28:49+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261128-1328-601e9e",
+  "caption": "Export clean documents without fees or visual clutter on your active search pipeline.\n\nJobRez supports exports to PDF, Word and plain text. PDF and plain-text export are unlimited and watermark-free on the free plan, while Word document export is Pro. Keep track of your recruitment pipeline with application tracker statuses including Saved, Applied, Interviewing, Offer, and Closed, which are stored locally in the browser.\n\nBuild your master resume and export clean files at https://jobrez.com.",
+  "hashtags": [
+    "#JobRez",
+    "#MasterResume",
+    "#CareerTools",
+    "#Engineering"
+  ],
+  "altText": "Text graphic stating PDF exports remain unlimited and watermark-free on the free tier at jobrez.com",
+  "factsUsed": [
+    {
+      "factId": "jr-f09",
+      "quote": "Exports to PDF, Word and plain text; PDF and plain-text export are unlimited and watermark-free on the free plan; Word (.docx) export is Pro"
+    },
+    {
+      "factId": "jr-f13",
+      "quote": "Tracker statuses: Saved, Applied, Interviewing, Offer, Closed; stored locally in the browser"
+    }
+  ],
+  "artwork": {
+    "headline": "Watermark-Free PDF Exports",
+    "subline": "Unlimited and watermark-free exports on the free tier",
+    "facts": [
+      "PDF and plain-text exports are unlimited and free",
+      "Word document export is available on Pro",
+      "Application statuses stored locally in the browser"
+    ],
+    "footer": "jobrez.com"
+  },
+  "writerNote": "Reworked caption structure to lower Jaccard similarity against recent captions while maintaining exact fact citations for jr-f09 and jr-f13. No exclamation marks, no emoji, and no forbidden country tokens.",
+  "media": [
+    {
+      "kind": "image",
+      "path": "media/jr-2026-12-01-watermark-free-pdf-export/image-1-053c996b.jpg",
+      "bytes": 114141,
+      "width": 1080,
+      "height": 1350,
+      "sha256": "053c996b73172c7d0b98e94012b8e401516cddc6d4b64dbd53e63504b5ec45c7",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/jr-2026-12-01-watermark-free-pdf-export/image-1-053c996b.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/jr-2026-12-01-watermark-free-pdf-export/image-1-053c996b.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "qaRef": "drafts/jr-2026-12-01-watermark-free-pdf-export/qa.json",
+  "designNote": "variant A · violet on cream"
+}

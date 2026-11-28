@@ -1,0 +1,100 @@
+{
+  "id": "rp-2026-11-28-browser-kundali-engine-reel",
+  "page": "rishtapatra",
+  "ideaId": "rp-i0034",
+  "slotId": "rishtapatra-2026-11-28-1930",
+  "slotAt": "2026-11-28T19:30:00+05:30",
+  "format": "reel",
+  "language": "hi",
+  "status": "queued",
+  "revision": 1,
+  "reworkCount": 0,
+  "mock": false,
+  "createdAt": "2026-11-28T13:28:49+05:30",
+  "updatedAt": "2026-11-28T13:28:49+05:30",
+  "by": "writer",
+  "runId": "engine-daily-20261128-1328-601e9e",
+  "caption": "क्या आप जानते हैं कि आपकी जन्म कुंडली आपके फोन के ब्राउज़र में ही बनती है? Janam Kundali is computed client-side: the astrology engine runs directly in the browser so no request carries your birth data anywhere. RishtaPatra offers three products: biodata maker, Rishta Connect, and Janam Kundali (free). Kundali details are indicative; consult your pandit. Explore rishtapatra.com",
+  "hashtags": [
+    "#RishtaPatra",
+    "#Kundali",
+    "#JanamKundali",
+    "#Biodata",
+    "#Rishta"
+  ],
+  "altText": "Reel card showing Browser Kundali Engine headline and Janam Kundali details",
+  "factsUsed": [
+    {
+      "factId": "rp-f04",
+      "quote": "Three products: biodata maker · Rishta Connect (matchmaking) · Janam Kundali (free)"
+    },
+    {
+      "factId": "rp-f07",
+      "quote": "Janam Kundali is computed client-side (the astrology engine runs in the browser); no request carries birth data"
+    },
+    {
+      "factId": "rp-f09",
+      "quote": "Kundali disclaimer: \"indicative, North Indian method; consult your pandit/astrologer\""
+    }
+  ],
+  "reel": {
+    "style": "kinetic",
+    "durationSec": 16,
+    "scenes": [
+      {
+        "text": "क्या आपकी जन्म कुंडली ब्राउज़र में बनती है?",
+        "seconds": 4
+      },
+      {
+        "text": "The astrology engine runs in the browser",
+        "seconds": 4
+      },
+      {
+        "text": "No request carries birth data anywhere",
+        "seconds": 4
+      },
+      {
+        "text": "Janam Kundali (free) on rishtapatra.com",
+        "seconds": 4
+      }
+    ]
+  },
+  "writerNote": "Used the client-side kundali calculation facts along with the mandatory disclaimer for kundali. Kept total duration to 16 seconds within the 15-30 limit.",
+  "media": [
+    {
+      "kind": "video",
+      "path": "media/rp-2026-11-28-browser-kundali-engine-reel/reel-3d2abbdb.mp4",
+      "bytes": 147385,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "3d2abbdbd02bae8d03dfadc440b44fb5276b1e86b04ae85bad79d6dd654f6487",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-28-browser-kundali-engine-reel/reel-3d2abbdb.mp4",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-28-browser-kundali-engine-reel/reel-3d2abbdb.mp4",
+      "durationSec": 16,
+      "probe": {
+        "ok": true,
+        "codec": "h264",
+        "width": 1080,
+        "height": 1920,
+        "pixFmt": "yuv420p",
+        "frameRate": "30/1",
+        "durationSec": 16,
+        "bytes": 147385,
+        "faststart": true
+      }
+    },
+    {
+      "kind": "poster",
+      "path": "media/rp-2026-11-28-browser-kundali-engine-reel/poster-15b68dcc.jpg",
+      "bytes": 73764,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "15b68dcc751f23304a983488c03c3394e86cf69156bdcf9dfccef597957b2932",
+      "rawUrl": "https://raw.githubusercontent.com/Sudish007/hoshlab/media/media/rp-2026-11-28-browser-kundali-engine-reel/poster-15b68dcc.jpg",
+      "pagesUrl": "https://sudish007.github.io/hoshlab/media/rp-2026-11-28-browser-kundali-engine-reel/poster-15b68dcc.jpg"
+    }
+  ],
+  "publishAttempts": [],
+  "designNote": "reel kinetic · 4 scenes · 16 s · 480 frames · cream and maroon",
+  "qaRef": "drafts/rp-2026-11-28-browser-kundali-engine-reel/qa.json"
+}

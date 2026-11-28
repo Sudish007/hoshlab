@@ -1,0 +1,104 @@
+{
+  "draftId": "jr-2026-12-01-watermark-free-pdf-export",
+  "revision": 2,
+  "at": "2026-11-28T13:28:49+05:30",
+  "passed": true,
+  "deterministic": {
+    "passed": true,
+    "checks": [
+      {
+        "id": "caption_length",
+        "ok": true,
+        "detail": "546/2200"
+      },
+      {
+        "id": "hashtags",
+        "ok": true,
+        "detail": "4/8"
+      },
+      {
+        "id": "disclaimer",
+        "ok": true,
+        "detail": "none defined"
+      },
+      {
+        "id": "forbidden",
+        "ok": true,
+        "detail": "25 patterns, no match"
+      },
+      {
+        "id": "numbers_sourced",
+        "ok": true,
+        "detail": "no numbers"
+      },
+      {
+        "id": "alt_text",
+        "ok": true,
+        "detail": "99/100"
+      },
+      {
+        "id": "language",
+        "ok": true,
+        "detail": "ok (en; no Devanagari)"
+      },
+      {
+        "id": "media_spec",
+        "ok": true,
+        "detail": "1080x1350 jpeg 114 KB"
+      },
+      {
+        "id": "links",
+        "ok": true,
+        "detail": "3 link tokens, all on jobrez.com"
+      },
+      {
+        "id": "emoji",
+        "ok": true,
+        "detail": "0/0 (none)"
+      },
+      {
+        "id": "duplicate",
+        "ok": true,
+        "detail": "max jaccard 0.48 over 30 recent captions"
+      },
+      {
+        "id": "brand_lint",
+        "ok": true,
+        "detail": "no OF-2 tokens; no ₹ amounts"
+      }
+    ]
+  },
+  "model": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "verdict": "pass",
+    "toneScore": 5,
+    "claims": [
+      {
+        "claim": "JobRez supports exports to PDF, Word and plain text",
+        "ok": true,
+        "factId": "jr-f09"
+      },
+      {
+        "claim": "PDF and plain-text export are unlimited and watermark-free on the free plan",
+        "ok": true,
+        "factId": "jr-f09"
+      },
+      {
+        "claim": "Word document export is Pro",
+        "ok": true,
+        "factId": "jr-f09"
+      },
+      {
+        "claim": "Application tracker statuses include Saved, Applied, Interviewing, Offer, and Closed, which are stored locally in the browser",
+        "ok": true,
+        "factId": "jr-f13"
+      }
+    ],
+    "reasons": [],
+    "notes": "Tone is clean, direct, and matches the product README style."
+  },
+  "reasons": [],
+  "mock": false,
+  "runId": "engine-daily-20261128-1328-601e9e"
+}
